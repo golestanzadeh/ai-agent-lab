@@ -12,11 +12,14 @@ from agent_lab.case_registry import (
     OwnerType,
     StorageScopeReference,
     TaxPeriod,
-    TaxPeriodType,
 )
 from agent_lab.case_state import CaseStateStore
 from agent_lab.document_inventory import DocumentInventory, DocumentInventoryItem
-from agent_lab.inventory_evidence import InventoryEvidenceError, InventoryEvidenceStore
+from agent_lab.inventory_evidence import (
+    InventoryEvidenceError,
+    InventoryEvidenceNotFoundError,
+    InventoryEvidenceStore,
+)
 
 
 def _case(case_id: str, root: str) -> CaseRecord:
@@ -24,11 +27,14 @@ def _case(case_id: str, root: str) -> CaseRecord:
         case_id=case_id,
         owner_type=OwnerType.PERSON,
         owner_id=f"owner-{case_id}",
-        tax_period=TaxPeriod(TaxPeriodType.CALENDAR_YEAR, 2024),
+        tax_period=TaxPeriod("CALENDAR_YEAR", 2024),
         case_type=CaseType.INDIVIDUAL,
         assessment_mode=AssessmentMode.UNKNOWN_PENDING_VERIFICATION,
         lifecycle_status=LifecycleStatus.CREATED,
-        storage_scope=StorageScopeReference("test", root),
+        storage_scope_reference=StorageScopeReference("test", root),
+        schema_version=1,
+        created_at=datetime(2026, 9, 6, tzinfo=timezone.utc),
+        updated_at=datetime(2026, 9, 6, tzinfo=timezone.utc),
     )
 
 
@@ -110,7 +116,7 @@ def test_run_from_another_case_is_rejected() -> None:
     _, state, _, store = _store()
     foreign_run = state.list_runs("CASE-B")[0]
 
-    with pytest.raises((KeyError, PermissionError)):
+    with pytest.raises(PermissionError):
         store.record(
             "CASE-A",
             foreign_run.run_id,
@@ -131,5 +137,5 @@ def test_evidence_cannot_be_read_from_another_case() -> None:
         source_scope_ref="root-a",
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(InventoryEvidenceNotFoundError):
         store.get("CASE-B", evidence.evidence_id)
