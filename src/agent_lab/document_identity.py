@@ -185,7 +185,7 @@ class DocumentIdentityRegistry:
                 is_folder=item.is_folder,
             )
             self._observations[observation.observation_id] = observation
-            self._case_state.update_state(case_id, document_refs=(document_id,))
+            self._case_state.update_state(case_id, documents_ref=document_id)
             return record, observation
 
     def get(self, case_id: str, document_id: str) -> DocumentRecord:
