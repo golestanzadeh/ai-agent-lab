@@ -56,7 +56,7 @@ Use this file for decisions that materially affect project scope, architecture, 
 
 **Submission requirement:** Final documents should be print-ready and, where technically and legally supported, electronically submittable through an official channel. Consequential submission requires explicit authorization/approval and must be fully auditable.
 
-**Reason:** This scope creates a demanding real-world learning environment covering document understanding, retrieval/research, evidence grounding, structured reasoning, calculations, specialist delegation, conflict resolution, validation, current-information handling, adversarial testing, auditability, and human-in-the-loop control.
+**Reason:** This scope creates a demanding real-world learning environment covering document understanding, retrieval/research, structured reasoning, calculations, specialist delegation, conflict resolution, validation, current-information handling, adversarial testing, auditability, and human-in-the-loop control.
 
 ## D-007 — Final-goal breadth, first-workflow narrowness
 
@@ -178,3 +178,31 @@ The adapter must not expose a generic Drive-wide list/search operation. Explicit
 **Gate result:** The defined Stage 5 unit and live scope tests passed. Stage 6 documentation and verification evidence have been recorded. The release gate for a metadata-only CASE-001 `Documents` inventory is therefore open. This does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, durable storage security, or electronic filing.
 
 **Reason:** Storage is the first physical boundary where a software defect could expose another taxpayer's documents. Making the six stages explicit prevents convenience APIs or premature live access from bypassing the deterministic isolation architecture.
+
+## D-014 — Document Identity is separate from source location and evidence snapshots
+
+**Status:** accepted as design baseline
+
+**Decision:** Document Identity will use a case-scoped logical `document_id` separate from filename, provider object ID, inventory evidence ID, and derived artifacts.
+
+The initial identity chain is:
+
+```text
+case_id + provider + source_object_id
+                ↓
+         logical document_id
+                ↓
+       source observations
+                ↓
+   derived versions / evidence
+```
+
+A repeated observation of the same source object within the same case resolves to the existing logical document. A different object with the same filename remains a separate document. A renamed object with the same provider object ID remains the same logical document. Cross-provider migration requires an explicit audited link and must not be auto-merged. Identical content in different source objects does not collapse their source identities.
+
+The initial implementation is metadata-only. Content fingerprints may be added only after controlled document-content access is separately designed and verified.
+
+Document Identity must remain downstream of the mandatory case-isolation boundary. It does not determine tax relevance, party attribution, tax category, deductibility, legal qualification, or final calculations.
+
+Ambiguous identity must fail closed into an explicit unresolved state rather than being guessed. Source documents remain immutable.
+
+**Reason:** Filename and provider location are operational attributes, while evidence and derived representations require a stable logical identity and historical provenance. Separating these concepts now prevents later OCR, extraction, migration, and evidence layers from coupling themselves to a storage provider or a mutable filename.
