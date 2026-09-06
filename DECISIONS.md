@@ -12,11 +12,11 @@ Use this file for decisions that materially affect project scope, architecture, 
 
 ## D-002 — Domain remains open during Phase 0
 
-**Status:** accepted
+**Status:** superseded by D-006
 
-**Decision:** Do not lock the project to the tax domain yet.
+**Decision:** During Phase 0, the domain was intentionally left open while the project structure was established.
 
-**Reason:** Tax is a strong candidate but the learning project should first compare candidate problems against explicit criteria.
+**Reason:** The initial architecture should not be forced by an untested domain assumption.
 
 ## D-003 — Anti-hallucination project memory
 
@@ -40,4 +40,16 @@ Use this file for decisions that materially affect project scope, architecture, 
 
 **Decision:** Keep `AGENTS.md` concise and place detailed project knowledge in structured repository documents.
 
-**Reason:** OpenAI's Codex guidance emphasizes concise agent instructions and structured repository knowledge rather than a giant instruction file. citeturn0search5
+**Reason:** OpenAI's Codex guidance emphasizes concise agent instructions and structured repository knowledge rather than a giant instruction file.
+
+## D-006 — Tax assistance is the primary project domain
+
+**Status:** accepted
+
+**Decision:** The AI Agent Lab will use a tax-assistance workflow as its primary real-world problem domain and will carry this domain through the project unless later evidence justifies a formally recorded change.
+
+**Scope:** The goal is not to build an autonomous tax authority or replace a tax professional. The project will build an evidence-driven agentic system that can analyze a defined tax case, extract and reconcile information from documents, research authoritative tax rules, identify applicable considerations and potential options, challenge its own conclusions, audit the result, and present a traceable output with explicit uncertainty and human approval where consequential judgment is involved.
+
+**Reason:** Tax work provides a strong learning environment for document understanding, retrieval/research, evidence grounding, structured reasoning, specialist delegation, conflict resolution, validation, adversarial testing, auditability, and human-in-the-loop control.
+
+**Important constraint:** Legal/tax correctness must never be claimed merely because an LLM produced a plausible answer. Authoritative sources, deterministic checks where possible, evaluation evidence, and appropriate human review are required.
