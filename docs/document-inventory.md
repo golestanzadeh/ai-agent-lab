@@ -1,6 +1,6 @@
 # Document Inventory and Intake Architecture
 
-Status: **approved baseline / first implementation ready**
+Status: **approved baseline / first implementation verified**
 
 Last updated: 2026-09-06
 
@@ -23,7 +23,7 @@ Google Drive/
             ├── Evidence/       <- derived evidence, later stage
             ├── Calculations/   <- derived calculations, later stage
             ├── Reports/        <- generated reports, later stage
-            └── Audit/          <- audit records, later stage
+            └── Audit/           <- audit records, later stage
 ```
 
 GitHub stores code, schemas, documentation, tests, and evaluation assets. Real taxpayer documents and extracted sensitive content must not be stored in GitHub.
@@ -88,7 +88,9 @@ Case/Folder Resolver
       ↓
 Document Inventory
       ↓
-Inventory Validation
+Inventory Evidence
+      ↓
+Document Identity
       ↓
 Document Processing
       ↓
@@ -151,13 +153,25 @@ The inventory stage must fail closed when:
 
 A partial inventory must never be presented as a complete inventory.
 
-## Current CASE-001 observation
+## CASE-001 live verification
 
-On 2026-09-06, the user reported that the local Drive mirror contains 15 PDF files in `CASE-001/Documents`, totaling approximately 4.25 MB. This is a human-provided observation only. The authoritative machine inventory must be produced by the Drive API and must not assume the local filesystem listing is identical to the Drive API view.
+The metadata-only CASE-001 inventory was executed locally against the exact case-scoped `Documents` folder on 2026-09-06.
+
+Verified result:
+
+- `case_id`: `CASE-001`
+- `document_count`: **15**
+- `folder_count`: **0**
+- every returned item was a direct child of the selected `Documents` scope;
+- every returned item was a PDF;
+- the inventory was produced through the case-scoped Google Drive adapter;
+- no source-document mutation was performed.
+
+This is authoritative machine inventory evidence for the metadata-only stage. It does not establish document-content correctness, OCR/extraction correctness, tax relevance, legal qualification, tax calculations, or final refund correctness.
 
 ## Acceptance criteria for the first implementation
 
-The implementation is ready for live execution when it can:
+The implementation has now satisfied the metadata-only live acceptance gate:
 
 - authenticate with the existing OAuth flow;
 - use the exact registered CASE-001 `Documents` scope without scanning unrelated Drive content;
@@ -166,7 +180,7 @@ The implementation is ready for live execution when it can:
 - report total document and folder counts;
 - perform no source-document mutation;
 - perform no tax interpretation;
-- pass automated unit tests;
+- pass the required live execution;
 - produce a structured inventory snapshot suitable for later evidence provenance.
 
-The live CASE-001 inventory itself is **not yet verified**. The next verification is the local execution of `scripts/case001_metadata_inventory.py` against the exact CASE-001 `Documents` folder ID.
+The next layer is **Document Identity**, which assigns stable logical document identities to source-object observations without coupling identity to filenames or a storage provider.
