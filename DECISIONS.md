@@ -206,3 +206,19 @@ Document Identity must remain downstream of the mandatory case-isolation boundar
 Ambiguous identity must fail closed into an explicit unresolved state rather than being guessed. Source documents remain immutable.
 
 **Reason:** Filename and provider location are operational attributes, while evidence and derived representations require a stable logical identity and historical provenance. Separating these concepts now prevents later OCR, extraction, migration, and evidence layers from coupling themselves to a storage provider or a mutable filename.
+
+## D-015 — CASE-001 migration validation must be anchored to Document Identity and Inventory Evidence
+
+**Status:** accepted
+
+**Decision:** CASE-001 migration compatibility validation must use the existing Document Identity registry as the authoritative source for logical document identity and may use a verified Inventory Evidence snapshot as an exact preflight manifest boundary.
+
+When Document Identity is connected, every migration mapping must resolve to an existing logical document for the same `case_id`, and its provider, source object ID, and source scope must exactly match the identity record. A migration mapping must never invent a logical `document_id`.
+
+When Inventory Evidence is supplied, migration mappings must match the evidence snapshot exactly for source object sequence and logical document sequence. Evidence must belong to the same case and source scope.
+
+The migration layer remains non-mutating. No Drive copy, move, rename, delete, or overwrite operation is introduced by this decision. Physical execution remains a separate consequential workflow requiring authorization, verification, rollback handling, and audit.
+
+**Verification requirement:** The CASE-001 migration test suite must cover the original structural checks plus successful identity/evidence linkage and fail-closed behavior for unknown or mismatched identity/evidence data.
+
+**Reason:** A migration plan is dangerous if it can assert an identity that the system has never observed or silently omit an observed source document. Anchoring migration to the two existing deterministic records creates a stronger preflight boundary without prematurely introducing physical storage mutation.
