@@ -79,7 +79,8 @@ This document defines the architectural baseline for the German tax-assistance s
                     └─────────────────┘
 
 Cross-cutting layers:
-  Case State | Audit/Observability | Security/Permissions | Evaluation
+  Case State | Party/Household Context | Audit/Observability |
+  Security/Permissions | Evaluation
 ```
 
 This diagram is a logical architecture, not a claim that every box will become an independent agent.
@@ -106,7 +107,10 @@ Google Drive/
 
 The logical case state must distinguish at minimum:
 
+- case identity and tax period;
+- parties, household relationships, and temporal status;
 - source documents;
+- document-to-party attribution;
 - extracted evidence;
 - normalized facts;
 - reconciled facts;
@@ -121,7 +125,81 @@ The logical case state must distinguish at minimum:
 
 No single unstructured LLM context is the authoritative case state.
 
-## 4. Intake and document pipeline
+## 4. Case Party / Household Context layer
+
+A natural-person tax case must establish its relevant people and relationships before substantive analysis can safely proceed.
+
+The minimum conceptual model distinguishes:
+
+- primary taxpayer/case owner;
+- spouse/registered partner;
+- children;
+- other relevant persons;
+- organizations and external parties separately.
+
+For each relevant person, the case may contain tax-year-specific attributes such as marital/family status, residence, employment, income, Steuerklasse/ELStAM, child-related relationships, and economic burden of expenses.
+
+The system must explicitly determine or mark unknown:
+
+- whether the case concerns one person or a family;
+- spouse/partner identity where relevant;
+- whether joint or individual assessment is legally available and selected;
+- each spouse's tax class/ELStAM where applicable;
+- children and relevant child facts;
+- which documents, income, and expenses belong to which person;
+- which facts are shared household facts;
+- who economically bore each material expense.
+
+### 4.1 Tax class is not the final tax liability
+
+Steuerklasse/ELStAM is retained as evidence about wage-tax withholding and payroll circumstances. It must not be confused with the final income-tax assessment calculation.
+
+The architecture therefore separates:
+
+```text
+Person A ELStAM / Steuerklasse ─┐
+                               ├→ Wage-tax withholding evidence
+Person B ELStAM / Steuerklasse ─┘
+                                      ↓
+                               Lohnsteuer withheld
+                                      ↓
+                           Income-tax assessment
+                                      ↓
+                         Final tax / refund / payment
+```
+
+For married couples, the system must capture the relevant tax class of each spouse independently, including changes during the year. The applicable legal consequences must be evaluated for the relevant tax year.
+
+### 4.2 Joint versus individual assessment
+
+Where spouses/registered partners are involved, assessment mode is explicit case state:
+
+- `JOINT_ASSESSMENT` / Zusammenveranlagung;
+- `INDIVIDUAL_ASSESSMENT` / Einzelveranlagung;
+- `NOT_APPLICABLE`;
+- `UNKNOWN_PENDING_VERIFICATION`.
+
+The system must establish legal eligibility before comparing alternatives for tax optimization. Under individual assessment, attribution of costs to the person who legally/economically bears them becomes especially important.
+
+### 4.3 Document-to-party attribution
+
+Every material document and extracted fact must support attribution to one or more parties, or explicitly to the household/shared context.
+
+Attribution may use names, addresses, tax identifiers where appropriate, employer/insurer data, invoice data, dates, form fields, explicit relationships, and cross-document consistency. Filename alone is never sufficient for material attribution.
+
+The model must support one-to-many and many-to-many relationships because a document can concern several people or a household, and a person's tax case can depend on several documents.
+
+Each material attribution carries evidence references, attribution method, status/confidence, and unresolved alternatives where applicable.
+
+### 4.4 Temporal facts
+
+Party relationships and tax attributes are time-dependent. The case state must support effective intervals for marital status, permanent separation, tax class, employment, residence, child household membership, education/training, insurance coverage, and other material changes.
+
+A dated document must not automatically establish a fact for the entire tax year.
+
+The complete conceptual contract is defined in `docs/case-party-model.md`.
+
+## 5. Intake and document pipeline
 
 The first executable boundary is now explicitly defined as:
 
@@ -132,9 +210,13 @@ Drive Connector
    ↓
 Case/Folder Resolver
    ↓
+Case Party / Household Context
+   ↓
 Document Inventory
    ↓
 Inventory Validation
+   ↓
+Document → Party Attribution
    ↓
 Document Processing
    ↓
@@ -149,7 +231,7 @@ The detailed contract is recorded in `docs/document-inventory.md`.
 
 Google Drive API supports parent-scoped queries such as `'folderId' in parents`, pagination through `nextPageToken`, and explicit field masks. The implementation will use those mechanisms to avoid scanning unrelated Drive content and to minimize data transfer. citeturn0search0turn0search1
 
-## 5. Evidence and provenance
+## 6. Evidence and provenance
 
 Every material extracted fact must ultimately be traceable to:
 
@@ -157,6 +239,8 @@ Every material extracted fact must ultimately be traceable to:
 Source Document
       ↓
 Document Identity / Version
+      ↓
+Party Attribution
       ↓
 Evidence Span / Extraction Record
       ↓
@@ -169,7 +253,7 @@ Conclusion / Recommendation
 
 Where the exact evidence span cannot yet be represented, the system must record the strongest available source reference and mark the provenance limitation explicitly.
 
-## 6. Current-law layer
+## 7. Current-law layer
 
 German tax law is a dynamic system dependency. The architecture must support:
 
@@ -183,7 +267,7 @@ German tax law is a dynamic system dependency. The architecture must support:
 
 The LLM must not be treated as the authoritative source of current German tax law.
 
-## 7. Agent boundary
+## 8. Agent boundary
 
 Candidate agents remain hypotheses until workflow decomposition proves they are needed. Candidates include:
 
@@ -198,7 +282,7 @@ Other functions should remain deterministic code or controlled integrations when
 
 An agent is approved only after definition of role, inputs, outputs, tools, permissions, evidence requirements, stop conditions, failure behavior, and evaluation tests.
 
-## 8. Tax Optimization Supervisor
+## 9. Tax Optimization Supervisor
 
 The Tax Optimization Supervisor is a cross-cutting architectural role candidate aligned with the project's golden objective:
 
@@ -208,7 +292,7 @@ It continuously reviews facts, evidence, calculations, research, and decisions f
 
 Every optimization opportunity must carry legal basis, evidence requirements, effective-date awareness, financial impact where calculable, uncertainty, and approval requirements.
 
-## 9. Permissions and safety
+## 10. Permissions and safety
 
 Capabilities must be permissioned by stage. The initial inventory stage is metadata-read-only for the approved case path.
 
@@ -221,7 +305,7 @@ No component may:
 - submit consequential tax declarations without the required approval gate;
 - expose credentials, tokens, or private case content through logs or GitHub.
 
-## 10. Audit and observability
+## 11. Audit and observability
 
 The system must maintain enough information to reconstruct a run:
 
@@ -231,6 +315,7 @@ The system must maintain enough information to reconstruct a run:
 - input references;
 - tool calls and outcomes;
 - source/evidence references;
+- party attribution records;
 - calculations;
 - decisions and challenges;
 - approvals;
@@ -239,12 +324,16 @@ The system must maintain enough information to reconstruct a run:
 
 Sensitive content must be minimized in logs.
 
-## 11. Evaluation architecture
+## 12. Evaluation architecture
 
 Evaluation is part of the system, not a final afterthought. The project must maintain:
 
 - golden cases;
 - expected facts/results;
+- party-attribution accuracy tests;
+- household/relationship edge cases;
+- expected assessment-mode decisions;
+- expected document-to-person mappings;
 - tax-optimization opportunity coverage;
 - adversarial and failure cases;
 - regression tests;
@@ -254,20 +343,21 @@ Evaluation is part of the system, not a final afterthought. The project must mai
 
 CASE-001 is the first Golden Test Case and must remain independently evaluated against the known real-world outcome without revealing that outcome to the system before its independent calculation is complete.
 
-## 12. Implementation sequence
+## 13. Implementation sequence
 
 The next implementation stage is deliberately narrow:
 
 1. Drive connector contract;
 2. deterministic case-folder resolution;
-3. Document Inventory implementation;
-4. mocked/unit tests;
-5. live metadata-only test against `CASE-001/Documents`;
-6. record the inventory snapshot and verified result;
-7. only then design document-content processing.
+3. **Case Party / Household Context contract**;
+4. Document Inventory implementation;
+5. mocked/unit tests;
+6. live metadata-only test against `CASE-001/Documents`;
+7. record the inventory snapshot and verified result;
+8. only then design document-content processing and party attribution extraction.
 
-This sequencing prevents early LLM complexity from contaminating the source-document boundary and gives the project a reproducible first pipeline milestone.
+This sequencing prevents early LLM complexity from contaminating the source-document boundary and makes party identity/ownership a first-class case-state concern.
 
-## 13. Baseline security requirement
+## 14. Baseline security requirement
 
 Before real document content is processed, the project must explicitly validate authentication, access scope, token handling, data minimization, logging, local caching, retention, and failure behavior. OAuth credentials and tokens remain outside GitHub.
