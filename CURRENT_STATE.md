@@ -133,7 +133,7 @@ The runtime establishes:
 
 The current runtime is intentionally in-memory. Durable persistence, workflow queues, checkpoint/resume, durable audit storage, and full tax-domain state schemas remain separate future layers.
 
-Local verification is pending: the user must run `tests/unit/test_case_state.py` locally before this component is marked verified.
+Local verification passed: `tests/unit/test_case_state.py` completed with 12 passed tests.
 
 ## Completed environment work
 
@@ -151,15 +151,14 @@ Local verification is pending: the user must run `tests/unit/test_case_state.py`
 - Case ↔ Identity Association runtime and tests created and verified.
 - Case Creation Workflow contract, runtime, and tests created and verified.
 - Case-Scoped Drive Resolver contract, runtime, and tests created and verified.
-- Case State + Run ID contract and runtime created; local verification pending.
+- Case State + Run ID contract, runtime, and tests created and verified.
 
 ## Next implementation priorities
 
-1. Verify the Case State + Run ID runtime locally.
-2. Define durable audit/observability boundary.
-3. Add isolation and cross-case contamination tests.
-4. Implement a Google Drive storage adapter behind the verified scope boundary.
-5. Define migration/compatibility handling for existing CASE-001.
-6. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-7. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
-8. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
+1. Define durable audit/observability boundary.
+2. Add isolation and cross-case contamination tests.
+3. Implement a Google Drive storage adapter behind the verified scope boundary.
+4. Define migration/compatibility handling for existing CASE-001.
+5. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+6. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
+7. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
