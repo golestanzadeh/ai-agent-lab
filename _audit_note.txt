@@ -1,1 +1,0 @@
-Audit foundation implemented in docs/audit-observability.md, src/agent_lab/audit.py, and tests/unit/test_audit.py. This temporary file is intentionally not part of the final project state.
