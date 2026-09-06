@@ -53,6 +53,7 @@ Existing files:
 - `docs/case-creation-workflow.md`
 - `docs/case-scoped-drive-resolver.md`
 - `docs/state-and-memory.md`
+- `docs/google-drive-storage-adapter.md`
 
 Implemented runtime foundations:
 - `src/agent_lab/case_registry.py`
@@ -61,6 +62,8 @@ Implemented runtime foundations:
 - `src/agent_lab/case_creation_workflow.py`
 - `src/agent_lab/case_scoped_drive.py`
 - `src/agent_lab/case_state.py`
+- `src/agent_lab/storage.py`
+- `src/agent_lab/google_drive_storage.py`
 
 Verified unit-test suites:
 - Case Registry: 10/10
@@ -68,10 +71,33 @@ Verified unit-test suites:
 - Case ↔ Identity Association: 9/9
 - Case Creation Workflow: 9/9
 - Case-Scoped Drive Resolver: 8/8
+- Case State + Run ID: 12/12
+- Audit: 9/9
+- Case Isolation: 10/10
+
+### Google Drive Storage Adapter — six-stage work package
+
+Status: **implementation in progress; live CASE-001 access remains gated**
+
+1. **Storage Adapter Contract** — provider-neutral case-scoped interface and normalized metadata model.
+2. **Case-Scoped Resolver Integration** — adapter access must originate from the authoritative Case Registry through `CaseScopedDriveResolver`.
+3. **Google Drive Metadata Adapter** — metadata-only Google Drive implementation using the currently verified metadata-read capability.
+4. **Deterministic Scope Enforcement** — exact root and descendant containment; fail closed for unrelated, ambiguous, trashed, or malformed objects.
+5. **Adapter and Scope Tests** — unit tests plus live integration verification of A/B isolation before opening real case data.
+6. **Documentation, Verification and Gate** — record evidence, limitations, decisions, and the release condition for CASE-001 inventory.
+
+Current implementation artifacts:
+- `docs/google-drive-storage-adapter.md`
+- `src/agent_lab/storage.py`
+- `src/agent_lab/google_drive_storage.py`
+- `tests/unit/test_storage.py`
+- `tests/unit/test_google_drive_storage.py`
 
 Still planned:
 - `docs/agent-design.md`
 - `docs/tool-contracts.md`
+- live Google Drive integration test/harness
+- CASE-001 migration/compatibility implementation
 
 ## Phase 3 — Evaluation and safety design
 
