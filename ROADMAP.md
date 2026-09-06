@@ -42,12 +42,15 @@ Goals:
 - establish Case Registry and Person/Entity Registry contracts;
 - establish mandatory case-scoped access and isolation;
 - define execution/run identity and idempotency;
+- define case creation workflow;
 - define migration strategy for the existing CASE-001 structure.
 
 Existing files:
 - `docs/architecture.md`
 - `docs/case-management.md`
 - `docs/case-registry.md`
+- `docs/person-entity-registry.md`
+- `docs/case-creation-workflow.md`
 
 Still planned:
 - `docs/agent-design.md`
