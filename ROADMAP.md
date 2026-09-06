@@ -74,29 +74,31 @@ Verified unit-test suites:
 - Case State + Run ID: 12/12
 - Audit: 9/9
 - Case Isolation: 10/10
+- Google Drive Storage Adapter: 8/8
 
 ### Google Drive Storage Adapter — six-stage work package
 
-Status: **implementation in progress; live CASE-001 access remains gated**
+Status: **complete through Stage 6; CASE-001 metadata-only inventory gate open**
 
-1. **Storage Adapter Contract** — provider-neutral case-scoped interface and normalized metadata model.
-2. **Case-Scoped Resolver Integration** — adapter access must originate from the authoritative Case Registry through `CaseScopedDriveResolver`.
-3. **Google Drive Metadata Adapter** — metadata-only Google Drive implementation using the currently verified metadata-read capability.
-4. **Deterministic Scope Enforcement** — exact root and descendant containment; fail closed for unrelated, ambiguous, trashed, or malformed objects.
-5. **Adapter and Scope Tests** — unit tests plus live integration verification of A/B isolation before opening real case data.
-6. **Documentation, Verification and Gate** — record evidence, limitations, decisions, and the release condition for CASE-001 inventory.
+1. **Storage Adapter Contract** — provider-neutral case-scoped interface and normalized metadata model. **Complete.**
+2. **Case-Scoped Resolver Integration** — adapter access must originate from the authoritative Case Registry through `CaseScopedDriveResolver`. **Complete.**
+3. **Google Drive Metadata Adapter** — metadata-only Google Drive implementation using the currently verified metadata-read capability. **Complete.**
+4. **Deterministic Scope Enforcement** — exact root and descendant containment; fail closed for unrelated, ambiguous, trashed, or malformed objects. **Complete.**
+5. **Adapter and Scope Tests** — unit tests plus live integration verification of A/B isolation before opening real case data. **Complete.** Unit suite: 8 passed. Live scope harness: 1 passed in 4.55s.
+6. **Documentation, Verification and Gate** — record evidence, limitations, decisions, and the release condition for CASE-001 inventory. **Complete.**
 
 Current implementation artifacts:
 - `docs/google-drive-storage-adapter.md`
 - `src/agent_lab/storage.py`
 - `src/agent_lab/google_drive_storage.py`
+- `src/agent_lab/google_drive_auth.py`
 - `tests/unit/test_storage.py`
 - `tests/unit/test_google_drive_storage.py`
+- `tests/integration/test_google_drive_scope_live.py`
 
 Still planned:
 - `docs/agent-design.md`
 - `docs/tool-contracts.md`
-- live Google Drive integration test/harness
 - CASE-001 migration/compatibility implementation
 
 ## Phase 3 — Evaluation and safety design
