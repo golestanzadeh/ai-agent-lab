@@ -63,11 +63,24 @@ Case isolation is a deterministic security/correctness boundary, not merely an A
 
 Cross-year summaries resolve cases through persistent `person_id`/`entity_id` and the Case Registry, then access each case separately. They must not scan unrelated Drive content and guess ownership.
 
-## Case Registry foundation
+## Case Registry implementation
 
-`docs/case-registry.md` defines the first Registry contract. It establishes `case_id`, persistent person/entity identity, structured `tax_period`, case type, lifecycle state, storage scope reference, lookup behavior, invariants, failure-closed rules, versioning, and acceptance criteria.
+`docs/case-registry.md` remains the authoritative contract. The first deterministic runtime model has now been implemented at `src/agent_lab/case_registry.py`, with acceptance-oriented unit tests at `tests/unit/test_case_registry.py`.
 
-The Registry contract is designed so the physical storage implementation can evolve beyond Google Drive without changing the case identity contract.
+The implementation currently provides:
+
+- explicit `CaseRecord`, `TaxPeriod`, and `StorageScopeReference` models;
+- controlled enums for owner type, case type, assessment mode, lifecycle status, and lookup status;
+- globally unique `case_id` registration;
+- explicit owner + tax-period lookup;
+- deterministic ambiguity handling with no arbitrary case selection;
+- persistent cross-year lookup by owner ID;
+- lifecycle, storage-scope, and run-ID updates;
+- request-ID idempotency for registration;
+- registry invariant validation, including one storage root per case;
+- no Drive/document access inside the registry layer.
+
+The implementation has been committed to GitHub. Local test execution could not be completed in this environment because outbound access to GitHub is unavailable; therefore no test-pass claim is recorded here.
 
 ## Person/Entity Registry foundation
 
@@ -95,17 +108,17 @@ Runtime implementation and automated acceptance tests for this workflow are not 
 - Case Party / Household Model created.
 - Foundational Case Management and Isolation architecture created.
 - Case Registry contract created.
+- Deterministic Case Registry runtime model and unit-test suite created.
 - Person/Entity Registry model created.
 - Case Creation Workflow contract created.
 
 ## Next implementation priorities
 
-1. Implement the deterministic Case Registry model from `docs/case-registry.md`.
-2. Implement the Person/Entity Registry runtime model from `docs/person-entity-registry.md`.
-3. Implement Case Creation workflow using both Registry models and the contract in `docs/case-creation-workflow.md`.
-4. Implement case-scoped Drive Resolver and access boundary.
-5. Implement case-scoped state and execution/run IDs.
-6. Add isolation and cross-case contamination tests.
-7. Define migration/compatibility handling for existing CASE-001.
-8. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-9. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
+1. Implement the Person/Entity Registry runtime model from `docs/person-entity-registry.md`.
+2. Implement Case Creation workflow using both Registry models and the contract in `docs/case-creation-workflow.md`.
+3. Implement case-scoped Drive Resolver and access boundary.
+4. Implement case-scoped state and execution/run IDs.
+5. Add isolation and cross-case contamination tests.
+6. Define migration/compatibility handling for existing CASE-001.
+7. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+8. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
