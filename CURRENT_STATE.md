@@ -33,7 +33,7 @@ Last verified: 2026-09-06
 - **Tax Optimization Supervisor established as a primary architectural role candidate** responsible for continuous optimization review and cross-agent challenge/feedback.
 - Python 3.14.2 verified on the user's Windows machine.
 - Docker Desktop / Docker Engine verified by successfully running `hello-world`.
-- Google Drive case-storage folder structure created for `AI-Tax-Agent/` and `CASE-001`.
+- Google Drive case-storage folder structure created for `AI-Tax-Agent` and `CASE-001`.
 - Google Cloud project `AI-Tax-Agent` created.
 - Google Drive API enabled.
 - Google OAuth configuration completed and a Desktop OAuth client `AI-Tax-Agent Desktop` created.
@@ -53,6 +53,10 @@ Last verified: 2026-09-06
 - **Google Drive OAuth authentication and metadata-only API smoke test completed successfully.**
 - **The Python smoke test authenticated the user and successfully located the private `AI-Tax-Agent` Drive folder.**
 - The smoke test used the `drive.metadata.readonly` scope and did not read, modify, upload, or process tax-document contents.
+- **CASE-001 source documents were placed by the user in `Google Drive/AI-Tax-Agent/Cases/CASE-001/Documents`.** The user reported 15 PDF files totaling approximately 4.25 MB in the local Google Drive mirror. This observation is not yet treated as the authoritative machine inventory.
+- **The Document Inventory boundary was formally approved as the first executable processing stage.**
+- `docs/document-inventory.md` was created with the inventory contract, metadata model, deterministic-first rule, permissions, privacy/minimization requirements, pagination/completeness requirements, idempotency, failure states, and acceptance criteria.
+- `docs/architecture.md` was upgraded to the approved logical architecture, including the source-document boundary, intake pipeline, evidence/provenance boundary, permissions, audit/observability, evaluation, and implementation sequence.
 
 ## Current local development state
 
@@ -74,39 +78,62 @@ C:\Users\rezag\ai-agent-lab
     Git / GitHub
 ```
 
-OAuth credentials are stored outside the repository:
+OAuth credentials and the generated token are stored outside the repository under:
 
 ```text
-C:\Users\rezag\ai-tax-agent\credentials.json
+C:\Users\rezag\ai-tax-agent\
 ```
 
-The OAuth token is also intended to remain outside the repository under the same `ai-tax-agent` directory. No credential or token belongs in GitHub.
+No credential or token belongs in GitHub.
 
-## Current target
+## Current architecture milestone
 
-Build a Germany-focused tax-assistance system that can ultimately handle supported tax matters from user-supplied documents through current-law-verified analysis, validated calculations, systematic lawful tax optimization, audited results, final print-ready documents, and controlled electronic submission where an official and lawful technical path exists.
+The first executable pipeline is now explicitly defined as:
 
-The optimization target is explicit: minimize legally payable tax and maximize legally recoverable/refundable tax for the user, supported by applicable law, evidence, documentation, and measurable financial impact where calculable.
+```text
+Google Drive
+    ↓
+Drive Connector
+    ↓
+Case/Folder Resolver
+    ↓
+Document Inventory
+    ↓
+Inventory Validation
+    ↓
+Document Processing
+    ↓
+Evidence Extraction
+    ↓
+Fact Normalization / Reconciliation
+```
+
+The immediate implementation target is the first four stages. Document Inventory is deterministic code, not an LLM agent. It must enumerate only the approved `CASE-001/Documents` path and retrieve metadata only before any document content is processed.
 
 ## Not yet completed
 
-- First concrete tax workflow selection.
-- Exact target taxpayer profile for the first workflow.
-- Exact tax year/assessment period for the first workflow.
-- Detailed requirements and acceptance thresholds for the first workflow.
+- Implement the Drive Connector contract for case-scoped access.
+- Implement deterministic resolution of `CASE-001/Documents`.
+- Implement Document Inventory with pagination and explicit field selection.
+- Add mocked/unit tests for the inventory component.
+- Run the live metadata-only inventory against CASE-001.
+- Record the authoritative API inventory snapshot.
+- Exact target taxpayer profile and tax-year requirements for CASE-001.
+- Detailed requirements and acceptance thresholds for the first tax workflow.
 - Authoritative German source inventory and current-law retrieval strategy.
-- Workflow decomposition.
-- Architecture decision, including final justification for the Tax Optimization Supervisor and other agent roles.
+- Evidence extraction and fact/reconciliation implementation.
+- Workflow decomposition beyond the approved intake baseline.
+- Final architecture decisions for each candidate agent/component.
 - Agent/tool contracts.
 - Evaluation dataset and harness, including tax-optimization opportunity coverage metrics.
 - Safety/privacy threat model.
-- First executable prototype.
+- First executable end-to-end tax prototype.
 - Production deployment and operations design.
 - Official electronic submission integration decision.
 
 ## Next action
 
-Select and formalize the first concrete tax workflow and its Golden Test Case requirements before introducing real taxpayer documents into the system. Google Drive access is now verified at the safe metadata level; the next project-level step must still respect the requirement that real tax data remains outside GitHub and that access permissions/scopes are kept as narrow as practical.
+Implement and test the deterministic, metadata-only Document Inventory component against `CASE-001/Documents`. Do not download or interpret tax documents yet. The first live run must prove complete, paginated enumeration and produce a structured inventory without mutating source data.
 
 ## Continuity rule
 
