@@ -6,6 +6,8 @@ The project will produce a real, reproducible, evidence-driven Agentic AI system
 
 The target system should be capable of performing supported tax matters to a senior tax-expert standard, from user-supplied documents and information through validated analysis, preparation of final tax documents, and controlled electronic submission where an official and lawful technical path exists.
 
+A golden objective applies across the entire system: **Maximize Legally Achievable Tax Benefit** by minimizing legally payable tax and maximizing legally recoverable/refundable tax. This is a continuous optimization objective, not merely a final reporting feature.
+
 The system must demonstrate controlled agentic behavior rather than merely calling an LLM repeatedly. It must remain grounded in authoritative German tax sources and must verify the rules applicable to the relevant tax year and case at execution time.
 
 The final system should be:
@@ -16,6 +18,7 @@ The final system should be:
 - explicit about effective dates, tax years, uncertainty, and limitations;
 - capable of using tools under defined permissions;
 - able to coordinate multiple specialized roles only where justified;
+- continuously alert to lawful tax-optimization opportunities and able to feed validated opportunities back into the workflow;
 - protected by deterministic validation and human approval for consequential actions;
 - auditable from input through evidence, research, calculations, decisions, outputs, and approvals;
 - capable of producing complete printable and submission-ready outputs for supported workflows;
@@ -43,14 +46,15 @@ The build itself is the course. By project completion, the learner should unders
 13. Cost, latency, reliability, and model-selection trade-offs.
 14. Deployment, maintenance, versioning, and operational failure handling.
 15. How to improve an agentic system from measured evidence rather than intuition.
+16. How to design and evaluate a continuous tax-optimization control loop without sacrificing legality, evidence, or auditability.
 
 ## 3. Domain and problem selection
 
 **German tax assistance is selected as the primary domain.** The final destination covers tax workflows for natural persons and legal entities, while the first executable workflow must be narrowed to a concrete, testable use case during Phase 10.
 
-Phase 10 must define the first supported tax problem, target user, jurisdiction details, tax year(s), scope/non-scope, inputs, outputs, authoritative evidence requirements, current-law verification strategy, measurable success criteria, and representative cases.
+Phase 10 must define the first supported tax problem, target user, jurisdiction details, tax year(s), scope/non-scope, inputs, outputs, authoritative evidence requirements, current-law verification strategy, measurable success criteria, optimization objectives/metrics, and representative cases.
 
-The first workflow should be narrow enough to evaluate rigorously but rich enough to exercise document understanding, retrieval/research, evidence grounding, structured reasoning, calculations, validation, challenge, auditability, and human-in-the-loop control.
+The first workflow should be narrow enough to evaluate rigorously but rich enough to exercise document understanding, retrieval/research, evidence grounding, structured reasoning, calculations, validation, optimization, challenge, auditability, and human-in-the-loop control.
 
 ## 4. Lifecycle: Phase 0 to Phase 100
 
@@ -76,6 +80,7 @@ Define:
 - expected outputs and official forms/documents;
 - current-law verification and authoritative source requirements;
 - calculations and validation requirements;
+- **tax-optimization objective, opportunity categories, financial-impact model, and measurable optimization metrics**;
 - privacy/security constraints;
 - submission requirements and technical/legal boundaries;
 - measurable success criteria;
@@ -96,6 +101,8 @@ Determine:
 - where tools are needed;
 - where current-law evidence enters;
 - how source freshness/effective dates are checked;
+- where optimization opportunities are detected;
+- how the Tax Optimization Supervisor can challenge, redirect, or request rework;
 - where uncertainty exists;
 - where decisions branch;
 - where human approval is required;
@@ -112,7 +119,7 @@ Design the system before significant implementation.
 Define:
 - components and boundaries;
 - orchestrator/control loop;
-- agent roles;
+- agent roles, including whether a dedicated **Tax Optimization Supervisor** is justified;
 - agent inputs/outputs;
 - tool contracts;
 - permissions;
@@ -122,6 +129,7 @@ Define:
 - evidence/provenance model;
 - structured schemas;
 - calculation and validation boundaries;
+- optimization opportunity and scenario schemas;
 - human approval gates;
 - submission controls;
 - error handling;
@@ -144,6 +152,8 @@ Build:
 - failure cases;
 - adversarial cases;
 - current-law freshness/effective-date tests;
+- **tax-optimization opportunity coverage tests**;
+- **missed-opportunity, false-positive, and financial-impact accuracy metrics where trusted references permit**;
 - regression policy;
 - safety threat model;
 - misuse cases;
@@ -167,6 +177,8 @@ Requirements:
 - automated tests for deterministic components;
 - no premature infrastructure complexity.
 
+The prototype must demonstrate the optimization loop for the supported workflow, even if the first implementation uses a narrow set of optimization rules.
+
 Exit criteria: one complete workflow runs reproducibly from input to output.
 
 ### Phase 60 — Evidence, tools, state, and orchestration maturity
@@ -182,6 +194,7 @@ Add and harden:
 - structured tool results;
 - calculation engines and deterministic checks;
 - permission enforcement;
+- **continuous optimization supervision, opportunity detection, and alternative-scenario evaluation**;
 - human approval flows;
 - controlled submission integrations where justified.
 
@@ -198,6 +211,10 @@ Measure as appropriate:
 - citation/source quality;
 - completeness;
 - calculation correctness;
+- **tax-optimization opportunity recall/coverage**;
+- **missed-opportunity rate**;
+- **false-positive optimization rate**;
+- **financial-impact estimation accuracy**;
 - failure rate;
 - unsafe-action rate;
 - tool-call accuracy;
@@ -207,7 +224,7 @@ Measure as appropriate:
 - human intervention rate;
 - repeatability.
 
-Implement logs, traces, audit events, provenance, source snapshots/identifiers where lawful and practical, and run summaries.
+Implement logs, traces, audit events, provenance, source snapshots/identifiers where lawful and practical, and run summaries. Optimization decisions and feedback loops must be auditable.
 
 Exit criteria: every important run can be inspected and compared with previous runs.
 
@@ -224,6 +241,8 @@ Test:
 - stale information;
 - changed tax rules;
 - incorrect effective dates;
+- **optimization opportunities hidden in new evidence or rule changes**;
+- **tempting but legally invalid deductions/claims**;
 - prompt injection;
 - instruction conflicts;
 - hallucination pressure;
@@ -274,6 +293,7 @@ Deliver:
 - example runs;
 - representative final tax-document package;
 - current-law evidence demonstration;
+- **tax-optimization demonstration showing baseline versus optimized lawful outcome**;
 - known limitations;
 - design decisions;
 - failure analysis;
@@ -291,6 +311,7 @@ Verify:
 - tests pass;
 - evaluation results are recorded;
 - current-law verification is demonstrably effective;
+- **tax optimization is demonstrably systematic, lawful, evidence-backed, and measurable for supported workflows**;
 - safety boundaries are explicit;
 - provenance is intact;
 - known limitations are documented;
@@ -312,6 +333,7 @@ These are not optional end-stage features. They are maintained throughout the li
 - current-state updates;
 - source/evidence discipline;
 - current-law verification;
+- **lawful tax-benefit optimization**;
 - testing;
 - security/privacy;
 - cost awareness;
@@ -344,6 +366,7 @@ The final repository must allow a new session, agent, or human reviewer to recon
 - how the system works;
 - what data/evidence it uses;
 - how current German tax law is verified;
+- **how the system searches for and validates lawful tax-optimization opportunities**;
 - what agents and tools exist and why;
 - what controls exist;
 - how final documents are generated and submitted;
