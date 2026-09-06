@@ -2,7 +2,7 @@
 
 ## Status
 
-Stage defined and implementation started. The six stages are the controlled rollout for case-scoped Google Drive access. The stages are recorded as one ordered work package; implementation may proceed in parallel where dependencies permit, but no live CASE-001 document inventory is allowed until the scope and adapter gates pass.
+**Stage 6 complete.** The six-stage controlled rollout for case-scoped Google Drive access has passed its defined unit and live scope gates. Live CASE-001 document access is now permitted only through the verified case-scoped path described below; no CASE-001 inventory has yet been executed by this rollout.
 
 ## Six-stage rollout
 
@@ -119,6 +119,19 @@ Do not substitute CASE-001 for either test root.
 
 Only the exact locally executed output may be recorded as verification evidence. A test file existing in GitHub is not verification. A skipped integration test is not a passing integration test. Unit-test success does not establish live Drive isolation.
 
+#### Stage 5 verification evidence
+
+The required local live integration test was executed after the adapter's `orderBy` request was corrected.
+
+Exact result:
+
+```text
+.                                                                                                                                            [100%]
+1 passed in 4.55s
+```
+
+This verifies the defined live A/B scope-isolation harness against the two isolated test-only Drive roots. It does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, or durable storage security.
+
 ### Stage 6 — Documentation, Verification and Gate
 
 Record implementation status, test results, decisions, limitations, and the exact conditions for opening CASE-001 to inventory.
@@ -131,11 +144,11 @@ Required records:
 - `DECISIONS.md` decision entry;
 - `CURRENT_STATE.md` status update.
 
-Stage 6 is complete only when the evidence is recorded without upgrading unexecuted or skipped tests into verified status.
+**Stage 6 is complete.** The evidence above records the user-executed live integration result without upgrading unexecuted tests or broader security properties into verified status.
 
 ## CASE-001 gate
 
-The existing CASE-001 files must remain untouched during adapter development.
+The existing CASE-001 files remained untouched during adapter development.
 
 The first permitted live case-data operation is a metadata-only inventory of:
 
@@ -148,6 +161,8 @@ only after:
 2. Stage 5 unit tests pass;
 3. live scope verification passes against isolated test folders or an equivalent faithful integration environment;
 4. Stage 6 records the evidence.
+
+These conditions are now satisfied. Therefore a metadata-only CASE-001 inventory may proceed, subject to the existing exact registered scope and case-isolation controls.
 
 ## Security invariant
 
