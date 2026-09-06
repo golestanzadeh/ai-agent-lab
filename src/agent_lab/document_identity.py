@@ -46,7 +46,7 @@ class SourceObservation:
         if self.observed_at.tzinfo is None:
             raise ValueError("observed_at must be timezone-aware")
         if not self.source_provider.strip() or not self.source_object_id.strip():
-            raise ValueError("source_provider and source_object_id are required")
+            raise ValueError("source provider and object ID are required")
         if not self.source_scope_ref.strip():
             raise ValueError("source_scope_ref is required")
 
@@ -176,6 +176,9 @@ class DocumentIdentityRegistry:
         """Restore a validated snapshot, replacing this registry's in-memory state."""
         with self._lock:
             self._require_case(case_id)
+            case = self._case_registry.get(case_id)
+            assert case is not None
+            expected_scope = f"{case.storage_scope_reference.provider}:{case.storage_scope_reference.root_id}"
             if payload.get("schema_version") != self.SNAPSHOT_SCHEMA_VERSION or payload.get("case_id") != case_id:
                 raise DocumentIdentityError("invalid or cross-case document identity snapshot")
             raw_records = payload.get("records")
@@ -191,6 +194,8 @@ class DocumentIdentityRegistry:
                 record = self._record_from_dict(raw)
                 if record.case_id != case_id:
                     raise DocumentIdentityError("document identity crosses case boundary")
+                if f"{record.source_provider}:{record.source_scope_ref}" != expected_scope and record.source_scope_ref != expected_scope:
+                    raise DocumentIdentityError("document identity source scope does not match registered case scope")
                 key = (record.case_id, record.source_provider, record.source_object_id)
                 if record.document_id in records or key in source_index:
                     raise DocumentIdentityError("duplicate document identity in snapshot")
@@ -202,6 +207,8 @@ class DocumentIdentityRegistry:
                 observation = self._observation_from_dict(raw)
                 if observation.case_id != case_id or observation.document_id not in records:
                     raise DocumentIdentityError("observation crosses case boundary or references unknown document")
+                if f"{observation.source_provider}:{observation.source_scope_ref}" != expected_scope and observation.source_scope_ref != expected_scope:
+                    raise DocumentIdentityError("observation source scope does not match registered case scope")
                 if observation.observation_id in observations:
                     raise DocumentIdentityError("duplicate observation in snapshot")
                 observations[observation.observation_id] = observation
