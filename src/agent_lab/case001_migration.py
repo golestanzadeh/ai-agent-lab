@@ -71,6 +71,9 @@ class Case001MigrationCompatibility:
             raise MigrationCompatibilityError("CASE-001 is not a 2024 case")
         if not source_scope_ref.strip() or not target_scope_ref.strip():
             raise ValueError("source and target scope references are required")
+        registered_scope = f"{case.storage_scope_reference.provider}:{case.storage_scope_reference.root_id}"
+        if source_scope_ref != registered_scope:
+            raise MigrationCompatibilityError("migration source scope is not the registered CASE-001 scope")
         return Case001MigrationPlan(case.case_id, case.tax_period, source_scope_ref,
                                     target_scope_ref, tuple(mappings))
 
@@ -83,6 +86,9 @@ class Case001MigrationCompatibility:
             raise MigrationCompatibilityError("migration changes tax period")
         if plan.case_id != "CASE-001":
             raise MigrationCompatibilityError("unexpected case_id")
+        registered_scope = f"{case.storage_scope_reference.provider}:{case.storage_scope_reference.root_id}"
+        if plan.source_scope_ref != registered_scope:
+            raise MigrationCompatibilityError("migration source scope is not the registered CASE-001 scope")
         if inventory_evidence is not None:
             self._validate_inventory_evidence(plan, inventory_evidence)
 
