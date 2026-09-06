@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import datetime, timezone
 
 import pytest
@@ -231,18 +232,6 @@ def test_migration_rejects_inventory_evidence_from_another_scope():
     service = Case001MigrationCompatibility(registry, identity)
     mapping = DocumentMigrationMapping("google_drive", "object-1", document_ids[0], REGISTERED_SOURCE_SCOPE, TARGET_SCOPE)
     plan = service.prepare(source_scope_ref=REGISTERED_SOURCE_SCOPE, target_scope_ref=TARGET_SCOPE, mappings=(mapping,))
-    # A validated plan with a different evidence scope must fail closed.
-    wrong_scope_evidence = evidence.__class__(
-        case_id=evidence.case_id,
-        run_id=evidence.run_id,
-        evidence_id=evidence.evidence_id,
-        source_provider=evidence.source_provider,
-        source_scope_ref="other-scope",
-        item_refs=evidence.item_refs,
-        document_identity_refs=evidence.document_identity_refs,
-        document_count=evidence.document_count,
-        folder_count=evidence.folder_count,
-        generated_at=evidence.generated_at,
-    )
+    wrong_scope_evidence = replace(evidence, source_scope_ref="other-scope")
     with pytest.raises(MigrationCompatibilityError, match="inventory evidence source scope mismatch"):
         service.validate(plan, inventory_evidence=wrong_scope_evidence)
