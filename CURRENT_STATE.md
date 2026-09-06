@@ -62,6 +62,9 @@ Last verified: 2026-09-06
 - `docs/requirements.md` was extended with explicit party/context, document-to-person attribution, and reconciliation requirements.
 - `docs/use-cases.md` was extended with a dedicated family/spouse/children use case and party-aware escalation requirements.
 - **Decision D-009 accepted:** every natural-person case requires an explicit party/household model before substantive calculations are considered reliable.
+- **CASE-001 `Tax_Categories/` structure created in Google Drive** with six default categories: `Einkommensnachweise`, `Werbungskosten`, `Haushaltsnahe_Dienstleistungen`, `Sonderausgaben_Versicherungsbeitraege`, `Aussergewoehnliche_Belastungen`, and `Kinder`.
+- **Document Processing & Tax Categorization contract approved and recorded in `docs/document-processing.md`.** It defines immutable source documents, evidence/provenance linkage, dynamic categories, many-to-many classification, classification states, party/tax-year attribution, audit requirements, and human escalation boundaries.
+- `docs/README.md` updated to index the new document-processing contract.
 
 ## Current local development state
 
@@ -108,16 +111,18 @@ Document Inventory
     ↓
 Inventory Validation
     ↓
-Document → Party Attribution
-    ↓
 Document Processing
     ↓
 Evidence Extraction
     ↓
 Fact Normalization / Reconciliation
+    ↓
+Tax Categorization
+    ↓
+Provenance / Audit
 ```
 
-The immediate implementation target remains deterministic, metadata-only intake. The Party/Household layer is a required case-state contract; it does not automatically become an LLM Agent.
+Tax categorization is a downstream stage. It must not bypass authoritative source inventory, evidence extraction, party attribution, or tax-year attribution.
 
 ## Party-model architectural rules
 
@@ -132,6 +137,17 @@ The immediate implementation target remains deterministic, metadata-only intake.
 - Material ambiguous or contradictory party attribution must stop or escalate the affected workflow.
 - Party and tax attributes are time-dependent and must support tax-year/effective intervals.
 
+## Document-processing rules
+
+- Original documents under `Documents/` are immutable source material.
+- `Tax_Categories/` is an organization/retrieval layer, not the legal or factual source of truth.
+- A document may belong to multiple tax categories.
+- Categories are extensible; the six CASE-001 categories are defaults, not a closed taxonomy.
+- Classification state must be explicit: `CONFIRMED`, `CANDIDATE`, or `UNRESOLVED`.
+- Material classifications require evidence/provenance references.
+- Material ambiguity must be escalated rather than silently resolved.
+- Category, party, and tax-year changes must be auditable.
+
 ## Not yet completed
 
 - Implement the Drive Connector contract for case-scoped access.
@@ -143,9 +159,11 @@ The immediate implementation target remains deterministic, metadata-only intake.
 - Define the concrete CASE-001 taxpayer/family profile from evidence.
 - Define the exact tax year/assessment period for CASE-001.
 - Define detailed party-model schemas and validation tests for the first workflow.
-- Detailed requirements and acceptance thresholds for the first tax workflow.
+- Define concrete document/evidence/category schemas and validation tests.
+- Implement controlled document-content processing and evidence extraction.
+- Implement tax categorization and category indexing.
+- Implement provenance and audit events for processing/classification.
 - Authoritative German source inventory and current-law retrieval strategy.
-- Evidence extraction and fact/reconciliation implementation.
 - Workflow decomposition beyond the approved intake baseline.
 - Final architecture decisions for each candidate agent/component.
 - Agent/tool contracts.
@@ -157,7 +175,7 @@ The immediate implementation target remains deterministic, metadata-only intake.
 
 ## Next action
 
-Implement and test the deterministic, metadata-only Document Inventory component against `CASE-001/Documents`. Do not download or interpret tax documents yet. The first live run must prove complete, paginated enumeration and produce a structured inventory without mutating source data.
+Implement and test the deterministic, metadata-only Document Inventory component against `CASE-001/Documents`. Do not download or interpret tax documents yet. The first live run must prove complete, paginated enumeration and produce a structured inventory without mutating source data. Tax categorization will be implemented only after this intake boundary is verified.
 
 ## Continuity rule
 
