@@ -9,6 +9,7 @@ from threading import RLock
 from agent_lab.audit import ActorType, AuditEventType, AuditStatus, AuditStore
 from agent_lab.case_registry import CaseRegistry
 from agent_lab.case_state import CaseStateStore
+from agent_lab.document_identity import DocumentIdentityRegistry
 from agent_lab.document_inventory import DocumentInventory
 
 
@@ -25,6 +26,7 @@ class InventoryEvidence:
     item_refs: tuple[str, ...]
     source_provider: str
     source_scope_ref: str
+    document_identity_refs: tuple[str, ...] = ()
     schema_version: int = 1
 
     def __post_init__(self) -> None:
@@ -75,6 +77,7 @@ class InventoryEvidenceStore:
         *,
         source_provider: str,
         source_scope_ref: str,
+        document_identity: DocumentIdentityRegistry | None = None,
     ) -> InventoryEvidence:
         with self._lock:
             self._require_case_and_run(case_id, run_id)
@@ -83,10 +86,27 @@ class InventoryEvidenceStore:
             if not source_provider.strip() or not source_scope_ref.strip():
                 raise ValueError("source_provider and source_scope_ref are required")
 
+            identity_refs: tuple[str, ...] = ()
+            if document_identity is not None:
+                resolved = tuple(
+                    document_identity.resolve_inventory_item(
+                        case_id,
+                        run_id,
+                        item,
+                        source_provider=source_provider,
+                        source_scope_ref=source_scope_ref,
+                    )
+                    for item in inventory.items
+                )
+                identity_refs = tuple(record.document_id for record, _ in resolved)
+
             snapshot_key = (case_id, self._fingerprint(inventory, source_provider, source_scope_ref))
             existing_id = self._snapshot_index.get(snapshot_key)
             if existing_id is not None:
-                return self._records[existing_id]
+                existing = self._records[existing_id]
+                if document_identity is not None and existing.document_identity_refs != identity_refs:
+                    raise InventoryEvidenceError("existing evidence has inconsistent document identity links")
+                return existing
 
             self._sequence += 1
             evidence = InventoryEvidence(
@@ -99,6 +119,7 @@ class InventoryEvidenceStore:
                 item_refs=tuple(item.object_id for item in inventory.items),
                 source_provider=source_provider,
                 source_scope_ref=source_scope_ref,
+                document_identity_refs=identity_refs,
             )
             self._records[evidence.evidence_id] = evidence
             self._snapshot_index[snapshot_key] = evidence.evidence_id
@@ -114,7 +135,11 @@ class InventoryEvidenceStore:
                 status=AuditStatus.SUCCESS,
                 evidence_refs=(evidence.evidence_id,),
                 input_refs=tuple(item.object_id for item in inventory.items),
-                metadata={"source_provider": source_provider, "source_scope_ref": source_scope_ref},
+                metadata={
+                    "source_provider": source_provider,
+                    "source_scope_ref": source_scope_ref,
+                    "document_identity_refs": identity_refs,
+                },
             )
             return evidence
 
