@@ -43,7 +43,8 @@ Goals:
 - establish mandatory case-scoped access and isolation;
 - define execution/run identity and idempotency;
 - define case creation workflow;
-- define migration strategy for the existing CASE-001 structure.
+- define migration strategy for the existing CASE-001 structure;
+- anchor CASE-001 migration validation to Document Identity and Inventory Evidence.
 
 Existing files:
 - `docs/architecture.md`
@@ -54,6 +55,8 @@ Existing files:
 - `docs/case-scoped-drive-resolver.md`
 - `docs/state-and-memory.md`
 - `docs/google-drive-storage-adapter.md`
+- `docs/case001-migration-compatibility.md`
+- `docs/document-identity.md`
 
 Implemented runtime foundations:
 - `src/agent_lab/case_registry.py`
@@ -64,6 +67,11 @@ Implemented runtime foundations:
 - `src/agent_lab/case_state.py`
 - `src/agent_lab/storage.py`
 - `src/agent_lab/google_drive_storage.py`
+- `src/agent_lab/google_drive_auth.py`
+- `src/agent_lab/document_inventory.py`
+- `src/agent_lab/document_identity.py`
+- `src/agent_lab/inventory_evidence.py`
+- `src/agent_lab/case001_migration.py`
 
 Verified unit-test suites:
 - Case Registry: 10/10
@@ -75,6 +83,8 @@ Verified unit-test suites:
 - Audit: 9/9
 - Case Isolation: 10/10
 - Google Drive Storage Adapter: 8/8
+- Document Identity + Inventory Evidence: 13/13
+- CASE-001 Migration baseline: 8/8
 
 ### Google Drive Storage Adapter — six-stage work package
 
@@ -96,10 +106,38 @@ Current implementation artifacts:
 - `tests/unit/test_google_drive_storage.py`
 - `tests/integration/test_google_drive_scope_live.py`
 
-Still planned:
+### CASE-001 inventory / identity / migration work package
+
+Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility validation integrated; physical migration not implemented**
+
+- Metadata-only CASE-001 inventory: implemented and live-verified with 15 PDF documents and 0 folders.
+- Document Identity: implemented and unit-verified.
+- Inventory Evidence: implemented and unit-verified, including stable Document Identity references.
+- CASE-001 Migration/Compatibility Layer: implemented and baseline unit-verified.
+- Migration ↔ Document Identity validation: implemented.
+- Migration ↔ Inventory Evidence exact-manifest validation: implemented.
+- Physical Drive migration: deliberately not implemented.
+
+Current artifacts:
+- `docs/document-inventory.md`
+- `docs/document-identity.md`
+- `docs/case001-migration-compatibility.md`
+- `src/agent_lab/document_inventory.py`
+- `src/agent_lab/document_identity.py`
+- `src/agent_lab/inventory_evidence.py`
+- `src/agent_lab/case001_migration.py`
+- `tests/unit/test_document_inventory.py`
+- `tests/unit/test_document_identity.py`
+- `tests/unit/test_inventory_evidence.py`
+- `tests/unit/test_case001_migration.py`
+- `scripts/case001_metadata_inventory.py`
+
+Still planned before physical migration:
 - `docs/agent-design.md`
 - `docs/tool-contracts.md`
-- CASE-001 migration/compatibility implementation
+- stronger live CASE-001 migration manifest/preflight generation;
+- human approval gate for consequential migration;
+- physical migration executor with rollback and post-migration verification.
 
 ## Phase 3 — Evaluation and safety design
 
