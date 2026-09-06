@@ -189,16 +189,33 @@ The generator derives one migration mapping for each non-folder inventory item b
 
 No physical Drive migration has occurred. The manifest generator does not create, move, rename, delete, overwrite, or copy Drive objects.
 
+## Live CASE-001 Document Identity Bootstrap
+
+The read-only live bootstrap has now been executed successfully against the real CASE-001 Documents scope.
+
+Verified output:
+
+- `inventory_document_count`: **15**
+- `inventory_folder_count`: **0**
+- `identity_count`: **15**
+- `run_id`: `RUN-00000001`
+- local identity snapshot: `artifacts\\case001\\document_identity.json`
+- `drive_mutation`: **false**
+
+All 15 observed PDF source objects received a stable logical `document_id`. The bootstrap performed no Google Drive mutation. The local snapshot remains local and must not be committed because it may contain private provider object IDs.
+
+The bootstrap initially exposed a constructor-call mismatch in the harness: `GoogleDriveMetadataAdapter` requires keyword-only constructor arguments. The harness was corrected in commit `771db7b1d7de895d05bc2e4c745414a60efbc8ef` and then executed successfully.
+
 ## Pre-Manifest Safety Gate
 
-Before generating the real CASE-001 manifest from the live 15-document inventory, the following safety work is implemented:
+The pre-manifest gate is now satisfied for the live CASE-001 inventory:
 
 - local restart-safe Document Identity snapshot persistence;
-- a read-only live bootstrap harness at `scripts/case001_identity_bootstrap.py`;
-- authoritative registered-source-scope enforcement in migration compatibility validation;
-- `ERRORS_AND_LESSONS.md` for verified failures and architectural lessons.
-
-The persistence/migration/source-scope tests are now green. The live bootstrap has **not yet been executed against CASE-001**, so persistence against the live 15-document inventory remains the next verification gate.
+- authoritative registered-source-scope enforcement;
+- deterministic migration manifest generator;
+- live metadata-only inventory of 15 documents;
+- live identity bootstrap resolving all 15 documents to logical identities;
+- no physical Drive mutation.
 
 ## Completed environment work
 
@@ -222,15 +239,16 @@ The persistence/migration/source-scope tests are now green. The live bootstrap h
 - Six-stage Google Drive Storage Adapter rollout completed and live scope gate verified.
 - CASE-001 metadata-only inventory implemented and live-verified: 15 documents, 0 folders.
 - Document Identity and Inventory Evidence foundations implemented and unit-verified.
-- Document Identity local persistence baseline implemented; live bootstrap verification pending.
+- Document Identity local persistence baseline implemented and live-verified against 15 CASE-001 documents.
 - CASE-001 Migration/Compatibility baseline implemented and unit-verified.
 - Migration validation connected to Document Identity and Inventory Evidence.
 - CASE-001 Migration Manifest Generator implemented and unit-verified: 6 passed in 0.17s.
+- Live CASE-001 identity bootstrap completed successfully with 15/15 identity coverage and no Drive mutation.
 
 ## Next implementation priorities
 
-1. Execute `scripts/case001_identity_bootstrap.py` against the live CASE-001 Documents scope and confirm inventory/identity counts are both 15, with no Drive mutation.
-2. Inspect the generated local identity snapshot and verify stable logical identities for all 15 source objects.
-3. Only then generate the real CASE-001 migration manifest from the live inventory.
+1. Generate the real CASE-001 migration manifest from the live inventory and persisted logical identities.
+2. Validate the generated manifest against the authoritative source scope and Inventory Evidence.
+3. Inspect the manifest as a read-only preflight artifact and verify all 15 mappings before any physical migration design/execution.
 4. Design the controlled physical migration preflight, human approval gate, executor, rollback, and post-migration verification. No physical Drive migration yet.
 5. Continue toward controlled document-content access and evidence extraction.
