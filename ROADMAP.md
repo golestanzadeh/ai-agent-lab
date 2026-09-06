@@ -9,38 +9,49 @@ Status: **complete**
 - Establish repository as source of truth.
 - Create operating principles and project definition.
 - Create anti-hallucination rules.
-- Establish this roadmap and future-file registry.
+- Establish roadmap, future-file registry, and decision log.
 
 ## Phase 1 — Problem and requirements
 
-Status: **next**
+Status: **in progress**
 
 Goals:
-- compare candidate real-world domains;
-- select one problem using explicit criteria;
+- define the German tax-assistance domain and supported first workflow;
 - define users, inputs, outputs, constraints, risks, and success metrics;
-- define the minimum viable workflow before adding agent complexity.
+- define party/household context;
+- define the minimum viable workflow before adding agent complexity;
+- establish the first real Golden Test Case.
 
-Planned files:
-- `docs/requirements.md` — problem statement, actors, inputs/outputs, constraints, acceptance criteria.
-- `docs/domain-selection.md` — candidate domains, scoring, rejected alternatives, final choice.
-- `docs/use-cases.md` — concrete scenarios and expected outcomes.
+Existing files:
+- `docs/requirements.md`
+- `docs/use-cases.md`
+- `docs/case-party-model.md`
+- `docs/document-inventory.md`
+- `docs/document-processing.md`
 
-## Phase 2 — System architecture
+## Phase 2 — System architecture and case foundation
 
-Status: planned
+Status: **in progress**
 
 Goals:
 - define control loop and state model;
-- decide which tasks require agents versus deterministic code;
+- define deterministic versus Agent boundaries;
 - define tool interfaces and evidence flow;
-- define human approval points.
+- define human approval points;
+- establish persistent multi-case and multi-year identity;
+- establish Case Registry and Person/Entity Registry contracts;
+- establish mandatory case-scoped access and isolation;
+- define execution/run identity and idempotency;
+- define migration strategy for the existing CASE-001 structure.
 
-Planned files:
-- `docs/architecture.md` — system architecture and component boundaries.
-- `docs/agent-design.md` — agent roles, responsibilities, inputs, outputs, tools, and stop conditions.
-- `docs/tool-contracts.md` — tool schemas, permissions, failure behavior, and safety constraints.
-- `docs/state-and-memory.md` — working state, persistent memory, provenance, and retention rules.
+Existing files:
+- `docs/architecture.md`
+- `docs/case-management.md`
+
+Still planned:
+- `docs/agent-design.md`
+- `docs/tool-contracts.md`
+- `docs/state-and-memory.md`
 
 ## Phase 3 — Evaluation and safety design
 
@@ -49,13 +60,15 @@ Status: planned
 Goals:
 - define what good performance means;
 - build representative cases and adversarial cases;
-- define failure taxonomy and safety boundaries.
+- define failure taxonomy and safety boundaries;
+- test case isolation and cross-case contamination;
+- test identity resolution and multi-year retrieval.
 
 Planned files:
-- `docs/evaluation.md` — metrics, test strategy, benchmark design, and regression policy.
-- `docs/safety.md` — threat model, approval gates, misuse cases, and containment.
-- `docs/failure-modes.md` — known and expected failure classes.
-- `tests/fixtures/README.md` — structure and provenance of evaluation fixtures.
+- `docs/evaluation.md`
+- `docs/safety.md`
+- `docs/failure-modes.md`
+- `tests/fixtures/README.md`
 
 ## Phase 4 — First executable prototype
 
@@ -64,16 +77,20 @@ Status: planned
 Goals:
 - implement the smallest useful end-to-end workflow;
 - keep orchestration observable;
-- test deterministic components independently.
+- test deterministic components independently;
+- implement the case-scoped Drive connector before live document processing.
 
 Planned files/directories:
-- `src/agent_lab/` — application package.
-- `src/agent_lab/orchestrator.py` — initial control loop.
-- `src/agent_lab/state.py` — case state model.
-- `src/agent_lab/tools/` — tool adapters.
-- `src/agent_lab/agents/` — agent implementations.
-- `tests/unit/` — unit tests.
-- `tests/integration/` — workflow tests.
+- `src/agent_lab/`
+- `src/agent_lab/orchestrator.py`
+- `src/agent_lab/state.py`
+- `src/agent_lab/case_registry.py`
+- `src/agent_lab/case_resolver.py`
+- `src/agent_lab/tools/`
+- `src/agent_lab/agents/`
+- `tests/unit/`
+- `tests/integration/`
+- isolation and cross-case test suites.
 
 ## Phase 5 — Evidence, observability, and auditability
 
@@ -82,13 +99,14 @@ Status: planned
 Goals:
 - make every consequential output traceable;
 - capture tool calls and decisions;
-- support post-run analysis.
+- support post-run analysis;
+- preserve case/run provenance.
 
 Planned files:
-- `docs/observability.md` — logs, traces, events, and debugging strategy.
-- `docs/provenance.md` — source/evidence lineage.
-- `src/agent_lab/audit.py` — audit event model and recorder.
-- `tests/evaluation/` — automated evaluation suites.
+- `docs/observability.md`
+- `docs/provenance.md`
+- `src/agent_lab/audit.py`
+- `tests/evaluation/`
 
 ## Phase 6 — Adversarial testing and improvement
 
@@ -97,13 +115,14 @@ Status: planned
 Goals:
 - challenge the system deliberately;
 - measure regressions;
-- improve weak components based on evidence.
+- improve weak components based on evidence;
+- attack scope boundaries, identity resolution, and tool permissions.
 
 Planned files:
-- `experiments/README.md` — experiment protocol.
-- `experiments/` — dated experiment records.
-- `docs/red-team.md` — adversarial testing strategy.
-- `tests/adversarial/` — adversarial cases.
+- `experiments/README.md`
+- `experiments/`
+- `docs/red-team.md`
+- `tests/adversarial/`
 
 ## Phase 7 — Packaging and portfolio quality
 
@@ -117,10 +136,10 @@ Goals:
 - credible limitations and evaluation results.
 
 Planned files:
-- `pyproject.toml` — Python project metadata and dependencies, once implementation language/framework is confirmed.
-- `README` expansion — installation, usage, architecture, evaluation summary.
-- `docs/demo.md` — reproducible demonstration.
-- `docs/limitations.md` — known limitations and non-goals.
+- `pyproject.toml`
+- README expansion
+- `docs/demo.md`
+- `docs/limitations.md`
 
 ## Future-file registry rule
 
@@ -128,4 +147,4 @@ A file listed as planned is **not** considered created or implemented until it e
 
 ## Ordering rule
 
-Do not jump directly to Phase 4 because coding feels productive. Phases 1–3 define what we are building and how we will know whether it works. That prevents the usual human tradition of constructing a magnificent solution to the wrong problem.
+Do not jump directly to executable Agent implementation because coding feels productive. The project must first establish the case/identity/scope boundaries and the evidence/evaluation contracts that make later automation safe and testable.
