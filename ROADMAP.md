@@ -51,11 +51,27 @@ Existing files:
 - `docs/case-registry.md`
 - `docs/person-entity-registry.md`
 - `docs/case-creation-workflow.md`
+- `docs/case-scoped-drive-resolver.md`
+- `docs/state-and-memory.md`
+
+Implemented runtime foundations:
+- `src/agent_lab/case_registry.py`
+- `src/agent_lab/person_entity_registry.py`
+- `src/agent_lab/case_identity_association.py`
+- `src/agent_lab/case_creation_workflow.py`
+- `src/agent_lab/case_scoped_drive.py`
+- `src/agent_lab/case_state.py`
+
+Verified unit-test suites:
+- Case Registry: 10/10
+- Person/Entity Registry: 11/11
+- Case ↔ Identity Association: 9/9
+- Case Creation Workflow: 9/9
+- Case-Scoped Drive Resolver: 8/8
 
 Still planned:
 - `docs/agent-design.md`
 - `docs/tool-contracts.md`
-- `docs/state-and-memory.md`
 
 ## Phase 3 — Evaluation and safety design
 
