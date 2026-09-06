@@ -83,7 +83,15 @@ The following Google Cloud setup was completed:
 4. An OAuth Client of type **Desktop app** was created with the name `AI-Tax-Agent Desktop`.
 5. The OAuth client JSON was downloaded.
 
-The downloaded credential file must remain outside GitHub and must never be committed.
+The credential file is stored outside the public repository at:
+
+```text
+C:\Users\rezag\ai-tax-agent\credentials.json
+```
+
+The credential file must remain outside GitHub and must never be committed.
+
+A previous mistaken placement inside `C:\Users\rezag\ai-agent-lab\credentials.json` was removed. `git status` subsequently verified a clean working tree, confirming that no local Git change remained from that file.
 
 ### Step 6 — Local repository clone
 
@@ -153,6 +161,36 @@ C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe
 
 VS Code's Python tooling supports workspace-local virtual environments and uses the selected interpreter for IntelliSense, running, debugging, linting, and related Python features.
 
+### Step 10 — Credential-location and repository-safety verification
+
+The credential file location was explicitly verified:
+
+```powershell
+Test-Path "$HOME\ai-tax-agent\credentials.json"
+```
+
+Verified result:
+
+```text
+True
+```
+
+The mistaken repository copy was removed and the repository was checked with:
+
+```powershell
+git status
+```
+
+Verified result:
+
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+The repository's existing `.gitignore` already excludes `.env`, `.env.*`, virtual environments, caches, and local output/artifact directories. The OAuth credential is nevertheless kept physically outside the repository as the primary protection.
+
 ## Current local development state
 
 The verified local development chain is now:
@@ -171,7 +209,13 @@ C:\Users\rezag\ai-agent-lab
     Git / GitHub
 ```
 
-The local repository and project-local Python environment are established. Google Drive API Python integration has not yet been implemented or smoke-tested.
+Google OAuth credentials are stored separately at:
+
+```text
+C:\Users\rezag\ai-tax-agent\credentials.json
+```
+
+Google Drive API Python integration has not yet been implemented or smoke-tested.
 
 ## Security rules
 
