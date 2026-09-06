@@ -53,8 +53,6 @@ CASE-YYYY-NNNN/
 └── Audit/
 ```
 
-The exact migration of the currently existing CASE-001 layout is not yet implemented.
-
 ## Mandatory isolation rule
 
 No Agent, pipeline component, model, or data-access tool may access case data without a validated `case_id`. Access must resolve through the Case Registry to the exact case folder reference. Unscoped broad Drive searches for case data are prohibited.
@@ -151,7 +149,7 @@ The audit layer establishes:
 
 The first runtime is intentionally in-memory. Durable database storage, distributed ordering, cryptographic tamper evidence, retention policy, and OpenTelemetry integration remain future layers.
 
-Local verification passed: `tests/unit/test_audit.py` completed with **9 passed tests in 0.20s**.
+Local verification passed: `tests/unit/test_audit.py` completed with 9 passed tests in 0.20s.
 
 ## Isolation and Cross-Case Contamination Tests
 
@@ -159,7 +157,7 @@ Local verification passed: `tests/unit/test_audit.py` completed with **9 passed 
 
 The suite verifies the deterministic chain across Case Registry, Case State/Run ID, Case-Scoped Storage Resolver, and Audit Boundary. It covers storage isolation in both directions, cross-case run misuse, cross-case audit access, case-bound state lookup, unknown-case rejection, shared-root rejection, and preservation of distinct cases for the same persistent owner across tax periods.
 
-Local verification passed: `tests/unit/test_case_isolation.py` completed with **10 passed tests in 0.14s**.
+Local verification passed: `tests/unit/test_case_isolation.py` completed with 10 passed tests in 0.14s.
 
 This verification establishes the deterministic isolation gate only. It does not yet prove isolation for live Google Drive access, authentication/authorization, durable storage, distributed execution, or production security.
 
@@ -167,16 +165,7 @@ This verification establishes the deterministic isolation gate only. It does not
 
 `docs/google-drive-storage-adapter.md` is the authoritative implementation contract for the six-stage rollout recorded in Decision D-013.
 
-The six stages are:
-
-1. Storage Adapter Contract.
-2. Case-Scoped Resolver Integration.
-3. Metadata-only Google Drive Adapter.
-4. Deterministic Scope Enforcement.
-5. Adapter and Scope Tests, including live integration verification.
-6. Documentation, Verification and Gate.
-
-Stages 1–6 are complete and verified as defined by D-013.
+The six stages are complete and verified as defined by D-013.
 
 - `src/agent_lab/storage.py` defines the provider-neutral case-scoped adapter contract, normalized metadata model, deterministic boundary wrapper, and in-memory contract-test provider.
 - `src/agent_lab/google_drive_storage.py` defines the metadata-only Google Drive adapter using an injected Drive service and `CaseScopedDriveResolver`.
@@ -186,28 +175,54 @@ Stages 1–6 are complete and verified as defined by D-013.
 
 ### Verification evidence
 
-The adapter unit suite was executed locally and completed with **8 passed tests in 0.25s**.
+The adapter unit suite was executed locally and completed with 8 passed tests in 0.25s.
 
-The required live Google Drive scope-isolation harness was then executed against two isolated test-only Drive roots and completed with the exact result **1 passed in 4.55s**.
+The required live Google Drive scope-isolation harness was then executed against two isolated test-only Drive roots and completed with the exact result 1 passed in 4.55s.
 
 The live harness was read-only and did not modify CASE-001. This verifies the defined live A/B scope-isolation boundary, but does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, durable storage security, or electronic filing.
 
-### Gate status
-
-The release gate for a metadata-only CASE-001 `Documents` inventory is open.
-
 ## CASE-001 Metadata-Only Document Inventory
 
-The first implementation is now present:
+The metadata-only inventory implementation is present and has now been live-verified against the CASE-001 Documents scope.
 
-- `src/agent_lab/document_inventory.py` provides the deterministic `DocumentInventoryService` over the case-scoped storage contract.
-- `tests/unit/test_document_inventory.py` provides the initial unit contract tests.
-- `scripts/case001_metadata_inventory.py` is the local live execution harness for CASE-001.
+- `src/agent_lab/document_inventory.py` provides deterministic metadata-only inventory.
+- `tests/unit/test_document_inventory.py` provides the unit contract.
+- `scripts/case001_metadata_inventory.py` is the local live execution harness.
 - `docs/document-inventory.md` is the inventory/intake contract.
 
-The implementation is intentionally metadata-only. It requires the exact CASE-001 `Documents` folder ID through `CASE_001_DOCUMENTS_ROOT_ID`, builds a temporary in-memory Case Registry record, resolves the scope through `CaseScopedDriveResolver`, enumerates direct children through `GoogleDriveMetadataAdapter`, and prints a structured JSON inventory. It performs no Drive-wide discovery and no source-document mutation.
+The live inventory produced **15 documents and 0 folders**. All 15 observed items were PDFs and were direct children of the specified CASE-001 Documents scope. The live harness performs no Drive-wide discovery and no source-document mutation.
 
-The live CASE-001 inventory has **not yet been executed/verified**. No claim is made that the machine inventory matches the previously observed local mirror listing until the live command succeeds.
+## Document Identity
+
+`docs/document-identity.md` and `src/agent_lab/document_identity.py` define the stable logical identity layer between source-object observations and downstream evidence/processing.
+
+The runtime is metadata-only and case-scoped. It preserves logical identity across repeated observations and renames while keeping different provider objects distinct.
+
+Local verification passed: the combined Document Identity + Inventory Evidence unit suites completed with **13 passed tests in 0.28s**.
+
+## Inventory Evidence
+
+`src/agent_lab/inventory_evidence.py` records an immutable, case-scoped metadata inventory snapshot and can link every inventory item to stable logical Document Identity references. It also updates case state and emits a case/run-bound audit event.
+
+The source inventory remains immutable. Evidence is a reference-oriented record, not a copy of source documents.
+
+## CASE-001 Migration / Compatibility Layer
+
+`docs/case001-migration-compatibility.md` defines the compatibility contract between the legacy CASE-001 layout and the target 2024 case layout.
+
+`src/agent_lab/case001_migration.py` implements non-mutating deterministic migration preparation and validation. The baseline migration suite has been executed locally and completed with **8 passed tests in 0.13s**.
+
+The migration layer is now connected to the existing Document Identity and Inventory Evidence boundaries:
+
+- when Document Identity is supplied, every migration mapping must resolve to an existing logical document in CASE-001;
+- provider, source object ID, source scope, and logical document ID must exactly match the identity record;
+- when Inventory Evidence is supplied, the migration mapping must exactly match its source-object sequence and logical-document sequence;
+- cross-case, cross-scope, unknown-identity, and identity-mismatch conditions fail closed;
+- no physical Drive mutation has been introduced.
+
+New integration-boundary tests have been added to `tests/unit/test_case001_migration.py`. These tests have been written but their new integration portion has **not yet been executed/verified** in this environment.
+
+Decision D-015 records this architecture boundary.
 
 ## Completed environment work
 
@@ -229,12 +244,15 @@ The live CASE-001 inventory has **not yet been executed/verified**. No claim is 
 - Durable Audit / Observability contract, runtime, and tests created and verified.
 - Case Isolation and Cross-Case Contamination acceptance tests created and verified.
 - Six-stage Google Drive Storage Adapter rollout completed and live scope gate verified.
-- Metadata-only CASE-001 inventory implementation created; live execution remains pending.
+- CASE-001 metadata-only inventory implemented and live-verified: 15 documents, 0 folders.
+- Document Identity and Inventory Evidence foundations implemented and unit-verified.
+- CASE-001 Migration/Compatibility baseline implemented and unit-verified.
+- Migration validation connected to Document Identity and Inventory Evidence; integration-boundary tests added, execution pending.
 
 ## Next implementation priorities
 
-1. Execute and verify the CASE-001 metadata-only inventory locally.
-2. Record the verified inventory as case-scoped evidence/audit data without modifying source documents.
-3. Define migration/compatibility handling for the existing CASE-001 structure.
-4. Define and implement deterministic document identity/metadata handling for the inventory output.
-5. Continue toward evidence extraction, research, analysis, optimization, challenge, and final-output workflows.
+1. Execute and verify the updated CASE-001 migration integration test suite.
+2. If the suite passes, perform a stronger review of source-scope authority and identity provenance before any physical migration work.
+3. Define `docs/agent-design.md` and `docs/tool-contracts.md` before executable Agent orchestration.
+4. Design the controlled physical migration preflight, human approval gate, executor, rollback, and post-migration verification. No physical Drive migration yet.
+5. Continue toward controlled document-content access and evidence extraction.
