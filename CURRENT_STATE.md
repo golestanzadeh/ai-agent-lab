@@ -155,6 +155,16 @@ The first runtime is intentionally in-memory. Durable database storage, distribu
 
 Local verification passed: `tests/unit/test_audit.py` completed with **9 passed tests in 0.20s**.
 
+## Isolation and Cross-Case Contamination Tests
+
+`docs/case-isolation-tests.md` defines the foundational isolation acceptance contract. The acceptance suite is implemented at `tests/unit/test_case_isolation.py`.
+
+The suite verifies the deterministic chain across Case Registry, Case State/Run ID, Case-Scoped Storage Resolver, and Audit Boundary. It covers storage isolation in both directions, cross-case run misuse, cross-case audit access, case-bound state lookup, unknown-case rejection, shared-root rejection, and preservation of distinct cases for the same persistent owner across tax periods.
+
+Local verification passed: `tests/unit/test_case_isolation.py` completed with **10 passed tests in 0.14s**.
+
+This verification establishes the deterministic isolation gate only. It does not yet prove isolation for live Google Drive access, authentication/authorization, durable storage, distributed execution, or production security.
+
 ## Completed environment work
 
 - Google Drive API enabled.
@@ -173,12 +183,12 @@ Local verification passed: `tests/unit/test_audit.py` completed with **9 passed 
 - Case-Scoped Drive Resolver contract, runtime, and tests created and verified.
 - Case State + Run ID contract, runtime, and tests created and verified.
 - Durable Audit / Observability contract, runtime, and tests created and verified.
+- Case Isolation and Cross-Case Contamination acceptance tests created and verified.
 
 ## Next implementation priorities
 
-1. Add isolation and cross-case contamination tests.
-2. Implement a Google Drive storage adapter behind the verified scope boundary.
-3. Define migration/compatibility handling for existing CASE-001.
-4. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-5. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
-6. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
+1. Implement a Google Drive storage adapter behind the verified scope boundary.
+2. Define migration/compatibility handling for existing CASE-001.
+3. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+4. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
+5. Continue toward evidence extraction, research, analysis, optimization, challenge, and final-output workflows.
