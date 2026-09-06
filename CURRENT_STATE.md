@@ -75,6 +75,14 @@ The Registry contract is designed so the physical storage implementation can evo
 
 Runtime implementation, identity matching, merge/split logic, and migration are not yet implemented.
 
+## Case Creation Workflow contract
+
+`docs/case-creation-workflow.md` defines the foundational contract for creating new tax cases. It establishes request validation, Person/Entity identity resolution, explicit tax-period validation, case identity generation, idempotency, exact storage-scope creation, Case Registry initialization, Person/Entity linkage, initial `CREATED` state, creation run identity, audit events, failure/compensation behavior, and mandatory case isolation.
+
+The workflow is a generic case-creation contract. It explicitly excludes migration or restructuring of the existing CASE-001 layout.
+
+Runtime implementation and automated acceptance tests for this workflow are not yet complete.
+
 ## Completed environment work
 
 - Google Drive API enabled.
@@ -88,12 +96,13 @@ Runtime implementation, identity matching, merge/split logic, and migration are 
 - Foundational Case Management and Isolation architecture created.
 - Case Registry contract created.
 - Person/Entity Registry model created.
+- Case Creation Workflow contract created.
 
 ## Next implementation priorities
 
 1. Implement the deterministic Case Registry model from `docs/case-registry.md`.
 2. Implement the Person/Entity Registry runtime model from `docs/person-entity-registry.md`.
-3. Implement Case Creation workflow using both Registry models.
+3. Implement Case Creation workflow using both Registry models and the contract in `docs/case-creation-workflow.md`.
 4. Implement case-scoped Drive Resolver and access boundary.
 5. Implement case-scoped state and execution/run IDs.
 6. Add isolation and cross-case contamination tests.
