@@ -50,6 +50,9 @@ Last verified: 2026-09-06
 - Google Drive Python dependencies installed successfully in the project-local `.venv`.
 - Google Drive library import smoke check completed successfully with output: `Google Drive libraries: OK`.
 - `requirements.txt` added with the verified Google Drive/Auth dependency versions.
+- **Google Drive OAuth authentication and metadata-only API smoke test completed successfully.**
+- **The Python smoke test authenticated the user and successfully located the private `AI-Tax-Agent` Drive folder.**
+- The smoke test used the `drive.metadata.readonly` scope and did not read, modify, upload, or process tax-document contents.
 
 ## Current local development state
 
@@ -64,6 +67,8 @@ C:\Users\rezag\ai-agent-lab
         ↓
  Google Drive libraries installed
         ↓
+ Google OAuth + Drive metadata API verified
+        ↓
       VS Code
         ↓
     Git / GitHub
@@ -75,7 +80,7 @@ OAuth credentials are stored outside the repository:
 C:\Users\rezag\ai-tax-agent\credentials.json
 ```
 
-The previous `C:\Users\rezag\.venv` is not the project environment and must not be used as the project's source environment.
+The OAuth token is also intended to remain outside the repository under the same `ai-tax-agent` directory. No credential or token belongs in GitHub.
 
 ## Current target
 
@@ -85,7 +90,6 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Not yet completed
 
-- Google Drive API Python integration and OAuth smoke test.
 - First concrete tax workflow selection.
 - Exact target taxpayer profile for the first workflow.
 - Exact tax year/assessment period for the first workflow.
@@ -102,7 +106,7 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Next action
 
-Run a minimal Google Drive API smoke test using the credential stored outside the repository. The first test should authenticate locally and inspect only the private `AI-Tax-Agent` Drive structure or safe metadata; it must not access, modify, upload, or process real tax documents yet. Record the result in this document and `docs/development-setup.md` before proceeding.
+Select and formalize the first concrete tax workflow and its Golden Test Case requirements before introducing real taxpayer documents into the system. Google Drive access is now verified at the safe metadata level; the next project-level step must still respect the requirement that real tax data remains outside GitHub and that access permissions/scopes are kept as narrow as practical.
 
 ## Continuity rule
 
