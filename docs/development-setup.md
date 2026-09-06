@@ -36,33 +36,9 @@ A virtual environment was initially created at:
 C:\Users\rezag\.venv
 ```
 
-This location is now considered **incorrect for the project**, because the repository had not yet been cloned locally. It must not be treated as the project's final virtual environment.
+This location is considered **incorrect for the project** and is not used as the final project environment.
 
-### Step 3 — VS Code
-
-VS Code was opened with `code .` while the current directory was `C:\Users\rezag`.
-
-The interpreter was selected as:
-
-```text
-.venv\Scripts\python.exe
-```
-
-and verified with:
-
-```powershell
-python -c "import sys; print(sys.executable)"
-```
-
-which returned:
-
-```text
-C:\Users\rezag\.venv\Scripts\python.exe
-```
-
-This verification is valid for the temporary/home-directory environment only. The project-local interpreter must be configured after cloning the repository.
-
-### Step 4 — Docker
+### Step 3 — Docker
 
 Docker Desktop was updated and the Docker Engine was verified with:
 
@@ -76,7 +52,7 @@ The command completed successfully. Verified Docker CLI version at that point:
 Docker version 29.7.2
 ```
 
-### Step 5 — Google Drive folder structure
+### Step 4 — Google Drive folder structure
 
 The user created the following folders through Google Drive for Desktop / PowerShell:
 
@@ -97,7 +73,7 @@ Google Drive
 
 This is private case storage and is not part of the GitHub repository.
 
-### Step 6 — Google Drive API
+### Step 5 — Google Drive API
 
 The following Google Cloud setup was completed:
 
@@ -109,22 +85,93 @@ The following Google Cloud setup was completed:
 
 The downloaded credential file must remain outside GitHub and must never be committed.
 
-## Important correction: local repository did not exist yet
+### Step 6 — Local repository clone
 
-At the time the first local Python/VS Code steps were performed, the user had **not cloned `ai-agent-lab` to the PC**. The project had previously been created and maintained directly on GitHub through the Codex-enabled GitHub integration.
+The repository was successfully cloned to:
 
-Therefore:
+```text
+C:\Users\rezag\ai-agent-lab
+```
 
-- `C:\Users\rezag` is not the project directory.
-- `C:\Users\rezag\.venv` is not the final project virtual environment.
-- There is currently no verified local `ai-agent-lab` clone from these setup steps.
-- The next local setup action must be to clone `https://github.com/golestanzadeh/ai-agent-lab.git` to a deliberate project location.
-- Only after cloning should the project-local `.venv` be created.
-- Only after the local repository exists should the downloaded Google OAuth credential be placed in the local project environment, preferably outside the repository or otherwise protected by `.gitignore` and secret-handling rules.
+Verification:
 
-## Next verified setup action
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
 
-Clone the GitHub repository locally, then establish the project-local Python environment and verify the repository/venv relationship before continuing with Google Drive API code.
+The local clone is therefore synchronized with `origin/main` at the time of verification.
+
+### Step 7 — Project-local Python virtual environment
+
+The project-local environment was created inside the cloned repository:
+
+```text
+C:\Users\rezag\ai-agent-lab\.venv
+```
+
+The environment was activated and verified with:
+
+```powershell
+python --version
+python -c "import sys; print(sys.executable)"
+```
+
+Verified result:
+
+```text
+Python 3.14.2
+C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe
+```
+
+The previous home-directory environment at `C:\Users\rezag\.venv` is not the project environment.
+
+### Step 8 — pip
+
+The project-local pip was upgraded and verified:
+
+```text
+pip 26.2.1 from C:\Users\rezag\ai-agent-lab\.venv\Lib\site-packages\pip (python 3.14)
+```
+
+### Step 9 — VS Code
+
+VS Code was opened from the project root with:
+
+```powershell
+code .
+```
+
+The project workspace opened successfully.
+
+The Python interpreter must be the project-local environment:
+
+```text
+C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe
+```
+
+VS Code's Python tooling supports workspace-local virtual environments and uses the selected interpreter for IntelliSense, running, debugging, linting, and related Python features.
+
+## Current local development state
+
+The verified local development chain is now:
+
+```text
+C:\Users\rezag\ai-agent-lab
+        ↓
+      .venv
+        ↓
+ Python 3.14.2
+        ↓
+    pip 26.2.1
+        ↓
+      VS Code
+        ↓
+    Git / GitHub
+```
+
+The local repository and project-local Python environment are established. Google Drive API Python integration has not yet been implemented or smoke-tested.
 
 ## Security rules
 
@@ -138,3 +185,7 @@ Never commit:
 - private personal data
 
 All credentials and real tax data must remain outside the public GitHub repository.
+
+## Continuity rule
+
+Whenever a setup step is completed, corrected, or materially changed, update this document and `CURRENT_STATE.md` before moving to the next project-level setup step. The repository must remain sufficient to reconstruct the verified local setup without relying on chat history.
