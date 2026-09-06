@@ -9,6 +9,8 @@ Last verified: 2026-09-06
 - Visibility: public
 - GitHub write access through the current Codex-enabled integration: verified.
 - GitHub is the durable project source of truth.
+- Local clone: `C:\Users\rezag\ai-agent-lab`
+- Local `main` branch was verified up to date with `origin/main` after cloning.
 
 ## Phase
 
@@ -35,15 +37,30 @@ Last verified: 2026-09-06
 - Google Cloud project `AI-Tax-Agent` created.
 - Google Drive API enabled.
 - Google OAuth configuration completed and a Desktop OAuth client `AI-Tax-Agent Desktop` created.
+- Repository cloned locally to `C:\Users\rezag\ai-agent-lab`.
+- Project-local `.venv` created and verified at `C:\Users\rezag\ai-agent-lab\.venv`.
+- Project-local Python interpreter verified as `C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe`.
+- Project-local pip upgraded and verified as `26.2.1`.
+- VS Code successfully opened from the project root with `code .`.
 - Development setup history and local-state corrections recorded in `docs/development-setup.md`.
 
-## Important local-state correction
+## Current local development state
 
-The user has **not yet cloned `ai-agent-lab` to the local PC**. The repository has so far been maintained directly on GitHub through the Codex-enabled integration.
+```text
+C:\Users\rezag\ai-agent-lab
+        ↓
+      .venv
+        ↓
+ Python 3.14.2
+        ↓
+    pip 26.2.1
+        ↓
+      VS Code
+        ↓
+    Git / GitHub
+```
 
-Therefore the previously created `C:\Users\rezag\.venv` is a temporary/home-directory environment and is **not** the final project virtual environment. The next local setup step is to clone the repository deliberately, then create and verify a `.venv` inside the cloned project.
-
-The downloaded Google OAuth credential must not be committed to GitHub.
+The previous `C:\Users\rezag\.venv` is not the project environment and must not be used as the project's source environment.
 
 ## Current target
 
@@ -53,8 +70,6 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Not yet completed
 
-- Local repository clone.
-- Project-local Python virtual environment.
 - Google Drive API Python integration and OAuth smoke test.
 - First concrete tax workflow selection.
 - Exact target taxpayer profile for the first workflow.
@@ -72,7 +87,7 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Next action
 
-Clone `golestanzadeh/ai-agent-lab` locally. Then create a project-local `.venv`, verify the interpreter, establish the Git workflow, and only then continue with the Google Drive API smoke test.
+Verify the VS Code workspace is using the project-local `.venv`, then continue with the Google Drive API smoke test. Do not place the downloaded OAuth credential JSON inside the public repository.
 
 ## Continuity rule
 
