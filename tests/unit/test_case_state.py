@@ -109,6 +109,7 @@ def test_legal_run_transitions_are_enforced():
 def test_state_updates_are_case_scoped_and_can_reference_run():
     store = CaseStateStore(make_registry())
     run = store.create_run("CASE-2024-0001")
+    store.initialize_case("CASE-2025-0001")
     state = store.update_state(
         "CASE-2024-0001",
         last_run_id=run.run_id,
