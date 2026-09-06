@@ -65,28 +65,13 @@ Cross-year summaries resolve cases through persistent `person_id`/`entity_id` an
 
 ## Case Registry implementation
 
-`docs/case-registry.md` remains the authoritative contract. The first deterministic runtime model has been implemented at `src/agent_lab/case_registry.py`, with acceptance-oriented unit tests at `tests/unit/test_case_registry.py`.
-
-The implementation currently provides:
-
-- explicit `CaseRecord`, `TaxPeriod`, and `StorageScopeReference` models;
-- controlled enums for owner type, case type, assessment mode, lifecycle status, and lookup status;
-- globally unique `case_id` registration;
-- explicit owner + tax-period lookup;
-- deterministic ambiguity handling with no arbitrary case selection;
-- persistent cross-year lookup by owner ID;
-- lifecycle, storage-scope, and run-ID updates;
-- request-ID idempotency for registration;
-- registry invariant validation, including one storage root per case;
-- no Drive/document access inside the registry layer.
+`docs/case-registry.md` remains the authoritative contract. The deterministic runtime model is implemented at `src/agent_lab/case_registry.py`, with acceptance-oriented unit tests at `tests/unit/test_case_registry.py`.
 
 Local verification passed: `tests/unit/test_case_registry.py` completed with 10 passed tests.
 
 ## Person/Entity Registry foundation and runtime
 
-`docs/person-entity-registry.md` defines the foundational persistent identity model for natural persons and legal entities. It establishes explicit PERSON versus ENTITY identity, persistent IDs, controlled lookup attributes, identity resolution states, identity-to-case mapping, lifecycle status, auditability, and separation from case-scoped tax data.
-
-The deterministic runtime implementation is at `src/agent_lab/person_entity_registry.py`, with acceptance-oriented unit tests at `tests/unit/test_person_entity_registry.py`.
+`docs/person-entity-registry.md` defines the persistent identity model for natural persons and legal entities. The deterministic runtime implementation is at `src/agent_lab/person_entity_registry.py`, with tests at `tests/unit/test_person_entity_registry.py`.
 
 Local verification passed: `tests/unit/test_person_entity_registry.py` completed with 11 passed tests.
 
@@ -98,34 +83,33 @@ It enforces identity-type compatibility, exact owner-ID matching, existence of b
 
 Local verification passed: `tests/unit/test_case_identity_association.py` completed with 9 passed tests.
 
-## Case Creation Workflow contract
+## Case Creation Workflow
 
-`docs/case-creation-workflow.md` defines the foundational contract for creating new tax cases. It establishes request validation, Person/Entity identity resolution, explicit tax-period validation, case identity generation, idempotency, exact storage-scope creation, Case Registry initialization, Person/Entity linkage, initial `CREATED` state, creation run identity, audit events, failure/compensation behavior, and mandatory case isolation.
-
-The workflow is a generic case-creation contract. It explicitly excludes migration or restructuring of the existing CASE-001 layout.
-
-## Case Creation Workflow runtime
-
-The deterministic runtime is implemented at `src/agent_lab/case_creation_workflow.py`, with acceptance-oriented unit tests at `tests/unit/test_case_creation_workflow.py`.
-
-The current runtime coordinates:
-
-- request validation;
-- deterministic existing-identity resolution;
-- case-type and assessment-mode validation;
-- duplicate and request-id idempotency checks;
-- unique `CASE-YYYY-NNNN` generation;
-- exact storage-scope creation through an injected storage adapter;
-- Case Registry initialization with lifecycle `CREATED`;
-- Person/Entity ↔ Case association;
-- creation run identity;
-- auditable creation event recording.
-
-The initial storage implementation is deliberately in-memory/test-oriented. Google Drive creation is not yet part of this runtime, preserving a replaceable storage abstraction and preventing premature coupling to an external backend.
+`docs/case-creation-workflow.md` defines the foundational creation contract. The deterministic runtime is implemented at `src/agent_lab/case_creation_workflow.py`, with tests at `tests/unit/test_case_creation_workflow.py`.
 
 Local verification passed: `tests/unit/test_case_creation_workflow.py` completed with 9 passed tests.
 
-The runtime does not yet implement the durable Case State store, production Run store, production Audit store, Google Drive storage adapter, or CASE-001 migration. Those remain separate steps.
+The runtime remains storage-provider-neutral and does not migrate CASE-001 or perform document processing.
+
+## Case-Scoped Drive Resolver and Access Boundary
+
+`docs/case-scoped-drive-resolver.md` defines the mandatory boundary between validated case identity and storage access.
+
+The deterministic runtime is implemented at `src/agent_lab/case_scoped_drive.py`, with tests at `tests/unit/test_case_scoped_drive.py`.
+
+The resolver:
+
+- requires a non-empty validated `case_id`;
+- resolves storage only through the authoritative Case Registry;
+- returns the exact registered `StorageScopeReference`;
+- fails closed for unknown cases;
+- rejects objects whose storage scope does not exactly match the resolved case scope;
+- does not scan Drive, inspect documents, or infer ownership;
+- preserves `case_id` when the physical storage reference changes.
+
+The current runtime uses provider-neutral opaque storage references. A Google Drive adapter remains a separate implementation step.
+
+Local verification is pending: the user must run `tests/unit/test_case_scoped_drive.py` locally before this component is marked verified.
 
 ## Completed environment work
 
@@ -138,18 +122,20 @@ The runtime does not yet implement the durable Case State store, production Run 
 - Document Processing Contract created.
 - Case Party / Household Model created.
 - Foundational Case Management and Isolation architecture created.
-- Case Registry contract and runtime created and verified.
-- Person/Entity Registry model and runtime created and verified.
-- Case ↔ Identity Association runtime created and verified.
-- Case Creation Workflow contract, runtime, and unit tests created and verified.
+- Case Registry contract, runtime, and tests created and verified.
+- Person/Entity Registry model, runtime, and tests created and verified.
+- Case ↔ Identity Association runtime and tests created and verified.
+- Case Creation Workflow contract, runtime, and tests created and verified.
+- Case-Scoped Drive Resolver contract and runtime created; local verification pending.
 
 ## Next implementation priorities
 
-1. Implement case-scoped Drive Resolver and access boundary.
+1. Verify the Case-Scoped Drive Resolver locally.
 2. Implement case-scoped state and execution/run IDs.
 3. Define durable audit/observability boundary.
 4. Add isolation and cross-case contamination tests.
-5. Define migration/compatibility handling for existing CASE-001.
-6. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-7. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
-8. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
+5. Implement a Google Drive storage adapter behind the verified scope boundary.
+6. Define migration/compatibility handling for existing CASE-001.
+7. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+8. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
+9. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
