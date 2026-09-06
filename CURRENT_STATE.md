@@ -111,6 +111,30 @@ The current runtime uses provider-neutral opaque storage references. A Google Dr
 
 Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with 8 passed tests.
 
+## Case State + Run ID Model and Runtime
+
+`docs/state-and-memory.md` defines the foundational case-state and execution identity contract.
+
+The deterministic runtime is implemented at `src/agent_lab/case_state.py`, with acceptance-oriented tests at `tests/unit/test_case_state.py`.
+
+The runtime establishes:
+
+- structured case-scoped operational state;
+- unique deterministic `run_id` generation;
+- exactly one `case_id` per run;
+- request-ID idempotency for repeated execution requests;
+- rejection of request-ID reuse across cases;
+- case-scoped run lookup and listing;
+- explicit run lifecycle transitions;
+- immutable terminal run status;
+- state references for parties, documents, evidence, facts, assumptions, rules, calculations, optimization, challenges, approvals, and outputs;
+- validation against the authoritative Case Registry;
+- fail-closed behavior for unknown cases and cross-case run/state access.
+
+The current runtime is intentionally in-memory. Durable persistence, workflow queues, checkpoint/resume, durable audit storage, and full tax-domain state schemas remain separate future layers.
+
+Local verification is pending: the user must run `tests/unit/test_case_state.py` locally before this component is marked verified.
+
 ## Completed environment work
 
 - Google Drive API enabled.
@@ -127,10 +151,11 @@ Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with
 - Case ↔ Identity Association runtime and tests created and verified.
 - Case Creation Workflow contract, runtime, and tests created and verified.
 - Case-Scoped Drive Resolver contract, runtime, and tests created and verified.
+- Case State + Run ID contract and runtime created; local verification pending.
 
 ## Next implementation priorities
 
-1. Implement case-scoped state and execution/run IDs.
+1. Verify the Case State + Run ID runtime locally.
 2. Define durable audit/observability boundary.
 3. Add isolation and cross-case contamination tests.
 4. Implement a Google Drive storage adapter behind the verified scope boundary.
