@@ -42,6 +42,7 @@ Last verified: 2026-09-06
 - Project-local Python interpreter verified as `C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe`.
 - Project-local pip upgraded and verified as `26.2.1`.
 - VS Code successfully opened from the project root with `code .`.
+- VS Code workspace interpreter verified as the project-local `C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe`.
 - Development setup history and local-state corrections recorded in `docs/development-setup.md`.
 
 ## Current local development state
@@ -87,7 +88,7 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Next action
 
-Verify the VS Code workspace is using the project-local `.venv`, then continue with the Google Drive API smoke test. Do not place the downloaded OAuth credential JSON inside the public repository.
+Review and harden the repository's `.gitignore` before introducing any Google OAuth credentials or other local secrets. Then continue with the Google Drive API smoke test. Do not place the downloaded OAuth credential JSON inside the public repository.
 
 ## Continuity rule
 
