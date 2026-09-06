@@ -109,7 +109,7 @@ The resolver:
 
 The current runtime uses provider-neutral opaque storage references. A Google Drive adapter remains a separate implementation step.
 
-Local verification is pending: the user must run `tests/unit/test_case_scoped_drive.py` locally before this component is marked verified.
+Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with 8 passed tests.
 
 ## Completed environment work
 
@@ -126,16 +126,15 @@ Local verification is pending: the user must run `tests/unit/test_case_scoped_dr
 - Person/Entity Registry model, runtime, and tests created and verified.
 - Case ↔ Identity Association runtime and tests created and verified.
 - Case Creation Workflow contract, runtime, and tests created and verified.
-- Case-Scoped Drive Resolver contract and runtime created; local verification pending.
+- Case-Scoped Drive Resolver contract, runtime, and tests created and verified.
 
 ## Next implementation priorities
 
-1. Verify the Case-Scoped Drive Resolver locally.
-2. Implement case-scoped state and execution/run IDs.
-3. Define durable audit/observability boundary.
-4. Add isolation and cross-case contamination tests.
-5. Implement a Google Drive storage adapter behind the verified scope boundary.
-6. Define migration/compatibility handling for existing CASE-001.
-7. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-8. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
-9. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
+1. Implement case-scoped state and execution/run IDs.
+2. Define durable audit/observability boundary.
+3. Add isolation and cross-case contamination tests.
+4. Implement a Google Drive storage adapter behind the verified scope boundary.
+5. Define migration/compatibility handling for existing CASE-001.
+6. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+7. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
+8. Continue toward evidence extraction, research, analysis, optimization, challenge, audit, and final-output workflows.
