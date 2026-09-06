@@ -191,6 +191,37 @@ nothing to commit, working tree clean
 
 The repository's existing `.gitignore` already excludes `.env`, `.env.*`, virtual environments, caches, and local output/artifact directories. The OAuth credential is nevertheless kept physically outside the repository as the primary protection.
 
+### Step 11 — Google Drive Python dependency and import verification
+
+The following dependencies were installed successfully into the project-local `.venv`:
+
+```text
+google-api-python-client==2.200.0
+google-auth-httplib2==0.4.2
+google-auth-oauthlib==1.4.1
+google-auth==2.57.1
+google-api-core==2.36.0
+protobuf==7.36.1
+cryptography==50.0.1
+requests==2.34.2
+```
+
+The import smoke check was executed with:
+
+```powershell
+python -c "from googleapiclient.discovery import build; from google_auth_oauthlib.flow import InstalledAppFlow; print('Google Drive libraries: OK')"
+```
+
+Verified output:
+
+```text
+Google Drive libraries: OK
+```
+
+The verified dependency set is recorded in the repository root `requirements.txt`.
+
+This verifies that the required Google Drive Python libraries can be imported in the project environment. It does **not** yet verify OAuth authentication or access to Google Drive.
+
 ## Current local development state
 
 The verified local development chain is now:
@@ -204,6 +235,8 @@ C:\Users\rezag\ai-agent-lab
         ↓
     pip 26.2.1
         ↓
+ Google Drive libraries installed + import verified
+        ↓
       VS Code
         ↓
     Git / GitHub
@@ -215,7 +248,7 @@ Google OAuth credentials are stored separately at:
 C:\Users\rezag\ai-tax-agent\credentials.json
 ```
 
-Google Drive API Python integration has not yet been implemented or smoke-tested.
+Google Drive API Python integration has **not yet** been authenticated or smoke-tested against Drive. The next test must use the credential outside the repository and inspect only safe metadata.
 
 ## Security rules
 
