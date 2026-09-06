@@ -1,11 +1,12 @@
-from datetime import datetime, timezone
-
+from agent_lab.case_registry import StorageScopeReference
 from agent_lab.document_inventory import DocumentInventoryService
 from agent_lab.storage import InMemoryCaseScopedStorageAdapter, StorageObjectMetadata
 
 
 def _storage() -> InMemoryCaseScopedStorageAdapter:
-    storage = InMemoryCaseScopedStorageAdapter()
+    storage = InMemoryCaseScopedStorageAdapter(
+        {"CASE-001": StorageScopeReference("test", "root-1")}
+    )
     storage.add_object(
         "CASE-001",
         StorageObjectMetadata(
