@@ -1,6 +1,6 @@
 # Document Inventory and Intake Architecture
 
-Status: **approved baseline / first implementation verified**
+Status: **approved baseline / live-verified for CASE-001 metadata inventory**
 
 Last updated: 2026-09-06
 
@@ -12,21 +12,7 @@ It is an intake/inventory component, not a tax-analysis agent.
 
 ## Source of truth
 
-For CASE-001, the private source documents remain in Google Drive:
-
-```text
-Google Drive/
-└── AI-Tax-Agent/
-    └── Cases/
-        └── CASE-001/
-            ├── Documents/      <- source documents
-            ├── Evidence/       <- derived evidence, later stage
-            ├── Calculations/   <- derived calculations, later stage
-            ├── Reports/        <- generated reports, later stage
-            └── Audit/           <- audit records, later stage
-```
-
-GitHub stores code, schemas, documentation, tests, and evaluation assets. Real taxpayer documents and extracted sensitive content must not be stored in GitHub.
+For CASE-001, the private source documents remain in Google Drive. GitHub stores code, schemas, documentation, tests, decisions, and evaluation assets. Real taxpayer documents and extracted sensitive content must not be stored in GitHub.
 
 ## Intake boundary
 
@@ -58,8 +44,6 @@ The inventory additionally records:
 - document count;
 - folder count.
 
-The schema deliberately separates source metadata from later classification and interpretation. Additional metadata such as size, created time, modified time, checksum, or Drive version may be added when justified by a later requirement.
-
 ## Runtime implementation
 
 `src/agent_lab/document_inventory.py` implements `DocumentInventoryService` over the existing `CaseScopedStorageAdapter` contract.
@@ -73,41 +57,37 @@ It:
 - does not perform Drive-wide discovery;
 - distinguishes documents from folders.
 
-`tests/unit/test_document_inventory.py` provides the initial deterministic contract tests.
+`tests/unit/test_document_inventory.py` provides the deterministic contract tests.
 
 `scripts/case001_metadata_inventory.py` is the local CASE-001 execution harness. It requires the exact `CASE_001_DOCUMENTS_ROOT_ID` environment variable and uses the existing local OAuth flow. It prints the metadata-only inventory as JSON and does not modify Drive.
 
-## Separation of concerns
+## Inventory Evidence and Document Identity
 
-The pipeline is intentionally separated:
+Inventory is an observation snapshot. It does not itself become the long-term identity of a document.
+
+The current downstream chain is:
 
 ```text
-Drive Connector
+Case Registry
       ↓
-Case/Folder Resolver
+Case-Scoped Storage
       ↓
 Document Inventory
       ↓
-Inventory Evidence
-      ↓
 Document Identity
       ↓
-Document Processing
+Inventory Evidence
       ↓
-Evidence Extraction
-      ↓
-Fact Normalization/Reconciliation
-      ↓
-Tax Analysis
+Migration / Processing
 ```
+
+`Document Identity` assigns stable logical `document_id` values to source-object observations. `Inventory Evidence` can record the exact inventory item sequence together with the corresponding logical identity references. This allows later migration/preflight logic to prove that a manifest is based on an observed source snapshot rather than invented IDs or filenames.
+
+## Separation of concerns
 
 Document Inventory must not infer tax facts from filenames. For example, a filename containing `Spenden` is not by itself evidence that a deductible donation exists.
 
-## Deterministic-first rule
-
-Inventory is deterministic code, not an LLM agent.
-
-An LLM may later assist with document classification or extraction, but only after the source document has been identified, retrieved under explicit permissions, and passed through the evidence/provenance pipeline.
+Inventory is deterministic code, not an LLM agent. An LLM may later assist with document classification or extraction, but only after the source document has been identified, retrieved under explicit permissions, and passed through the evidence/provenance pipeline.
 
 ## Read/write permissions
 
@@ -129,7 +109,7 @@ An LLM may later assist with document classification or extraction, but only aft
 
 ## Privacy and minimization
 
-The inventory stage must request only the metadata fields required for its task. The current Google Drive adapter therefore requests IDs, names, MIME types, parents, and trashed state only. Content, permissions, owners, and other sensitive metadata are not requested.
+The inventory stage must request only the metadata fields required for its task. The current Google Drive adapter therefore requests IDs, names, MIME types, parents, and trashed state only.
 
 ## Pagination and completeness
 
@@ -137,7 +117,7 @@ Inventory must be complete for the selected folder. The Google Drive adapter con
 
 ## Idempotency
 
-Running inventory repeatedly against an unchanged folder should produce the same logical set of source items. Stable Drive object IDs, rather than filenames alone, are the primary identity key.
+Running inventory repeatedly against an unchanged folder should produce the same logical set of source items. Stable Drive object IDs, rather than filenames alone, are the primary source identity key.
 
 The current snapshot timestamp is intentionally run-specific, while the logical item set is deterministic.
 
@@ -167,11 +147,13 @@ Verified result:
 - the inventory was produced through the case-scoped Google Drive adapter;
 - no source-document mutation was performed.
 
+The private Drive object IDs are deliberately not recorded in GitHub documentation.
+
 This is authoritative machine inventory evidence for the metadata-only stage. It does not establish document-content correctness, OCR/extraction correctness, tax relevance, legal qualification, tax calculations, or final refund correctness.
 
 ## Acceptance criteria for the first implementation
 
-The implementation has now satisfied the metadata-only live acceptance gate:
+The metadata-only live acceptance gate is satisfied:
 
 - authenticate with the existing OAuth flow;
 - use the exact registered CASE-001 `Documents` scope without scanning unrelated Drive content;
@@ -183,4 +165,4 @@ The implementation has now satisfied the metadata-only live acceptance gate:
 - pass the required live execution;
 - produce a structured inventory snapshot suitable for later evidence provenance.
 
-The next layer is **Document Identity**, which assigns stable logical document identities to source-object observations without coupling identity to filenames or a storage provider.
+The next migration-specific layer is the **CASE-001 Migration Manifest Generator**, which derives explicit source-object → logical-document mappings from the inventory and existing Document Identity records. It remains non-mutating and must be preflight-validated before any future physical migration.
