@@ -47,6 +47,9 @@ Last verified: 2026-09-06
 - OAuth credential location verified as `C:\Users\rezag\ai-tax-agent\credentials.json`.
 - Mistaken repository copy of `credentials.json` removed; `git status` verified a clean working tree afterward.
 - Repository `.gitignore` was verified as already excluding local secrets/environment files and common local development artifacts.
+- Google Drive Python dependencies installed successfully in the project-local `.venv`.
+- Google Drive library import smoke check completed successfully with output: `Google Drive libraries: OK`.
+- `requirements.txt` added with the verified Google Drive/Auth dependency versions.
 
 ## Current local development state
 
@@ -58,6 +61,8 @@ C:\Users\rezag\ai-agent-lab
  Python 3.14.2
         ↓
     pip 26.2.1
+        ↓
+ Google Drive libraries installed
         ↓
       VS Code
         ↓
