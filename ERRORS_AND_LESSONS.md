@@ -2,6 +2,18 @@
 
 This file records only verified implementation failures, corrections, and architectural lessons. It is not a reconstruction of every historical interaction. Unverified memories are deliberately excluded.
 
+## 2026-09-06 — Live CASE-001 bootstrap constructor mismatch
+
+### Lesson: live harnesses must follow the actual adapter constructor contract
+
+**Observed condition:** `scripts/case001_identity_bootstrap.py` instantiated `GoogleDriveMetadataAdapter` with positional arguments, while the adapter constructor defines keyword-only parameters.
+
+**Observed failure:** `TypeError: GoogleDriveMetadataAdapter.__init__() takes 1 positional argument but 3 were given`.
+
+**Correction:** The harness was changed to pass `drive_service=` and `resolver=` explicitly. The correction was committed as `771db7b1d7de895d05bc2e4c745414a60efbc8ef`.
+
+**Verification:** The user re-ran the live bootstrap successfully against CASE-001: 15 documents, 0 folders, 15 logical identities, and no Drive mutation.
+
 ## 2026-09-06 — Live manifest readiness
 
 ### Lesson: in-memory logical identity is insufficient for a restart-safe real manifest
@@ -12,7 +24,7 @@ This file records only verified implementation failures, corrections, and archit
 
 **Correction:** Add a versioned, case-scoped local JSON snapshot export/import boundary and a read-only CASE-001 bootstrap harness. The local snapshot is ignored by Git and may contain private provider object IDs.
 
-**Verification required:** user execution of the bootstrap against the live CASE-001 Documents scope.
+**Verification:** The bootstrap was subsequently executed successfully against the live CASE-001 Documents scope, covering all 15 observed documents.
 
 ## 2026-09-06 — Migration source-scope authority
 
@@ -24,7 +36,7 @@ This file records only verified implementation failures, corrections, and archit
 
 **Correction:** `Case001MigrationCompatibility.prepare()` and `validate()` now require the source scope to equal the authoritative registered CASE-001 scope (`provider:root_id`).
 
-**Verification required:** user execution of the migration unit suite after this change.
+**Verification required:** User execution of the migration unit suite after this change.
 
 ## 2026-09-06 — Manifest tests versus real execution
 
