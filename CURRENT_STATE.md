@@ -26,10 +26,14 @@ Last verified: 2026-09-06
 - Current-law verification, authoritative evidence, final document generation, and controlled electronic submission are now explicit project requirements.
 - `docs/requirements.md` created as the Phase 10 requirements baseline.
 - `docs/use-cases.md` created with candidate workflows.
+- **Golden objective added: Maximize Legally Achievable Tax Benefit.**
+- **Tax Optimization Supervisor established as a primary architectural role candidate** responsible for continuous optimization review and cross-agent challenge/feedback.
 
 ## Current target
 
-Build a Germany-focused tax-assistance system that can ultimately handle supported tax matters from user-supplied documents through current-law-verified analysis, validated calculations, audited results, final print-ready documents, and controlled electronic submission where an official and lawful technical path exists.
+Build a Germany-focused tax-assistance system that can ultimately handle supported tax matters from user-supplied documents through current-law-verified analysis, validated calculations, systematic lawful tax optimization, audited results, final print-ready documents, and controlled electronic submission where an official and lawful technical path exists.
+
+The optimization target is explicit: minimize legally payable tax and maximize legally recoverable/refundable tax for the user, supported by applicable law, evidence, documentation, and measurable financial impact where calculable.
 
 ## Not yet completed
 
@@ -39,9 +43,9 @@ Build a Germany-focused tax-assistance system that can ultimately handle support
 - Detailed requirements and acceptance thresholds for the first workflow.
 - Authoritative German source inventory and current-law retrieval strategy.
 - Workflow decomposition.
-- Architecture decision.
+- Architecture decision, including final justification for the Tax Optimization Supervisor and other agent roles.
 - Agent/tool contracts.
-- Evaluation dataset and harness.
+- Evaluation dataset and harness, including tax-optimization opportunity coverage metrics.
 - Safety/privacy threat model.
 - First executable prototype.
 - Production deployment and operations design.
@@ -49,7 +53,7 @@ Build a Germany-focused tax-assistance system that can ultimately handle support
 
 ## Next action
 
-Continue Phase 10 by selecting and specifying the **first executable German tax workflow**. Define the taxpayer profile, tax year, exact scope/non-scope, input documents, required calculations, official forms/documents, authoritative sources, current-law verification mechanism, acceptance thresholds, and human approval/submission boundaries.
+Continue Phase 10 by selecting and specifying the **first executable German tax workflow**. Define the taxpayer profile, tax year, exact scope/non-scope, input documents, required calculations, official forms/documents, authoritative sources, current-law verification mechanism, tax-optimization objectives/metrics, acceptance thresholds, and human approval/submission boundaries.
 
 ## Continuity rule
 
