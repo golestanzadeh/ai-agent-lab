@@ -11,7 +11,6 @@ Optional:
     CASE_001_IDENTITY_SNAPSHOT
         Local JSON path. Defaults to artifacts/case001/document_identity.json.
 """
-
 from __future__ import annotations
 
 import json
@@ -76,12 +75,15 @@ def main() -> None:
     case_registry = build_case_registry(root_id)
     case_state = CaseStateStore(case_registry)
     audit = AuditStore(case_registry, case_state)
-    run_id = case_state.create_run(CASE_ID, request_id=f"case001-identity-bootstrap-{datetime.now(timezone.utc).isoformat()}").run_id
+    run_id = case_state.create_run(
+        CASE_ID,
+        request_id=f"case001-identity-bootstrap-{datetime.now(timezone.utc).isoformat()}",
+    ).run_id
 
     credentials = get_drive_credentials()
     drive_service = build("drive", "v3", credentials=credentials, cache_discovery=False)
     resolver = CaseScopedDriveResolver(case_registry)
-    storage = GoogleDriveMetadataAdapter(drive_service, resolver)
+    storage = GoogleDriveMetadataAdapter(drive_service=drive_service, resolver=resolver)
     inventory = DocumentInventoryService(storage).build(CASE_ID)
 
     identity = DocumentIdentityRegistry(case_registry, case_state)
