@@ -44,6 +44,9 @@ Last verified: 2026-09-06
 - VS Code successfully opened from the project root with `code .`.
 - VS Code workspace interpreter verified as the project-local `C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe`.
 - Development setup history and local-state corrections recorded in `docs/development-setup.md`.
+- OAuth credential location verified as `C:\Users\rezag\ai-tax-agent\credentials.json`.
+- Mistaken repository copy of `credentials.json` removed; `git status` verified a clean working tree afterward.
+- Repository `.gitignore` was verified as already excluding local secrets/environment files and common local development artifacts.
 
 ## Current local development state
 
@@ -59,6 +62,12 @@ C:\Users\rezag\ai-agent-lab
       VS Code
         ↓
     Git / GitHub
+```
+
+OAuth credentials are stored outside the repository:
+
+```text
+C:\Users\rezag\ai-tax-agent\credentials.json
 ```
 
 The previous `C:\Users\rezag\.venv` is not the project environment and must not be used as the project's source environment.
@@ -88,7 +97,7 @@ The optimization target is explicit: minimize legally payable tax and maximize l
 
 ## Next action
 
-Review and harden the repository's `.gitignore` before introducing any Google OAuth credentials or other local secrets. Then continue with the Google Drive API smoke test. Do not place the downloaded OAuth credential JSON inside the public repository.
+Run a minimal Google Drive API smoke test using the credential stored outside the repository. The first test should authenticate locally and inspect only the private `AI-Tax-Agent` Drive structure or safe metadata; it must not access, modify, upload, or process real tax documents yet. Record the result in this document and `docs/development-setup.md` before proceeding.
 
 ## Continuity rule
 
