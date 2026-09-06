@@ -19,6 +19,16 @@ Treat the repository as the durable project memory. Before making architectural 
 
 When documents conflict, flag the conflict and do not silently choose a version.
 
+## Case and data isolation
+
+- `case_id` is mandatory for every operation that reads or writes tax-case data.
+- Resolve case identity through the Case Registry before accessing case storage.
+- Never perform broad/unscoped Drive searches for tax-case data.
+- A component processing one case must never inspect, infer from, or retrieve another case's documents.
+- Case isolation must be enforced deterministically by application/connector code, not by prompt instructions alone.
+- Fail closed when case identity or scope cannot be validated.
+- Cross-case contamination is a security and correctness failure and requires tests.
+
 ## Change discipline
 
 1. Read the relevant documentation before changing architecture or behavior.
