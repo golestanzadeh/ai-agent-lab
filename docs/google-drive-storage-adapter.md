@@ -78,6 +78,47 @@ Minimum test matrix:
 
 A passing unit suite is not a claim of live Drive isolation. Live verification must be separately recorded.
 
+#### Stage 5 verification procedure
+
+Run from the repository root in the project's Python environment:
+
+```powershell
+$env:PYTHONPATH="src"
+.\.venv\Scripts\python.exe -m pytest -q tests\unit\test_storage.py tests\unit\test_google_drive_storage.py
+```
+
+Expected result: all tests pass.
+
+Then prepare two unrelated, manually created **test-only** Google Drive folders. They must not be CASE-001 folders and must contain no real tax documents. Put at least one harmless marker file in each folder so that each root has a visible child.
+
+Set their Drive folder IDs locally without committing them:
+
+```powershell
+$env:TEST_DRIVE_ROOT_A="<test-folder-A-id>"
+$env:TEST_DRIVE_ROOT_B="<test-folder-B-id>"
+```
+
+If the OAuth credential file is not at the harness default, set it locally:
+
+```powershell
+$env:GOOGLE_DRIVE_CREDENTIALS="<local-credentials-path>"
+```
+
+Run:
+
+```powershell
+$env:PYTHONPATH="src"
+.\.venv\Scripts\python.exe -m pytest -q tests\integration\test_google_drive_scope_live.py
+```
+
+The live harness is read-only. It does not create, move, rename, delete, or modify Drive data. It verifies both directions of cross-case access and rejects using one test root as an object for the other case.
+
+Do not substitute CASE-001 for either test root.
+
+#### Stage 5 evidence rule
+
+Only the exact locally executed output may be recorded as verification evidence. A test file existing in GitHub is not verification. A skipped integration test is not a passing integration test. Unit-test success does not establish live Drive isolation.
+
 ### Stage 6 — Documentation, Verification and Gate
 
 Record implementation status, test results, decisions, limitations, and the exact conditions for opening CASE-001 to inventory.
@@ -89,6 +130,8 @@ Required records:
 - integration test results;
 - `DECISIONS.md` decision entry;
 - `CURRENT_STATE.md` status update.
+
+Stage 6 is complete only when the evidence is recorded without upgrading unexecuted or skipped tests into verified status.
 
 ## CASE-001 gate
 
