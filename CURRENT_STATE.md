@@ -6,7 +6,7 @@ The project is in the foundational architecture and Phase 1 preparation stage. C
 
 ## Established architecture
 
-- GitHub is the source of truth for code, architecture, decisions, and tests.
+- GitHub is the source of truth for code, docs, tests, decisions, and verified state.
 - Google Drive is private source-document storage and working-case storage; it is not the system brain.
 - Local Python/Docker runtime is the execution environment.
 - Source documents under a case's `Documents/` boundary are immutable.
@@ -57,21 +57,17 @@ The exact migration of the currently existing CASE-001 layout is not yet impleme
 
 ## Mandatory isolation rule
 
-No Agent, pipeline component, or data-access tool may access case data without a validated `case_id`. Access must resolve through the Case Registry to the exact case folder reference. Unscoped broad Drive searches for case data are prohibited.
+No Agent, pipeline component, model, or data-access tool may access case data without a validated `case_id`. Access must resolve through the Case Registry to the exact case folder reference. Unscoped broad Drive searches for case data are prohibited.
 
 Case isolation is a deterministic security/correctness boundary, not merely an Agent prompt instruction. Failure to resolve a case or an out-of-scope object must fail closed.
 
 Cross-year summaries resolve cases through persistent `person_id`/`entity_id` and the Case Registry, then access each case separately. They must not scan unrelated Drive content and guess ownership.
 
-## Registries
+## Case Registry foundation
 
-Case Registry will map case identity to taxpayer/entity identity, tax period, case type, lifecycle state, exact Drive case-folder reference, processing/run metadata, and required version metadata.
+`docs/case-registry.md` now defines the first Registry contract. It establishes `case_id`, persistent person/entity identity, structured `tax_period`, case type, lifecycle state, storage scope reference, lookup behavior, invariants, failure-closed rules, versioning, and acceptance criteria.
 
-Person/Entity Registry will provide persistent identity mappings across tax periods. Registry data is an index and identity layer, not a replacement for source documents or evidence.
-
-## Document inventory
-
-The deterministic metadata-only Document Inventory remains the next processing capability, but its implementation must follow the foundational case-management architecture rather than hard-code CASE-001 as a special case.
+The Registry contract is designed so the physical storage implementation can evolve beyond Google Drive without changing the case identity contract.
 
 ## Completed environment work
 
@@ -84,13 +80,16 @@ The deterministic metadata-only Document Inventory remains the next processing c
 - Document Processing Contract created.
 - Case Party / Household Model created.
 - Foundational Case Management and Isolation architecture created.
+- Case Registry contract created.
 
 ## Next implementation priorities
 
-1. Implement Case Registry model and Case Creation workflow.
-2. Implement case-scoped Drive Resolver and access boundary.
-3. Implement case-scoped state and execution/run IDs.
-4. Add isolation and cross-case contamination tests.
-5. Define migration/compatibility handling for existing CASE-001.
-6. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-7. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
+1. Implement the deterministic Case Registry model from `docs/case-registry.md`.
+2. Implement Person/Entity Registry model.
+3. Implement Case Creation workflow.
+4. Implement case-scoped Drive Resolver and access boundary.
+5. Implement case-scoped state and execution/run IDs.
+6. Add isolation and cross-case contamination tests.
+7. Define migration/compatibility handling for existing CASE-001.
+8. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
+9. Run the live inventory against CASE-001/Documents only after the scope boundary is verified.
