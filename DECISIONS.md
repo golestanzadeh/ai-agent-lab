@@ -222,3 +222,26 @@ The migration layer remains non-mutating. No Drive copy, move, rename, delete, o
 **Verification requirement:** The CASE-001 migration test suite must cover the original structural checks plus successful identity/evidence linkage and fail-closed behavior for unknown or mismatched identity/evidence data.
 
 **Reason:** A migration plan is dangerous if it can assert an identity that the system has never observed or silently omit an observed source document. Anchoring migration to the two existing deterministic records creates a stronger preflight boundary without prematurely introducing physical storage mutation.
+
+## D-016 — CASE-001 migration manifests are generated from observed inventory and stable identity
+
+**Status:** accepted
+
+**Decision:** The first CASE-001 migration manifest must be generated deterministically from a case-scoped `DocumentInventory` and the existing `DocumentIdentityRegistry`, rather than being manually authored from filenames or remembered document IDs.
+
+The generator must:
+
+- require `CASE-001` and tax period 2024;
+- accept only an explicitly supplied source provider and source scope;
+- create one mapping for each non-folder inventory item;
+- resolve the logical `document_id` from the existing Document Identity registry using the same case, provider, and source object ID;
+- reject inventory documents without a known logical identity;
+- reject identities whose source scope differs from the supplied source scope;
+- reject inactive logical documents;
+- optionally bind the manifest to a matching Inventory Evidence record;
+- validate the resulting manifest through the existing CASE-001 migration compatibility boundary;
+- perform no Drive mutation and store no private Drive object IDs in repository documentation.
+
+The manifest is an execution/preflight artifact, not permission to mutate storage. Physical migration remains blocked until separate preflight, human approval, execution, rollback, and post-migration verification controls exist.
+
+**Reason:** The live CASE-001 inventory has established the actual source population, while Document Identity establishes stable logical identities. Generating the manifest from those deterministic records eliminates filename-based guessing and makes the migration boundary reproducible and auditable.
