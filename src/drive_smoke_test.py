@@ -7,39 +7,11 @@ process any tax documents.
 
 from __future__ import annotations
 
-from pathlib import Path
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
-CREDENTIALS_FILE = Path.home() / "ai-tax-agent" / "credentials.json"
-TOKEN_FILE = Path.home() / "ai-tax-agent" / "token.json"
+from agent_lab.google_drive_auth import get_drive_credentials
+
 TARGET_FOLDER_NAME = "AI-Tax-Agent"
-
-
-def get_credentials() -> Credentials:
-    """Load or obtain OAuth credentials without storing secrets in the repo."""
-    credentials = None
-
-    if TOKEN_FILE.exists():
-        credentials = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
-
-    if credentials and credentials.expired and credentials.refresh_token:
-        credentials.refresh(Request())
-    elif not credentials or not credentials.valid:
-        if not CREDENTIALS_FILE.exists():
-            raise FileNotFoundError(
-                f"OAuth credential file not found: {CREDENTIALS_FILE}"
-            )
-        flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_FILE), SCOPES)
-        credentials = flow.run_local_server(port=0)
-
-    TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
-    TOKEN_FILE.write_text(credentials.to_json(), encoding="utf-8")
-    return credentials
 
 
 def find_target_folder(service):
@@ -63,7 +35,7 @@ def find_target_folder(service):
 
 
 def main() -> None:
-    credentials = get_credentials()
+    credentials = get_drive_credentials()
     service = build("drive", "v3", credentials=credentials)
     folders = find_target_folder(service)
 
