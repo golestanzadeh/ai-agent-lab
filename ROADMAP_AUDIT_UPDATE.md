@@ -1,0 +1,1 @@
+Phase 5 audit foundation update: docs/audit-observability.md and src/agent_lab/audit.py and tests/unit/test_audit.py are created. Phase 5 status is now in progress. This file is a temporary marker and must be removed.
