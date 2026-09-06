@@ -47,6 +47,7 @@ Goals:
 Existing files:
 - `docs/architecture.md`
 - `docs/case-management.md`
+- `docs/case-registry.md`
 
 Still planned:
 - `docs/agent-design.md`
