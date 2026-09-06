@@ -135,9 +135,7 @@ class AuditStore:
         with self._lock:
             self._require_case(case_id)
             event = self._events.get(event_id)
-            if event is None:
-                raise AuditEventNotFoundError(event_id)
-            if event.case_id != case_id:
+            if event is None or event.case_id != case_id:
                 raise AuditEventNotFoundError(event_id)
             return event
 
@@ -168,6 +166,9 @@ class AuditStore:
             raise InvalidAuditEventError(f"unknown case_id: {case_id}")
 
     def _require_run(self, case_id: str, run_id: str) -> None:
-        run = self._case_state.get_run(run_id)
-        if run is None or run.case_id != case_id:
+        try:
+            run = self._case_state.get_run(case_id, run_id)
+        except (KeyError, PermissionError) as exc:
+            raise InvalidAuditEventError(f"run is outside case scope: {run_id}") from exc
+        if run.case_id != case_id:
             raise InvalidAuditEventError(f"run is outside case scope: {run_id}")
