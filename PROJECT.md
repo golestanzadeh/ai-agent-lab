@@ -18,6 +18,7 @@ For a supported case, the system should be able to:
 - research and cite authoritative sources;
 - calculate relevant tax figures with deterministic validation where possible;
 - identify applicable deductions, allowances, obligations, options, risks, and deadlines;
+- continuously search for lawful tax-optimization opportunities;
 - challenge its own reasoning and search for contrary interpretations or evidence;
 - perform an independent audit/QA pass;
 - produce complete, clear, evidence-backed tax documentation and submission-ready outputs;
@@ -27,6 +28,23 @@ For a supported case, the system should be able to:
 The system must distinguish clearly between facts, evidence, assumptions, calculations, legal/tax interpretations, conclusions, uncertainty, and human approvals. It must never present an unverified or stale rule as current merely because an LLM produced a plausible answer.
 
 "Senior tax-expert standard" is a **design and evaluation target**, not an unsupported claim of legal perfection. The project must establish measurable evidence for accuracy and completeness, and consequential submissions must remain subject to explicit controls and approval requirements defined during the project.
+
+## Golden objective: maximize legally achievable tax benefit
+
+A core objective of the entire system is:
+
+**Maximize Legally Achievable Tax Benefit**
+
+For every supported case, the system must continuously seek the best lawful outcome for the user by:
+
+1. **minimizing the legally payable tax amount**; and
+2. **maximizing the legally recoverable/refundable amount from the tax authority**.
+
+This is a cross-cutting objective, not a final reporting step. It must influence requirements, workflow decomposition, agent responsibilities, calculations, research, challenge, evaluation, safety, and final output.
+
+A dedicated **Tax Optimization Supervisor** is a primary architectural role candidate. It must continuously review new facts, documents, research findings, calculations, and decisions from other agents/components for missed or newly available tax benefits. Where a lawful, evidence-backed optimization opportunity is identified, it must be able to challenge affected work, request additional evidence/research, trigger recalculation or alternative-scenario analysis, and feed the result back into the relevant workflow stage.
+
+Every optimization recommendation must be supported by applicable law/evidence, effective-date awareness, required documentation, and an explicit financial impact estimate where calculable. The objective never permits unlawful tax avoidance, fabrication of evidence, omission of material facts, or unsupported deductions/claims.
 
 ## Primary domain
 
@@ -61,7 +79,7 @@ Potential components include:
 - Evidence Matching / Reconciliation component
 - German Tax Research Agent
 - Calculation / Tax Analysis Agent
-- Optimization / Options Agent
+- **Tax Optimization Supervisor**
 - Devil's Advocate / Challenge Agent
 - Auditor / QA Agent
 - Human Approval Gate
@@ -84,7 +102,8 @@ Final outputs should be:
 - traceable to source evidence;
 - suitable for printing;
 - suitable for electronic submission where an official interface and lawful technical integration exist;
-- accompanied by a machine-readable case/audit record where useful.
+- accompanied by a machine-readable case/audit record where useful;
+- accompanied by a tax-optimization summary showing identified opportunities, financial impact, evidence, and unresolved items where applicable.
 
 Automatic submission must be permissioned and controlled. The system must not silently submit consequential tax filings or declarations.
 
@@ -97,6 +116,8 @@ The project is successful when it demonstrates one or more supported German tax 
 - accurate document/fact extraction and reconciliation;
 - deterministic validation where appropriate;
 - measurable tax-result correctness against trusted references;
+- systematic identification of applicable tax-optimization opportunities;
+- measurable comparison of baseline versus optimized lawful tax outcome where calculable;
 - explicit handling of uncertainty and missing/conflicting evidence;
 - controlled agent/tool use;
 - independent challenge and audit stages;
@@ -116,4 +137,5 @@ The project is successful when it demonstrates one or more supported German tax 
 - bypassing official German tax authority requirements or authentication controls;
 - adding tools merely because they are available;
 - using personal or real taxpayer data unnecessarily in development;
-- optimizing infrastructure before workflow and evaluation are understood.
+- optimizing infrastructure before workflow and evaluation are understood;
+- pursuing tax benefits that are unlawful, unsupported, deceptive, or dependent on fabricated evidence.
