@@ -95,15 +95,7 @@ The runtime remains storage-provider-neutral and does not migrate CASE-001 or pe
 
 The deterministic runtime is implemented at `src/agent_lab/case_scoped_drive.py`, with tests at `tests/unit/test_case_scoped_drive.py`.
 
-The resolver:
-
-- requires a non-empty validated `case_id`;
-- resolves storage only through the authoritative Case Registry;
-- returns the exact registered `StorageScopeReference`;
-- fails closed for unknown cases;
-- rejects objects whose storage scope does not exactly match the resolved case scope;
-- does not scan Drive, inspect documents, or infer ownership;
-- preserves `case_id` when the physical storage reference changes.
+The resolver requires a validated `case_id`, resolves storage only through the Case Registry, returns the exact registered `StorageScopeReference`, fails closed for unknown cases, rejects out-of-scope objects, and does not scan Drive or infer ownership.
 
 Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with 8 passed tests.
 
@@ -171,6 +163,8 @@ The runtime is metadata-only and case-scoped. It preserves logical identity acro
 
 Local verification passed: the combined Document Identity + Inventory Evidence unit suites completed with **13 passed tests in 0.28s**.
 
+A versioned local JSON snapshot boundary is now implemented through `export_snapshot()`, `save_snapshot()`, `load_snapshot()`, and `import_snapshot()`. The snapshot is intended for local use only because it may contain private provider object IDs. `docs/document-identity-persistence.md` defines this boundary.
+
 ## Inventory Evidence
 
 `src/agent_lab/inventory_evidence.py` records an immutable, case-scoped metadata inventory snapshot and can link inventory items to stable logical Document Identity references. It also updates case state and emits a case/run-bound audit event.
@@ -181,27 +175,30 @@ Local verification passed: the combined Document Identity + Inventory Evidence u
 
 `src/agent_lab/case001_migration.py` implements non-mutating deterministic migration preparation and validation.
 
-The migration layer is connected to Document Identity and Inventory Evidence:
+The migration layer is connected to Document Identity and Inventory Evidence. Source scope is now authoritative: the migration plan must use the exact registered CASE-001 storage scope. Provider, source object ID, source scope, and logical document ID must match exactly; supplied Inventory Evidence must match source-object and logical-document sequences exactly; cross-case, cross-scope, unknown-identity, and identity-mismatch conditions fail closed.
 
-- logical document identity is authoritative when the registry is supplied;
-- provider, source object ID, source scope, and logical document ID must match exactly;
-- supplied Inventory Evidence must match the migration source-object and logical-document sequences exactly;
-- cross-case, cross-scope, unknown-identity, and identity-mismatch conditions fail closed;
-- no physical Drive mutation has been introduced.
-
-The updated migration suite and the combined migration + identity + evidence suites were executed by the user with **13 passed** and **26 passed** respectively.
+The migration suite and the combined migration + identity + evidence suites were executed by the user with **13 passed** and **26 passed** respectively.
 
 ## CASE-001 Migration Manifest Generator
 
-`src/agent_lab/case001_migration_manifest.py` now defines the deterministic manifest-generation boundary.
+`src/agent_lab/case001_migration_manifest.py` defines the deterministic manifest-generation boundary.
 
-The generator derives one migration mapping for each non-folder inventory item by resolving the existing logical `document_id` from `DocumentIdentityRegistry`. It rejects missing identity, source-scope mismatch, and inactive identity records, and can bind the manifest to a matching `InventoryEvidence` record before passing the result through the existing migration compatibility validation.
+The generator derives one migration mapping for each non-folder inventory item by resolving the logical `document_id` from `DocumentIdentityRegistry`. It rejects missing identity, source-scope mismatch, and inactive identity records, and can bind the manifest to matching `InventoryEvidence` before passing the result through migration compatibility validation.
 
-`tests/unit/test_case001_migration_manifest.py` contains the new deterministic tests. **These tests have been created but have not yet been executed/verified by the user.**
+`tests/unit/test_case001_migration_manifest.py` has been executed by the user: **6 passed in 0.17s**.
 
 No physical Drive migration has occurred. The manifest generator does not create, move, rename, delete, overwrite, or copy Drive objects.
 
-Decision D-016 records this boundary.
+## Pre-Manifest Safety Gate
+
+Before generating the real CASE-001 manifest from the live 15-document inventory, the following safety work is now implemented:
+
+- local restart-safe Document Identity snapshot persistence;
+- a read-only live bootstrap harness at `scripts/case001_identity_bootstrap.py`;
+- authoritative registered-source-scope enforcement in migration compatibility validation;
+- `ERRORS_AND_LESSONS.md` for verified failures and architectural lessons.
+
+The bootstrap has **not yet been executed by the user**, so persistence against the live CASE-001 inventory remains an open verification gate.
 
 ## Completed environment work
 
@@ -225,14 +222,15 @@ Decision D-016 records this boundary.
 - Six-stage Google Drive Storage Adapter rollout completed and live scope gate verified.
 - CASE-001 metadata-only inventory implemented and live-verified: 15 documents, 0 folders.
 - Document Identity and Inventory Evidence foundations implemented and unit-verified.
+- Document Identity local persistence baseline implemented; live bootstrap verification pending.
 - CASE-001 Migration/Compatibility baseline implemented and unit-verified.
 - Migration validation connected to Document Identity and Inventory Evidence.
-- CASE-001 Migration Manifest Generator implemented; unit verification pending.
+- CASE-001 Migration Manifest Generator implemented and unit-verified: 6 passed in 0.17s.
 
 ## Next implementation priorities
 
-1. User executes and verifies `tests/unit/test_case001_migration_manifest.py`.
-2. If it passes, review and strengthen source-scope authority and identity provenance before any physical migration work.
-3. Generate the real CASE-001 manifest from the live 15-document inventory locally; keep private Drive object IDs out of GitHub documentation.
+1. User executes `tests/unit/test_document_identity_persistence.py` and `tests/unit/test_case001_migration.py` after the latest persistence/source-scope changes.
+2. User executes `scripts/case001_identity_bootstrap.py` against the live CASE-001 Documents scope and confirms inventory/identity counts are both 15, with no Drive mutation.
+3. Review the generated local identity snapshot and only then generate the real CASE-001 migration manifest from the live inventory.
 4. Design the controlled physical migration preflight, human approval gate, executor, rollback, and post-migration verification. No physical Drive migration yet.
 5. Continue toward controlled document-content access and evidence extraction.
