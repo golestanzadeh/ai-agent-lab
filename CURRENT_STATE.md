@@ -20,17 +20,24 @@ Last verified: 2026-09-06
 - Core project documentation initialized.
 - Durable anti-hallucination rule established.
 - Future-file registry established in `ROADMAP.md`.
+- Complete initial Phase 0–100 lifecycle and final definition of done recorded in `MASTER_PLAN.md`.
 
 ## Not yet completed
 
 - Final domain selection.
+- Final problem and requirements specification.
+- Workflow decomposition.
 - Architecture decision.
 - Agent/tool contracts.
-- First executable prototype.
 - Evaluation dataset and harness.
 - Safety threat model.
-- Production deployment design.
+- First executable prototype.
+- Production deployment and operations design.
 
 ## Next action
 
-Complete Phase 1 discovery: compare candidate domains, choose the first real problem, define the minimum viable workflow, and record the decision before implementation.
+Begin Phase 1 discovery: compare candidate domains, choose the first real problem using explicit criteria, define requirements and use cases, and record the decision before implementation.
+
+## Continuity rule
+
+A future session must reconstruct project status from repository documents, especially `CONSTITUTION.md`, `PROJECT.md`, `MASTER_PLAN.md`, `ROADMAP.md`, `CURRENT_STATE.md`, and `DECISIONS.md`, rather than relying on chat history or assumptions.
