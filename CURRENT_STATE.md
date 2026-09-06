@@ -165,6 +165,32 @@ Local verification passed: `tests/unit/test_case_isolation.py` completed with **
 
 This verification establishes the deterministic isolation gate only. It does not yet prove isolation for live Google Drive access, authentication/authorization, durable storage, distributed execution, or production security.
 
+## Google Drive Storage Adapter — six-stage rollout
+
+`docs/google-drive-storage-adapter.md` is the authoritative implementation contract for the six-stage rollout recorded in Decision D-013.
+
+The six stages are:
+
+1. Storage Adapter Contract.
+2. Case-Scoped Resolver Integration.
+3. Metadata-only Google Drive Adapter.
+4. Deterministic Scope Enforcement.
+5. Adapter and Scope Tests, including live integration verification.
+6. Documentation, Verification and Gate.
+
+Implementation has started for Stages 1–4:
+
+- `src/agent_lab/storage.py` defines the provider-neutral case-scoped adapter contract, normalized metadata model, deterministic boundary wrapper, and in-memory contract-test provider.
+- `src/agent_lab/google_drive_storage.py` defines the metadata-only Google Drive adapter using an injected Drive service and `CaseScopedDriveResolver`.
+- `tests/unit/test_storage.py` defines initial case-scoped contract tests.
+- `tests/unit/test_google_drive_storage.py` defines initial Google Drive ancestry and containment tests.
+
+The Google Drive adapter does not expose a Drive-wide search/list operation. Explicit object reads verify parent ancestry against the exact case root and reject ambiguous, trashed, unrelated, or malformed objects.
+
+**Verification status:** the new adapter test files have been created in GitHub, but their local execution has not yet been performed in this recorded state. Therefore the adapter is **not yet marked verified**.
+
+The existing CASE-001 documents have not been opened or inventoried by this rollout. Live CASE-001 access remains blocked until the adapter tests and live scope verification pass.
+
 ## Completed environment work
 
 - Google Drive API enabled.
@@ -184,11 +210,14 @@ This verification establishes the deterministic isolation gate only. It does not
 - Case State + Run ID contract, runtime, and tests created and verified.
 - Durable Audit / Observability contract, runtime, and tests created and verified.
 - Case Isolation and Cross-Case Contamination acceptance tests created and verified.
+- Six-stage Google Drive Storage Adapter rollout registered; implementation started; verification still pending.
 
 ## Next implementation priorities
 
-1. Implement a Google Drive storage adapter behind the verified scope boundary.
-2. Define migration/compatibility handling for existing CASE-001.
-3. Implement deterministic metadata-only Document Inventory using the case-scoped connector.
-4. Run the live inventory against CASE-001/Documents only after the scope boundary and adapter are verified.
-5. Continue toward evidence extraction, research, analysis, optimization, challenge, and final-output workflows.
+1. Execute and verify the new storage adapter unit tests locally.
+2. Build/execute the live Google Drive scope integration test using isolated test folders, without touching CASE-001 documents.
+3. Complete Stage 6 verification evidence and release gate.
+4. Define migration/compatibility handling for existing CASE-001.
+5. Implement deterministic metadata-only Document Inventory using the verified case-scoped connector.
+6. Run the live inventory against CASE-001/Documents only after all gates are verified.
+7. Continue toward evidence extraction, research, analysis, optimization, challenge, and final-output workflows.
