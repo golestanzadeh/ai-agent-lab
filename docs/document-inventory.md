@@ -1,8 +1,8 @@
 # Document Inventory and Intake Architecture
 
-Status: **approved baseline**
+Status: **approved baseline / first implementation ready**
 
-Last verified: 2026-09-06
+Last updated: 2026-09-06
 
 ## Purpose
 
@@ -33,34 +33,49 @@ GitHub stores code, schemas, documentation, tests, and evaluation assets. Real t
 The first inventory pass MUST:
 
 1. authenticate using the approved local OAuth credential;
-2. resolve the approved case folder and its `Documents` child folder;
+2. use the exact CASE-001 `Documents` scope registered for the case;
 3. enumerate direct children of `Documents` that are not trashed;
 4. retrieve metadata only;
-5. record an inventory snapshot;
-6. detect obvious inventory anomalies such as unsupported file types, duplicate names, or unexpected subfolders;
-7. stop before downloading or interpreting document content.
+5. produce an inventory snapshot;
+6. stop before downloading or interpreting document content.
 
-Google Drive API `files.list` supports parent-based queries such as `'folderId' in parents`, pagination through `nextPageToken`, and explicit field selection. The implementation must use these mechanisms rather than scanning the user's entire Drive. See the official Drive API documentation for search and partial-response behavior.
+No Drive-wide search is permitted. The exact CASE-001 `Documents` folder ID must be supplied by the local case bootstrap/registry layer. It must not be discovered by searching Drive for a taxpayer or filename.
 
 ## Minimum metadata model
 
-Each inventory item should have, where available:
+The first implementation uses the verified provider-neutral storage metadata contract:
 
-- stable Drive file ID;
+- stable Drive object ID;
 - filename;
 - MIME type;
-- size in bytes;
-- created time;
-- modified time;
-- parent ID;
-- trashed status;
-- Drive version when available;
-- checksum/hash when safely obtainable without unnecessary content exposure;
-- inventory timestamp;
-- case ID;
-- source location identifier.
+- parent IDs;
+- folder/document flag.
 
-The exact schema must distinguish **source metadata** from any later classification or interpretation.
+The inventory additionally records:
+
+- `case_id`;
+- inventory timestamp;
+- document count;
+- folder count.
+
+The schema deliberately separates source metadata from later classification and interpretation. Additional metadata such as size, created time, modified time, checksum, or Drive version may be added when justified by a later requirement.
+
+## Runtime implementation
+
+`src/agent_lab/document_inventory.py` implements `DocumentInventoryService` over the existing `CaseScopedStorageAdapter` contract.
+
+It:
+
+- requires a `case_id`;
+- delegates enumeration to the case-scoped storage boundary;
+- sorts inventory items deterministically by case-insensitive name and object ID;
+- does not read document content;
+- does not perform Drive-wide discovery;
+- distinguishes documents from folders.
+
+`tests/unit/test_document_inventory.py` provides the initial deterministic contract tests.
+
+`scripts/case001_metadata_inventory.py` is the local CASE-001 execution harness. It requires the exact `CASE_001_DOCUMENTS_ROOT_ID` environment variable and uses the existing local OAuth flow. It prints the metadata-only inventory as JSON and does not modify Drive.
 
 ## Separation of concerns
 
@@ -97,7 +112,7 @@ An LLM may later assist with document classification or extraction, but only aft
 ### Inventory stage may
 
 - read Drive metadata for the approved case path;
-- create or update an inventory record in the approved case artifact area once that artifact-storage contract is implemented;
+- later create or update an inventory record in the approved case artifact area once that artifact-storage contract is implemented;
 - emit structured logs/audit events.
 
 ### Inventory stage must not
@@ -112,27 +127,24 @@ An LLM may later assist with document classification or extraction, but only aft
 
 ## Privacy and minimization
 
-The inventory stage must request only the metadata fields required for its task. Google recommends explicit field masks/partial responses to avoid unnecessary data transfer. The implementation must therefore avoid requesting file content, permissions, owners, or other sensitive metadata unless a later requirement explicitly justifies it.
+The inventory stage must request only the metadata fields required for its task. The current Google Drive adapter therefore requests IDs, names, MIME types, parents, and trashed state only. Content, permissions, owners, and other sensitive metadata are not requested.
 
 ## Pagination and completeness
 
-Inventory must be complete for the selected folder. The implementation must continue through every `nextPageToken` until none remains. A single page is not considered a complete inventory unless the API explicitly confirms no continuation token exists.
-
-The resulting inventory should record the number of enumerated items and the timestamp of the snapshot.
+Inventory must be complete for the selected folder. The Google Drive adapter continues through every `nextPageToken` until none remains. A single page is not considered a complete inventory unless the API explicitly confirms no continuation token exists.
 
 ## Idempotency
 
-Running inventory repeatedly against an unchanged folder should produce the same logical set of source items. Stable Drive file IDs, rather than filenames alone, are the primary identity key.
+Running inventory repeatedly against an unchanged folder should produce the same logical set of source items. Stable Drive object IDs, rather than filenames alone, are the primary identity key.
 
-A renamed document therefore remains the same source item, while a new Drive file receives a new identity even if it has the same filename.
+The current snapshot timestamp is intentionally run-specific, while the logical item set is deterministic.
 
 ## Failure states
 
 The inventory stage must fail closed when:
 
 - authentication is unavailable;
-- the approved case folder cannot be resolved;
-- the `Documents` folder cannot be resolved uniquely;
+- the exact case scope cannot be resolved;
 - Drive returns an authorization error;
 - pagination cannot be completed;
 - required metadata cannot be retrieved reliably.
@@ -141,19 +153,20 @@ A partial inventory must never be presented as a complete inventory.
 
 ## Current CASE-001 observation
 
-On 2026-09-06, the user verified the local Drive mirror contains 15 PDF files in `CASE-001/Documents`, totaling approximately 4.25 MB. This is a human-provided observation only. The authoritative machine inventory must be produced by the Drive API and must not assume the local filesystem listing is identical to the Drive API view.
+On 2026-09-06, the user reported that the local Drive mirror contains 15 PDF files in `CASE-001/Documents`, totaling approximately 4.25 MB. This is a human-provided observation only. The authoritative machine inventory must be produced by the Drive API and must not assume the local filesystem listing is identical to the Drive API view.
 
 ## Acceptance criteria for the first implementation
 
-The first implementation is accepted only when it can:
+The implementation is ready for live execution when it can:
 
 - authenticate with the existing OAuth flow;
-- resolve `AI-Tax-Agent/Cases/CASE-001/Documents` without scanning unrelated Drive content;
-- enumerate all direct child files using pagination;
+- use the exact registered CASE-001 `Documents` scope without scanning unrelated Drive content;
+- enumerate all direct children using pagination;
 - return deterministic metadata for every item;
-- report total item count;
-- distinguish folders from documents;
+- report total document and folder counts;
 - perform no source-document mutation;
 - perform no tax interpretation;
-- pass automated tests using mocked Drive responses;
-- produce a reproducible inventory snapshot suitable for later evidence provenance.
+- pass automated unit tests;
+- produce a structured inventory snapshot suitable for later evidence provenance.
+
+The live CASE-001 inventory itself is **not yet verified**. The next verification is the local execution of `scripts/case001_metadata_inventory.py` against the exact CASE-001 `Documents` folder ID.
