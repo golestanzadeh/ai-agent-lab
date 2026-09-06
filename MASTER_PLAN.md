@@ -2,18 +2,24 @@
 
 ## 1. Final destination
 
-The project will produce a real, reproducible, evidence-driven Agentic AI system that solves one clearly defined complex real-world problem from end to end. The system must demonstrate controlled agentic behavior rather than merely calling an LLM repeatedly.
+The project will produce a real, reproducible, evidence-driven Agentic AI system for tax work in Germany, ultimately supporting natural persons and legal entities across defined tax workflows.
+
+The target system should be capable of performing supported tax matters to a senior tax-expert standard, from user-supplied documents and information through validated analysis, preparation of final tax documents, and controlled electronic submission where an official and lawful technical path exists.
+
+The system must demonstrate controlled agentic behavior rather than merely calling an LLM repeatedly. It must remain grounded in authoritative German tax sources and must verify the rules applicable to the relevant tax year and case at execution time.
 
 The final system should be:
 
-- useful for a defined user and set of use cases;
+- useful for defined German tax users and use cases;
 - modular, observable, testable, and reproducible;
-- grounded in authoritative evidence where evidence matters;
-- explicit about uncertainty and limitations;
+- grounded in authoritative and current German tax evidence;
+- explicit about effective dates, tax years, uncertainty, and limitations;
 - capable of using tools under defined permissions;
 - able to coordinate multiple specialized roles only where justified;
 - protected by deterministic validation and human approval for consequential actions;
-- auditable from input through evidence, tool calls, decisions, outputs, and approvals;
+- auditable from input through evidence, research, calculations, decisions, outputs, and approvals;
+- capable of producing complete printable and submission-ready outputs for supported workflows;
+- capable of controlled electronic submission where technically and legally supported;
 - evaluated against representative, edge, failure, and adversarial cases;
 - packaged so another person can understand, run, test, and critique it;
 - strong enough to serve as a credible portfolio demonstration of practical Agentic AI engineering.
@@ -40,23 +46,11 @@ The build itself is the course. By project completion, the learner should unders
 
 ## 3. Domain and problem selection
 
-The initial candidate is a complex document-heavy, evidence-driven workflow. Tax assistance is a candidate domain, not a locked decision.
+**German tax assistance is selected as the primary domain.** The final destination covers tax workflows for natural persons and legal entities, while the first executable workflow must be narrowed to a concrete, testable use case during Phase 10.
 
-Domain selection must be based on explicit criteria including:
+Phase 10 must define the first supported tax problem, target user, jurisdiction details, tax year(s), scope/non-scope, inputs, outputs, authoritative evidence requirements, current-law verification strategy, measurable success criteria, and representative cases.
 
-- real-world usefulness;
-- learning value;
-- availability and quality of evidence/data;
-- feasibility for a solo project;
-- technical depth;
-- safety and legal/ethical risk;
-- ability to evaluate objectively;
-- demonstrability;
-- cost and operational complexity;
-- privacy requirements;
-- potential for meaningful agent/tool orchestration.
-
-The final domain and problem must be recorded as a decision before implementation.
+The first workflow should be narrow enough to evaluate rigorously but rich enough to exercise document understanding, retrieval/research, evidence grounding, structured reasoning, calculations, validation, challenge, auditability, and human-in-the-loop control.
 
 ## 4. Lifecycle: Phase 0 to Phase 100
 
@@ -67,26 +61,30 @@ Establish the repository as source of truth, project constitution, project defin
 
 Exit criteria: project can be resumed from GitHub without relying on chat history.
 
-### Phase 10 — Problem discovery and domain selection
+### Phase 10 — Problem discovery and requirements
 
-Compare candidate domains and select one concrete problem.
+Define the first concrete German tax workflow and its requirements.
 
 Define:
-- target user;
+- target user: natural person or legal entity, or a deliberately limited subset;
+- tax jurisdiction and relevant tax authority context;
+- tax year(s) and effective-date requirements;
 - user pain/problem;
 - scope and non-scope;
-- actors;
-- inputs and outputs;
-- constraints;
-- risks;
-- evidence requirements;
+- actors and approval responsibilities;
+- input documents/data;
+- expected outputs and official forms/documents;
+- current-law verification and authoritative source requirements;
+- calculations and validation requirements;
+- privacy/security constraints;
+- submission requirements and technical/legal boundaries;
 - measurable success criteria;
 - minimum viable workflow;
 - representative scenarios.
 
-Deliverables: requirements, domain selection, use cases, decision record.
+Deliverables: requirements, domain/scope record, use cases, decision records.
 
-Exit criteria: one problem is explicitly approved and testable.
+Exit criteria: one first workflow is explicitly approved and objectively testable.
 
 ### Phase 20 — Workflow decomposition
 
@@ -96,10 +94,12 @@ Determine:
 - which steps are deterministic;
 - which steps need reasoning;
 - where tools are needed;
-- where evidence enters;
+- where current-law evidence enters;
+- how source freshness/effective dates are checked;
 - where uncertainty exists;
 - where decisions branch;
 - where human approval is required;
+- where filing/submission is allowed;
 - where failure can occur;
 - which parts should not be autonomous.
 
@@ -118,9 +118,12 @@ Define:
 - permissions;
 - state model;
 - memory model;
+- current-law/source model;
 - evidence/provenance model;
 - structured schemas;
+- calculation and validation boundaries;
 - human approval gates;
+- submission controls;
 - error handling;
 - termination/stop conditions;
 - retry and recovery behavior.
@@ -135,17 +138,18 @@ Define how the system will be judged before optimizing it.
 
 Build:
 - evaluation rubric;
-- golden/expected cases where feasible;
+- trusted reference cases;
 - representative cases;
 - edge cases;
 - failure cases;
 - adversarial cases;
+- current-law freshness/effective-date tests;
 - regression policy;
 - safety threat model;
 - misuse cases;
 - privacy rules;
 - prompt-injection/tool-abuse defenses;
-- approval policy.
+- approval and submission policy.
 
 Exit criteria: a failing system can be distinguished from a successful one using repeatable evidence.
 
@@ -158,6 +162,7 @@ Requirements:
 - real outputs;
 - minimal justified agent count;
 - deterministic validation;
+- authoritative evidence retrieval for the supported case;
 - observable execution;
 - automated tests for deterministic components;
 - no premature infrastructure complexity.
@@ -168,16 +173,19 @@ Exit criteria: one complete workflow runs reproducibly from input to output.
 
 Add and harden:
 - real tool integrations;
-- retrieval/research where justified;
+- authoritative German tax retrieval/research;
+- current-law and effective-date verification;
 - evidence extraction and citation/provenance;
 - state transitions;
 - memory where justified;
 - agent delegation/routing;
 - structured tool results;
+- calculation engines and deterministic checks;
 - permission enforcement;
-- human approval flows.
+- human approval flows;
+- controlled submission integrations where justified.
 
-Exit criteria: agentic behavior is controlled, useful, and traceable.
+Exit criteria: agentic behavior is controlled, useful, current-law-aware, and traceable.
 
 ### Phase 70 — Evaluation, observability, and auditability
 
@@ -186,17 +194,20 @@ Build the measurement and inspection layer.
 Measure as appropriate:
 - task success;
 - factual/evidence correctness;
+- current-law correctness and freshness;
 - citation/source quality;
 - completeness;
+- calculation correctness;
 - failure rate;
 - unsafe-action rate;
 - tool-call accuracy;
+- submission accuracy where applicable;
 - latency;
 - token/model cost;
 - human intervention rate;
 - repeatability.
 
-Implement logs, traces, audit events, provenance, and run summaries.
+Implement logs, traces, audit events, provenance, source snapshots/identifiers where lawful and practical, and run summaries.
 
 Exit criteria: every important run can be inspected and compared with previous runs.
 
@@ -211,12 +222,15 @@ Test:
 - malformed documents;
 - tool failures;
 - stale information;
+- changed tax rules;
+- incorrect effective dates;
 - prompt injection;
 - instruction conflicts;
 - hallucination pressure;
 - excessive delegation;
 - loops and runaway execution;
 - unsafe requests;
+- unauthorized submission attempts;
 - unexpected outputs.
 
 For each important failure: reproduce, classify, measure, fix, retest, and record.
@@ -240,8 +254,10 @@ Address:
 - privacy;
 - monitoring;
 - backup/recovery considerations;
+- source availability/failure handling;
 - upgrade strategy;
-- operational documentation.
+- operational documentation;
+- controlled submission/authentication handling.
 
 Exit criteria: the system can be run repeatedly without manual archaeology.
 
@@ -256,6 +272,8 @@ Deliver:
 - setup instructions;
 - evaluation summary;
 - example runs;
+- representative final tax-document package;
+- current-law evidence demonstration;
 - known limitations;
 - design decisions;
 - failure analysis;
@@ -272,12 +290,15 @@ Verify:
 - architecture matches implementation;
 - tests pass;
 - evaluation results are recorded;
+- current-law verification is demonstrably effective;
 - safety boundaries are explicit;
 - provenance is intact;
 - known limitations are documented;
 - setup is reproducible;
 - repository contains no secrets or accidental private data;
 - final demo works;
+- supported final documents are print-ready;
+- controlled submission path works where supported and authorized;
 - major decisions are recorded;
 - learning objectives are mapped to concrete project evidence.
 
@@ -290,6 +311,7 @@ These are not optional end-stage features. They are maintained throughout the li
 - documentation and decision records;
 - current-state updates;
 - source/evidence discipline;
+- current-law verification;
 - testing;
 - security/privacy;
 - cost awareness;
@@ -299,7 +321,8 @@ These are not optional end-stage features. They are maintained throughout the li
 - failure tracking;
 - learning notes;
 - scope control;
-- explicit uncertainty.
+- explicit uncertainty;
+- controlled human approval for consequential actions.
 
 ## 6. Change management
 
@@ -320,8 +343,10 @@ The final repository must allow a new session, agent, or human reviewer to recon
 - what was chosen and rejected;
 - how the system works;
 - what data/evidence it uses;
+- how current German tax law is verified;
 - what agents and tools exist and why;
 - what controls exist;
+- how final documents are generated and submitted;
 - how it is evaluated;
 - what failed;
 - what changed;
