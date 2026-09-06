@@ -1,6 +1,6 @@
 # Document Identity
 
-**Status:** Design baseline approved for implementation planning
+**Status:** Implemented and unit-verified baseline
 **Last updated:** 2026-09-06
 
 ## Purpose
@@ -45,25 +45,13 @@ Document Identity
 
 ### 1. Logical Document ID
 
-A deterministic internal identifier such as:
-
-`DOC-CASE-001-00000001`
-
-is assigned by the case-scoped Document Identity registry. It represents the logical source document within one case.
+A deterministic internal identifier such as `DOC-CASE-001-00000001` is assigned by the case-scoped Document Identity registry. It represents the logical source document within one case.
 
 It is not derived from the filename and is not exposed as a substitute for the source provider object ID.
 
 ### 2. Source Object Identity
 
-The initial provider locator is:
-
-```text
-case_id
-provider
-provider_object_id
-```
-
-For Google Drive, `provider_object_id` is the Drive file ID. The exact case scope remains authoritative through the Case Registry and Case-Scoped Resolver.
+The initial provider locator is `case_id + provider + provider_object_id`. For Google Drive, `provider_object_id` is the Drive file ID. The exact case scope remains authoritative through the Case Registry and Case-Scoped Resolver.
 
 A provider object ID must never be accepted without validating that it belongs to the requested case scope.
 
@@ -71,13 +59,13 @@ A provider object ID must never be accepted without validating that it belongs t
 
 A source document can change while retaining the same provider object ID. Therefore each meaningful observed version must be distinguishable.
 
-Before content access is available, the system may record a **metadata observation** containing the stable provider object ID and relevant metadata. This is not a cryptographic content identity.
+Before content access is available, the system records metadata observations containing the stable provider object ID and relevant metadata. This is not a cryptographic content identity.
 
 After authorized content access is introduced, the system should additionally calculate a content fingerprint for the exact bytes when technically appropriate. The content fingerprint identifies the observed content, not the legal meaning of the document.
 
 ## Initial metadata identity record
 
-The first implementation should support at least:
+The implementation supports:
 
 ```text
 DocumentRecord
@@ -99,15 +87,9 @@ DocumentRecord
 └── schema_version
 ```
 
-`source_status` should distinguish at least:
+`source_status` distinguishes `ACTIVE`, `MISSING`, `TRASHED`, `REPLACED`, and `UNRESOLVED`.
 
-- `ACTIVE`
-- `MISSING`
-- `TRASHED`
-- `REPLACED`
-- `UNRESOLVED`
-
-The first implementation should not infer `REPLACED` merely from a changed filename. Replacement requires stronger evidence, such as a provider-level object change, content fingerprint difference, or explicit source observation rules.
+The current metadata-only implementation does not infer `REPLACED` from a filename change. Replacement requires stronger evidence and remains a later lifecycle concern.
 
 ## Identity resolution rules
 
@@ -117,11 +99,11 @@ If the same `(case_id, provider, source_object_id)` is observed again within the
 
 ### Rule B — Same name, different object
 
-A different provider object ID with the same filename is a **new candidate document**, not an update to the old document.
+A different provider object ID with the same filename is a new candidate document, not an update to the old document.
 
 ### Rule C — Renamed object
 
-A changed filename on the same provider object ID does not create a new document. The logical document remains the same, while metadata history records the observation change.
+A changed filename on the same provider object ID does not create a new document. The logical document remains the same, while metadata observations record the change.
 
 ### Rule D — Different case
 
@@ -129,15 +111,21 @@ The same provider object ID must never be assumed to belong to another case. Cas
 
 ### Rule E — Migration/provider change
 
-If a source document is migrated from Google Drive to another storage provider, the new provider locator is not automatically a new logical document. A future migration process may explicitly link the new source record to the old `document_id`, with provenance and audit evidence. Automatic cross-provider merging is prohibited.
+A migrated source is not automatically merged across providers. A future migration process may explicitly link the new source record to the old `document_id`, with provenance and audit evidence.
 
 ### Rule F — Content duplicate
 
-Two different source objects with identical bytes are not automatically one document. They may be duplicate copies, and their independent provenance must be preserved. A future duplicate-analysis layer may identify them as content-equivalent without collapsing their source identities.
+Two different source objects with identical bytes are not automatically one document. Their independent provenance must be preserved.
+
+## Implemented runtime
+
+`src/agent_lab/document_identity.py` implements the deterministic, case-scoped in-memory registry.
+
+It assigns stable logical IDs, resolves repeated observations by `(case_id, provider, source_object_id)`, preserves identity across filename changes, separates different source objects with the same name, records source observations with `run_id` provenance, validates case/run ownership, and updates the case's `documents_ref` state reference. It does not read document content or perform global discovery.
 
 ## Inventory relationship
 
-The metadata-only inventory currently produces provider object metadata. Document Identity should consume those observations after scope validation:
+The verified pipeline boundary is:
 
 ```text
 Case Registry
@@ -155,41 +143,27 @@ Document Registry / Source History
 Inventory Evidence
 ```
 
-The existing Inventory Evidence record remains a snapshot/evidence object. It must not become the primary document identity registry.
+Inventory Evidence now accepts stable Document Identity references. It remains a snapshot/evidence object and does not become the primary document identity registry.
 
 ## Provenance relationship
 
-The minimum provenance chain should eventually be:
-
 ```text
-Evidence / Fact
+Inventory Evidence
    ↓
 Document Identity
    ↓
-Source Version / Observation
+Source Observation
    ↓
 Provider + Object ID + Case Scope
    ↓
 Original Source Document
 ```
 
-A derived artifact such as OCR text, parsed JSON, or a normalized fact must reference the source document identity and the processing run that produced it.
+Future extracted facts and derived artifacts must reference the relevant document identity and processing run.
 
 ## Immutability and history
 
-The source file itself is not modified by identity management.
-
-Identity metadata should be treated as historical state rather than repeatedly overwriting the only record. At minimum, changes to name, MIME type, parent scope, source status, and content fingerprint must be attributable to an observation/run.
-
-The system should eventually maintain a source-observation history so an auditor can answer:
-
-- When was this document first seen?
-- In which case?
-- Under which provider object ID?
-- What metadata was observed at each run?
-- Did the object change?
-- Which derived artifacts were produced from which observed version?
-- Which evidence and calculations depend on it?
+The source file itself is not modified by identity management. Each inventory observation produces a `SourceObservation`, retaining metadata and run provenance. The logical `DocumentRecord` maintains current metadata while observation history preserves prior observed states.
 
 ## Collision and ambiguity policy
 
@@ -202,17 +176,15 @@ The following must never silently merge:
 - an object whose ancestry cannot be validated;
 - an object observed as trashed/missing and a newly discovered object with the same name.
 
-When identity cannot be established deterministically, the record enters `UNRESOLVED` and the workflow escalates rather than guessing.
+When identity cannot be established deterministically, the workflow must escalate rather than guess.
 
 ## Security boundary
 
-Document Identity is downstream of case isolation, not a replacement for it.
-
-The resolver must receive a validated `case_id`, and every source object lookup must pass through the case-scoped storage boundary. A global document search by filename, content, taxpayer name, or hash is prohibited in the initial architecture.
+Document Identity is downstream of case isolation, not a replacement for it. The resolver receives a validated `case_id`, validates the associated run, and operates only on inventory observations supplied within that case scope. Global document search by filename, content, taxpayer name, or hash is prohibited in the initial architecture.
 
 ## Idempotency
 
-Repeated observation of the same source object in the same case must be idempotent:
+Repeated observation of the same source object in the same case is idempotent at the logical identity level:
 
 ```text
 same case + same provider + same object ID
@@ -220,48 +192,24 @@ same case + same provider + same object ID
 existing document_id
 ```
 
-A repeated inventory run may create a new observation record and a new inventory evidence snapshot, but it must not create a second logical document solely because the run is new.
+A repeated observation creates a new source observation, but not a second logical document solely because the run is new.
+
+## Verification
+
+The implementation was locally verified on 2026-09-06 with:
+
+```text
+13 passed in 0.28s
+```
+
+The combined suite covered the Document Identity registry and Inventory Evidence integration, including logical identity idempotency, same-name/different-object separation, rename preservation, cross-case rejection, case/run scoping, case-state linkage, audit linkage, and inventory-evidence idempotency.
+
+This is unit verification only. It does not prove durable persistence, production authorization, content extraction, legal qualification, or final tax correctness.
 
 ## What Document Identity does not decide
 
-Document Identity does not determine:
+Document Identity does not determine tax relevance, person ownership of expenses, tax category, deductibility, legal qualification, final tax calculation, or legal equivalence of documents. Those decisions belong to later evidence, attribution, research, analysis, and calculation layers.
 
-- whether a document is tax-relevant;
-- which person owns an expense;
-- which tax category applies;
-- whether an expense is deductible;
-- the legal qualification of a document;
-- the final tax calculation;
-- whether two documents are legally equivalent.
+## Next boundary
 
-Those decisions belong to later evidence, attribution, research, analysis, and calculation layers.
-
-## Implementation sequence
-
-1. Define deterministic `DocumentRecord` and source-observation models.
-2. Implement a case-scoped in-memory Document Identity Registry.
-3. Resolve inventory items by `(case_id, provider, source_object_id)`.
-4. Record metadata observations without reading document content.
-5. Add idempotency and collision tests.
-6. Add cross-case isolation tests.
-7. Connect Document Identity to Inventory Evidence.
-8. Only after this baseline is verified, introduce controlled document-content access and content fingerprints.
-
-## Acceptance criteria for the first implementation
-
-- one logical `document_id` per source object within a case;
-- repeated observations are idempotent;
-- same-name/different-object documents remain separate;
-- renamed same-object documents remain the same logical document;
-- cross-case access fails closed;
-- source provider and object locator are retained;
-- observation/run provenance is retained;
-- no document content is required for the metadata-only phase;
-- no global Drive search is used;
-- ambiguous identity is represented explicitly rather than guessed;
-- original source documents remain untouched;
-- tests demonstrate all material identity rules.
-
-## Current boundary
-
-This is a design baseline. The Document Identity runtime is **not yet implemented or verified**.
+After this verified baseline, the next architecture task is controlled migration/compatibility handling for the existing CASE-001 structure. Content access and content fingerprints remain downstream of that boundary.
