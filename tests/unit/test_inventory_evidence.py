@@ -14,6 +14,7 @@ from agent_lab.case_registry import (
     TaxPeriod,
 )
 from agent_lab.case_state import CaseStateStore
+from agent_lab.document_identity import DocumentIdentityRegistry
 from agent_lab.document_inventory import DocumentInventory, DocumentInventoryItem
 from agent_lab.inventory_evidence import (
     InventoryEvidenceError,
@@ -139,3 +140,53 @@ def test_evidence_cannot_be_read_from_another_case() -> None:
 
     with pytest.raises(InventoryEvidenceNotFoundError):
         store.get("CASE-B", evidence.evidence_id)
+
+
+def test_inventory_evidence_links_logical_document_identity() -> None:
+    registry, state, audit, store = _store()
+    run = state.list_runs("CASE-A")[0]
+    identity = DocumentIdentityRegistry(registry, state)
+
+    evidence = store.record(
+        "CASE-A",
+        run.run_id,
+        _inventory("CASE-A", ("1", "2")),
+        source_provider="test",
+        source_scope_ref="root-a",
+        document_identity=identity,
+    )
+
+    records = identity.list_for_case("CASE-A")
+    assert evidence.document_identity_refs == tuple(record.document_id for record in records)
+    assert len(evidence.document_identity_refs) == 2
+    assert all(ref.startswith("DOC-CASE-A-") for ref in evidence.document_identity_refs)
+    assert audit.list_events("CASE-A", run.run_id)[0].metadata["document_identity_refs"] == evidence.document_identity_refs
+
+
+def test_inventory_evidence_identity_links_are_case_scoped() -> None:
+    registry, state, _, store = _store()
+    run_a = state.list_runs("CASE-A")[0]
+    identity = DocumentIdentityRegistry(registry, state)
+
+    evidence = store.record(
+        "CASE-A",
+        run_a.run_id,
+        _inventory("CASE-A", ("1",)),
+        source_provider="test",
+        source_scope_ref="root-a",
+        document_identity=identity,
+    )
+
+    foreign_run = state.list_runs("CASE-B")[0]
+    with pytest.raises(PermissionError):
+        store.record(
+            "CASE-A",
+            foreign_run.run_id,
+            _inventory("CASE-A", ("1",)),
+            source_provider="test",
+            source_scope_ref="root-a",
+            document_identity=identity,
+        )
+
+    assert evidence.case_id == "CASE-A"
+    assert all(ref.startswith("DOC-CASE-A-") for ref in evidence.document_identity_refs)
