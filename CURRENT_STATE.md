@@ -65,9 +65,15 @@ Cross-year summaries resolve cases through persistent `person_id`/`entity_id` an
 
 ## Case Registry foundation
 
-`docs/case-registry.md` now defines the first Registry contract. It establishes `case_id`, persistent person/entity identity, structured `tax_period`, case type, lifecycle state, storage scope reference, lookup behavior, invariants, failure-closed rules, versioning, and acceptance criteria.
+`docs/case-registry.md` defines the first Registry contract. It establishes `case_id`, persistent person/entity identity, structured `tax_period`, case type, lifecycle state, storage scope reference, lookup behavior, invariants, failure-closed rules, versioning, and acceptance criteria.
 
 The Registry contract is designed so the physical storage implementation can evolve beyond Google Drive without changing the case identity contract.
+
+## Person/Entity Registry foundation
+
+`docs/person-entity-registry.md` defines the foundational persistent identity model for natural persons and legal entities. It establishes explicit PERSON versus ENTITY identity, immutable persistent IDs, controlled lookup attributes, identity resolution states, identity-to-case mapping, lifecycle status, auditability, historical identity changes, and separation from case-scoped tax data.
+
+Runtime implementation, identity matching, merge/split logic, and migration are not yet implemented.
 
 ## Completed environment work
 
@@ -81,12 +87,13 @@ The Registry contract is designed so the physical storage implementation can evo
 - Case Party / Household Model created.
 - Foundational Case Management and Isolation architecture created.
 - Case Registry contract created.
+- Person/Entity Registry model created.
 
 ## Next implementation priorities
 
 1. Implement the deterministic Case Registry model from `docs/case-registry.md`.
-2. Implement Person/Entity Registry model.
-3. Implement Case Creation workflow.
+2. Implement the Person/Entity Registry runtime model from `docs/person-entity-registry.md`.
+3. Implement Case Creation workflow using both Registry models.
 4. Implement case-scoped Drive Resolver and access boundary.
 5. Implement case-scoped state and execution/run IDs.
 6. Add isolation and cross-case contamination tests.
