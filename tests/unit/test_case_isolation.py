@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from agent_lab.audit import ActorType, AuditEventType, AuditStore, InvalidAuditEventError
+from agent_lab.audit import AuditEventNotFoundError, ActorType, AuditEventType, AuditStore, InvalidAuditEventError
 from agent_lab.case_registry import (
     AssessmentMode,
     CaseRecord,
@@ -15,9 +15,8 @@ from agent_lab.case_registry import (
     StorageScopeReference,
     TaxPeriod,
 )
-from agent_lab.case_scoped_drive import CaseScopedDriveResolver, OutOfScopeError
+from agent_lab.case_scoped_drive import CaseNotFoundError, CaseScopedDriveResolver, OutOfScopeError
 from agent_lab.case_state import CaseStateStore
-
 
 CASE_A = "CASE-2024-0001"
 CASE_B = "CASE-2025-0001"
@@ -72,12 +71,9 @@ def test_run_created_for_a_cannot_be_used_by_b():
     run_a = state.create_run(CASE_A)
     with pytest.raises(InvalidAuditEventError):
         audit.append(
-            case_id=CASE_B,
-            run_id=run_a.run_id,
-            event_type=AuditEventType.TOOL_CALLED,
-            actor_type=ActorType.TOOL,
-            actor_id="storage",
-            operation="read",
+            case_id=CASE_B, run_id=run_a.run_id,
+            event_type=AuditEventType.TOOL_CALLED, actor_type=ActorType.TOOL,
+            actor_id="storage", operation="read",
         )
 
 
@@ -109,7 +105,7 @@ def test_case_a_cannot_read_case_b_audit_event():
         event_type=AuditEventType.ERROR_RECORDED, actor_type=ActorType.SYSTEM,
         actor_id="runtime", operation="error",
     )
-    with pytest.raises(Exception):
+    with pytest.raises(AuditEventNotFoundError):
         audit.get(CASE_A, event_b.event_id)
 
 
@@ -117,7 +113,7 @@ def test_case_state_lookup_is_case_bound():
     _, state, _, _ = make_system()
     run_a = state.create_run(CASE_A)
     assert state.get_run(CASE_A, run_a.run_id).case_id == CASE_A
-    with pytest.raises(Exception):
+    with pytest.raises(PermissionError):
         state.get_run(CASE_B, run_a.run_id)
 
 
@@ -130,13 +126,13 @@ def test_cross_case_storage_roots_are_rejected_if_same_root_is_introduced():
 
 
 def test_unknown_case_cannot_enter_any_case_scoped_boundary():
-    registry, state, resolver, audit = make_system()
+    _, state, resolver, audit = make_system()
     unknown = "CASE-2099-9999"
-    with pytest.raises(Exception):
+    with pytest.raises(CaseNotFoundError):
         resolver.resolve(unknown)
-    with pytest.raises(Exception):
+    with pytest.raises(KeyError):
         state.create_run(unknown)
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidAuditEventError):
         audit.append(
             case_id=unknown, run_id=None,
             event_type=AuditEventType.ERROR_RECORDED,
