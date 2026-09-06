@@ -113,19 +113,7 @@ Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with
 
 The deterministic runtime is implemented at `src/agent_lab/case_state.py`, with acceptance-oriented tests at `tests/unit/test_case_state.py`.
 
-The runtime establishes:
-
-- structured case-scoped operational state;
-- unique deterministic `run_id` generation;
-- exactly one `case_id` per run;
-- request-ID idempotency for repeated execution requests;
-- rejection of request-ID reuse across cases;
-- case-scoped run lookup and listing;
-- explicit run lifecycle transitions;
-- immutable terminal run status;
-- state references for parties, documents, evidence, facts, assumptions, rules, calculations, optimization, challenges, approvals, and outputs;
-- validation against the authoritative Case Registry;
-- fail-closed behavior for unknown cases and cross-case run/state access.
+The runtime establishes structured case-scoped operational state, unique deterministic `run_id` generation, exactly one `case_id` per run, request-ID idempotency, case-scoped run lookup, explicit run lifecycle transitions, immutable terminal status, state references, registry validation, and fail-closed cross-case access protection.
 
 The current runtime is intentionally in-memory. Durable persistence, workflow queues, checkpoint/resume, durable audit storage, and full tax-domain state schemas remain separate future layers.
 
@@ -135,17 +123,7 @@ Local verification passed: `tests/unit/test_case_state.py` completed with 12 pas
 
 `docs/audit-observability.md` defines the foundational audit contract. The deterministic runtime is implemented at `src/agent_lab/audit.py`, with acceptance-oriented tests at `tests/unit/test_audit.py`.
 
-The audit layer establishes:
-
-- exactly one validated `case_id` per event;
-- validated `run_id` for execution-bound events;
-- explicit event type, actor, operation, and timestamp;
-- reference-based links to inputs, evidence, decisions, outputs, errors, and approvals;
-- append-only event semantics;
-- case-scoped event retrieval;
-- fail-closed cross-case access protection;
-- independence from LLM conversation context;
-- minimization of sensitive/raw payload storage.
+The audit layer establishes exactly one validated `case_id` per event, validated `run_id` for execution-bound events, explicit event type/actor/operation/timestamp, reference-based links, append-only semantics, case-scoped retrieval, fail-closed cross-case protection, independence from LLM conversation context, and minimization of sensitive/raw payload storage.
 
 The first runtime is intentionally in-memory. Durable database storage, distributed ordering, cryptographic tamper evidence, retention policy, and OpenTelemetry integration remain future layers.
 
@@ -155,42 +133,35 @@ Local verification passed: `tests/unit/test_audit.py` completed with 9 passed te
 
 `docs/case-isolation-tests.md` defines the foundational isolation acceptance contract. The acceptance suite is implemented at `tests/unit/test_case_isolation.py`.
 
-The suite verifies the deterministic chain across Case Registry, Case State/Run ID, Case-Scoped Storage Resolver, and Audit Boundary. It covers storage isolation in both directions, cross-case run misuse, cross-case audit access, case-bound state lookup, unknown-case rejection, shared-root rejection, and preservation of distinct cases for the same persistent owner across tax periods.
+The suite verifies the deterministic chain across Case Registry, Case State/Run ID, Case-Scoped Storage Resolver, and Audit Boundary.
 
 Local verification passed: `tests/unit/test_case_isolation.py` completed with 10 passed tests in 0.14s.
 
-This verification establishes the deterministic isolation gate only. It does not yet prove isolation for live Google Drive access, authentication/authorization, durable storage, distributed execution, or production security.
-
 ## Google Drive Storage Adapter — six-stage rollout
 
-`docs/google-drive-storage-adapter.md` is the authoritative implementation contract for the six-stage rollout recorded in Decision D-013.
+`docs/google-drive-storage-adapter.md` is the authoritative implementation contract for Decision D-013.
 
-The six stages are complete and verified as defined by D-013.
+The six stages are complete and verified as defined by D-013. The adapter is metadata-only and case-scoped. The live A/B scope-isolation harness was read-only and did not modify CASE-001.
 
-- `src/agent_lab/storage.py` defines the provider-neutral case-scoped adapter contract, normalized metadata model, deterministic boundary wrapper, and in-memory contract-test provider.
-- `src/agent_lab/google_drive_storage.py` defines the metadata-only Google Drive adapter using an injected Drive service and `CaseScopedDriveResolver`.
-- `tests/unit/test_storage.py` defines case-scoped contract tests.
-- `tests/unit/test_google_drive_storage.py` defines Google Drive ancestry and containment tests.
-- `tests/integration/test_google_drive_scope_live.py` verifies live A/B case-scope isolation against two test-only Drive roots.
+Verification evidence:
 
-### Verification evidence
+- adapter unit suite: **8 passed in 0.25s**;
+- live Google Drive scope-isolation harness: **1 passed in 4.55s**.
 
-The adapter unit suite was executed locally and completed with 8 passed tests in 0.25s.
-
-The required live Google Drive scope-isolation harness was then executed against two isolated test-only Drive roots and completed with the exact result 1 passed in 4.55s.
-
-The live harness was read-only and did not modify CASE-001. This verifies the defined live A/B scope-isolation boundary, but does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, durable storage security, or electronic filing.
+This does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, durable storage security, or electronic filing.
 
 ## CASE-001 Metadata-Only Document Inventory
 
-The metadata-only inventory implementation is present and has now been live-verified against the CASE-001 Documents scope.
+The metadata-only inventory implementation is present and has been live-verified against the CASE-001 `Documents` scope.
 
-- `src/agent_lab/document_inventory.py` provides deterministic metadata-only inventory.
-- `tests/unit/test_document_inventory.py` provides the unit contract.
-- `scripts/case001_metadata_inventory.py` is the local live execution harness.
+- `src/agent_lab/document_inventory.py` provides deterministic metadata-only inventory;
+- `tests/unit/test_document_inventory.py` provides the unit contract;
+- `scripts/case001_metadata_inventory.py` is the local live execution harness;
 - `docs/document-inventory.md` is the inventory/intake contract.
 
-The live inventory produced **15 documents and 0 folders**. All 15 observed items were PDFs and were direct children of the specified CASE-001 Documents scope. The live harness performs no Drive-wide discovery and no source-document mutation.
+The live inventory produced **15 documents and 0 folders**. All 15 observed items were PDFs and direct children of the selected CASE-001 Documents scope. No source-document mutation was performed.
+
+Private Drive object IDs are not recorded in GitHub.
 
 ## Document Identity
 
@@ -202,27 +173,35 @@ Local verification passed: the combined Document Identity + Inventory Evidence u
 
 ## Inventory Evidence
 
-`src/agent_lab/inventory_evidence.py` records an immutable, case-scoped metadata inventory snapshot and can link every inventory item to stable logical Document Identity references. It also updates case state and emits a case/run-bound audit event.
-
-The source inventory remains immutable. Evidence is a reference-oriented record, not a copy of source documents.
+`src/agent_lab/inventory_evidence.py` records an immutable, case-scoped metadata inventory snapshot and can link inventory items to stable logical Document Identity references. It also updates case state and emits a case/run-bound audit event.
 
 ## CASE-001 Migration / Compatibility Layer
 
 `docs/case001-migration-compatibility.md` defines the compatibility contract between the legacy CASE-001 layout and the target 2024 case layout.
 
-`src/agent_lab/case001_migration.py` implements non-mutating deterministic migration preparation and validation. The baseline migration suite has been executed locally and completed with **8 passed tests in 0.13s**.
+`src/agent_lab/case001_migration.py` implements non-mutating deterministic migration preparation and validation.
 
-The migration layer is now connected to the existing Document Identity and Inventory Evidence boundaries:
+The migration layer is connected to Document Identity and Inventory Evidence:
 
-- when Document Identity is supplied, every migration mapping must resolve to an existing logical document in CASE-001;
-- provider, source object ID, source scope, and logical document ID must exactly match the identity record;
-- when Inventory Evidence is supplied, the migration mapping must exactly match its source-object sequence and logical-document sequence;
+- logical document identity is authoritative when the registry is supplied;
+- provider, source object ID, source scope, and logical document ID must match exactly;
+- supplied Inventory Evidence must match the migration source-object and logical-document sequences exactly;
 - cross-case, cross-scope, unknown-identity, and identity-mismatch conditions fail closed;
 - no physical Drive mutation has been introduced.
 
-New integration-boundary tests have been added to `tests/unit/test_case001_migration.py`. These tests have been written but their new integration portion has **not yet been executed/verified** in this environment.
+The updated migration suite and the combined migration + identity + evidence suites were executed by the user with **13 passed** and **26 passed** respectively.
 
-Decision D-015 records this architecture boundary.
+## CASE-001 Migration Manifest Generator
+
+`src/agent_lab/case001_migration_manifest.py` now defines the deterministic manifest-generation boundary.
+
+The generator derives one migration mapping for each non-folder inventory item by resolving the existing logical `document_id` from `DocumentIdentityRegistry`. It rejects missing identity, source-scope mismatch, and inactive identity records, and can bind the manifest to a matching `InventoryEvidence` record before passing the result through the existing migration compatibility validation.
+
+`tests/unit/test_case001_migration_manifest.py` contains the new deterministic tests. **These tests have been created but have not yet been executed/verified by the user.**
+
+No physical Drive migration has occurred. The manifest generator does not create, move, rename, delete, overwrite, or copy Drive objects.
+
+Decision D-016 records this boundary.
 
 ## Completed environment work
 
@@ -247,12 +226,13 @@ Decision D-015 records this architecture boundary.
 - CASE-001 metadata-only inventory implemented and live-verified: 15 documents, 0 folders.
 - Document Identity and Inventory Evidence foundations implemented and unit-verified.
 - CASE-001 Migration/Compatibility baseline implemented and unit-verified.
-- Migration validation connected to Document Identity and Inventory Evidence; integration-boundary tests added, execution pending.
+- Migration validation connected to Document Identity and Inventory Evidence.
+- CASE-001 Migration Manifest Generator implemented; unit verification pending.
 
 ## Next implementation priorities
 
-1. Execute and verify the updated CASE-001 migration integration test suite.
-2. If the suite passes, perform a stronger review of source-scope authority and identity provenance before any physical migration work.
-3. Define `docs/agent-design.md` and `docs/tool-contracts.md` before executable Agent orchestration.
+1. User executes and verifies `tests/unit/test_case001_migration_manifest.py`.
+2. If it passes, review and strengthen source-scope authority and identity provenance before any physical migration work.
+3. Generate the real CASE-001 manifest from the live 15-document inventory locally; keep private Drive object IDs out of GitHub documentation.
 4. Design the controlled physical migration preflight, human approval gate, executor, rollback, and post-migration verification. No physical Drive migration yet.
 5. Continue toward controlled document-content access and evidence extraction.
