@@ -2,7 +2,7 @@
 
 ## Project status
 
-The project is in the foundational architecture and Phase 1 preparation stage. CASE-001 is the first real validation case, but the architecture is being built for long-term multi-case, multi-year operation for natural persons and legal entities.
+The project is in the foundational architecture and Phase 2 implementation stage. CASE-001 is the first real validation case, but the architecture is being built for long-term multi-case, multi-year operation for natural persons and legal entities.
 
 ## Established architecture
 
@@ -107,8 +107,6 @@ The resolver:
 - does not scan Drive, inspect documents, or infer ownership;
 - preserves `case_id` when the physical storage reference changes.
 
-The current runtime uses provider-neutral opaque storage references. A Google Drive adapter remains a separate implementation step.
-
 Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with 8 passed tests.
 
 ## Case State + Run ID Model and Runtime
@@ -178,14 +176,13 @@ The six stages are:
 5. Adapter and Scope Tests, including live integration verification.
 6. Documentation, Verification and Gate.
 
-Stages 1–4 are implemented:
+Stages 1–6 are complete and verified as defined by D-013.
 
 - `src/agent_lab/storage.py` defines the provider-neutral case-scoped adapter contract, normalized metadata model, deterministic boundary wrapper, and in-memory contract-test provider.
 - `src/agent_lab/google_drive_storage.py` defines the metadata-only Google Drive adapter using an injected Drive service and `CaseScopedDriveResolver`.
 - `tests/unit/test_storage.py` defines case-scoped contract tests.
 - `tests/unit/test_google_drive_storage.py` defines Google Drive ancestry and containment tests.
-
-The Google Drive adapter does not expose a Drive-wide search/list operation. Explicit object reads verify parent ancestry against the exact case root and reject ambiguous, trashed, unrelated, or malformed objects.
+- `tests/integration/test_google_drive_scope_live.py` verifies live A/B case-scope isolation against two test-only Drive roots.
 
 ### Verification evidence
 
@@ -197,9 +194,20 @@ The live harness was read-only and did not modify CASE-001. This verifies the de
 
 ### Gate status
 
-Stage 6 documentation and verification evidence have been recorded. The release gate for a metadata-only CASE-001 `Documents` inventory is now **open**.
+The release gate for a metadata-only CASE-001 `Documents` inventory is open.
 
-The next live case-data operation must still be restricted to the exact registered CASE-001 `Documents` scope and must remain metadata-only.
+## CASE-001 Metadata-Only Document Inventory
+
+The first implementation is now present:
+
+- `src/agent_lab/document_inventory.py` provides the deterministic `DocumentInventoryService` over the case-scoped storage contract.
+- `tests/unit/test_document_inventory.py` provides the initial unit contract tests.
+- `scripts/case001_metadata_inventory.py` is the local live execution harness for CASE-001.
+- `docs/document-inventory.md` is the inventory/intake contract.
+
+The implementation is intentionally metadata-only. It requires the exact CASE-001 `Documents` folder ID through `CASE_001_DOCUMENTS_ROOT_ID`, builds a temporary in-memory Case Registry record, resolves the scope through `CaseScopedDriveResolver`, enumerates direct children through `GoogleDriveMetadataAdapter`, and prints a structured JSON inventory. It performs no Drive-wide discovery and no source-document mutation.
+
+The live CASE-001 inventory has **not yet been executed/verified**. No claim is made that the machine inventory matches the previously observed local mirror listing until the live command succeeds.
 
 ## Completed environment work
 
@@ -220,14 +228,13 @@ The next live case-data operation must still be restricted to the exact register
 - Case State + Run ID contract, runtime, and tests created and verified.
 - Durable Audit / Observability contract, runtime, and tests created and verified.
 - Case Isolation and Cross-Case Contamination acceptance tests created and verified.
-- Six-stage Google Drive Storage Adapter rollout implemented through Stage 5 and gated by live scope verification.
-- Stage 5 unit and live integration evidence recorded.
-- Stage 6 documentation and release gate completed.
+- Six-stage Google Drive Storage Adapter rollout completed and live scope gate verified.
+- Metadata-only CASE-001 inventory implementation created; live execution remains pending.
 
 ## Next implementation priorities
 
-1. Perform a metadata-only inventory of CASE-001 `Documents` through the exact registered case scope.
-2. Record the inventory as case-scoped evidence/audit data without modifying source documents.
+1. Execute and verify the CASE-001 metadata-only inventory locally.
+2. Record the verified inventory as case-scoped evidence/audit data without modifying source documents.
 3. Define migration/compatibility handling for the existing CASE-001 structure.
 4. Define and implement deterministic document identity/metadata handling for the inventory output.
 5. Continue toward evidence extraction, research, analysis, optimization, challenge, and final-output workflows.
