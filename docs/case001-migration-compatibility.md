@@ -1,6 +1,6 @@
 # CASE-001 Migration / Compatibility Layer
 
-**Status:** Implemented design baseline; no physical Drive migration performed
+**Status:** Implemented compatibility validation baseline; no physical Drive migration performed
 **Last updated:** 2026-09-06
 
 ## Purpose
@@ -30,7 +30,7 @@ AI-Tax-Agent/
                 └── Audit/
 ```
 
-The compatibility layer exists to bridge these layouts without changing the case identity or source-document identity. It deliberately separates **migration planning** from **physical Drive mutation**.
+The compatibility layer bridges these layouts without changing case identity or source-document identity. It deliberately separates **migration planning/validation** from **physical Drive mutation**.
 
 ## Non-negotiable invariants
 
@@ -45,7 +45,7 @@ A migration is valid only if all of the following remain true:
 7. No source document is deleted, overwritten, or silently duplicated.
 8. Legacy and target scopes are never treated as two independent cases.
 9. Any ambiguous mapping fails closed.
-10. Physical Drive writes are outside this first implementation.
+10. Physical Drive writes are outside this implementation.
 
 ## Compatibility model
 
@@ -54,7 +54,7 @@ The layer treats the legacy scope as a temporary alias for the same registered c
 ```text
 Legacy CASE-001 scope
         │
-        │ compatibility mapping
+        │ explicit migration mapping
         ▼
      CASE-001
      tax_period=2024
@@ -64,6 +64,36 @@ Target 2024 CASE-001 scope
 ```
 
 The mapping is case-scoped and explicit. It is not a Drive-wide discovery mechanism.
+
+## Validation chain
+
+The current implementation can validate a migration plan against both the stable Document Identity registry and a previously recorded Inventory Evidence snapshot:
+
+```text
+Case Registry
+     │
+     ├──────────────┐
+     ▼              ▼
+Document Identity  Inventory Evidence
+     │              │
+     └──────┬───────┘
+            ▼
+   CASE-001 Migration Plan
+            │
+            ▼
+     deterministic validation
+```
+
+When a `DocumentIdentityRegistry` is supplied, every mapping must resolve to an existing logical document in `CASE-001`, and all of these must match exactly:
+
+- `source_provider`
+- `source_object_id`
+- `source_scope_ref`
+- `logical_document_id`
+
+When `InventoryEvidence` is supplied, the migration manifest must match the evidence snapshot's source object sequence and logical document sequence exactly. The evidence must belong to `CASE-001`, use the plan's source scope, and use the expected Google Drive provider.
+
+This prevents a migration manifest from inventing document identities or silently omitting/reordering inventory objects.
 
 ## Migration phases
 
@@ -77,15 +107,15 @@ Create a deterministic migration plan from explicit scope references. No Drive m
 
 ### Phase 2 — Validate
 
-Validate the plan and its object mappings before any future write operation. The current implementation supports deterministic validation of the plan structure and identity invariants.
+Validate the plan against the Case Registry and, when connected, the Document Identity and Inventory Evidence layers. Duplicate, unknown, mismatched, or cross-scope mappings fail closed.
 
 ### Phase 3 — Execute
 
-Future implementation only. Physical Drive create/move/rename operations require an explicit migration command and separate verification. They are not part of the current layer.
+Future implementation only. Physical Drive create/move/rename operations require an explicit migration command, consequential-action approval, and separate verification. They are not part of the current layer.
 
 ### Phase 4 — Verify
 
-Future live verification must prove that every expected source object remains reachable, every document identity is preserved, and the target structure is correct.
+Future live verification must prove that every expected source object remains reachable, every logical document identity is preserved, and the target structure is correct.
 
 ### Phase 5 — Commit / Retire Legacy Alias
 
@@ -93,40 +123,55 @@ Only after successful verification may the legacy compatibility alias be retired
 
 ## Rollback principle
 
-The first implementation is intentionally non-mutating, so its rollback is trivial: discard the generated migration plan. A future physical migration must be designed so that a failed partial operation cannot be mistaken for a completed migration.
+The current implementation is intentionally non-mutating, so its rollback is trivial: discard the generated migration plan. A future physical migration must be designed so that a failed partial operation cannot be mistaken for a completed migration.
 
 ## Document Identity relationship
 
-Migration must operate on source object identity, not filenames.
+Migration operates on source object identity, not filenames.
 
 For each source document:
 
 ```text
 provider + original object ID
           ↓
-existing document_id
+existing logical document_id
           ↓
 new target parent/scope
 ```
 
-A copied object with a new provider object ID is not automatically the same source object. Such a mapping requires explicit migration provenance and must preserve the old logical `document_id` only when the migration process can prove the relationship.
+The migration layer does not create or reassign logical document IDs. When the identity registry is connected, the existing record is authoritative and the mapping must agree with it.
+
+A copied object with a new provider object ID is not automatically the same source object. Such a relationship requires explicit future migration provenance and must preserve the old logical `document_id` only when the migration process can prove the relationship.
+
+## Inventory Evidence relationship
+
+Inventory Evidence records the verified metadata-only source snapshot and can contain stable `document_identity_refs`. The migration layer can use that evidence as a preflight manifest boundary.
+
+The current validation requires exact sequence equality between:
+
+- migration `(source_provider, source_object_id)` mappings and evidence `item_refs`;
+- migration `logical_document_id` mappings and evidence `document_identity_refs`.
+
+Therefore a migration plan cannot silently migrate only part of the inventory when the full inventory evidence is supplied.
 
 ## Current runtime
 
-`src/agent_lab/case001_migration.py` implements a deterministic preparation/validation layer using opaque storage-scope references.
+`src/agent_lab/case001_migration.py` implements deterministic preparation and validation using opaque storage-scope references.
 
 It:
 
 - requires explicit source and target scope references;
 - requires the expected `case_id` and tax period;
 - produces a deterministic migration plan;
-- validates that the plan does not change case identity or tax period;
-- validates object mappings when supplied;
+- validates case identity and tax period;
+- validates explicit object mappings;
 - rejects duplicate source-object mappings;
-- rejects mappings that attempt to change a logical document ID;
+- rejects duplicate logical-document mappings;
+- can validate each mapping against `DocumentIdentityRegistry`;
+- can validate a complete mapping manifest against `InventoryEvidence`;
 - performs no Drive reads or writes;
 - performs no global search;
-- does not copy or move source documents.
+- does not copy, move, rename, delete, or overwrite source documents.
 
 ## Object mapping contract
 
@@ -140,22 +185,45 @@ source_scope_ref
 target_scope_ref
 ```
 
-The compatibility layer accepts these as identity assertions to validate, not as permission to mutate Drive.
+These are identity assertions to validate, not permission to mutate Drive.
 
 The following are invalid:
 
 - one source object mapped to multiple logical documents;
 - one logical document mapped from multiple unrelated source objects;
-- source case scope different from the plan source scope;
-- target case different from `CASE-001`;
+- source scope different from the plan source scope;
+- target scope different from the plan target scope;
+- unknown logical document when identity validation is enabled;
+- provider/object/scope mismatch against Document Identity;
+- inventory evidence from another case or source scope;
+- migration mappings that do not exactly match the supplied inventory evidence;
 - empty provider/object/document identifiers;
 - filename-only identity claims.
 
 ## Security boundary
 
-The migration layer is downstream of the Case Registry and must remain case-scoped. It must never discover CASE-001 by searching Drive for a taxpayer name, filename, or folder name.
+The migration layer is downstream of the Case Registry and remains case-scoped. It must never discover CASE-001 by searching Drive for a taxpayer name, filename, or folder name.
 
 A future executor must require explicit authorization and a human-controlled consequential-action gate before any physical mutation.
+
+## Tests
+
+`tests/unit/test_case001_migration.py` contains the structural migration tests plus integration-boundary tests for Document Identity and Inventory Evidence.
+
+The test suite covers:
+
+- CASE-001 / 2024 plan creation;
+- validated plan status;
+- logical document preservation;
+- duplicate and scope mismatch rejection;
+- unregistered and wrong-year rejection;
+- successful validation against registered Document Identity;
+- rejection of unknown logical document IDs;
+- rejection of source-object identity mismatch;
+- successful validation against matching Inventory Evidence;
+- rejection of Inventory Evidence from another source scope.
+
+The tests are deterministic and non-mutating. They do not prove live Drive migration safety.
 
 ## Acceptance criteria
 
@@ -166,6 +234,8 @@ The compatibility baseline is accepted when unit tests prove:
 - case identity is preserved;
 - tax period is preserved;
 - document logical identity is preserved;
+- Document Identity is authoritative when connected;
+- Inventory Evidence can act as an exact migration preflight boundary;
 - duplicate/ambiguous mappings fail closed;
 - no physical storage mutation is performed.
 
