@@ -2,9 +2,8 @@
 
 This test intentionally requires two manually prepared, unrelated Drive test
 folders. It never creates, moves, renames, deletes, or modifies Drive data.
-Set TEST_DRIVE_ROOT_A and TEST_DRIVE_ROOT_B to their folder IDs and provide
-Google OAuth credentials through the same local setup used by the Drive smoke
-test.
+Set TEST_DRIVE_ROOT_A and TEST_DRIVE_ROOT_B to their folder IDs and use the
+same local OAuth setup as the Drive smoke test.
 
 The harness is skipped unless the environment variables are present so normal
 unit-test runs remain offline and deterministic.
@@ -14,9 +13,9 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
-from pathlib import Path
 
 import pytest
+from googleapiclient.discovery import build
 
 from agent_lab.case_registry import (
     AssessmentMode,
@@ -29,14 +28,8 @@ from agent_lab.case_registry import (
     TaxPeriod,
 )
 from agent_lab.case_scoped_drive import CaseScopedDriveResolver, OutOfScopeError
+from agent_lab.google_drive_auth import get_drive_credentials
 from agent_lab.google_drive_storage import GoogleDriveMetadataAdapter
-
-
-def _credentials_path() -> Path:
-    configured = os.environ.get("GOOGLE_DRIVE_CREDENTIALS")
-    if configured:
-        return Path(configured)
-    return Path.home() / "ai-tax-agent" / "credentials.json"
 
 
 def _build_registry(root_a: str, root_b: str) -> CaseRegistry:
@@ -66,14 +59,12 @@ def _build_registry(root_a: str, root_b: str) -> CaseRegistry:
 
 def _drive_service():
     pytest.importorskip("googleapiclient.discovery")
-    from google.oauth2.credentials import Credentials
-    from googleapiclient.discovery import build
-
-    credentials_path = _credentials_path()
-    if not credentials_path.exists():
-        pytest.fail(f"Google Drive credentials file not found: {credentials_path}")
-    creds = Credentials.from_authorized_user_file(str(credentials_path))
-    return build("drive", "v3", credentials=creds, cache_discovery=False)
+    return build(
+        "drive",
+        "v3",
+        credentials=get_drive_credentials(),
+        cache_discovery=False,
+    )
 
 
 def test_live_google_drive_case_scope_isolation() -> None:
@@ -103,7 +94,7 @@ def test_live_google_drive_case_scope_isolation() -> None:
         with pytest.raises(OutOfScopeError):
             adapter.get_metadata("LIVE-TEST-B-2025", next(iter(a_ids)))
 
-    with pytest.raises(Exception):
+    with pytest.raises(OutOfScopeError):
         adapter.get_metadata("LIVE-TEST-A-2024", root_b)
-    with pytest.raises(Exception):
+    with pytest.raises(OutOfScopeError):
         adapter.get_metadata("LIVE-TEST-B-2025", root_a)
