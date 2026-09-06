@@ -30,35 +30,54 @@ Optimization recommendations must be lawful, applicable to the relevant tax year
 
 ## 3. Core functional requirements
 
-### FR-01 — Document intake
+### FR-01 — Case and taxpayer context
+
+Before substantive tax analysis, establish the tax-year-specific case context, including:
+
+- primary taxpayer/case owner;
+- whether the case is individual or family-based;
+- spouse/registered partner where relevant;
+- children and other materially relevant persons;
+- marital/family status and relevant changes during the tax year;
+- residence/household facts where relevant;
+- intended/legal assessment mode where applicable (Zusammenveranlagung / Einzelveranlagung);
+- tax class/ELStAM for each relevant employed person, including relevant periods/changes;
+- person-specific versus shared household facts;
+- economic bearer of material expenses.
+
+Unknown or ambiguous material facts must be explicitly recorded rather than inferred.
+
+### FR-02 — Document intake
 
 Accept supported user-provided tax documents and structured information.
 
-### FR-02 — Document understanding
+### FR-03 — Document understanding and party attribution
 
 Classify documents, extract relevant facts, preserve source references, and identify missing or unreadable information.
 
-### FR-03 — Reconciliation
+Every material document/fact must be attributable to the correct person, persons, or household context with evidence and an attribution status. Filename alone is insufficient. The model must support documents concerning multiple persons and person-to-document many-to-many relationships.
 
-Detect contradictions across documents and require resolution or explicit uncertainty instead of silently choosing a value.
+### FR-04 — Reconciliation
 
-### FR-04 — Current-law verification
+Detect contradictions across documents and require resolution or explicit uncertainty instead of silently choosing a value. Reconciliation must include identity/party conflicts, tax-year conflicts, ownership conflicts, and shared-versus-individual expense conflicts.
+
+### FR-05 — Current-law verification
 
 For every material tax/legal conclusion, verify the applicable German rules against authoritative sources available at execution time. The system must track source identity, relevant date/version information, and applicability to the case.
 
-### FR-05 — Research
+### FR-06 — Research
 
 Research authoritative German tax sources and provide traceable citations for material conclusions.
 
-### FR-06 — Calculation
+### FR-07 — Calculation
 
 Perform tax calculations with deterministic code or independently validated calculation logic wherever practical.
 
-### FR-07 — Analysis
+### FR-08 — Analysis
 
 Identify applicable tax treatment, deductions, allowances, obligations, deadlines, risks, and supported options.
 
-### FR-08 — Tax optimization supervision
+### FR-09 — Tax optimization supervision
 
 Continuously evaluate the case for lawful opportunities to reduce tax payable or increase tax legally recoverable/refundable. The optimization supervisor must review relevant facts, evidence, research, calculations, and decisions throughout the workflow, not only at the end.
 
@@ -72,27 +91,27 @@ The supervisor must be able to:
 - return work to an earlier workflow stage when further investigation is justified;
 - record the legal basis, evidence, assumptions, financial impact, confidence, and required human approval for each material optimization opportunity.
 
-### FR-09 — Challenge
+### FR-10 — Challenge
 
 Perform an independent challenge pass that actively searches for contradictory evidence, alternative interpretations, missing facts, calculation errors, unsupported conclusions, and missed lawful tax-optimization opportunities.
 
-### FR-10 — Audit
+### FR-11 — Audit
 
 Perform a final QA/audit pass before documents are approved.
 
-### FR-11 — Output package
+### FR-12 — Output package
 
 Generate complete, clear, traceable, and print-ready tax documents for the supported workflow, including required attachments and supporting evidence where applicable.
 
-### FR-12 — Electronic submission
+### FR-13 — Electronic submission
 
 Where an official and lawful technical submission route exists, support controlled electronic submission. Submission must require explicit authorization/approval and must never occur silently.
 
-### FR-13 — Audit trail
+### FR-14 — Audit trail
 
-Preserve a traceable record of source documents, extracted facts, evidence, research, calculations, optimization findings, decisions, approvals, generated documents, and submission events.
+Preserve a traceable record of source documents, extracted facts, party-attribution records, evidence, research, calculations, optimization findings, decisions, approvals, generated documents, and submission events.
 
-### FR-14 — Optimization reporting
+### FR-15 — Optimization reporting
 
 Provide an independent tax-optimization summary for supported cases containing, where applicable:
 
@@ -111,6 +130,9 @@ Provide an independent tax-optimization summary for supported cases containing, 
 - Accuracy must be measurable, not asserted.
 - Current-law freshness must be testable.
 - Effective-date handling must be testable.
+- Party/entity attribution accuracy must be measurable.
+- Household relationship and assessment-mode classification must be testable.
+- Document-to-person attribution must be measurable for supported workflows.
 - Optimization opportunity coverage must be measurable for supported workflows.
 - Missed-opportunity and false-positive rates must be measurable where a trusted reference set exists.
 - Outputs must be reproducible for a fixed case, source set, and configuration.
@@ -142,3 +164,7 @@ For a supported workflow, final documents must be:
 ## 6. First workflow constraint
 
 The final product may eventually support many German tax workflows. The first implementation must be a deliberately narrow, high-value workflow that can be evaluated rigorously. The concrete first workflow, target taxpayer profile, tax year, documents, official forms, and submission route are Phase 10 decisions still to be made.
+
+## 7. Party-model contract
+
+The conceptual contract for parties, household relationships, tax-year-specific status, tax-class handling, assessment mode, document attribution, shared expenses, temporal facts, ambiguity handling, and privacy is defined in `docs/case-party-model.md`.
