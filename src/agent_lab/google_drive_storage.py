@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent_lab.case_scoped_drive import CaseNotFoundError, CaseScopedDriveResolver, OutOfScopeError
+from agent_lab.case_scoped_drive import CaseScopedDriveResolver, OutOfScopeError
 from agent_lab.storage import StorageAdapterError, StorageObjectMetadata, StorageObjectNotFoundError
 
 
@@ -47,7 +47,7 @@ class GoogleDriveMetadataAdapter:
                 spaces="drive",
                 fields="nextPageToken,files(id,name,mimeType,parents,trashed)",
                 pageToken=page_token,
-                orderBy="name,id",
+                orderBy="name",
             )
             response = request.execute()
             for item in response.get("files", []):
