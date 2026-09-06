@@ -57,6 +57,11 @@ Last verified: 2026-09-06
 - **The Document Inventory boundary was formally approved as the first executable processing stage.**
 - `docs/document-inventory.md` was created with the inventory contract, metadata model, deterministic-first rule, permissions, privacy/minimization requirements, pagination/completeness requirements, idempotency, failure states, and acceptance criteria.
 - `docs/architecture.md` was upgraded to the approved logical architecture, including the source-document boundary, intake pipeline, evidence/provenance boundary, permissions, audit/observability, evaluation, and implementation sequence.
+- **Case Party / Household Context was formally added as a foundational architecture layer.**
+- `docs/case-party-model.md` was created as the conceptual contract for taxpayer, spouse/partner, child, household, tax-year status, document attribution, economic burden, assessment mode, temporal facts, ambiguity handling, and privacy.
+- `docs/requirements.md` was extended with explicit party/context, document-to-person attribution, and reconciliation requirements.
+- `docs/use-cases.md` was extended with a dedicated family/spouse/children use case and party-aware escalation requirements.
+- **Decision D-009 accepted:** every natural-person case requires an explicit party/household model before substantive calculations are considered reliable.
 
 ## Current local development state
 
@@ -97,9 +102,13 @@ Drive Connector
     ↓
 Case/Folder Resolver
     ↓
+Case Party / Household Context
+    ↓
 Document Inventory
     ↓
 Inventory Validation
+    ↓
+Document → Party Attribution
     ↓
 Document Processing
     ↓
@@ -108,7 +117,20 @@ Evidence Extraction
 Fact Normalization / Reconciliation
 ```
 
-The immediate implementation target is the first four stages. Document Inventory is deterministic code, not an LLM agent. It must enumerate only the approved `CASE-001/Documents` path and retrieve metadata only before any document content is processed.
+The immediate implementation target remains deterministic, metadata-only intake. The Party/Household layer is a required case-state contract; it does not automatically become an LLM Agent.
+
+## Party-model architectural rules
+
+- A case is not assumed to belong to one person.
+- For married/registered partners, each spouse's relevant Steuerklasse/ELStAM must be captured independently where applicable.
+- Steuerklasse/ELStAM is treated as wage-tax/withholding evidence and must not be confused with final income-tax liability.
+- Joint versus individual assessment must be explicit and legally verified before optimization comparison.
+- Children are first-class case parties when tax-relevant.
+- Every material document/fact must be attributable to a person, multiple persons, or shared household context.
+- Filename alone is never sufficient for material attribution.
+- Shared expenses must not automatically be assumed to be 50/50.
+- Material ambiguous or contradictory party attribution must stop or escalate the affected workflow.
+- Party and tax attributes are time-dependent and must support tax-year/effective intervals.
 
 ## Not yet completed
 
@@ -118,14 +140,16 @@ The immediate implementation target is the first four stages. Document Inventory
 - Add mocked/unit tests for the inventory component.
 - Run the live metadata-only inventory against CASE-001.
 - Record the authoritative API inventory snapshot.
-- Exact target taxpayer profile and tax-year requirements for CASE-001.
+- Define the concrete CASE-001 taxpayer/family profile from evidence.
+- Define the exact tax year/assessment period for CASE-001.
+- Define detailed party-model schemas and validation tests for the first workflow.
 - Detailed requirements and acceptance thresholds for the first tax workflow.
 - Authoritative German source inventory and current-law retrieval strategy.
 - Evidence extraction and fact/reconciliation implementation.
 - Workflow decomposition beyond the approved intake baseline.
 - Final architecture decisions for each candidate agent/component.
 - Agent/tool contracts.
-- Evaluation dataset and harness, including tax-optimization opportunity coverage metrics.
+- Evaluation dataset and harness, including party-attribution and tax-optimization opportunity coverage metrics.
 - Safety/privacy threat model.
 - First executable end-to-end tax prototype.
 - Production deployment and operations design.
