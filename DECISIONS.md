@@ -291,3 +291,13 @@ The identity reference is an integrity/identity reference, not a cryptographic s
 When authorized, development may use the controlled workflow: inspect → implement → test → analyze → fix → retest → git review → commit → push → report. The project must remain understandable, maintainable, testable, and continuable without Codex.
 
 **Reason:** A controlled agent-assisted workflow can improve engineering execution while preserving human governance, Git traceability, and operational independence from any specific coding agent.
+
+## D-020 — CASE-001 approval context composition and manifest provenance
+
+**Status:** design and narrow contract adjustment authorized by the human; branch implementation pending human review and acceptance before main integration.
+
+**Decision:** A dedicated CASE-001 composition layer translates the exact manifest and successful live-target-preflight artifacts into the generic D-017 `ApprovalExecutionContext`. `LiveTargetScopeResult` records the existing Manifest `ArtifactIdentity` at preflight execution. Composition requires exact equality with the supplied manifest identity and rejects missing provenance. The nested D-018 structural preflight identity and hashed payload remain unchanged.
+
+Identical manifest contents intentionally share artifact identity. Attempt/run provenance is a separate concern and is not introduced. Composition does not create, grant, or consume approval, access Drive, or execute migration. D-017 remains generic; Manifest and Preflight do not become approval-aware.
+
+**Reason:** Different mappings can produce identical structural preflight results. Their distinct manifest identities must be retained in the live result to prevent substitution during composition. This provenance binding closes that ambiguity without redefining D-018 identity semantics. Implementation and verification are documented in `docs/case001-approval-context.md`; tests do not constitute human stage acceptance.

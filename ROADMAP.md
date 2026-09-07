@@ -248,6 +248,20 @@ Planned files:
 - `docs/demo.md`
 - `docs/limitations.md`
 
+## D-020 approved integration boundary
+
+Implemented on the dedicated development branch, pending human review and main integration:
+
+- `src/agent_lab/case001_approval_context.py`
+- `tests/unit/test_case001_approval_context.py`
+- `docs/case001-approval-context.md`
+
+The authorized integration composes existing artifact identities into the generic
+D-017 execution context. Live target results retain exact manifest provenance;
+D-018 structural identity and D-017 lifecycle contracts remain unchanged.
+Physical execution, approval grant/consumption, and attempt provenance are outside
+this boundary. Local verification is recorded in `CURRENT_STATE.md`.
+
 ## Future-file registry rule
 
 A file listed as planned is **not** considered created or implemented until it exists in GitHub. A future file may be added, renamed, split, or cancelled only through an explicit update to this roadmap and, for significant changes, a decision record.
