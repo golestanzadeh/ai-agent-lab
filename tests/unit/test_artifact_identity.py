@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from agent_lab.artifact_identity import build_artifact_identity, canonical_json
 from agent_lab.case001_migration_manifest import Case001MigrationManifest
 from agent_lab.case001_migration import DocumentMigrationMapping
@@ -50,22 +52,7 @@ def test_manifest_exposes_stable_artifact_identity():
 
 def test_manifest_identity_changes_when_mapping_changes():
     first = _manifest()
-    second = Case001MigrationManifest(
-        case_id=first.case_id,
-        tax_period_year=first.tax_period_year,
-        source_provider=first.source_provider,
-        source_scope_ref=first.source_scope_ref,
-        target_scope_ref=first.target_scope_ref,
-        mappings=(
-            DocumentMigrationMapping(
-                source_provider="google_drive",
-                source_object_id="DOC-002",
-                logical_document_id="DOCLOG-001",
-                source_scope_ref="google_drive:SOURCE",
-                target_scope_ref="google_drive:TARGET",
-            ),
-        ),
-    )
+    second = replace(first, mappings=(replace(first.mappings[0], source_object_id="DOC-002"),))
     assert first.artifact_identity.reference != second.artifact_identity.reference
 
 
@@ -83,15 +70,7 @@ def test_preflight_exposes_stable_artifact_identity():
 def test_preflight_identity_changes_when_result_changes():
     preflight = Case001MigrationPreflight()
     empty_target = preflight.run(_manifest(), target_scope_is_actual=True, target_is_empty=True)
-    non_empty_target = object.__new__(type(empty_target))
-    for field in (
-        "case_id", "tax_period_year", "document_count", "source_scope_ref",
-        "target_scope_ref", "target_scope_is_actual", "target_is_empty",
-        "mapping_count_matches", "source_objects_unique", "logical_documents_unique",
-        "preflight_passed",
-    ):
-        object.__setattr__(non_empty_target, field, getattr(empty_target, field))
-    object.__setattr__(non_empty_target, "target_is_empty", False)
+    non_empty_target = replace(empty_target, target_is_empty=False)
     assert empty_target.artifact_identity.reference != non_empty_target.artifact_identity.reference
 
 
