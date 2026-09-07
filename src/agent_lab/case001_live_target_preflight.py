@@ -1,9 +1,4 @@
-"""Read-only validation of an explicit CASE-001 migration target scope.
-
-This module validates only an explicitly supplied Google Drive target folder.
-It never searches Drive globally and never creates, moves, renames, deletes,
-or overwrites storage objects.
-"""
+"""Read-only validation of an explicit CASE-001 migration target scope."""
 
 from __future__ import annotations
 
@@ -13,6 +8,7 @@ from typing import Any
 from agent_lab.case001_migration_manifest import Case001MigrationManifest
 from agent_lab.case001_migration_preflight import (
     Case001MigrationPreflight,
+    MigrationPreflightError,
     MigrationPreflightResult,
 )
 
@@ -23,8 +19,6 @@ class LiveTargetPreflightError(RuntimeError):
 
 @dataclass(frozen=True, slots=True)
 class LiveTargetScopeResult:
-    """Read-only evidence about one explicitly supplied target folder."""
-
     target_object_id: str
     target_name: str
     target_mime_type: str
@@ -35,19 +29,14 @@ class LiveTargetScopeResult:
 
 
 class GoogleDriveLiveTargetScopePreflight:
-    """Validate an explicit Drive target folder without mutation or discovery."""
+    """Validate an explicit Drive target folder without storage mutation."""
 
     FOLDER_MIME = "application/vnd.google-apps.folder"
 
     def __init__(self, *, drive_service: Any) -> None:
         self._drive = drive_service
 
-    def run(
-        self,
-        manifest: Case001MigrationManifest,
-        *,
-        target_object_id: str,
-    ) -> LiveTargetScopeResult:
+    def run(self, manifest: Case001MigrationManifest, *, target_object_id: str) -> LiveTargetScopeResult:
         target_object_id = target_object_id.strip()
         if not target_object_id:
             raise LiveTargetPreflightError("target_object_id is required")
@@ -60,12 +49,14 @@ class GoogleDriveLiveTargetScopePreflight:
 
         children = self._list_children(target_object_id)
         target_is_empty = len(children) == 0
-
-        structural = Case001MigrationPreflight().run(
-            manifest,
-            target_scope_is_actual=True,
-            target_is_empty=target_is_empty,
-        )
+        try:
+            structural = Case001MigrationPreflight().run(
+                manifest,
+                target_scope_is_actual=True,
+                target_is_empty=target_is_empty,
+            )
+        except MigrationPreflightError as exc:
+            raise LiveTargetPreflightError(str(exc)) from exc
 
         return LiveTargetScopeResult(
             target_object_id=target_object_id,
@@ -79,15 +70,11 @@ class GoogleDriveLiveTargetScopePreflight:
 
     def _get_metadata(self, object_id: str) -> dict[str, Any]:
         try:
-            return (
-                self._drive.files()
-                .get(
-                    fileId=object_id,
-                    fields="id,name,mimeType,parents,trashed",
-                )
-                .execute()
-            )
-        except Exception as exc:  # provider errors are normalized at the boundary
+            return self._drive.files().get(
+                fileId=object_id,
+                fields="id,name,mimeType,parents,trashed",
+            ).execute()
+        except Exception as exc:
             raise LiveTargetPreflightError("target object is unavailable") from exc
 
     def _list_children(self, parent_id: str) -> tuple[dict[str, Any], ...]:
@@ -95,20 +82,15 @@ class GoogleDriveLiveTargetScopePreflight:
         results: list[dict[str, Any]] = []
         while True:
             try:
-                response = (
-                    self._drive.files()
-                    .list(
-                        q=f"'{parent_id}' in parents and trashed = false",
-                        spaces="drive",
-                        fields="nextPageToken,files(id,name,mimeType,parents,trashed)",
-                        pageToken=page_token,
-                        orderBy="name",
-                    )
-                    .execute()
-                )
+                response = self._drive.files().list(
+                    q=f"'{parent_id}' in parents and trashed = false",
+                    spaces="drive",
+                    fields="nextPageToken,files(id,name,mimeType,parents,trashed)",
+                    pageToken=page_token,
+                    orderBy="name",
+                ).execute()
             except Exception as exc:
                 raise LiveTargetPreflightError("cannot inspect target children") from exc
-
             results.extend(response.get("files", []))
             page_token = response.get("nextPageToken")
             if not page_token:
