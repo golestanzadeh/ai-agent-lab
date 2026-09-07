@@ -2,7 +2,7 @@
 
 ## Status and scope
 
-Implemented and locally verified on the D-020 development branch; human review and acceptance are required before integration into main.
+Human-accepted at `e6f28e89acf45541e4cfaa55c9efd8db35fc7909` and integrated into main through a non-fast-forward merge. Integrated-main verification: **223 passed, 1 skipped in 2.29s**, using the complete-suite command below. D-020 is closed; approval consumption and physical migration remain outside this acceptance.
 
 `src/agent_lab/case001_approval_context.py` exposes the pure function `compose_approval_context(manifest, live_preflight, *, run_id, actor)`. It returns the generic D-017 `ApprovalExecutionContext`. It has no Case Registry, approval store, audit store, filesystem, or Drive client dependency and performs no external data access. Its inputs must be supplied by the existing case-scoped workflow. Presence checks on run and actor do not establish registry membership, authorization, or execution-attempt provenance.
 

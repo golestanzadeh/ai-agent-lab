@@ -294,7 +294,7 @@ When authorized, development may use the controlled workflow: inspect → implem
 
 ## D-020 — CASE-001 approval context composition and manifest provenance
 
-**Status:** design and narrow contract adjustment authorized by the human; branch implementation pending human review and acceptance before main integration.
+**Status:** accepted by the human at `e6f28e89acf45541e4cfaa55c9efd8db35fc7909` and integrated into main. D-020 is closed; no physical migration or approval consumption is authorized by this acceptance.
 
 **Decision:** A dedicated CASE-001 composition layer translates the exact manifest and successful live-target-preflight artifacts into the generic D-017 `ApprovalExecutionContext`. `LiveTargetScopeResult` records the existing Manifest `ArtifactIdentity` at preflight execution. Composition requires exact equality with the supplied manifest identity and rejects missing provenance. The nested D-018 structural preflight identity and hashed payload remain unchanged.
 

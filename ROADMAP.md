@@ -250,7 +250,7 @@ Planned files:
 
 ## D-020 approved integration boundary
 
-Implemented on the dedicated development branch, pending human review and main integration:
+Human-accepted at `e6f28e89acf45541e4cfaa55c9efd8db35fc7909` and integrated into main; D-020 is closed:
 
 - `src/agent_lab/case001_approval_context.py`
 - `tests/unit/test_case001_approval_context.py`

@@ -280,9 +280,9 @@ Verification using the existing project-local environment, with `$env:PYTHONPATH
 
 The live Drive integration harness skipped because its explicit test-root environment variables were absent. No live Drive verification or mutation occurred. These results establish local test success, not human stage acceptance. D-020 was not started.
 
-## D-020 Approval Context Composition — branch implementation
+## D-020 Approval Context Composition — accepted and integrated
 
-D-020 is implemented on `d020-case001-approval-context`, pending human review and integration into main. `src/agent_lab/case001_approval_context.py` composes the generic D-017 execution context from an exact manifest and successful live preflight, preserving their existing D-018 references. Live preflight now records the manifest's exact `ArtifactIdentity`; missing or mismatched provenance fails closed. Identical manifest contents remain the same artifact identity; no attempt/run provenance was added.
+The human accepted D-020 at `e6f28e89acf45541e4cfaa55c9efd8db35fc7909`; it is now integrated into main through a non-fast-forward merge. The integrated-main full suite passed: **223 passed, 1 skipped in 2.29s** with `PYTHONPATH=src` and `.\.venv\Scripts\python.exe -m pytest -q`. D-020 is closed; this acceptance does not authorize approval consumption or physical migration. `src/agent_lab/case001_approval_context.py` composes the generic D-017 execution context from an exact manifest and successful live preflight, preserving their existing D-018 references. Live preflight now records the manifest's exact `ArtifactIdentity`; missing or mismatched provenance fails closed. Identical manifest contents remain the same artifact identity; no attempt/run provenance was added.
 
 The focused suite passed **51 tests**, required regression suites passed **104 tests**, and the complete suite passed **223 tests with 1 opt-in live test skipped**, using the project-local Python environment with `PYTHONPATH=src`. See `docs/case001-approval-context.md` for commands and semantics. D-017 lifecycle and D-018 structural identity payloads remain unchanged. No approval was granted or consumed by composition, no Drive mutation occurred, and no migration executor was created. Tests do not constitute stage acceptance.
 
