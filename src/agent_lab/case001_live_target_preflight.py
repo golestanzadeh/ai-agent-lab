@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from agent_lab.artifact_identity import ArtifactIdentity
+
 from agent_lab.case001_migration_manifest import Case001MigrationManifest
 from agent_lab.case001_migration_preflight import (
     Case001MigrationPreflight,
@@ -26,6 +28,7 @@ class LiveTargetScopeResult:
     target_is_empty: bool
     child_count: int
     structural_preflight: MigrationPreflightResult
+    manifest_identity: ArtifactIdentity | None = None
 
 
 class GoogleDriveLiveTargetScopePreflight:
@@ -66,6 +69,7 @@ class GoogleDriveLiveTargetScopePreflight:
             target_is_empty=target_is_empty,
             child_count=len(children),
             structural_preflight=structural,
+            manifest_identity=manifest.artifact_identity,
         )
 
     def _get_metadata(self, object_id: str) -> dict[str, Any]:

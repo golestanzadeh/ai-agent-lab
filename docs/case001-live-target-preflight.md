@@ -60,6 +60,16 @@ $env:PYTHONPATH="src"
 
 The output intentionally reports only safe target metadata and validation facts. Provider object IDs must not be committed to GitHub or written into project documentation.
 
+## D-020 manifest provenance
+
+The live result now records `manifest_identity`, the exact existing Manifest
+`ArtifactIdentity` used during preflight. The optional default is `None` for
+legacy callers; D-020 composition rejects missing or mismatched provenance.
+The nested `structural_preflight` remains the version-1 D-018 preflight artifact
+with an unchanged hashed payload. This binding distinguishes different manifest
+contents without introducing run/attempt provenance or approval lifecycle logic.
+See `case001-approval-context.md` for composition validation and test evidence.
+
 ## Mutation policy
 
 This stage performs no:
