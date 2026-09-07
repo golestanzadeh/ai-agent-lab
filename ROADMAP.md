@@ -44,7 +44,8 @@ Goals:
 - define execution/run identity and idempotency;
 - define case creation workflow;
 - define migration strategy for the existing CASE-001 structure;
-- anchor CASE-001 migration validation to Document Identity and Inventory Evidence.
+- anchor CASE-001 migration validation to Document Identity and Inventory Evidence;
+- implement the deterministic human approval boundary for consequential actions.
 
 Existing files:
 - `docs/architecture.md`
@@ -57,6 +58,7 @@ Existing files:
 - `docs/google-drive-storage-adapter.md`
 - `docs/case001-migration-compatibility.md`
 - `docs/document-identity.md`
+- `docs/approval-gate.md`
 
 Implemented runtime foundations:
 - `src/agent_lab/case_registry.py`
@@ -72,6 +74,9 @@ Implemented runtime foundations:
 - `src/agent_lab/document_identity.py`
 - `src/agent_lab/inventory_evidence.py`
 - `src/agent_lab/case001_migration.py`
+- `src/agent_lab/case001_migration_manifest.py`
+- `src/agent_lab/case001_live_target_preflight.py`
+- `src/agent_lab/approval.py`
 
 Verified unit-test suites:
 - Case Registry: 10/10
@@ -85,6 +90,7 @@ Verified unit-test suites:
 - Google Drive Storage Adapter: 8/8
 - Document Identity + Inventory Evidence: 13/13
 - CASE-001 Migration baseline: 8/8
+- D-017 Approval Store/Gate: 12/12 local verification
 
 ### Google Drive Storage Adapter — six-stage work package
 
@@ -108,7 +114,7 @@ Current implementation artifacts:
 
 ### CASE-001 inventory / identity / migration work package
 
-Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility validation integrated; physical migration not implemented**
+Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility validation integrated; live target preflight implemented; human approval gate implemented; physical migration not implemented**
 
 - Metadata-only CASE-001 inventory: implemented and live-verified with 15 PDF documents and 0 folders.
 - Document Identity: implemented and unit-verified.
@@ -116,28 +122,38 @@ Status: **metadata inventory verified; identity/evidence foundation implemented;
 - CASE-001 Migration/Compatibility Layer: implemented and baseline unit-verified.
 - Migration ↔ Document Identity validation: implemented.
 - Migration ↔ Inventory Evidence exact-manifest validation: implemented.
+- CASE-001 Migration Manifest Generator: implemented and unit-verified.
+- CASE-001 Live Target Preflight: implemented as a read-only target-scope validation boundary.
+- D-017 Human Approval Gate: implemented with immutable approval values, exact binding, deterministic fail-closed validation, one-time consumption, process-local atomic consistency, rollback semantics, and existing AuditStore integration.
 - Physical Drive migration: deliberately not implemented.
 
 Current artifacts:
 - `docs/document-inventory.md`
 - `docs/document-identity.md`
 - `docs/case001-migration-compatibility.md`
+- `docs/case001-live-target-preflight.md`
+- `docs/approval-gate.md`
 - `src/agent_lab/document_inventory.py`
 - `src/agent_lab/document_identity.py`
 - `src/agent_lab/inventory_evidence.py`
 - `src/agent_lab/case001_migration.py`
+- `src/agent_lab/case001_migration_manifest.py`
+- `src/agent_lab/case001_live_target_preflight.py`
+- `src/agent_lab/approval.py`
 - `tests/unit/test_document_inventory.py`
 - `tests/unit/test_document_identity.py`
 - `tests/unit/test_inventory_evidence.py`
 - `tests/unit/test_case001_migration.py`
+- `tests/unit/test_case001_migration_manifest.py`
+- `tests/unit/test_case001_live_target_preflight.py`
+- `tests/unit/test_approval.py`
 - `scripts/case001_metadata_inventory.py`
 
 Still planned before physical migration:
 - `docs/agent-design.md`
 - `docs/tool-contracts.md`
-- stronger live CASE-001 migration manifest/preflight generation;
-- human approval gate for consequential migration;
-- physical migration executor with rollback and post-migration verification.
+- real CASE-001 manifest/preflight artifact binding from live outputs;
+- controlled physical migration executor with rollback and post-migration verification.
 
 ## Phase 3 — Evaluation and safety design
 
