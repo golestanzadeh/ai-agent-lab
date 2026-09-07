@@ -249,3 +249,47 @@ def test_case_state_is_only_a_reference_boundary():
     approval = approve(store)
     state.update_state("CASE-2024-0001", approvals_ref=approval.approval_id)
     assert state.get_state("CASE-2024-0001").approvals_ref == approval.approval_id
+
+
+def test_atomic_boundary_hides_partial_state():
+    _, _, audit, store = make_store()
+    approval = approve(store)
+    entered = Event()
+    release = Event()
+    original_events = audit._events
+
+    class PausingEvents(dict):
+        def __setitem__(self, key, value):
+            if value.event_type is AuditEventType.APPROVAL_CONSUMED:
+                entered.set()
+                release.wait(timeout=2)
+            return super().__setitem__(key, value)
+
+    audit._events = PausingEvents(original_events)
+    result = []
+
+    def consume_worker():
+        store.consume(approval.approval_id, context())
+        result.append("consumed")
+
+    thread = Thread(target=consume_worker)
+    thread.start()
+    assert entered.wait(timeout=2)
+
+    read_result = []
+    reader = Thread(target=lambda: read_result.append(store.get(approval.approval_id).approval_status))
+    audit_reader = Thread(target=lambda: read_result.append(len(audit.list_events(approval.case_id, approval.run_id))))
+    reader.start()
+    audit_reader.start()
+    reader.join(timeout=0.05)
+    audit_reader.join(timeout=0.05)
+    assert reader.is_alive()
+    assert audit_reader.is_alive()
+
+    release.set()
+    thread.join(timeout=2)
+    reader.join(timeout=2)
+    audit_reader.join(timeout=2)
+    assert result == ["consumed"]
+    assert ApprovalStatus.CONSUMED in read_result
+    audit._events = original_events
