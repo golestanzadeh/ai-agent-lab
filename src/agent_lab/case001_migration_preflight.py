@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from agent_lab.case001_migration import DocumentMigrationMapping
+from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identity
 from agent_lab.case001_migration_manifest import Case001MigrationManifest
 
 
@@ -27,6 +27,27 @@ class MigrationPreflightResult:
     source_objects_unique: bool
     logical_documents_unique: bool
     preflight_passed: bool
+
+    @property
+    def artifact_identity(self) -> ArtifactIdentity:
+        payload = {
+            "case_id": self.case_id,
+            "tax_period_year": self.tax_period_year,
+            "document_count": self.document_count,
+            "source_scope_ref": self.source_scope_ref,
+            "target_scope_ref": self.target_scope_ref,
+            "target_scope_is_actual": self.target_scope_is_actual,
+            "target_is_empty": self.target_is_empty,
+            "mapping_count_matches": self.mapping_count_matches,
+            "source_objects_unique": self.source_objects_unique,
+            "logical_documents_unique": self.logical_documents_unique,
+            "preflight_passed": self.preflight_passed,
+        }
+        return build_artifact_identity(
+            kind="CASE001_MIGRATION_PREFLIGHT",
+            version="1",
+            payload=payload,
+        )
 
 
 class Case001MigrationPreflight:
