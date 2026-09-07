@@ -263,3 +263,21 @@ Approval creation, approval state transitions, atomic consumption, and subsequen
 This decision does not authorize Drive mutation by itself and does not introduce a Physical Migration Executor.
 
 **Reason:** Physical migration is a consequential external action. The architecture therefore requires an explicit human authorization boundary that is independent of planning and readiness checks, deterministically bound to the exact artifacts being authorized, fail-closed, auditable, and protected against approval reuse. Making consumption atomic prevents both concurrent and sequential executions from reusing one authorization.
+
+## D-018 — Deterministic Migration Artifact Identity
+
+**Status:** accepted and implemented
+
+**Decision:** CASE-001 migration Manifest and Live Target Preflight outputs must expose deterministic artifact identities. Each identity consists of a controlled `kind`, an explicit identity/schema `version`, and a `reference` formed as `sha256:<digest>` over the artifact's canonical payload, excluding the identity itself.
+
+Canonicalization uses deterministic JSON representation with sorted object keys, compact separators, UTF-8 encoding, and deterministic handling of the supported Python value types. Equivalent payloads must produce the same reference; any change to a hashed field must produce a different reference.
+
+The initial controlled artifact kinds are `CASE001_MIGRATION_MANIFEST` and `CASE001_MIGRATION_PREFLIGHT`, both at version `1`.
+
+The Manifest identity covers its case, tax period, provider, source scope, target scope, complete mapping sequence, and optional Inventory Evidence reference. The Preflight identity covers the complete deterministic preflight result, including target verification and pass-state fields.
+
+These identities provide the concrete values required by D-017's exact manifest and preflight bindings. This decision does not itself create or consume approval and does not authorize or perform Drive mutation.
+
+The identity reference is an integrity/identity reference, not a cryptographic signature or proof of authorship.
+
+**Reason:** D-017 requires approval to bind to exact Manifest and Preflight artifacts. Without deterministic artifact references, an approval could not reliably distinguish the exact artifacts that were reviewed from later reconstructions or modified values. The artifact identity boundary closes that gap without coupling authorization to an LLM or to physical storage mutation.
