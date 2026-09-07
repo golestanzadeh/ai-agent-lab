@@ -262,6 +262,12 @@ Test suite: `tests/unit/test_artifact_identity.py` contains **8 tests** covering
 
 D-018 performs no Drive mutation and does not authorize or execute migration. The next boundary is to construct the D-017 approval context from the exact real Manifest and successful Live Target Preflight artifact identities.
 
+## D-019 Controlled Agent-Assisted Development Workflow
+
+D-019 is accepted and documented. Controlled agent-assisted development is now part of project governance: Codex remains optional, is not a runtime dependency, and does not replace required human authority for architecture, contracts, stage acceptance, migration authorization, destructive operations, or governance decisions. Passing tests does not itself constitute architectural or stage acceptance.
+
+D-017 is implemented/completed and D-018 is accepted and implemented. No physical Google Drive migration has occurred. The next implementation boundary remains construction of the D-017 approval context from the exact real migration manifest and successful live-target-preflight artifact identities.
+
 ## Completed environment work
 
 - Google Drive API enabled.
