@@ -82,7 +82,7 @@ class MigrationApproval:
 
 
 class ApprovalGate:
-    """Own deterministic authorization/binding validation only."""
+    """Own deterministic authorization and binding validation only."""
 
     @staticmethod
     def _required(name: str, value: str) -> None:
@@ -114,6 +114,8 @@ class ApprovalGate:
         )
         for name, value in required:
             cls._required(name, value)
+        if context.preflight_result != "PASSED":
+            raise ApprovalValidationError("preflight result is not successful")
         if not isinstance(context.intended_operation, IntendedOperation):
             raise ApprovalValidationError("unknown intended operation")
         if approval.case_id != context.case_id or approval.run_id != context.run_id:
@@ -170,9 +172,11 @@ class ApprovalStore:
         for name in (
             "case_id", "run_id", "manifest_identity", "manifest_version",
             "manifest_reference", "preflight_identity", "preflight_reference",
-            "preflight_result", "approver", "actor", "authorization_reference",
+            "preflight_result", "actor",
         ):
             ApprovalGate._required(name, values[name])
+        if values["preflight_result"] != "PASSED":
+            raise InvalidApprovalError("preflight result is not successful")
         if not isinstance(values["intended_operation"], IntendedOperation):
             raise InvalidApprovalError("unknown intended operation")
 
@@ -188,9 +192,7 @@ class ApprovalStore:
         preflight_reference: str,
         preflight_result: str,
         intended_operation: IntendedOperation,
-        approver: str,
         actor: str,
-        authorization_reference: str,
         timestamp: datetime | None = None,
     ) -> MigrationApproval:
         with self._lock:
@@ -199,7 +201,7 @@ class ApprovalStore:
                 manifest_version=manifest_version, manifest_reference=manifest_reference,
                 preflight_identity=preflight_identity, preflight_reference=preflight_reference,
                 preflight_result=preflight_result, intended_operation=intended_operation,
-                approver=approver, actor=actor, authorization_reference=authorization_reference,
+                actor=actor,
             )
             ts = timestamp or datetime.now(timezone.utc)
             self._validate_timestamp(ts)
@@ -210,8 +212,8 @@ class ApprovalStore:
                 manifest_identity=manifest_identity, manifest_version=manifest_version,
                 manifest_reference=manifest_reference, preflight_identity=preflight_identity,
                 preflight_reference=preflight_reference, preflight_result=preflight_result,
-                intended_operation=intended_operation, approver=approver, actor=actor,
-                approval_timestamp=ts, authorization_reference=authorization_reference,
+                intended_operation=intended_operation, approver="", actor=actor,
+                approval_timestamp=ts, authorization_reference="",
                 approval_status=ApprovalStatus.PENDING, audit_reference="",
             )
 
@@ -225,7 +227,7 @@ class ApprovalStore:
             self._audit.atomic_append(
                 case_id=case_id, run_id=run_id,
                 event_type=AuditEventType.APPROVAL_REQUESTED,
-                actor_type=ActorType.HUMAN, actor_id=approver,
+                actor_type=ActorType.HUMAN, actor_id=actor,
                 operation="request_approval", status=AuditStatus.INFO,
                 approval_ref=approval_id,
                 commit=commit, rollback=rollback,
@@ -268,35 +270,54 @@ class ApprovalStore:
             return self._approvals[approval_id]
 
     def reject(self, approval_id: str, *, actor: str) -> MigrationApproval:
-        return self._transition(approval_id, ApprovalStatus.REJECTED, actor, "reject_approval", AuditEventType.APPROVAL_REJECTED)
+        return self._transition(
+            approval_id, ApprovalStatus.REJECTED, actor,
+            "reject_approval", AuditEventType.APPROVAL_REJECTED,
+        )
 
     def revoke(self, approval_id: str, *, actor: str) -> MigrationApproval:
-        return self._transition(approval_id, ApprovalStatus.REVOKED, actor, "revoke_approval", AuditEventType.APPROVAL_REJECTED)
+        return self._transition(
+            approval_id, ApprovalStatus.REVOKED, actor,
+            "revoke_approval", AuditEventType.APPROVAL_REVOKED,
+        )
 
     def expire(self, approval_id: str, *, actor: str) -> MigrationApproval:
-        return self._transition(approval_id, ApprovalStatus.EXPIRED, actor, "expire_approval", AuditEventType.APPROVAL_REJECTED)
+        return self._transition(
+            approval_id, ApprovalStatus.EXPIRED, actor,
+            "expire_approval", AuditEventType.APPROVAL_EXPIRED,
+        )
 
     def _transition(self, approval_id, status, actor, operation, event_type):
         with self._lock:
             approval = self.get(approval_id)
-            if approval.approval_status is not ApprovalStatus.APPROVED and status in {ApprovalStatus.REVOKED, ApprovalStatus.EXPIRED}:
+            if status in {ApprovalStatus.REVOKED, ApprovalStatus.EXPIRED} and approval.approval_status is not ApprovalStatus.APPROVED:
                 raise ApprovalValidationError("only APPROVED approval can be revoked or expired")
-            if approval.approval_status is not ApprovalStatus.PENDING and status is ApprovalStatus.REJECTED:
+            if status is ApprovalStatus.REJECTED and approval.approval_status is not ApprovalStatus.PENDING:
                 raise ApprovalValidationError("only PENDING approval can be rejected")
             ApprovalGate._required("actor", actor)
-            def commit(event):
-                self._approvals[approval_id] = replace(approval, approval_status=status, audit_reference=event.event_id)
-            def rollback(): self._approvals[approval_id] = approval
-            self._audit.atomic_append(case_id=approval.case_id, run_id=approval.run_id, event_type=event_type,
-                actor_type=ActorType.HUMAN, actor_id=actor, operation=operation, status=AuditStatus.INFO,
-                approval_ref=approval_id, commit=commit, rollback=rollback)
+
+            def commit(event) -> None:
+                self._approvals[approval_id] = replace(
+                    approval, approval_status=status, audit_reference=event.event_id
+                )
+
+            def rollback() -> None:
+                self._approvals[approval_id] = approval
+
+            self._audit.atomic_append(
+                case_id=approval.case_id, run_id=approval.run_id,
+                event_type=event_type, actor_type=ActorType.HUMAN,
+                actor_id=actor, operation=operation, status=AuditStatus.INFO,
+                approval_ref=approval_id, commit=commit, rollback=rollback,
+            )
             return self._approvals[approval_id]
 
     def get(self, approval_id: str) -> MigrationApproval:
-        approval = self._approvals.get(approval_id)
-        if approval is None:
-            raise ApprovalNotFoundError(approval_id)
-        return approval
+        with self._lock:
+            approval = self._approvals.get(approval_id)
+            if approval is None:
+                raise ApprovalNotFoundError(approval_id)
+            return approval
 
     def validate(self, approval_id: str, context: ApprovalExecutionContext) -> MigrationApproval:
         with self._lock:

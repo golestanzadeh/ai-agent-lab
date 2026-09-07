@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from threading import RLock
-from typing import Callable, Mapping, TypeVar
+from typing import Callable, Mapping
 
 from agent_lab.case_registry import CaseRegistry
 from agent_lab.case_state import CaseStateStore
@@ -27,6 +27,8 @@ class AuditEventType(str, Enum):
     APPROVAL_REQUESTED = "APPROVAL_REQUESTED"
     APPROVAL_GRANTED = "APPROVAL_GRANTED"
     APPROVAL_REJECTED = "APPROVAL_REJECTED"
+    APPROVAL_REVOKED = "APPROVAL_REVOKED"
+    APPROVAL_EXPIRED = "APPROVAL_EXPIRED"
     APPROVAL_CONSUMED = "APPROVAL_CONSUMED"
     STATE_CHANGED = "STATE_CHANGED"
     OUTPUT_CREATED = "OUTPUT_CREATED"
@@ -80,16 +82,12 @@ class AuditEventNotFoundError(AuditError):
     pass
 
 
-_TransactionResult = TypeVar("_TransactionResult")
-
-
 class AuditStore:
     """In-memory append-only audit store for the foundational runtime.
 
-    ``atomic_append`` is a process-local transaction primitive used when a
-    domain store must publish one audit event together with its own state
-    transition. It does not provide crash durability or distributed
-    transactional guarantees.
+    ``atomic_append`` provides process-local transactional consistency for a
+    domain state change plus one audit event. It does not provide crash
+    durability, persistent transactional durability, or distributed atomicity.
     """
 
     def __init__(self, case_registry: CaseRegistry, case_state: CaseStateStore) -> None:
@@ -161,12 +159,12 @@ class AuditStore:
         commit: Callable[[AuditEvent], None],
         rollback: Callable[[], None],
     ) -> AuditEvent:
-        """Atomically publish an audit event with a caller-owned state change.
+        """Publish one audit event and a caller-owned state transition together.
 
-        The caller must hold its own domain lock for the whole call. While the
-        audit lock is held, readers cannot observe the staged event. If either
-        the domain commit or audit publication fails, the domain rollback is
-        invoked and the audit sequence/event remain unchanged.
+        The caller must hold its domain lock for the whole call. The audit
+        lock prevents external audit readers from observing the staged event.
+        If domain commit or audit publication fails, rollback is invoked and
+        the event/sequence remain unpublished.
         """
         with self._lock:
             self._validate(case_id, run_id, actor_id, operation)
@@ -194,11 +192,9 @@ class AuditStore:
                 self._events[event.event_id] = event
                 self._sequence = next_sequence
             except Exception:
-                try:
-                    rollback()
-                finally:
-                    self._events.pop(event.event_id, None)
-                    self._sequence = next_sequence - 1
+                rollback()
+                self._events.pop(event.event_id, None)
+                self._sequence = next_sequence - 1
                 raise
             return event
 
