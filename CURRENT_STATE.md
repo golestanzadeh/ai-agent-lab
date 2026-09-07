@@ -217,6 +217,28 @@ The pre-manifest gate is now satisfied for the live CASE-001 inventory:
 - live identity bootstrap resolving all 15 documents to logical identities;
 - no physical Drive mutation.
 
+## D-017 Human Approval Gate
+
+D-017 is now implemented at `src/agent_lab/approval.py` with unit coverage at `tests/unit/test_approval.py` and implementation documentation at `docs/approval-gate.md`.
+
+The implementation establishes:
+
+- immutable `MigrationApproval` values with controlled lifecycle states;
+- `ApprovalStore` as the lifecycle and one-time consumption owner;
+- `ApprovalGate` as the deterministic fail-closed binding validator;
+- exact case/run, manifest identity/version/reference, preflight identity/reference/result, intended-operation, actor, approver, authorization, timestamp, and audit bindings;
+- explicit `APPROVAL_CONSUMED` audit evidence through the existing `AuditStore`;
+- process-local atomic consistency for state transition plus audit publication;
+- rollback of approval state and audit sequence/event publication on failure;
+- exactly one successful concurrent consumption and deterministic `APPROVAL_ALREADY_CONSUMED` on reuse;
+- no Drive mutation, manifest generation, preflight generation, or physical migration execution.
+
+`CaseState.approvals_ref` remains only a case-state reference. Approval lifecycle authority is not moved into CaseState.
+
+The atomicity guarantee is intentionally limited to process-local consistency. The implementation makes no claim of crash durability, persistent transactional durability, or distributed atomicity.
+
+The D-017 unit suite was executed locally against the implementation boundary with **12 passed in 0.08s**. Repository-hosted GitHub Actions execution was attempted through a temporary verification workflow, but the repository reported **zero workflow runs**, so no GitHub-hosted execution result is claimed.
+
 ## Completed environment work
 
 - Google Drive API enabled.
@@ -244,11 +266,12 @@ The pre-manifest gate is now satisfied for the live CASE-001 inventory:
 - Migration validation connected to Document Identity and Inventory Evidence.
 - CASE-001 Migration Manifest Generator implemented and unit-verified: 6 passed in 0.17s.
 - Live CASE-001 identity bootstrap completed successfully with 15/15 identity coverage and no Drive mutation.
+- D-017 Human Approval Gate implemented with deterministic lifecycle, exact binding, one-time consumption, rollback semantics, and existing AuditStore integration.
 
 ## Next implementation priorities
 
 1. Generate the real CASE-001 migration manifest from the live inventory and persisted logical identities.
 2. Validate the generated manifest against the authoritative source scope and Inventory Evidence.
-3. Inspect the manifest as a read-only preflight artifact and verify all 15 mappings before any physical migration design/execution.
-4. Design the controlled physical migration preflight, human approval gate, executor, rollback, and post-migration verification. No physical Drive migration yet.
+3. Inspect the generated manifest and successful live target preflight as read-only artifacts, then bind those exact artifacts into a D-017 approval record before any physical migration design/execution.
+4. Design the controlled physical migration executor, rollback, and post-migration verification. No physical Drive migration yet.
 5. Continue toward controlled document-content access and evidence extraction.
