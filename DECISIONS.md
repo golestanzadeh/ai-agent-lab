@@ -281,3 +281,13 @@ These identities provide the concrete values required by D-017's exact manifest 
 The identity reference is an integrity/identity reference, not a cryptographic signature or proof of authorship.
 
 **Reason:** D-017 requires approval to bind to exact Manifest and Preflight artifacts. Without deterministic artifact references, an approval could not reliably distinguish the exact artifacts that were reviewed from later reconstructions or modified values. The artifact identity boundary closes that gap without coupling authorization to an LLM or to physical storage mutation.
+
+## D-019 — Controlled Agent-Assisted Development Workflow
+
+**Status:** accepted
+
+**Decision:** Codex and other AI coding agents are optional, controlled development tools and are not runtime dependencies. Human authority remains required for architecture, contracts, stage acceptance, migration authorization, destructive operations, and governance decisions. Passing tests demonstrates technical test success only and does not constitute architectural or stage acceptance.
+
+When authorized, development may use the controlled workflow: inspect → implement → test → analyze → fix → retest → git review → commit → push → report. The project must remain understandable, maintainable, testable, and continuable without Codex.
+
+**Reason:** A controlled agent-assisted workflow can improve engineering execution while preserving human governance, Git traceability, and operational independence from any specific coding agent.
