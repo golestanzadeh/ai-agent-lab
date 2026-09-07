@@ -59,6 +59,7 @@ Existing files:
 - `docs/case001-migration-compatibility.md`
 - `docs/document-identity.md`
 - `docs/approval-gate.md`
+- `docs/artifact-identity.md`
 
 Implemented runtime foundations:
 - `src/agent_lab/case_registry.py`
@@ -77,6 +78,7 @@ Implemented runtime foundations:
 - `src/agent_lab/case001_migration_manifest.py`
 - `src/agent_lab/case001_live_target_preflight.py`
 - `src/agent_lab/approval.py`
+- `src/agent_lab/artifact_identity.py`
 
 Verified unit-test suites:
 - Case Registry: 10/10
@@ -90,7 +92,8 @@ Verified unit-test suites:
 - Google Drive Storage Adapter: 8/8
 - Document Identity + Inventory Evidence: 13/13
 - CASE-001 Migration baseline: 8/8
-- D-017 Approval Store/Gate: 12/12 local verification
+- D-017 Approval Store/Gate: 13/13 test cases in repository suite; separate assistant deterministic reconstruction: 13/13
+- D-018 Artifact Identity: 8 test cases registered
 
 ### Google Drive Storage Adapter — six-stage work package
 
@@ -114,7 +117,7 @@ Current implementation artifacts:
 
 ### CASE-001 inventory / identity / migration work package
 
-Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility validation integrated; live target preflight implemented; human approval gate implemented; physical migration not implemented**
+Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility validation integrated; live target preflight implemented; human approval gate implemented; deterministic artifact identity implemented; physical migration not implemented**
 
 - Metadata-only CASE-001 inventory: implemented and live-verified with 15 PDF documents and 0 folders.
 - Document Identity: implemented and unit-verified.
@@ -125,6 +128,7 @@ Status: **metadata inventory verified; identity/evidence foundation implemented;
 - CASE-001 Migration Manifest Generator: implemented and unit-verified.
 - CASE-001 Live Target Preflight: implemented as a read-only target-scope validation boundary.
 - D-017 Human Approval Gate: implemented with immutable approval values, exact binding, deterministic fail-closed validation, one-time consumption, process-local atomic consistency, rollback semantics, and existing AuditStore integration.
+- D-018 Deterministic Artifact Identity: implemented for Manifest and Preflight artifacts with canonical SHA-256 references.
 - Physical Drive migration: deliberately not implemented.
 
 Current artifacts:
@@ -133,6 +137,7 @@ Current artifacts:
 - `docs/case001-migration-compatibility.md`
 - `docs/case001-live-target-preflight.md`
 - `docs/approval-gate.md`
+- `docs/artifact-identity.md`
 - `src/agent_lab/document_inventory.py`
 - `src/agent_lab/document_identity.py`
 - `src/agent_lab/inventory_evidence.py`
@@ -140,6 +145,7 @@ Current artifacts:
 - `src/agent_lab/case001_migration_manifest.py`
 - `src/agent_lab/case001_live_target_preflight.py`
 - `src/agent_lab/approval.py`
+- `src/agent_lab/artifact_identity.py`
 - `tests/unit/test_document_inventory.py`
 - `tests/unit/test_document_identity.py`
 - `tests/unit/test_inventory_evidence.py`
@@ -147,11 +153,10 @@ Current artifacts:
 - `tests/unit/test_case001_migration_manifest.py`
 - `tests/unit/test_case001_live_target_preflight.py`
 - `tests/unit/test_approval.py`
+- `tests/unit/test_artifact_identity.py`
 - `scripts/case001_metadata_inventory.py`
 
 Still planned before physical migration:
-- `docs/agent-design.md`
-- `docs/tool-contracts.md`
 - real CASE-001 manifest/preflight artifact binding from live outputs;
 - controlled physical migration executor with rollback and post-migration verification.
 
