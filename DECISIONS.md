@@ -245,3 +245,21 @@ The generator must:
 The manifest is an execution/preflight artifact, not permission to mutate storage. Physical migration remains blocked until separate preflight, human approval, execution, rollback, and post-migration verification controls exist.
 
 **Reason:** The live CASE-001 inventory has established the actual source population, while Document Identity establishes stable logical identities. Generating the manifest from those deterministic records eliminates filename-based guessing and makes the migration boundary reproducible and auditable.
+
+## D-017 — Human Approval Gate for Physical Migration
+
+**Status:** accepted
+
+**Decision:** Physical Migration must be preceded by a deterministic, case/run-scoped Human Approval Gate. Approval is an immutable authorization record bound exactly to the `case_id`, `run_id`, manifest identity/version, successful preflight identity/result, intended operation, actor/approver, timestamp, and authorization reference. Physical migration execution must fail closed unless all execution-context fields exactly match the approved artifact and the approval is otherwise valid.
+
+The Approval Gate is independent of Manifest and Preflight. Manifest generation does not grant approval, and a successful Preflight does not grant approval. The Approval Gate itself performs no Drive mutation and creates no Manifest or Preflight artifact.
+
+The approval lifecycle is `PENDING → APPROVED → CONSUMED`, with terminal/revocation paths `REJECTED`, `REVOKED`, and `EXPIRED` as applicable. `CONSUMED` is strictly one-time: an approval may authorize at most one physical migration execution. Consumption must be atomic so concurrent or sequential execution attempts cannot both use the same approval. A successful atomic consumption must be audit-linked.
+
+The approval contract must be deterministic and fail closed. Validation must not depend on an LLM or model judgment. Missing, malformed, mismatched, revoked, expired, or otherwise invalid approval data must prevent physical migration. `intended_operation` is a controlled deterministic operation value, initially `PHYSICAL_MIGRATION`, rather than free-form authorization text.
+
+Approval creation, approval state transitions, atomic consumption, and subsequent execution events must remain separately auditable and linked through the existing case/run-scoped Audit boundary. Approval is authorization evidence, not execution itself.
+
+This decision does not authorize Drive mutation by itself and does not introduce a Physical Migration Executor.
+
+**Reason:** Physical migration is a consequential external action. The architecture therefore requires an explicit human authorization boundary that is independent of planning and readiness checks, deterministically bound to the exact artifacts being authorized, fail-closed, auditable, and protected against approval reuse. Making consumption atomic prevents both concurrent and sequential executions from reusing one authorization.
