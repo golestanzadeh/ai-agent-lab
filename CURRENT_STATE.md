@@ -268,6 +268,18 @@ D-019 is accepted and documented. Controlled agent-assisted development is now p
 
 D-017 is implemented/completed and D-018 is accepted and implemented. No physical Google Drive migration has occurred. The next implementation boundary remains construction of the D-017 approval context from the exact real migration manifest and successful live-target-preflight artifact identities.
 
+### D-019 integration validation
+
+The authorized D-019 documentation was merged into main with a non-fast-forward merge. The first complete local suite reported 167 passed, 4 failed, and 1 skipped. These failures were pre-existing: the merge changed no runtime source or tests. Manifest-generator fixtures used an unqualified source scope, and the live-preflight test attempted to construct a wrong-case manifest that the existing constructor already rejects.
+
+Test-only repairs use the registered `google_drive:legacy` scope and separately verify wrong-case constructor rejection and empty-manifest preflight rejection. No runtime contracts or governance were changed. A targeted run initially failed collection because `agent_lab` was not on the import path; process-local `PYTHONPATH=src` resolved it.
+
+Verification using the existing project-local environment, with `$env:PYTHONPATH="src"`:
+- `.\.venv\Scripts\python.exe -m pytest -q tests/unit/test_case001_migration_manifest.py tests/unit/test_case001_live_target_preflight.py`: **13 passed**.
+- `.\.venv\Scripts\python.exe -m pytest`: **172 passed, 1 skipped**.
+
+The live Drive integration harness skipped because its explicit test-root environment variables were absent. No live Drive verification or mutation occurred. These results establish local test success, not human stage acceptance. D-020 was not started.
+
 ## Completed environment work
 
 - Google Drive API enabled.

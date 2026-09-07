@@ -122,8 +122,13 @@ def test_rejects_invalid_manifest_before_target_success():
         {"id": "target-root", "name": "Documents", "mimeType": FOLDER_MIME, "trashed": False},
         [],
     )
-    invalid = replace(manifest(), case_id="CASE-002")
-    with pytest.raises(Exception):
+    invalid = replace(manifest(), mappings=())
+    with pytest.raises(LiveTargetPreflightError, match="migration manifest contains no documents"):
         GoogleDriveLiveTargetScopePreflight(drive_service=drive).run(
             invalid, target_object_id="target-root"
         )
+
+
+def test_manifest_rejects_wrong_case_at_construction():
+    with pytest.raises(ValueError, match="manifest requires case_id CASE-001"):
+        replace(manifest(), case_id="CASE-002")

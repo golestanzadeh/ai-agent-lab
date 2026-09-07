@@ -53,7 +53,7 @@ def make_context(object_ids: tuple[str, ...]):
     for object_id in object_ids:
         item = DocumentInventoryItem(object_id, f"{object_id}.pdf", "application/pdf", ("legacy",), False)
         identity.resolve_inventory_item(
-            "CASE-001", run_id, item, source_provider="google_drive", source_scope_ref="legacy"
+            "CASE-001", run_id, item, source_provider="google_drive", source_scope_ref="google_drive:legacy"
         )
         items.append(item)
     inventory = DocumentInventory("CASE-001", datetime.now(timezone.utc), tuple(items))
@@ -66,7 +66,7 @@ def test_generator_creates_manifest_from_inventory_and_identity():
     manifest = generator.generate(
         inventory,
         source_provider="google_drive",
-        source_scope_ref="legacy",
+        source_scope_ref="google_drive:legacy",
         target_scope_ref="target-2024",
     )
     assert manifest.case_id == "CASE-001"
@@ -85,14 +85,14 @@ def test_generator_records_evidence_reference_without_mutating_storage():
     evidence_store = InventoryEvidenceStore(registry, state, AuditStore(registry, state))
     evidence = evidence_store.record(
         "CASE-001", run_id, inventory,
-        source_provider="google_drive", source_scope_ref="legacy",
+        source_provider="google_drive", source_scope_ref="google_drive:legacy",
         document_identity=identity,
     )
     generator = Case001MigrationManifestGenerator(registry, identity)
     manifest = generator.generate(
         inventory,
         source_provider="google_drive",
-        source_scope_ref="legacy",
+        source_scope_ref="google_drive:legacy",
         target_scope_ref="target-2024",
         inventory_evidence=evidence,
     )
@@ -112,7 +112,7 @@ def test_generator_rejects_inventory_document_without_identity():
         generator.generate(
             inventory,
             source_provider="google_drive",
-            source_scope_ref="legacy",
+            source_scope_ref="google_drive:legacy",
             target_scope_ref="target-2024",
         )
 
@@ -131,7 +131,7 @@ def test_generator_excludes_folders_from_document_mappings():
     manifest = generator.generate(
         inventory,
         source_provider="google_drive",
-        source_scope_ref="legacy",
+        source_scope_ref="google_drive:legacy",
         target_scope_ref="target-2024",
     )
     assert manifest.document_count == 1
@@ -149,7 +149,7 @@ def test_generator_rejects_wrong_case_inventory():
         generator.generate(
             inventory,
             source_provider="google_drive",
-            source_scope_ref="legacy",
+            source_scope_ref="google_drive:legacy",
             target_scope_ref="target-2024",
         )
 
