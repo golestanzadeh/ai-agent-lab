@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identity
 from agent_lab.case001_migration import (
     Case001MigrationCompatibility,
     Case001MigrationPlan,
@@ -49,6 +50,23 @@ class Case001MigrationManifest:
     @property
     def document_count(self) -> int:
         return len(self.mappings)
+
+    @property
+    def artifact_identity(self) -> ArtifactIdentity:
+        payload = {
+            "case_id": self.case_id,
+            "tax_period_year": self.tax_period_year,
+            "source_provider": self.source_provider,
+            "source_scope_ref": self.source_scope_ref,
+            "target_scope_ref": self.target_scope_ref,
+            "mappings": self.mappings,
+            "inventory_evidence_id": self.inventory_evidence_id,
+        }
+        return build_artifact_identity(
+            kind="CASE001_MIGRATION_MANIFEST",
+            version="1",
+            payload=payload,
+        )
 
 
 class Case001MigrationManifestGenerator:
