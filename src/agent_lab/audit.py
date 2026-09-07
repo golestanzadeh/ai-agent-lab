@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from threading import RLock
-from typing import Mapping
+from typing import Callable, Mapping, TypeVar
 
 from agent_lab.case_registry import CaseRegistry
 from agent_lab.case_state import CaseStateStore
@@ -27,6 +27,7 @@ class AuditEventType(str, Enum):
     APPROVAL_REQUESTED = "APPROVAL_REQUESTED"
     APPROVAL_GRANTED = "APPROVAL_GRANTED"
     APPROVAL_REJECTED = "APPROVAL_REJECTED"
+    APPROVAL_CONSUMED = "APPROVAL_CONSUMED"
     STATE_CHANGED = "STATE_CHANGED"
     OUTPUT_CREATED = "OUTPUT_CREATED"
     ERROR_RECORDED = "ERROR_RECORDED"
@@ -79,8 +80,17 @@ class AuditEventNotFoundError(AuditError):
     pass
 
 
+_TransactionResult = TypeVar("_TransactionResult")
+
+
 class AuditStore:
-    """In-memory append-only audit store for the foundational runtime."""
+    """In-memory append-only audit store for the foundational runtime.
+
+    ``atomic_append`` is a process-local transaction primitive used when a
+    domain store must publish one audit event together with its own state
+    transition. It does not provide crash durability or distributed
+    transactional guarantees.
+    """
 
     def __init__(self, case_registry: CaseRegistry, case_state: CaseStateStore) -> None:
         self._case_registry = case_registry
@@ -129,6 +139,67 @@ class AuditStore:
                 metadata=dict(metadata or {}),
             )
             self._events[event.event_id] = event
+            return event
+
+    def atomic_append(
+        self,
+        *,
+        case_id: str,
+        run_id: str | None,
+        event_type: AuditEventType,
+        actor_type: ActorType,
+        actor_id: str,
+        operation: str,
+        status: AuditStatus = AuditStatus.INFO,
+        input_refs: tuple[str, ...] = (),
+        decision_ref: str | None = None,
+        evidence_refs: tuple[str, ...] = (),
+        output_refs: tuple[str, ...] = (),
+        error_code: str | None = None,
+        approval_ref: str | None = None,
+        metadata: Mapping[str, str] | None = None,
+        commit: Callable[[AuditEvent], None],
+        rollback: Callable[[], None],
+    ) -> AuditEvent:
+        """Atomically publish an audit event with a caller-owned state change.
+
+        The caller must hold its own domain lock for the whole call. While the
+        audit lock is held, readers cannot observe the staged event. If either
+        the domain commit or audit publication fails, the domain rollback is
+        invoked and the audit sequence/event remain unchanged.
+        """
+        with self._lock:
+            self._validate(case_id, run_id, actor_id, operation)
+            next_sequence = self._sequence + 1
+            event = AuditEvent(
+                event_id=f"AUDIT-{next_sequence:08d}",
+                case_id=case_id,
+                run_id=run_id,
+                event_type=event_type,
+                occurred_at=datetime.now(timezone.utc),
+                actor_type=actor_type,
+                actor_id=actor_id,
+                operation=operation,
+                status=status,
+                input_refs=tuple(input_refs),
+                decision_ref=decision_ref,
+                evidence_refs=tuple(evidence_refs),
+                output_refs=tuple(output_refs),
+                error_code=error_code,
+                approval_ref=approval_ref,
+                metadata=dict(metadata or {}),
+            )
+            try:
+                commit(event)
+                self._events[event.event_id] = event
+                self._sequence = next_sequence
+            except Exception:
+                try:
+                    rollback()
+                finally:
+                    self._events.pop(event.event_id, None)
+                    self._sequence = next_sequence - 1
+                raise
             return event
 
     def get(self, case_id: str, event_id: str) -> AuditEvent:
