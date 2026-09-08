@@ -14,7 +14,7 @@ from agent_lab.case001_migration_preflight import Case001MigrationPreflight
 from agent_lab.case001_live_target_preflight import LiveTargetScopeResult
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-from case001_prepare_approval import prepare_pending
+from case001_prepare_approval import prepare_approved, prepare_pending
 sys.path.pop(0)
 
 
@@ -43,3 +43,17 @@ def test_bad_provenance_creates_no_record():
     with pytest.raises(ApprovalContextCompositionError):
         prepare_pending(manifest, replace(live, manifest_identity=None), run_id="run", actor="actor", approvals=store)
     assert not store.method_calls
+
+
+def test_approval_is_granted_only_with_explicit_human_inputs():
+    manifest, live = artifacts()
+    store = Mock(spec=["create_pending", "grant"])
+    _, record = prepare_approved(
+        manifest, live, run_id="run", actor="agent", approver="Reza Golestanzadeh",
+        authorization_reference="HUMAN-AUTH", approvals=store,
+    )
+    assert record is store.grant.return_value
+    assert [call[0] for call in store.method_calls] == ["create_pending", "grant"]
+    assert store.grant.call_args.kwargs == {
+        "approver": "Reza Golestanzadeh", "authorization_reference": "HUMAN-AUTH",
+    }

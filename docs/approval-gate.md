@@ -61,6 +61,11 @@ If the domain transition or audit publication fails, the Approval Store rollback
 
 This is **process-local atomic consistency only**. The current in-memory implementation makes no claim of crash durability, persistent transactional durability, or distributed atomicity.
 
+An exported review record may document an APPROVED state produced during one
+process, but it does not restore the ApprovalStore after that process exits and
+must not be treated as executable authorization. Durable/reloadable approval
+authority requires a separately accepted persistence architecture.
+
 ## Audit events
 
 Approval lifecycle actions use the existing audit boundary. The implementation adds the explicit event types needed by the lifecycle:

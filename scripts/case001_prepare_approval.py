@@ -28,9 +28,23 @@ from agent_lab.google_drive_storage import GoogleDriveMetadataAdapter
 from case001_live_target_preflight import build_case_registry
 
 
+REVIEWED_MANIFEST_REFERENCE = "sha256:94b563afc299a1c3da3b5e57ab6deb023952e15ae8e6abb274223f5d72b85587"
+REVIEWED_PREFLIGHT_REFERENCE = "sha256:16d9b1bd5ed8fb08d5cac0aa22a00333fa2d2c783da7fa38899efad747379853"
+
+
 def prepare_pending(manifest, live, *, run_id, actor, approvals):
     context = compose_approval_context(manifest, live, run_id=run_id, actor=actor)
     return context, approvals.create_pending(**asdict(context), requester_actor_type=ActorType.AGENT)
+
+
+def prepare_approved(manifest, live, *, run_id, actor, approver, authorization_reference, approvals):
+    context, pending = prepare_pending(manifest, live, run_id=run_id, actor=actor, approvals=approvals)
+    approval = approvals.grant(
+        pending.approval_id,
+        approver=approver,
+        authorization_reference=authorization_reference,
+    )
+    return context, approval
 
 
 def json_value(value):
@@ -78,14 +92,32 @@ def main():
         inventory, source_provider="google_drive", source_scope_ref=f"google_drive:{source}",
         target_scope_ref=f"google_drive:{target.root_id}")
     live = GoogleDriveLiveTargetScopePreflight(drive_service=drive).run(manifest, target_object_id=target.root_id)
-    context, pending = prepare_pending(manifest, live, run_id=run.run_id, actor=actor,
-        approvals=ApprovalStore(case_registry=cases, case_state=states, audit_store=audit))
+    approver = os.environ.get("D021_HUMAN_APPROVER", "").strip()
+    authorization_reference = os.environ.get("D021_AUTHORIZATION_REFERENCE", "").strip()
+    if not approver or not authorization_reference:
+        raise ValueError("explicit human approval inputs are required")
+    context = compose_approval_context(manifest, live, run_id=run.run_id, actor=actor)
+    if (
+        context.case_id != "CASE-001" or context.run_id != "RUN-00000001"
+        or context.manifest_identity != "CASE001_MIGRATION_MANIFEST"
+        or context.manifest_version != "1"
+        or context.manifest_reference != REVIEWED_MANIFEST_REFERENCE
+        or context.preflight_identity != "CASE001_MIGRATION_PREFLIGHT"
+        or context.preflight_reference != REVIEWED_PREFLIGHT_REFERENCE
+        or context.preflight_result != "PASSED"
+    ):
+        raise ValueError("reconstructed artifacts do not match reviewed authorization")
+    approvals = ApprovalStore(case_registry=cases, case_state=states, audit_store=audit)
+    context, approval = prepare_approved(
+        manifest, live, run_id=run.run_id, actor=actor, approver=approver,
+        authorization_reference=authorization_reference, approvals=approvals,
+    )
     audit.validate()
     evidence = {
         "case": asdict(case), "run": asdict(run), "inventory": asdict(inventory),
         "manifest": asdict(manifest), "manifest_identity": asdict(manifest.artifact_identity),
         "live_preflight": asdict(live), "preflight_identity": asdict(live.structural_preflight.artifact_identity),
-        "context": asdict(context), "pending_approval": asdict(pending),
+        "context": asdict(context), "approved_approval": asdict(approval),
         "audit": [asdict(e) for e in audit.list_events("CASE-001", run.run_id)],
         "limitation": "Review export only; no persistent ApprovalStore lifecycle or execution authority.",
     }
@@ -98,8 +130,8 @@ def main():
         "manifest_identity": asdict(manifest.artifact_identity),
         "preflight_identity": asdict(live.structural_preflight.artifact_identity),
         "preflight_result": context.preflight_result, "target_scope_consistent": True,
-        "intended_operation": context.intended_operation.value, "approval_state": pending.approval_status.value,
-        "approval_id": pending.approval_id, "review_file": str(output),
+        "intended_operation": context.intended_operation.value, "approval_state": approval.approval_status.value,
+        "approval_id": approval.approval_id, "review_file": str(output),
         "approval_consumed": False, "source_mutation": False,
     }, indent=2))
 
