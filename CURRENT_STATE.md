@@ -6,7 +6,7 @@
 
 Work is on branch `d021-agent-case-provisioning`. The branch contains the accepted clarification that standard case-storage provisioning is an authorized agent operation inside the existing Case Creation architecture; it is not physical document migration.
 
-D-021 implementation and live execution reached the human approval-review boundary. The configured system root and existing metadata-read plus drive.file credentials supported creation of the standard CASE-001 target tree. All six standard subfolders were created, the 15-document real Manifest was validated, the target Documents folder passed empty-target preflight, and D-020 composed the exact context. D-017 created a PENDING record; no approval was granted or consumed. Private review evidence and exact folder references remain under ignored artifacts/case001/.
+D-021 implementation and live execution reached the human approval-review boundary. The configured system root and existing metadata-read plus drive.file credentials supported creation of the standard CASE-001 target tree. All six standard subfolders were created, the 15-document real Manifest was validated, the target Documents folder passed empty-target preflight, and D-020 composed the exact context. D-017 created a PENDING record; `APPROVAL_REQUESTED` records the authorized requester as `AGENT`, while only `APPROVAL_GRANTED` remains a human action. No approval was granted or consumed. Private review evidence and exact folder references remain under ignored artifacts/case001/.
 
 ## LAST_ACCEPTED_STAGE
 

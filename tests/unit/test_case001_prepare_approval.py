@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from agent_lab.approval import ApprovalExecutionContext
+from agent_lab.audit import ActorType
 from agent_lab.case001_approval_context import ApprovalContextCompositionError
 from agent_lab.case001_migration import DocumentMigrationMapping
 from agent_lab.case001_migration_manifest import Case001MigrationManifest
@@ -32,6 +33,7 @@ def test_only_pending_creation_is_called():
     assert record is store.create_pending.return_value
     assert [call[0] for call in store.method_calls] == ["create_pending"]
     assert store.create_pending.call_args.kwargs["manifest_reference"] == manifest.artifact_identity.reference
+    assert store.create_pending.call_args.kwargs["requester_actor_type"] is ActorType.AGENT
     assert "approver" not in store.create_pending.call_args.kwargs
 
 

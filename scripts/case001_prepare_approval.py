@@ -30,7 +30,7 @@ from case001_live_target_preflight import build_case_registry
 
 def prepare_pending(manifest, live, *, run_id, actor, approvals):
     context = compose_approval_context(manifest, live, run_id=run_id, actor=actor)
-    return context, approvals.create_pending(**asdict(context))
+    return context, approvals.create_pending(**asdict(context), requester_actor_type=ActorType.AGENT)
 
 
 def json_value(value):

@@ -129,7 +129,8 @@ and source snapshot without replacing the legacy source scope with the target.
 Manifest, Live Target Preflight, D-020 composition and D-017 create_pending APIs.
 It requires the exact source and system-root configuration, validates the known
 15-document source population, and stores exact real artifacts and audit records
-in a private review export. It neither grants nor consumes approval. The export
+in a private review export. The authorized agent is recorded as the `AGENT`
+requester for `APPROVAL_REQUESTED`; it neither grants nor consumes approval. The export
 does not add restart support to ApprovalStore and is not executable authorization.
 
 Live execution created the required 10 folders (four hierarchy folders and six

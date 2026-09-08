@@ -74,6 +74,11 @@ Approval lifecycle actions use the existing audit boundary. The implementation a
 
 `APPROVAL_CONSUMED` is the authoritative audit evidence that the one-time authorization was successfully consumed.
 
+`create_pending()` records `APPROVAL_REQUESTED` with the actual requester type.
+Its backward-compatible default is `HUMAN`; authorized agent preparation passes
+`AGENT`. Only `HUMAN` and `AGENT` are valid requesters. `grant()` remains a
+human-authority action and always records `APPROVAL_GRANTED` as `HUMAN`.
+
 ## Integration boundary
 
 The implementation does not create or modify Manifest, Live Target Preflight, or a Physical Migration Executor. It performs no Drive mutation and cannot itself execute physical migration.
