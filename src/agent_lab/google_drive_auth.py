@@ -12,7 +12,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/drive.file"]
 CREDENTIALS_FILE = Path.home() / "ai-tax-agent" / "credentials.json"
 TOKEN_FILE = Path.home() / "ai-tax-agent" / "token.json"
 
