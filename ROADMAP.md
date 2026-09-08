@@ -264,6 +264,12 @@ this boundary. Local verification is recorded in `CURRENT_STATE.md`.
 
 ## Future-file registry rule
 
+D-021 branch implementation and live preparation complete; human review pending:
+- `src/agent_lab/google_drive_provisioning.py`: StorageScopeCreator with private local reference journal.
+- `tests/unit/test_google_drive_provisioning.py`: scoped creation, replay, and failure tests.
+- `scripts/case001_prepare_approval.py`: existing CASE-001 contracts connected to private review evidence.
+- `tests/unit/test_case001_prepare_approval.py`: approval preparation boundary tests.
+
 A file listed as planned is **not** considered created or implemented until it exists in GitHub. A future file may be added, renamed, split, or cancelled only through an explicit update to this roadmap and, for significant changes, a decision record.
 
 ## Ordering rule

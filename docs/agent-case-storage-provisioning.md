@@ -94,7 +94,63 @@ prepare reviewed D-017 approval evidence
 STOP before approval consumption / physical migration
 ```
 
-## Verification requirements
+## D-021 implementation and live evidence
+
+`GoogleDriveStorageScopeCreator` in `src/agent_lab/google_drive_provisioning.py`
+implements the existing `create_case_scope(tax_period, case_id)` contract.
+It creates only standard folders under an explicitly configured system root.
+Root identity is loaded privately from `AI_TAX_AGENT_DRIVE_ROOT_ID`; it is not
+discovered by name. The existing metadata-read and drive.file scopes sufficed
+for the authorized live execution; no OAuth changes were made in this work.
+
+One canonical private local reference journal must be used per system root,
+with one local execution owner. The CASE-001 execution uses ignored
+`artifacts/case001/provisioning.json`. Atomic local replacement records exact
+returned IDs, case/year bindings, create intents, completion events and unresolved
+operations. An exclusive local lock prevents concurrent use of that journal.
+Known completed folders are verified by exact ID, parent, name, MIME type and
+trash state on replay. Only missing known steps may resume. An uncertain create,
+crash lock, changed root, mismatched year, or unrecorded conflicting folder fails
+closed. An exact-name/exact-parent query is only a conflict check; it never adopts
+unrecorded folders. No cross-case document listing or broad Drive search exists.
+
+This is private provisioning configuration/recovery evidence, not a replacement
+Case Registry, durable AuditStore, or distributed transaction system. Do not use
+multiple journals or hosts to provision the same root concurrently. Journal loss
+does not authorize guessing or recreating an existing tree. No destructive
+compensation or automatic deletion is implemented. Provisioning events are
+retained in the private journal and the CASE-001 harness forwards them through
+the existing case/run-scoped AuditStore. Generic CaseCreationWorkflow retains its
+existing responsibility for validating owner/request identity and registering the
+returned case-root reference. The CASE-001 harness validates the existing registry
+and source snapshot without replacing the legacy source scope with the target.
+
+`scripts/case001_prepare_approval.py` connects the existing inventory, identity,
+Manifest, Live Target Preflight, D-020 composition and D-017 create_pending APIs.
+It requires the exact source and system-root configuration, validates the known
+15-document source population, and stores exact real artifacts and audit records
+in a private review export. It neither grants nor consumes approval. The export
+does not add restart support to ApprovalStore and is not executable authorization.
+
+Live execution created the required 10 folders (four hierarchy folders and six
+standard subfolders). The target Documents folder was empty; real manifest count
+was 15. D-020 composed a successful context and D-017 created PENDING evidence.
+No source document or permission was modified; no migration occurred.
+
+Safe exact artifact references:
+- Manifest, `CASE001_MIGRATION_MANIFEST`, version `1`:
+  `sha256:94b563afc299a1c3da3b5e57ab6deb023952e15ae8e6abb274223f5d72b85587`
+- Preflight, `CASE001_MIGRATION_PREFLIGHT`, version `1`:
+  `sha256:16d9b1bd5ed8fb08d5cac0aa22a00333fa2d2c783da7fa38899efad747379853`
+
+Tests with project-local Python and `PYTHONPATH=src`:
+- `-m pytest -q tests/unit/test_google_drive_provisioning.py tests/unit/test_case001_prepare_approval.py tests/unit/test_case_creation_workflow.py tests/unit/test_approval.py tests/unit/test_case001_approval_context.py`: **103 passed**.
+- `-m pytest -q`: **241 passed, 1 skipped**.
+
+The next boundary is human review with explicit approver identity and authorization
+reference. Approval grant/consumption and main integration have not been performed.
+
+## Required verification coverage
 
 Implementation must demonstrate with tests and, where explicitly authorized, narrowly scoped live verification that:
 

@@ -6,7 +6,7 @@
 
 Work is on branch `d021-agent-case-provisioning`. The branch contains the accepted clarification that standard case-storage provisioning is an authorized agent operation inside the existing Case Creation architecture; it is not physical document migration.
 
-D-021 is currently blocked at the Google OAuth credential boundary: the existing local token/loader uses `drive.metadata.readonly`, which cannot create the authorized standard case folders. The next execution step is a least-privilege credential upgrade/reauthorization, preferring `drive.file` while retaining required metadata-read capability.
+D-021 implementation and live execution reached the human approval-review boundary. The configured system root and existing metadata-read plus drive.file credentials supported creation of the standard CASE-001 target tree. All six standard subfolders were created, the 15-document real Manifest was validated, the target Documents folder passed empty-target preflight, and D-020 composed the exact context. D-017 created a PENDING record; no approval was granted or consumed. Private review evidence and exact folder references remain under ignored artifacts/case001/.
 
 ## LAST_ACCEPTED_STAGE
 
@@ -19,19 +19,11 @@ Canonical main before D-021 branch work: `ee59dadbc2c7f2433e8291f849fef3048b574a
 
 ## NEXT_BOUNDARY
 
-Resume D-021 from the credential blocker:
+Review the exact private D-021 evidence and provide explicit human approver identity and authorization reference before any D-017 grant. The saved PENDING record is a review export from the in-memory store, not a durable/reloadable approval lifecycle. No new approval persistence contract was introduced. Do not treat the export as executable authorization.
 
-1. update the OAuth loader/configuration for the minimum sufficient Drive scopes;
-2. perform local OAuth reauthorization if required;
-3. implement and test the real Google Drive `StorageScopeCreator`/case provisioner using existing Case Creation contracts;
-4. create only the standard empty CASE-001 / tax-year-2024 target structure;
-5. privately retain exact provider-returned storage references;
-6. generate the exact real CASE-001 migration Manifest;
-7. execute read-only Live Target Preflight;
-8. compose the D-020 `ApprovalExecutionContext`;
-9. prepare D-017 reviewable approval evidence/record up to the genuine human approver/authorization boundary.
+D-021 branch implementation awaits human acceptance; main was not modified. Physical migration and approval consumption remain outside the authorization.
 
-Physical source-document migration remains outside this boundary.
+Verification: focused provisioner/preparation tests and relevant creation/approval/D-020 regression suites: **103 passed**; full suite: **241 passed, 1 skipped**. The opt-in live isolation test skipped; the authorized create-only provisioning and real read-only preflight were executed separately and passed.
 
 ## VERIFIED_RUNTIME_STATE
 
@@ -45,7 +37,7 @@ Physical source-document migration remains outside this boundary.
 - CASE-001 migration compatibility, deterministic Manifest generation, Live Target Preflight, D-017 approval gate, D-018 artifact identity, and D-020 approval-context composition are implemented.
 - D-019 controlled agent-assisted development governance is accepted.
 - No physical Google Drive migration has occurred.
-- No real CASE-001 target tree has yet been provisioned.
+- Real CASE-001 / 2024 target tree was provisioned with all six standard subfolders; target Documents was verified empty. Exact provider references are privately journaled. Real run: RUN-00000001; PENDING approval: APP-00000001 (both process-local identifiers).
 - No D-017 approval has been consumed.
 
 ## ACTIVE_CONSTRAINTS
