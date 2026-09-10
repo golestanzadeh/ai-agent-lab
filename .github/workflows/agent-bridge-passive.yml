@@ -20,6 +20,11 @@ on:
       - scripts/install_local_sync_task.ps1
       - tests/unit/test_local_sync.py
       - docs/local-sync-agent.md
+      - src/agent_lab/windows_relay.py
+      - scripts/windows_relay.py
+      - scripts/install_windows_relay_task.ps1
+      - tests/unit/test_windows_relay.py
+      - docs/windows-relay.md
       - docs/durable-approval-lifecycle.md
       - docs/physical-migration-executor.md
       - docs/approval-gate.md
@@ -72,6 +77,8 @@ jobs:
         run: PYTHONPATH="src:." python -m pytest -q tests/unit/test_case001_controlled_migration.py
       - name: Run Local Sync Agent tests
         run: python -m pytest -q tests/unit/test_local_sync.py
+      - name: Run Windows Relay tests
+        run: python -m pytest -q tests/unit/test_windows_relay.py
       - name: Run full regression suite
         run: PYTHONPATH="src:." python -m pytest -q
 
