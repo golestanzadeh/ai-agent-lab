@@ -1,0 +1,35 @@
+name: Agent Bridge Passive Validation
+
+on:
+  push:
+    branches:
+      - d021-agent-case-provisioning
+    paths:
+      - scripts/agent_bridge_validate.py
+      - tests/unit/test_agent_bridge_validate.py
+      - .github/workflows/agent-bridge-passive.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-bridge-passive-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run passive validator tests
+        run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+
+# Observe-only by design: no secrets, no Codex, no comments, no repository writes,
+# no continuation, no runtime tax action.
