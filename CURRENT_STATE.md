@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge production and Step 11 durable/reloadable approval lifecycle are human accepted. The next work package is controlled physical migration executor design and verification.**
+**Agent Bridge Production and Durable Approval are human accepted. The Controlled Physical Migration Executor work package is implemented and technically verified; real CASE-001 execution is now at its separate consequential Human Gate.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -30,7 +30,7 @@ Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is
 10. Final verification/rollback hardening — **TECHNICAL PASS; HUMAN PRODUCTION ACCEPTANCE ISSUED 2026-09-10**.
 11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **IMPLEMENTED + VERIFIED + HUMAN ACCEPTED 2026-09-10**.
 
-## STEP-11 DURABLE APPROVAL IMPLEMENTATION
+## DURABLE APPROVAL IMPLEMENTATION
 
 Human-accepted architecture: SQLite-backed durable/reloadable approval authority preserving the existing D-017 domain binding and lifecycle semantics.
 
@@ -38,53 +38,66 @@ Implemented artifacts:
 - `docs/durable-approval-lifecycle.md`
 - `src/agent_lab/durable_approval.py`
 - `tests/unit/test_durable_approval.py`
-- bounded updates to `docs/approval-gate.md`, `ROADMAP.md`, and CI verification.
-
-Core behavior implemented:
-- SQLite schema version `1`;
-- durable approval and audit ID counters;
-- immutable `MigrationApproval` reconstruction from persistent rows;
-- SHA-256 integrity verification for approval and durable approval-audit records;
-- exact D-017 `ApprovalGate` binding validation after reload;
-- `BEGIN IMMEDIATE` write serialization;
-- approval state change and matching approval-lifecycle audit event in the same SQLite transaction;
-- restart-safe `PENDING`, `APPROVED`, terminal `CONSUMED`, `REJECTED`, `REVOKED`, and `EXPIRED` semantics;
-- exactly-once consumption across independent store instances;
-- rollback of state, audit event, and counters when durable audit insertion fails;
-- fail-closed behavior for corrupt records and unsupported schema versions;
-- no import path from legacy review/export data into executable authority.
 
 Verification evidence:
 - Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
 - Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
-- State-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success** at commit `771d4b265cf955c35a6edc2a1747a44f90925a4d`.
+- State-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success**.
 - Human stage acceptance issued 2026-09-10.
 
-## DURABLE APPROVAL SAFETY BOUNDARY
+## CONTROLLED PHYSICAL MIGRATION EXECUTOR
 
-The historical CASE-001 process-local approval is **not migrated or upgraded** into durable executable authority. A review export, chat message, GitHub comment, remembered ID, or historical process-local state cannot be treated as executable approval.
+Implemented artifacts:
+- `docs/physical-migration-executor.md`
+- `src/agent_lab/case001_physical_migration.py`
+- `tests/unit/test_case001_physical_migration.py`
+- `src/agent_lab/google_drive_mutation.py`
+- `tests/unit/test_google_drive_mutation.py`
 
-Future executable durable authority requires a newly created durable approval request and a new explicit human grant against the exact authoritative case/run/manifest/preflight/execution binding.
+Implemented behavior:
+- `DRY_RUN` is the default and performs zero storage mutation and zero approval consumption;
+- `LIVE` fails before storage inspection unless explicitly enabled and supplied with exact durable approval authority;
+- only explicit manifest object IDs and explicit source/target parent IDs are accepted;
+- Google Drive mutation port exposes only explicit parent-scoped listing, single-parent inspection, and guarded parent move;
+- no taxpayer-name, filename, folder-name, or Drive-wide discovery path exists in the mutation adapter;
+- object IDs are preserved by parent moves;
+- target must still be empty at execution time;
+- every expected source object must still be directly under the explicit source parent;
+- partial move failure triggers reverse-order rollback;
+- post-migration verification requires exact target contents and absence of expected objects from source;
+- approval is consumed only after successful post-migration verification;
+- approval-consumption failure triggers storage rollback;
+- incomplete rollback produces explicit terminal `PhysicalMigrationRollbackError` and can never be reported as success;
+- a consumed approval replay fails closed before storage inspection.
 
-No real approval was consumed during implementation or testing. Tests use synthetic cases and temporary SQLite databases only.
+Verification evidence:
+- CI run `34509462092`: physical migration executor tests **9 passed**; full suite **272 passed, 1 skipped**; job **success**.
+- CI run `34509683965`: executor tests **9 passed**, guarded Drive mutation adapter tests **7 passed**, durable approval tests **11 passed**, Agent Bridge validator **6 passed**, full regression **279 passed, 1 skipped**; job **success**.
+- All migration tests use synthetic storage/fake Drive services and temporary test authority only.
+- No real Google Drive object was moved, renamed, deleted, overwritten, or otherwise mutated by these tests.
 
-## NEXT WORK PACKAGE
+## REAL CASE-001 EXECUTION HUMAN GATE
 
-**Controlled Physical Migration Executor: design → bounded implementation → synthetic/dry-run verification → rollback/post-migration verification proof → consequential Human Gate.**
+Technical implementation is complete enough to prepare real execution, but real CASE-001 remains blocked until a separate consequential Human Gate explicitly authorizes it.
 
-Until that package reaches its final Human Gate, work is limited to design, implementation and non-production verification. It must not:
-- create or grant a real CASE-001 durable approval;
-- consume any real approval;
-- move, rename, delete or mutate the 15 real source PDFs;
-- execute physical migration against real Google Drive case data.
+Before a real move, the runtime must reconstruct fresh authoritative state and fail closed unless all of these still match:
+- `CASE-001`, tax period 2024 and the exact registered source scope;
+- live inventory remains exactly the expected 15 PDFs / 0 folders;
+- exact current Manifest identity and complete object mapping;
+- fresh successful Live Target Preflight and target still empty;
+- exact source/target parent IDs;
+- a **new durable approval request and explicit human grant** bound to the reconstructed manifest, preflight, run, actor, and `PHYSICAL_MIGRATION` operation;
+- explicit live execution enablement.
 
-The executor design must preserve exact case/run/manifest/preflight/execution binding, immutable sources, deterministic destination mapping, idempotency/replay protection, partial-failure recovery, audit linkage, and post-migration verification. Real execution remains separately human authorized.
+The historical process-local `APP-00000001` is **not** valid for this purpose and must not be imported or upgraded.
+
+Because Google Drive and SQLite are not one distributed transaction, any crash that leaves external placement uncertain must fail closed on restart and require human recovery rather than automatic replay.
 
 ## PRODUCTION SAFETY BOUNDARY
 
 Agent Bridge remains a **development control plane only**. It is not runtime tax authority.
 
-It does not authorize or perform physical Google Drive migration, D-017 approval consumption, source-document mutation, destructive operations, autonomous merge/release/stage acceptance, or direct autonomous write to `main`.
+It does not itself authorize physical Google Drive migration, D-017 approval consumption, source-document mutation, destructive operations, autonomous merge/release/stage acceptance, or direct autonomous write to `main`.
 
 `HUMAN_REQUIRED` remains terminal until explicit human authorization permits a new action.
 
@@ -92,15 +105,15 @@ It does not authorize or perform physical Google Drive migration, D-017 approval
 
 - GitHub is the durable source of truth; local Python/Docker is the execution environment; Google Drive holds private case data.
 - Multi-case architecture requires mandatory `case_id`, persistent `person_id`/`entity_id`, and explicit `tax_period`.
-- Real CASE-001 source inventory: **15 PDFs, 0 folders**.
-- Real CASE-001 / 2024 target tree: six standard subfolders provisioned; target Documents verified empty at the recorded D-021 checkpoint.
-- Real run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
-- Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED**.
+- Last recorded real CASE-001 source inventory: **15 PDFs, 0 folders**.
+- Last recorded real CASE-001 / 2024 target Documents scope was empty at the D-021 checkpoint; it must be freshly revalidated before execution.
+- Historical run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
+- Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED / NOT EXECUTABLE**.
 - Physical Google Drive migration: **NOT STARTED**.
 
 ## ACTIVE_CONSTRAINTS
 
-- Source documents are immutable.
+- Source documents are immutable except for an explicitly authorized parent move performed by the controlled migration executor; document content must never be altered.
 - No broad/unscoped Drive search for case data.
 - Every case-data operation requires validated case scope and fails closed on ambiguity.
 - Private Drive IDs, OAuth tokens, credentials, client secrets and private document information must never be committed.
@@ -114,6 +127,8 @@ It does not authorize or perform physical Google Drive migration, D-017 approval
 - `ROADMAP.md`
 - `docs/agent-bridge-production.md`
 - `docs/durable-approval-lifecycle.md`
+- `docs/physical-migration-executor.md`
+- `docs/case001-migration-compatibility.md`
 - `docs/codex-agent-workflow.md`
 - `docs/d-019-controlled-agent-assisted-development-workflow.md`
 - `docs/approval-gate.md`
