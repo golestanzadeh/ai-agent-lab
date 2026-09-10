@@ -1,6 +1,6 @@
 # Local Sync Agent
 
-**Status:** Architecture human-accepted 2026-09-10; implementation pending technical verification and stage acceptance.
+**Status:** Architecture human-accepted 2026-09-10; implementation technically verified; human stage acceptance required before local installation/live smoke test.
 
 ## Purpose
 
@@ -84,9 +84,16 @@ Local Sync is development infrastructure only. It does not authorize physical mi
 
 The Local Sync Agent inherits the project's D-019 governance: routine synchronization may be automatic, while architecture changes, stage acceptance, protected-main merge/release, consequential runtime actions, and Human Gates remain separately controlled.
 
-## Acceptance criteria
+## Verification
 
-Technical implementation is ready for stage acceptance only when tests prove:
+CI run `34512131024` completed successfully after the implementation was added.
+
+- Local Sync Agent targeted suite: **10 passed**.
+- Full project regression: **295 passed, 1 skipped**.
+- Existing Agent Bridge, Durable Approval, physical migration executor, guarded Drive mutation adapter, and controlled migration harness suites also remained green.
+- Verification used deterministic fake Git behavior only. It did not access or modify the user's Windows checkout.
+
+The tests cover:
 
 - no-op when local and remote match;
 - fast-forward only when local is strictly behind;
@@ -96,6 +103,9 @@ Technical implementation is ready for stage acceptance only when tests prove:
 - branch mismatch blocks;
 - divergence blocks without mutation;
 - remote-resolution failure blocks;
-- no code path invokes commit, reset, rebase, stash, checkout/switch, or force-push.
+- exact repository-root validation;
+- absence of commit, reset, rebase, stash, checkout/switch, or force-push paths.
 
-Local installation and a live synchronization smoke test occur only after implementation verification and human stage acceptance.
+## Acceptance boundary
+
+Implementation is technically ready. Local installation and the first live GitHub/local synchronization smoke test remain behind the Local Sync Agent human stage-acceptance gate. That local bootstrap does not authorize CASE-001 physical migration or any approval consumption.
