@@ -7,6 +7,13 @@ on:
     paths:
       - scripts/agent_bridge_validate.py
       - tests/unit/test_agent_bridge_validate.py
+      - src/agent_lab/durable_approval.py
+      - tests/unit/test_durable_approval.py
+      - docs/durable-approval-lifecycle.md
+      - docs/approval-gate.md
+      - DECISIONS.md
+      - CURRENT_STATE.md
+      - ROADMAP.md
       - requirements.txt
       - .github/workflows/agent-bridge-passive.yml
   workflow_dispatch:
@@ -41,8 +48,10 @@ jobs:
           python -m pip install pytest
       - name: Run Agent Bridge validator tests
         run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+      - name: Run durable approval tests
+        run: python -m pytest -q tests/unit/test_durable_approval.py
       - name: Run full regression suite
         run: python -m pytest -q
 
-# Observe-only final verification: no secrets, no Codex, no comments, no repository writes,
+# Observe-only verification: no secrets, no Codex, no comments, no repository writes,
 # no continuation and no runtime tax action. BRIDGE_ENABLED=false is the fail-closed rollback state.
