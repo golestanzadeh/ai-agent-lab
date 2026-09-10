@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   controlled-response:
+    if: ${{ vars.BRIDGE_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -44,6 +45,12 @@ jobs:
             Do not commit, push, merge, release, access Drive/tax documents/credentials,
             modify governance/contracts, consume approvals, or perform runtime tax actions.
             Final response must be PASS only if all 6 tests pass and git status confirms no tracked changes.
+      - name: Verify continuation evidence deterministically
+        run: |
+          set -euo pipefail
+          python -m pytest -q tests/unit/test_agent_bridge_validate.py
+          git diff --exit-code
+          test -z "$(git status --short --untracked-files=no)"
       - name: Deliver owner-identity RESPONSE comment
         if: success()
         env:
@@ -82,6 +89,6 @@ jobs:
             "$API_URL" \
             --data-binary @/tmp/payload.json
 
-# Step 8 remains limited to a disposable non-main branch. The PAT is used only
-# to emit an owner-identity PR comment because Work wake-up does not accept bot identity.
+# Fail closed by default: continuation cannot execute unless BRIDGE_ENABLED=true.
+# The response is emitted only after deterministic tests and tracked-worktree checks pass.
 # HUMAN_REQUIRED remains terminal and no continuation may target main or runtime tax actions.
