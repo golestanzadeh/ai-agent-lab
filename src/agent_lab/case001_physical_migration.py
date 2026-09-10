@@ -90,6 +90,20 @@ class Case001PhysicalMigrationExecutor:
             target_parent_id=target_parent_id,
         )
         expected_ids = tuple(mapping.source_object_id for mapping in manifest.mappings)
+
+        if mode is MigrationMode.LIVE:
+            if live_enabled is not True:
+                raise PhysicalMigrationPreconditionError("live execution is not explicitly enabled")
+            if approval_store is None or not approval_id or approval_context is None:
+                raise PhysicalMigrationPreconditionError(
+                    "live execution requires durable approval store, approval_id, and context"
+                )
+            approval = approval_store.validate(approval_id, approval_context)
+            if approval.approval_status is not ApprovalStatus.APPROVED:
+                raise PhysicalMigrationPreconditionError("durable approval is not APPROVED")
+        elif mode is not MigrationMode.DRY_RUN:
+            raise PhysicalMigrationPreconditionError("unknown migration mode")
+
         self._validate_storage_preconditions(
             expected_ids,
             source_parent_id=source_parent_id,
@@ -105,19 +119,6 @@ class Case001PhysicalMigrationExecutor:
                 verified=True,
                 approval_consumed=False,
             )
-
-        if mode is not MigrationMode.LIVE:
-            raise PhysicalMigrationPreconditionError("unknown migration mode")
-        if live_enabled is not True:
-            raise PhysicalMigrationPreconditionError("live execution is not explicitly enabled")
-        if approval_store is None or not approval_id or approval_context is None:
-            raise PhysicalMigrationPreconditionError(
-                "live execution requires durable approval store, approval_id, and context"
-            )
-
-        approval = approval_store.validate(approval_id, approval_context)
-        if approval.approval_status is not ApprovalStatus.APPROVED:
-            raise PhysicalMigrationPreconditionError("durable approval is not APPROVED")
 
         applied: list[str] = []
         try:
