@@ -8,6 +8,7 @@ on:
       - scripts/agent_bridge_validate.py
       - tests/unit/test_agent_bridge_validate.py
       - .github/workflows/agent-bridge-passive.yml
+      - .github/agent-bridge-step10-trigger
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,9 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    env:
+      BRIDGE_ENABLED: 'false'
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
@@ -28,10 +31,16 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
-      - name: Install bounded test dependency
+      - name: Verify fail-closed kill switch
+        run: |
+          set -euo pipefail
+          test "$BRIDGE_ENABLED" = "false"
+      - name: Install test dependency
         run: python -m pip install pytest
-      - name: Run passive validator tests
+      - name: Run Agent Bridge validator tests
         run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+      - name: Run full regression suite
+        run: python -m pytest -q
 
-# Observe-only by design: no secrets, no Codex, no comments, no repository writes,
-# no continuation, no runtime tax action.
+# Observe-only final verification: no secrets, no Codex, no comments, no repository writes,
+# no continuation and no runtime tax action. BRIDGE_ENABLED=false is the fail-closed rollback state.
