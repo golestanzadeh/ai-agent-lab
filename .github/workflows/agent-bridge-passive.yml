@@ -13,6 +13,8 @@ on:
       - tests/unit/test_case001_physical_migration.py
       - src/agent_lab/google_drive_mutation.py
       - tests/unit/test_google_drive_mutation.py
+      - scripts/case001_controlled_migration.py
+      - tests/unit/test_case001_controlled_migration.py
       - docs/durable-approval-lifecycle.md
       - docs/physical-migration-executor.md
       - docs/approval-gate.md
@@ -61,8 +63,10 @@ jobs:
         run: python -m pytest -q tests/unit/test_case001_physical_migration.py
       - name: Run guarded Drive mutation adapter tests
         run: python -m pytest -q tests/unit/test_google_drive_mutation.py
+      - name: Run controlled migration harness safety tests
+        run: PYTHONPATH="src:." python -m pytest -q tests/unit/test_case001_controlled_migration.py
       - name: Run full regression suite
-        run: python -m pytest -q
+        run: PYTHONPATH="src:." python -m pytest -q
 
 # Observe-only verification: no secrets, no Codex, no comments, no repository writes,
 # no continuation and no runtime tax action. BRIDGE_ENABLED=false is the fail-closed rollback state.
