@@ -2,17 +2,19 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge production migration accepted; Step 11 has begun at the durable/reloadable approval lifecycle architecture boundary.**
+**Agent Bridge production is accepted. Step 11 durable/reloadable approval lifecycle has completed technical implementation and verification and is at its human stage-acceptance gate.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
-Human authorization issued on 2026-09-08 produced an **APPROVED** state in the process-local `ApprovalStore`; it was **not consumed**. Physical migration was **not started** and source documents remain unchanged. The approval is not durable/reloadable after process exit and the private review export is not executable authority.
+Human authorization issued on 2026-09-08 produced an **APPROVED** state in the process-local `ApprovalStore`; it was **not consumed**. Physical migration was **not started** and source documents remain unchanged. That historical approval remains non-durable and is not executable authority after process exit.
 
 ## LAST_ACCEPTED_STAGE
 
-**Agent Bridge Production — human accepted 2026-09-10 after Step-10 technical verification.**
+**Durable Approval Architecture — human accepted 2026-09-10.**
 
-Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. Production acceptance does not itself authorize merge, release, runtime approval consumption, or physical migration.
+The implementation built from that accepted architecture is technically verified but is not yet human stage-accepted. Agent Bridge Production remains the last fully accepted productionization stage.
+
+Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. Neither Agent Bridge acceptance nor Durable Approval implementation authorizes automatic merge, release, runtime approval consumption, or physical migration.
 
 ## AGENT BRIDGE PRODUCTION MIGRATION — 2026-09-10
 
@@ -26,25 +28,59 @@ Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is
 8. Controlled low-risk continuation — **PASS**.
 9. Full Human Gate test — **PASS; HUMAN_REQUIRED terminal stop proved**.
 10. Final verification/rollback hardening — **TECHNICAL PASS; HUMAN PRODUCTION ACCEPTANCE ISSUED 2026-09-10**.
-11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **STARTED: ARCHITECTURE BOUNDARY ONLY**.
+11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **IMPLEMENTED + VERIFIED; HUMAN STAGE ACCEPTANCE REQUIRED**.
 
 ## STEP-10 VERIFIED EVIDENCE
 
 - Repository ruleset `22799423` is active and targets exactly `refs/heads/main`.
 - Main requires pull-request based changes, blocks non-fast-forward updates, has no bypass actors, and the current user cannot bypass the rule.
-- Final passive verification workflow uses pinned checkout/setup-python actions, read-only repository permission, non-persisted checkout credentials, concurrency control and timeout.
 - Fail-closed rollback state is `BRIDGE_ENABLED=false`.
-- Bounded Codex and controlled continuation jobs require repository variable `BRIDGE_ENABLED` to equal the exact string `true`; absent/false therefore skips agent execution.
+- Bounded Codex and controlled continuation jobs require repository variable `BRIDGE_ENABLED` to equal the exact string `true`; absent/false skips agent execution.
 - Rollback drill evidence: Codex workflow run `34507216155` concluded **skipped** with the fail-closed switch not explicitly enabled.
 - Step-10 passive verification run `34507007733`: Agent Bridge validator **6 passed**; full suite **252 passed, 1 skipped**.
-- Finalized passive workflow run `34507288461`: **success**, including kill-switch check, validator tests and full regression suite.
-- Controlled continuation independently reruns the six validator tests and verifies no tracked worktree changes before emitting PASS.
-- All tested Bridge actions are pinned to immutable SHAs.
-- Temporary Step-10 probe/checkpoint files were removed after verification.
+- Finalized passive workflow run `34507288461`: **success**.
+
+## STEP-11 DURABLE APPROVAL IMPLEMENTATION
+
+Human-accepted architecture: SQLite-backed durable/reloadable approval authority preserving the existing D-017 domain binding and lifecycle semantics.
+
+Implemented artifacts:
+- `docs/durable-approval-lifecycle.md`
+- `src/agent_lab/durable_approval.py`
+- `tests/unit/test_durable_approval.py`
+- bounded updates to `docs/approval-gate.md`, `ROADMAP.md`, and CI verification.
+
+Core behavior implemented:
+- SQLite schema version `1`;
+- durable approval and audit ID counters;
+- immutable `MigrationApproval` reconstruction from persistent rows;
+- SHA-256 integrity verification for approval and durable approval-audit records;
+- exact D-017 `ApprovalGate` binding validation after reload;
+- `BEGIN IMMEDIATE` write serialization;
+- approval state change and matching approval-lifecycle audit event in the same SQLite transaction;
+- restart-safe `PENDING`, `APPROVED`, terminal `CONSUMED`, `REJECTED`, `REVOKED`, and `EXPIRED` semantics;
+- exactly-once consumption across independent store instances;
+- rollback of state, audit event, and counters when durable audit insertion fails;
+- fail-closed behavior for corrupt records and unsupported schema versions;
+- no import path from legacy review/export data into executable authority.
+
+Verification evidence:
+- First targeted CI attempt correctly exposed a workflow import-path issue (`agent_lab` not on targeted-test import path); no domain failure was hidden.
+- CI was repaired by setting `PYTHONPATH=src`.
+- Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
+- Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
+
+## DURABLE APPROVAL SAFETY BOUNDARY
+
+The historical CASE-001 process-local approval is **not migrated or upgraded** into durable executable authority. A review export, chat message, GitHub comment, remembered ID, or historical process-local state cannot be treated as executable approval.
+
+Future executable durable authority requires a newly created durable approval request and a new explicit human grant against the exact authoritative case/run/manifest/preflight/execution binding.
+
+No real approval was consumed during implementation or testing. Tests use synthetic cases and temporary SQLite databases only.
 
 ## PRODUCTION SAFETY BOUNDARY
 
-Agent Bridge is a **development control plane only**. It is not runtime tax authority.
+Agent Bridge remains a **development control plane only**. It is not runtime tax authority.
 
 It does not authorize or perform:
 - physical Google Drive migration;
@@ -54,25 +90,13 @@ It does not authorize or perform:
 - autonomous merge/release/stage acceptance;
 - direct autonomous write to `main`.
 
-`HUMAN_REQUIRED` is terminal until explicit human authorization permits a new action. Bridge rollback must not touch Drive data, tax documents or runtime approval records.
+`HUMAN_REQUIRED` remains terminal until explicit human authorization permits a new action.
 
-## STEP-11 ARCHITECTURE BOUNDARY
+## NEXT_BOUNDARY
 
-Step 11 resumes AI-Tax-Agent development at the existing blocker: **durable/reloadable approval lifecycle architecture**.
+The durable approval work package has reached its **human stage-acceptance gate** under D-019. No physical migration executor may be designed or implemented until this implementation is explicitly accepted.
 
-Before implementation, the architecture must define at minimum:
-- durable authority source and storage boundary;
-- deterministic serialization/schema/versioning of approval records;
-- reload semantics after process restart;
-- atomic one-time consumption and concurrency behavior;
-- audit linkage for create/grant/revoke/expire/consume/reload events;
-- integrity and tamper/fail-closed behavior;
-- case/run/manifest/preflight/execution-context binding preservation;
-- recovery behavior after partial failure/crash;
-- separation between exported review evidence and executable approval authority;
-- migration/compatibility path from the current process-local `ApprovalStore` without treating historical exports as executable authority.
-
-This is an architecture/governance change under D-019. Implementation must not begin until that architecture is explicitly accepted by the human. Physical migration remains a later, separate Human Gate.
+After durable approval stage acceptance, the next separate work package is the controlled physical migration executor with rollback and post-migration verification. That package will itself remain non-executable against real CASE-001 data until a separate consequential Human Gate authorizes a new durable approval and the exact migration execution.
 
 ## VERIFIED_RUNTIME_STATE
 
@@ -80,8 +104,8 @@ This is an architecture/governance change under D-019. Implementation must not b
 - Multi-case architecture requires mandatory `case_id`, persistent `person_id`/`entity_id`, and explicit `tax_period`.
 - Real CASE-001 source inventory: **15 PDFs, 0 folders**.
 - Real CASE-001 / 2024 target tree: six standard subfolders provisioned; target Documents verified empty at the recorded D-021 checkpoint.
-- Real run: `RUN-00000001`; approval identifier: `APP-00000001`.
-- Approval: **APPROVED / NOT CONSUMED / NON-DURABLE**.
+- Real run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
+- Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED**.
 - Physical Google Drive migration: **NOT STARTED**.
 
 ## ACTIVE_CONSTRAINTS
@@ -99,6 +123,7 @@ This is an architecture/governance change under D-019. Implementation must not b
 - `DECISIONS.md`
 - `ROADMAP.md`
 - `docs/agent-bridge-production.md`
+- `docs/durable-approval-lifecycle.md`
 - `docs/codex-agent-workflow.md`
 - `docs/d-019-controlled-agent-assisted-development-workflow.md`
 - `docs/approval-gate.md`
