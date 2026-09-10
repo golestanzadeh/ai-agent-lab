@@ -9,8 +9,12 @@ on:
       - tests/unit/test_agent_bridge_validate.py
       - src/agent_lab/durable_approval.py
       - tests/unit/test_durable_approval.py
+      - src/agent_lab/case001_physical_migration.py
+      - tests/unit/test_case001_physical_migration.py
       - docs/durable-approval-lifecycle.md
+      - docs/physical-migration-executor.md
       - docs/approval-gate.md
+      - docs/case001-migration-compatibility.md
       - DECISIONS.md
       - CURRENT_STATE.md
       - ROADMAP.md
@@ -51,6 +55,8 @@ jobs:
         run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
       - name: Run durable approval tests
         run: python -m pytest -q tests/unit/test_durable_approval.py
+      - name: Run physical migration executor tests
+        run: python -m pytest -q tests/unit/test_case001_physical_migration.py
       - name: Run full regression suite
         run: python -m pytest -q
 
