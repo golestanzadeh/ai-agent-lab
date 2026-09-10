@@ -195,6 +195,8 @@ Registered before implementation on 2026-09-10:
 - `docs/physical-migration-executor.md` — execution contract, dry-run/live boundary, rollback model, post-migration verification and Human Gate requirements.
 - `src/agent_lab/case001_physical_migration.py` — deterministic CASE-001 physical migration executor over an injected storage mutation port; no credential discovery or global Drive search.
 - `tests/unit/test_case001_physical_migration.py` — synthetic execution, dry-run, approval binding, partial-failure rollback, idempotency, unexpected-target and verification failure tests.
+- `src/agent_lab/google_drive_mutation.py` — guarded Google Drive mutation adapter implementing only direct-child listing, single-parent inspection and explicit parent move by object ID.
+- `tests/unit/test_google_drive_mutation.py` — fake-service tests for guarded move semantics, ambiguous parent rejection, provider response verification and zero global search behavior.
 
 Existing files may receive bounded integration changes:
 - `.github/workflows/agent-bridge-passive.yml` — include the new executor tests in CI.
