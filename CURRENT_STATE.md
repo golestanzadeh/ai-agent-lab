@@ -65,7 +65,7 @@ Core behavior implemented:
 - no import path from legacy review/export data into executable authority.
 
 Verification evidence:
-- First targeted CI attempt correctly exposed a workflow import-path issue (`agent_lab` not on targeted-test import path); no domain failure was hidden.
+- First targeted CI attempt exposed a workflow import-path issue (`agent_lab` not on targeted-test import path); no domain failure was hidden.
 - CI was repaired by setting `PYTHONPATH=src`.
 - Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
 - Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
