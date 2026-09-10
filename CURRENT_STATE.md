@@ -2,19 +2,19 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge production is accepted. Step 11 durable/reloadable approval lifecycle has completed technical implementation and verification and is at its human stage-acceptance gate.**
+**Agent Bridge production and Step 11 durable/reloadable approval lifecycle are human accepted. The next work package is controlled physical migration executor design and verification.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
-Human authorization issued on 2026-09-08 produced an **APPROVED** state in the process-local `ApprovalStore`; it was **not consumed**. Physical migration was **not started** and source documents remain unchanged. That historical approval remains non-durable and is not executable authority after process exit.
+Human authorization issued on 2026-09-08 produced an **APPROVED** state in the historical process-local `ApprovalStore`; it was **not consumed**. Physical migration was **not started** and source documents remain unchanged. That historical approval remains non-durable and is not executable authority after process exit.
 
 ## LAST_ACCEPTED_STAGE
 
-**Agent Bridge Production — human accepted 2026-09-10.**
+**Durable Approval Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
 
-**Durable Approval Architecture** was separately human-accepted on 2026-09-10 as the Step-11 design authority. Its implementation is technically verified but is not yet human stage-accepted.
+Agent Bridge Production was separately human accepted on 2026-09-10.
 
-Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. Neither Agent Bridge acceptance nor Durable Approval implementation authorizes automatic merge, release, runtime approval consumption, or physical migration.
+Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. These acceptances do not themselves authorize automatic merge, release, runtime approval consumption, or physical migration.
 
 ## AGENT BRIDGE PRODUCTION MIGRATION — 2026-09-10
 
@@ -28,17 +28,7 @@ Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is
 8. Controlled low-risk continuation — **PASS**.
 9. Full Human Gate test — **PASS; HUMAN_REQUIRED terminal stop proved**.
 10. Final verification/rollback hardening — **TECHNICAL PASS; HUMAN PRODUCTION ACCEPTANCE ISSUED 2026-09-10**.
-11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **IMPLEMENTED + VERIFIED; HUMAN STAGE ACCEPTANCE REQUIRED**.
-
-## STEP-10 VERIFIED EVIDENCE
-
-- Repository ruleset `22799423` is active and targets exactly `refs/heads/main`.
-- Main requires pull-request based changes, blocks non-fast-forward updates, has no bypass actors, and the current user cannot bypass the rule.
-- Fail-closed rollback state is `BRIDGE_ENABLED=false`.
-- Bounded Codex and controlled continuation jobs require repository variable `BRIDGE_ENABLED` to equal the exact string `true`; absent/false skips agent execution.
-- Rollback drill evidence: Codex workflow run `34507216155` concluded **skipped** with the fail-closed switch not explicitly enabled.
-- Step-10 passive verification run `34507007733`: Agent Bridge validator **6 passed**; full suite **252 passed, 1 skipped**.
-- Finalized passive workflow run `34507288461`: **success**.
+11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **IMPLEMENTED + VERIFIED + HUMAN ACCEPTED 2026-09-10**.
 
 ## STEP-11 DURABLE APPROVAL IMPLEMENTATION
 
@@ -65,11 +55,10 @@ Core behavior implemented:
 - no import path from legacy review/export data into executable authority.
 
 Verification evidence:
-- First targeted CI attempt exposed a workflow import-path issue (`agent_lab` not on targeted-test import path); no domain failure was hidden.
-- CI was repaired by setting `PYTHONPATH=src`.
 - Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
 - Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
 - State-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success** at commit `771d4b265cf955c35a6edc2a1747a44f90925a4d`.
+- Human stage acceptance issued 2026-09-10.
 
 ## DURABLE APPROVAL SAFETY BOUNDARY
 
@@ -79,25 +68,25 @@ Future executable durable authority requires a newly created durable approval re
 
 No real approval was consumed during implementation or testing. Tests use synthetic cases and temporary SQLite databases only.
 
+## NEXT WORK PACKAGE
+
+**Controlled Physical Migration Executor: design → bounded implementation → synthetic/dry-run verification → rollback/post-migration verification proof → consequential Human Gate.**
+
+Until that package reaches its final Human Gate, work is limited to design, implementation and non-production verification. It must not:
+- create or grant a real CASE-001 durable approval;
+- consume any real approval;
+- move, rename, delete or mutate the 15 real source PDFs;
+- execute physical migration against real Google Drive case data.
+
+The executor design must preserve exact case/run/manifest/preflight/execution binding, immutable sources, deterministic destination mapping, idempotency/replay protection, partial-failure recovery, audit linkage, and post-migration verification. Real execution remains separately human authorized.
+
 ## PRODUCTION SAFETY BOUNDARY
 
 Agent Bridge remains a **development control plane only**. It is not runtime tax authority.
 
-It does not authorize or perform:
-- physical Google Drive migration;
-- D-017 approval consumption;
-- source-document mutation;
-- destructive or irreversible operations;
-- autonomous merge/release/stage acceptance;
-- direct autonomous write to `main`.
+It does not authorize or perform physical Google Drive migration, D-017 approval consumption, source-document mutation, destructive operations, autonomous merge/release/stage acceptance, or direct autonomous write to `main`.
 
 `HUMAN_REQUIRED` remains terminal until explicit human authorization permits a new action.
-
-## NEXT_BOUNDARY
-
-The durable approval work package has reached its **human stage-acceptance gate** under D-019. No physical migration executor may be designed or implemented until this implementation is explicitly accepted.
-
-After durable approval stage acceptance, the next separate work package is the controlled physical migration executor with rollback and post-migration verification. That package will itself remain non-executable against real CASE-001 data until a separate consequential Human Gate authorizes a new durable approval and the exact migration execution.
 
 ## VERIFIED_RUNTIME_STATE
 
