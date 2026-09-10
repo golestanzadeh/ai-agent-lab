@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge Production, Durable Approval, and Local Sync Agent implementation are human accepted. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate. Local Sync Agent is authorized for local Windows installation and first live synchronization smoke test.**
+**Agent Bridge Production, Durable Approval, and Local Sync Agent implementation are human accepted. Windows Relay architecture is human accepted and its implementation is technically verified, but Windows Relay Stage acceptance is still pending. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -12,7 +12,7 @@ Human authorization issued on 2026-09-08 produced an **APPROVED** state in the h
 
 **Local Sync Agent Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
 
-Durable Approval Stage and Agent Bridge Production were separately human accepted on 2026-09-10.
+Durable Approval Stage and Agent Bridge Production were separately human accepted on 2026-09-10. Windows Relay architecture was human accepted on 2026-09-10; its implementation stage still requires separate human acceptance before local bootstrap.
 
 Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. These acceptances do not themselves authorize automatic merge, release, runtime approval consumption, or physical migration.
 
@@ -109,9 +109,33 @@ Verification evidence:
 - Verification used fake Git behavior only and did not access or modify the user's Windows checkout.
 - Human stage acceptance issued 2026-09-10.
 
-Authorized next action:
-- install the scheduled Local Sync task on `C:\Users\rezag\ai-agent-lab` and perform the first live synchronization smoke test;
-- installation/smoke test does **not** authorize physical CASE-001 migration, approval consumption, protected-main merge, release, or destructive operations.
+## WINDOWS RELAY
+
+Architecture human-accepted 2026-09-10. Implemented artifacts:
+- `docs/windows-relay.md`
+- `src/agent_lab/windows_relay.py`
+- `scripts/windows_relay.py`
+- `scripts/install_windows_relay_task.ps1`
+- `tests/unit/test_windows_relay.py`
+
+Implemented behavior:
+- closes the GitHub-to-local-Windows execution gap without installing a GitHub self-hosted Actions runner;
+- polls only the exact configured `origin/d021-agent-case-provisioning` relay request file;
+- strict protocol v1 rejects unknown fields and arbitrary command/script/path payloads;
+- initial allowlist contains only `LOCAL_SYNC_BOOTSTRAP`;
+- requires Windows, exact repository root, exact approved branch, and clean worktree;
+- uses local `.git/windows-relay-state.json` for replay/interruption fail-closed behavior;
+- may publish only the bounded `.github/windows-relay/response.json` result on the approved non-main branch;
+- response publication stages exactly that one path and uses normal non-force push;
+- cannot modify `main`, merge/release, access Drive/tax data, grant/consume approval, or perform CASE-001 migration;
+- local relay installation itself remains a one-time trusted host bootstrap.
+
+Verification evidence:
+- CI run `34515017873`: Windows Relay targeted tests **14 passed**; Local Sync targeted tests **10 passed**; full regression **309 passed, 1 skipped**; job **success**.
+- Passive CI remained read-only and ran on GitHub-hosted Ubuntu only; it did not install or execute anything on the user's Windows host.
+
+Pending Human Gate:
+- Windows Relay implementation requires explicit **Windows Relay Stage** acceptance before the one-time local relay bootstrap is performed.
 
 ## REAL CASE-001 EXECUTION HUMAN GATE
 
@@ -148,6 +172,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED / NOT EXECUTABLE**.
 - Physical Google Drive migration: **NOT STARTED**.
 - Local Sync Agent: **IMPLEMENTED + TECHNICALLY VERIFIED + HUMAN STAGE ACCEPTED / LOCAL INSTALLATION AND LIVE SMOKE TEST AUTHORIZED BUT NOT YET VERIFIED**.
+- Windows Relay: **ARCHITECTURE HUMAN ACCEPTED + IMPLEMENTED + TECHNICALLY VERIFIED / STAGE ACCEPTANCE AND LOCAL BOOTSTRAP PENDING**.
 
 ## ACTIVE_CONSTRAINTS
 
@@ -157,6 +182,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - Private Drive IDs, OAuth tokens, credentials, client secrets and private document information must never be committed.
 - Human authority remains required wherever D-019 or a consequential-action contract requires it.
 - Local Sync may never auto-commit, force-push, repair divergence, or auto-push `main`.
+- Windows Relay may execute only versioned allowlisted local task types and may never accept arbitrary shell commands from GitHub state.
 
 ## AUTHORITATIVE_REFERENCES
 
@@ -168,6 +194,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - `docs/durable-approval-lifecycle.md`
 - `docs/physical-migration-executor.md`
 - `docs/local-sync-agent.md`
+- `docs/windows-relay.md`
 - `docs/case001-migration-compatibility.md`
 - `docs/codex-agent-workflow.md`
 - `docs/d-019-controlled-agent-assisted-development-workflow.md`
