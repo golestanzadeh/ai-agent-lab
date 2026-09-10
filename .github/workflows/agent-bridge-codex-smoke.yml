@@ -1,0 +1,45 @@
+name: Agent Bridge Codex Smoke
+
+on:
+  push:
+    branches:
+      - d021-agent-case-provisioning
+    paths:
+      - .github/agent-bridge-step6-trigger
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-bridge-codex-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  codex-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Run bounded Codex smoke task
+        id: codex
+        uses: openai/codex-action@86365089eb2b84e0a8fb0717b304f8bdcb13b20e
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ':workspace'
+          safety-strategy: drop-sudo
+          prompt: |
+            Agent Bridge Step 6 bounded smoke task.
+            Read AGENTS.md, CURRENT_STATE.md, docs/agent-bridge-production.md, scripts/agent_bridge_validate.py, and tests/unit/test_agent_bridge_validate.py.
+            Run only: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+            Then create a temporary untracked file named .agent-bridge-step6-codex-proof.txt containing exactly AGENT_BRIDGE_CODEX_STEP6_PASS if and only if the test passes.
+            Verify with git status --short that no tracked repository file was changed.
+            Do not access network resources, secrets, Drive, tax documents, credentials, ignored private artifacts, or any repository other than this checkout.
+            Do not commit, push, open/merge PRs, modify main, modify governance/contracts, or perform runtime tax actions.
+            Final response must report PASS or BLOCKED, exact test result, and whether any tracked file changed.
+
+# Step 6 only. Codex may write inside the disposable runner workspace but has no
+# GitHub write permission and checkout credentials are not persisted. No output
+# is automatically trusted as stage acceptance.
