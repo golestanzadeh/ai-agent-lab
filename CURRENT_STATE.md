@@ -69,6 +69,7 @@ Verification evidence:
 - CI was repaired by setting `PYTHONPATH=src`.
 - Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
 - Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
+- Final state-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success** at commit `771d4b265cf955c35a6edc2a1747a44f90925a4d`.
 
 ## DURABLE APPROVAL SAFETY BOUNDARY
 
