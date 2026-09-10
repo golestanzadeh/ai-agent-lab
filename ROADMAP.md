@@ -85,7 +85,7 @@ Implemented runtime foundations include:
 - `src/agent_lab/case001_approval_context.py`
 - D-021 provisioning/approval-preparation implementation on `d021-agent-case-provisioning`.
 
-Historical verification recorded before Agent Bridge productionization includes the accepted case-isolation, storage-adapter, identity, migration, approval and artifact-identity suites. The current Step-10 CI verification is authoritative for the branch-wide regression state.
+Historical verification recorded before Agent Bridge productionization includes the accepted case-isolation, storage-adapter, identity, migration, approval and artifact-identity suites. The latest branch-wide Step-10 verification is **252 passed, 1 skipped**.
 
 ### Google Drive Storage Adapter
 
@@ -102,10 +102,10 @@ Status: **metadata inventory verified; identity/evidence foundation implemented;
 - CASE-001 migration compatibility, deterministic Manifest, Live Target Preflight, D-017 Approval Gate, D-018 Artifact Identity, and D-020 Approval Context Composition: implemented.
 - D-021 standard target provisioning and approval preparation: implementation complete on its branch.
 - Physical Drive migration: deliberately not implemented.
-- Durable/reloadable approval lifecycle remains required before physical execution can be designed or considered.
+- Durable/reloadable approval lifecycle is the active Step-11 work package.
 
 Still required before any physical migration executor is accepted:
-- durable/reloadable approval lifecycle architecture and implementation;
+- durable/reloadable approval lifecycle implementation and verification;
 - controlled physical migration executor;
 - rollback and post-migration verification;
 - a separate consequential Human Gate for execution.
@@ -146,7 +146,7 @@ D-020 is accepted and integrated into main. Its composition layer binds exact Ma
 
 ## Agent Bridge Production Migration — approved sequential plan
 
-Status: **Step 10 final verification in progress; Steps 1-9 complete**
+Status: **production accepted; Step 11 active**
 
 1. Baseline + Durable Documentation + Canonical State Cleanup — **complete**.
 2. Production Architecture and Governance — **human accepted 2026-09-10**.
@@ -157,14 +157,13 @@ Status: **Step 10 final verification in progress; Steps 1-9 complete**
 7. GitHub → Work Response Wake-up and independent review — **complete**.
 8. Controlled Continuation for low-risk bounded tasks only — **complete**.
 9. Deliberate Human Gate validation — **complete; HUMAN_REQUIRED terminal behavior proved**.
-10. Production acceptance, rollback drill, audit and kill-switch verification — **in progress**.
-11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker — **not started**.
+10. Production acceptance, rollback drill, audit and kill-switch verification — **complete; production human-accepted 2026-09-10**.
+11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker — **active; architecture human-accepted 2026-09-10**.
 
 Agent Bridge is a **development control plane only**. It does not replace D-017, authorize approval consumption, or authorize physical migration.
 
-### Agent Bridge future-file registry
+### Agent Bridge production files
 
-Registered productionization files:
 - `docs/agent-bridge-production.md`
 - `.github/workflows/agent-bridge-passive.yml`
 - `.github/workflows/agent-bridge-codex.yml`
@@ -172,7 +171,29 @@ Registered productionization files:
 - `scripts/agent_bridge_validate.py`
 - `tests/unit/test_agent_bridge_validate.py`
 
-Temporary Step-6/8/9/10 probe trigger files and disposable test branches are validation artifacts, not long-term production interfaces, and should be removed or left unmerged when no longer needed.
+Temporary probe trigger files and disposable test branches are validation artifacts, not long-term production interfaces, and should be removed or left unmerged when no longer needed.
+
+### Durable/reloadable approval lifecycle — Step 11 future-file registry
+
+Architecture accepted by the human on 2026-09-10. The following files are registered before implementation:
+
+- `docs/durable-approval-lifecycle.md` — durable authority model, SQLite transaction boundary, schema/versioning, reload, crash recovery, audit linkage, tamper/fail-closed behavior, and migration boundary from the in-memory store.
+- `src/agent_lab/durable_approval.py` — SQLite-backed durable approval authority preserving D-017 binding/lifecycle semantics.
+- `tests/unit/test_durable_approval.py` — persistence/reload, exact binding, one-time consumption, concurrency, rollback, corruption, schema-version and legacy-export rejection tests.
+
+Existing files expected to receive bounded integration changes:
+- `src/agent_lab/approval.py` — shared domain value/validation reuse only; in-memory store remains available for compatibility unless explicitly superseded.
+- `src/agent_lab/audit.py` — only if required to preserve one durable transactional boundary without introducing a second audit subsystem.
+- `docs/approval-gate.md` — durable extension and compatibility boundary.
+- `DECISIONS.md` and `CURRENT_STATE.md` — accepted decision/evidence state.
+
+Implementation constraints:
+- SQLite is the initial durable backend for the local single-host runtime.
+- Approval and its authoritative approval-lifecycle audit event must commit in one SQLite transaction for durable lifecycle transitions.
+- Executable authority is reconstructed only from validated durable records, never from exported review JSON/text or chat/GitHub prose.
+- Unknown schema version, integrity mismatch, partial/corrupt state, case/run mismatch, or transaction uncertainty fails closed.
+- `CONSUMED` remains terminal and exactly-once across process restart and concurrent consumers.
+- No physical Drive mutation or approval consumption of the real CASE-001 approval is authorized by this work package.
 
 ## Future-file registry rule
 
