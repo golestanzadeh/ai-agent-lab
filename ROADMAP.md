@@ -83,9 +83,10 @@ Implemented runtime foundations include:
 - `src/agent_lab/approval.py`
 - `src/agent_lab/artifact_identity.py`
 - `src/agent_lab/case001_approval_context.py`
+- `src/agent_lab/durable_approval.py`
 - D-021 provisioning/approval-preparation implementation on `d021-agent-case-provisioning`.
 
-Historical verification recorded before Agent Bridge productionization includes the accepted case-isolation, storage-adapter, identity, migration, approval and artifact-identity suites. The latest branch-wide Step-10 verification is **252 passed, 1 skipped**.
+Historical verification recorded before Agent Bridge productionization includes the accepted case-isolation, storage-adapter, identity, migration, approval and artifact-identity suites. Durable approval technical verification reached **263 passed, 1 skipped**.
 
 ### Google Drive Storage Adapter
 
@@ -95,20 +96,19 @@ The provider-neutral contract, case-scoped resolver integration, metadata-only a
 
 ### CASE-001 inventory / identity / migration work package
 
-Status: **metadata inventory verified; identity/evidence foundation implemented; migration compatibility and live target preflight implemented; approval gate implemented; physical migration not implemented**
+Status: **metadata inventory verified; identity/evidence, manifest, live target preflight, approval and durable approval foundations implemented; controlled physical migration executor is active work**
 
 - Metadata-only CASE-001 inventory: 15 PDFs, 0 folders.
 - Document Identity and Inventory Evidence: implemented and verified.
-- CASE-001 migration compatibility, deterministic Manifest, Live Target Preflight, D-017 Approval Gate, D-018 Artifact Identity, and D-020 Approval Context Composition: implemented.
+- CASE-001 migration compatibility, deterministic Manifest, Live Target Preflight, D-017 Approval Gate, D-018 Artifact Identity, D-020 Approval Context Composition, and durable/reloadable approval backend: implemented.
 - D-021 standard target provisioning and approval preparation: implementation complete on its branch.
-- Physical Drive migration: deliberately not implemented.
-- Durable/reloadable approval lifecycle is the active Step-11 work package.
+- Physical Drive migration against real CASE-001 data has not been executed.
 
-Still required before any physical migration executor is accepted:
-- durable/reloadable approval lifecycle implementation and verification;
-- controlled physical migration executor;
+Still required before real physical migration:
+- controlled physical migration executor implementation and synthetic/dry-run verification;
 - rollback and post-migration verification;
-- a separate consequential Human Gate for execution.
+- a newly created durable executable approval for the exact authoritative binding;
+- a separate consequential Human Gate for real CASE-001 execution.
 
 ## Phase 3 — Evaluation and safety design
 
@@ -146,7 +146,7 @@ D-020 is accepted and integrated into main. Its composition layer binds exact Ma
 
 ## Agent Bridge Production Migration — approved sequential plan
 
-Status: **production accepted; Step 11 active**
+Status: **production accepted; Step 11 durable approval accepted; physical migration executor work package active**
 
 1. Baseline + Durable Documentation + Canonical State Cleanup — **complete**.
 2. Production Architecture and Governance — **human accepted 2026-09-10**.
@@ -158,7 +158,7 @@ Status: **production accepted; Step 11 active**
 8. Controlled Continuation for low-risk bounded tasks only — **complete**.
 9. Deliberate Human Gate validation — **complete; HUMAN_REQUIRED terminal behavior proved**.
 10. Production acceptance, rollback drill, audit and kill-switch verification — **complete; production human-accepted 2026-09-10**.
-11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker — **active; architecture human-accepted 2026-09-10**.
+11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker — **complete; architecture and stage human-accepted 2026-09-10**.
 
 Agent Bridge is a **development control plane only**. It does not replace D-017, authorize approval consumption, or authorize physical migration.
 
@@ -173,27 +173,44 @@ Agent Bridge is a **development control plane only**. It does not replace D-017,
 
 Temporary probe trigger files and disposable test branches are validation artifacts, not long-term production interfaces, and should be removed or left unmerged when no longer needed.
 
-### Durable/reloadable approval lifecycle — Step 11 future-file registry
+### Durable/reloadable approval lifecycle — Step 11
 
-Architecture accepted by the human on 2026-09-10. The following files are registered before implementation:
+Architecture and stage accepted by the human on 2026-09-10.
 
-- `docs/durable-approval-lifecycle.md` — durable authority model, SQLite transaction boundary, schema/versioning, reload, crash recovery, audit linkage, tamper/fail-closed behavior, and migration boundary from the in-memory store.
-- `src/agent_lab/durable_approval.py` — SQLite-backed durable approval authority preserving D-017 binding/lifecycle semantics.
-- `tests/unit/test_durable_approval.py` — persistence/reload, exact binding, one-time consumption, concurrency, rollback, corruption, schema-version and legacy-export rejection tests.
+Implemented files:
+- `docs/durable-approval-lifecycle.md`
+- `src/agent_lab/durable_approval.py`
+- `tests/unit/test_durable_approval.py`
 
-Existing files expected to receive bounded integration changes:
-- `src/agent_lab/approval.py` — shared domain value/validation reuse only; in-memory store remains available for compatibility unless explicitly superseded.
-- `src/agent_lab/audit.py` — only if required to preserve one durable transactional boundary without introducing a second audit subsystem.
-- `docs/approval-gate.md` — durable extension and compatibility boundary.
-- `DECISIONS.md` and `CURRENT_STATE.md` — accepted decision/evidence state.
-
-Implementation constraints:
+Implementation constraints remain authoritative:
 - SQLite is the initial durable backend for the local single-host runtime.
-- Approval and its authoritative approval-lifecycle audit event must commit in one SQLite transaction for durable lifecycle transitions.
+- Approval and its authoritative approval-lifecycle audit event commit in one SQLite transaction for durable lifecycle transitions.
 - Executable authority is reconstructed only from validated durable records, never from exported review JSON/text or chat/GitHub prose.
 - Unknown schema version, integrity mismatch, partial/corrupt state, case/run mismatch, or transaction uncertainty fails closed.
 - `CONSUMED` remains terminal and exactly-once across process restart and concurrent consumers.
-- No physical Drive mutation or approval consumption of the real CASE-001 approval is authorized by this work package.
+
+### Controlled physical migration executor — future-file registry
+
+Registered before implementation on 2026-09-10:
+- `docs/physical-migration-executor.md` — execution contract, dry-run/live boundary, rollback model, post-migration verification and Human Gate requirements.
+- `src/agent_lab/case001_physical_migration.py` — deterministic CASE-001 physical migration executor over an injected storage mutation port; no credential discovery or global Drive search.
+- `tests/unit/test_case001_physical_migration.py` — synthetic execution, dry-run, approval binding, partial-failure rollback, idempotency, unexpected-target and verification failure tests.
+
+Existing files may receive bounded integration changes:
+- `.github/workflows/agent-bridge-passive.yml` — include the new executor tests in CI.
+- `docs/case001-migration-compatibility.md` — advance Phase 3/4 boundary after verified implementation.
+- `CURRENT_STATE.md` and `DECISIONS.md` — record verified state and consequential Human Gate boundary.
+
+Executor constraints:
+- dry-run is the default and performs zero mutations;
+- live execution requires an exact durable `APPROVED` authorization and a separately enabled execution flag;
+- the executor operates only on explicit manifest object IDs and explicit target parent ID, never names or Drive-wide search;
+- each mutation must preserve provider object ID and logical document identity;
+- partial failure attempts reverse-order rollback of already-applied moves;
+- incomplete rollback or unverifiable post-state fails closed and must never be reported as success;
+- post-migration verification must prove every expected object is at the target and no unexpected source/target ambiguity exists;
+- approval consumption occurs only after successful post-migration verification; a failed execution must not consume authorization;
+- real CASE-001 execution, creation/grant of new durable authority for it, and any approval consumption remain behind a separate consequential Human Gate.
 
 ## Future-file registry rule
 
