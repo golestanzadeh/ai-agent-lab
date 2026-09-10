@@ -9,7 +9,6 @@ on:
       - tests/unit/test_agent_bridge_validate.py
       - requirements.txt
       - .github/workflows/agent-bridge-passive.yml
-      - .github/agent-bridge-step10-trigger
   workflow_dispatch:
 
 permissions:
