@@ -242,6 +242,29 @@ Local Sync Agent constraints:
 - overlapping runs are prevented by the scheduler and a local lock;
 - installation/configuration is local-machine bootstrap only and does not weaken protected-main, PR, Agent Bridge, Durable Approval, or Human Gate governance.
 
+### Windows Relay — approved architecture and registered implementation
+
+Architecture human-accepted on 2026-09-10 to close the bounded GitHub-to-local-Windows execution gap without attaching a general-purpose or self-hosted GitHub Actions runner to the public repository.
+
+Registered implementation artifacts:
+- `docs/windows-relay.md` — trust, transport, allowlist, bootstrap, and failure boundaries.
+- `src/agent_lab/windows_relay.py` — strict request parser, one-shot relay processor, idempotency state, and bounded response publisher.
+- `scripts/windows_relay.py` — unattended one-shot CLI with overlap lock.
+- `scripts/install_windows_relay_task.ps1` — one-time Task Scheduler bootstrap for the local relay.
+- `tests/unit/test_windows_relay.py` — deterministic fail-closed and no-arbitrary-command tests.
+
+Windows Relay constraints:
+- request transport is the exact GitHub branch file `.github/windows-relay/request.json` and response transport is `.github/windows-relay/response.json`;
+- protocol v1 accepts only `LOCAL_SYNC_BOOTSTRAP`; no request field can contain a shell command, script, path override, credential, Drive ID, or arbitrary argument;
+- execution requires Windows, the exact authoritative repository root, the exact approved non-main branch, and a clean working tree;
+- task replay is blocked using local state under `.git`;
+- response publication may stage/commit only the bounded response file and uses a normal non-force push to the approved non-main branch;
+- the relay cannot merge/release, modify `main`, access Drive/tax data, grant/consume migration approval, or perform CASE-001 physical migration;
+- first local relay bootstrap remains a one-time host action; after installation, ordinary allowlisted relay requests no longer require the user to open a terminal.
+
+Technical verification:
+- CI run `34515017873`: Windows Relay targeted tests **14 passed**, Local Sync tests **10 passed**, full regression **309 passed, 1 skipped**; job **success**.
+
 ## Future-file registry rule
 
 A file listed as planned is **not** considered created or implemented until it exists in GitHub. A future file may be added, renamed, split, or cancelled only through an explicit update to this roadmap and, for significant changes, a decision record.
