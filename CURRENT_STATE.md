@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge Production and Durable Approval are human accepted. The Controlled Physical Migration Executor, guarded Google Drive mutation adapter, and controlled local execution harness are implemented and technically verified. Real CASE-001 execution is now at its separate consequential Human Gate.**
+**Agent Bridge Production and Durable Approval are human accepted. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate. Local Sync Agent architecture is human accepted and its implementation is technically verified; Local Sync installation/live smoke test is at its own human stage-acceptance gate.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -12,7 +12,7 @@ Human authorization issued on 2026-09-08 produced an **APPROVED** state in the h
 
 **Durable Approval Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
 
-Agent Bridge Production was separately human accepted on 2026-09-10.
+Agent Bridge Production was separately human accepted on 2026-09-10. Local Sync Agent architecture was separately human accepted on 2026-09-10; implementation stage acceptance is still pending.
 
 Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. These acceptances do not themselves authorize automatic merge, release, runtime approval consumption, or physical migration.
 
@@ -83,6 +83,36 @@ Verification evidence:
 - All CI migration tests use synthetic storage/fake Drive services and temporary test authority only.
 - No real Google Drive object was moved, renamed, deleted, overwritten, or otherwise mutated by these tests.
 
+## LOCAL SYNC AGENT
+
+Architecture human-accepted 2026-09-10. Implemented artifacts:
+- `docs/local-sync-agent.md`
+- `src/agent_lab/local_sync.py`
+- `scripts/local_sync_agent.py`
+- `scripts/install_local_sync_task.ps1`
+- `tests/unit/test_local_sync.py`
+
+Implemented behavior:
+- one-shot reconciliation intended for Windows Task Scheduler every minute;
+- exact repository-root and configured-branch validation;
+- dirty tree fails closed before fetch/merge/push;
+- strictly-behind local branch updates only through `merge --ff-only`;
+- strictly-ahead already committed non-main branch may push normally;
+- `main` is never auto-pushed;
+- divergence, detached/wrong branch, missing remote, or Git failures stop without reset/rebase/stash/commit/force-push;
+- the CLI stores its overlap lock only under `.git` and recovers a stale lock after ten minutes;
+- no repository credential, OAuth token, tax data, Drive artifact, or durable approval database is synchronized by this mechanism.
+
+Verification evidence:
+- CI run `34512131024`: Local Sync Agent targeted tests **10 passed**; full regression **295 passed, 1 skipped**; job **success**.
+- Existing Agent Bridge, Durable Approval and controlled migration suites remained green in the same run.
+- Verification used fake Git behavior only and did not access or modify the user's Windows checkout.
+
+Human gate:
+- implementation is technically verified;
+- local Windows installation and first live synchronization smoke test require human stage acceptance;
+- this gate is independent of the real CASE-001 physical migration Human Gate.
+
 ## REAL CASE-001 EXECUTION HUMAN GATE
 
 All implementation and non-production verification needed before the consequential gate are complete. Real CASE-001 remains blocked until the human explicitly authorizes the live attempt and the creation/grant of its new durable executable approval.
@@ -117,6 +147,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - Historical run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
 - Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED / NOT EXECUTABLE**.
 - Physical Google Drive migration: **NOT STARTED**.
+- Local Sync Agent: **IMPLEMENTED + TECHNICALLY VERIFIED / NOT YET INSTALLED OR LIVE-SMOKE-TESTED**.
 
 ## ACTIVE_CONSTRAINTS
 
@@ -125,6 +156,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - Every case-data operation requires validated case scope and fails closed on ambiguity.
 - Private Drive IDs, OAuth tokens, credentials, client secrets and private document information must never be committed.
 - Human authority remains required wherever D-019 or a consequential-action contract requires it.
+- Local Sync may never auto-commit, force-push, repair divergence, or auto-push `main`.
 
 ## AUTHORITATIVE_REFERENCES
 
@@ -135,6 +167,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - `docs/agent-bridge-production.md`
 - `docs/durable-approval-lifecycle.md`
 - `docs/physical-migration-executor.md`
+- `docs/local-sync-agent.md`
 - `docs/case001-migration-compatibility.md`
 - `docs/codex-agent-workflow.md`
 - `docs/d-019-controlled-agent-assisted-development-workflow.md`
