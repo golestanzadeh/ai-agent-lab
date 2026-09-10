@@ -47,7 +47,45 @@ Goals:
 - anchor CASE-001 migration validation to Document Identity and Inventory Evidence;
 - implement the deterministic human approval boundary for consequential actions.
 
-Existing files include the accepted architecture/case/storage/migration/approval documents and their tested runtime foundations under `src/agent_lab/` and `tests/`.
+### Preserved detailed Phase-2 register
+
+Accepted architecture/storage/migration documents include:
+- `docs/architecture.md`
+- `docs/case-management.md`
+- `docs/case-registry.md`
+- `docs/person-entity-registry.md`
+- `docs/case-creation-workflow.md`
+- `docs/case-scoped-drive-resolver.md`
+- `docs/state-and-memory.md`
+- `docs/google-drive-storage-adapter.md`
+- `docs/case001-migration-compatibility.md`
+- `docs/document-identity.md`
+- `docs/approval-gate.md`
+- `docs/artifact-identity.md`
+- `docs/case001-approval-context.md`
+
+Implemented runtime foundations include:
+- `src/agent_lab/case_registry.py`
+- `src/agent_lab/person_entity_registry.py`
+- `src/agent_lab/case_identity_association.py`
+- `src/agent_lab/case_creation_workflow.py`
+- `src/agent_lab/case_scoped_drive.py`
+- `src/agent_lab/case_state.py`
+- `src/agent_lab/storage.py`
+- `src/agent_lab/google_drive_storage.py`
+- `src/agent_lab/google_drive_auth.py`
+- `src/agent_lab/document_inventory.py`
+- `src/agent_lab/document_identity.py`
+- `src/agent_lab/inventory_evidence.py`
+- `src/agent_lab/case001_migration.py`
+- `src/agent_lab/case001_migration_manifest.py`
+- `src/agent_lab/case001_live_target_preflight.py`
+- `src/agent_lab/approval.py`
+- `src/agent_lab/artifact_identity.py`
+- `src/agent_lab/case001_approval_context.py`
+- D-021 provisioning/approval-preparation implementation on `d021-agent-case-provisioning`.
+
+Historical verification recorded before Agent Bridge productionization includes the accepted case-isolation, storage-adapter, identity, migration, approval and artifact-identity suites. The current Step-10 CI verification is authoritative for the branch-wide regression state.
 
 ### Google Drive Storage Adapter
 
@@ -65,6 +103,12 @@ Status: **metadata inventory verified; identity/evidence foundation implemented;
 - D-021 standard target provisioning and approval preparation: implementation complete on its branch.
 - Physical Drive migration: deliberately not implemented.
 - Durable/reloadable approval lifecycle remains required before physical execution can be designed or considered.
+
+Still required before any physical migration executor is accepted:
+- durable/reloadable approval lifecycle architecture and implementation;
+- controlled physical migration executor;
+- rollback and post-migration verification;
+- a separate consequential Human Gate for execution.
 
 ## Phase 3 — Evaluation and safety design
 
@@ -102,34 +146,33 @@ D-020 is accepted and integrated into main. Its composition layer binds exact Ma
 
 ## Agent Bridge Production Migration — approved sequential plan
 
-Status: **in progress**
+Status: **Step 10 final verification in progress; Steps 1-9 complete**
 
 1. Baseline + Durable Documentation + Canonical State Cleanup — **complete**.
 2. Production Architecture and Governance — **human accepted 2026-09-10**.
-3. Protocol Contract — **defined; implementation pending**.
-4. Production Security Model — **defined; implementation pending**.
-5. Passive / Observe-only Bridge — next implementation stage.
-6. Codex Bounded Execution.
-7. GitHub → Work Response Wake-up and independent review.
-8. Controlled Continuation for low-risk bounded tasks only.
-9. Deliberate Human Gate validation.
-10. Production acceptance, rollback drill, audit and kill-switch verification.
-11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker.
+3. Protocol Contract — **defined**.
+4. Production Security Model — **defined**.
+5. Passive / Observe-only Bridge — **complete**.
+6. Codex Bounded Execution — **complete**.
+7. GitHub → Work Response Wake-up and independent review — **complete**.
+8. Controlled Continuation for low-risk bounded tasks only — **complete**.
+9. Deliberate Human Gate validation — **complete; HUMAN_REQUIRED terminal behavior proved**.
+10. Production acceptance, rollback drill, audit and kill-switch verification — **in progress**.
+11. Resume AI-Tax-Agent development at the durable/reloadable approval lifecycle blocker — **not started**.
 
 Agent Bridge is a **development control plane only**. It does not replace D-017, authorize approval consumption, or authorize physical migration.
 
 ### Agent Bridge future-file registry
 
-The following files are registered before creation:
+Registered productionization files:
+- `docs/agent-bridge-production.md`
+- `.github/workflows/agent-bridge-passive.yml`
+- `.github/workflows/agent-bridge-codex.yml`
+- `.github/workflows/agent-bridge-response.yml`
+- `scripts/agent_bridge_validate.py`
+- `tests/unit/test_agent_bridge_validate.py`
 
-- `docs/agent-bridge-production.md` — accepted production architecture, protocol, Human Gate matrix, security model, rollback and operational boundaries.
-- `.github/workflows/agent-bridge-passive.yml` — Step-5 observe-only REQUEST validation; no Codex execution or repository write authority.
-- `.github/workflows/agent-bridge-codex.yml` — later bounded Codex execution workflow; must not be activated until Step 6 and its prerequisites are satisfied.
-- `.github/workflows/agent-bridge-response.yml` — later response/wake-up path; must not be activated until Step 7 and its prerequisites are satisfied.
-- `scripts/agent_bridge_validate.py` — deterministic protocol/parser/validation boundary.
-- `tests/unit/test_agent_bridge_validate.py` — protocol, fail-closed, replay/idempotency and Human-Gate validation tests.
-
-Registration does not authorize creation or activation before the corresponding sequential migration step.
+Temporary Step-6/8/9/10 probe trigger files and disposable test branches are validation artifacts, not long-term production interfaces, and should be removed or left unmerged when no longer needed.
 
 ## Future-file registry rule
 
