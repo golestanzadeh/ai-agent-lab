@@ -2,15 +2,18 @@
 
 ## Status
 
-Implemented for D-017. This document defines the implementation boundary for the Human Approval Gate before any consequential physical migration.
+Implemented for D-017. The original `ApprovalStore` remains process-local. A SQLite-backed `DurableApprovalStore` now implements the human-accepted durable/reloadable extension described in `docs/durable-approval-lifecycle.md`.
+
+This document defines the Human Approval Gate before any consequential physical migration. Neither the process-local nor durable store authorizes physical migration by itself.
 
 ## Ownership
 
 - `MigrationApproval` is an immutable approval artifact. Lifecycle transitions replace the stored immutable value rather than mutating the artifact in place.
-- `ApprovalStore` owns approval lifecycle and one-time consumption.
 - `ApprovalGate` owns deterministic binding and authorization validation.
+- `ApprovalStore` owns the legacy/process-local approval lifecycle and one-time consumption semantics.
+- `DurableApprovalStore` owns the SQLite-backed durable/reloadable lifecycle and persists its matching approval-lifecycle audit event in the same SQLite transaction.
 - `CaseState` does not own approval state. Its `approvals_ref` remains a reference boundary only.
-- The existing `AuditStore` remains the only audit subsystem.
+- Approval audit events continue to use the existing `AuditEvent` / `AuditEventType` contract. The durable backend persists the approval-lifecycle subset of that contract transactionally with the approval row; this is not an independent second audit authority.
 
 ## Approval binding
 
@@ -40,13 +43,13 @@ PENDING -> APPROVED -> CONSUMED
  REJECTED      +-> EXPIRED
 ```
 
-`CONSUMED` is terminal for execution and one-time. A sequential reuse attempt returns `APPROVAL_ALREADY_CONSUMED`. Concurrent attempts are serialized by the Approval Store lock, so exactly one matching attempt can consume an approval.
+`CONSUMED` is terminal for execution and one-time. A sequential reuse attempt returns `APPROVAL_ALREADY_CONSUMED`.
 
-## Atomic consumption boundary
+The legacy in-memory `ApprovalStore` serializes concurrent attempts with its process lock. The durable store serializes write transactions with SQLite `BEGIN IMMEDIATE`, so independent store instances/processes cannot both commit the same consumption.
 
-Consumption is not implemented as two independent operations such as `consume()` followed by `audit.append()`.
+## Process-local atomic boundary
 
-The boundary is:
+For `ApprovalStore`, consumption remains:
 
 ```text
 APPROVED
@@ -55,20 +58,53 @@ APPROVED
   -> success
 ```
 
-The existing `AuditStore.atomic_append()` holds the audit lock while the Approval Store commits the state transition and before the audit event becomes externally visible. Approval readers are protected by the Approval Store lock and audit readers by the Audit Store lock. Therefore callers cannot observe the committed approval transition without the corresponding audit event.
+The existing `AuditStore.atomic_append()` holds the audit lock while the Approval Store commits the state transition and before the audit event becomes externally visible. If the domain transition or audit publication fails, the Approval Store rollback restores the previous approval and the Audit Store removes the unpublished event and restores its sequence number.
 
-If the domain transition or audit publication fails, the Approval Store rollback restores the previous approval and the Audit Store removes the unpublished event and restores its sequence number. The operation is then unsuccessful.
+This remains **process-local atomic consistency only**. The in-memory implementation makes no claim of crash durability, persistent transactional durability, or distributed atomicity.
 
-This is **process-local atomic consistency only**. The current in-memory implementation makes no claim of crash durability, persistent transactional durability, or distributed atomicity.
+## Durable SQLite boundary
 
-An exported review record may document an APPROVED state produced during one
-process, but it does not restore the ApprovalStore after that process exits and
-must not be treated as executable authorization. Durable/reloadable approval
-authority requires a separately accepted persistence architecture.
+For `DurableApprovalStore`, every lifecycle mutation uses one SQLite write transaction:
+
+```text
+BEGIN IMMEDIATE
+  -> reload + integrity/schema/scope validation
+  -> validate transition or exact execution binding
+  -> allocate durable audit identity
+  -> replace approval row with new immutable lifecycle value
+  -> append matching durable approval audit event
+COMMIT
+```
+
+If any operation fails before commit, SQLite rolls back approval state, audit event, and transactional counters together. A successful commit is reloadable after process restart.
+
+The durable record includes a schema version and SHA-256 integrity digest over its canonical executable payload. Durable approval audit rows also carry an integrity digest over the existing AuditEvent-shaped payload. Unknown schema versions, malformed records, or integrity mismatches fail closed.
+
+The integrity digest is corruption/tamper detection, not a digital signature and not protection against a malicious host administrator with database write access.
+
+## Reload and executable authority
+
+A durable approval becomes executable authority only when it is loaded from the configured durable SQLite database and passes:
+
+1. durable schema validation;
+2. record decoding and enum/timestamp validation;
+3. integrity verification;
+4. current case/run scope validation;
+5. existing `ApprovalGate.validate_binding()` against the exact execution context.
+
+An exported review record may document an APPROVED state produced during another process, but it is **never imported or interpreted as executable authority**. Chat text, GitHub comments, review JSON/text, and remembered identifiers are likewise not authority.
+
+The historical CASE-001 process-local APPROVED result therefore remains **APPROVED / NOT CONSUMED / NON-DURABLE** and is not silently migrated. Future durable execution would require a newly created durable approval request and a new explicit human grant against the exact authoritative artifacts/context.
+
+## Durable IDs and persistence
+
+Durable approval IDs and durable audit IDs keep the established textual shapes (`APP-00000001`, `AUDIT-00000001`) but are allocated from transactionally persisted SQLite counters so restart does not reuse an identifier.
+
+The database path is private runtime configuration/state. A live database containing case-bound approval authority must not be committed to GitHub.
 
 ## Audit events
 
-Approval lifecycle actions use the existing audit boundary. The implementation adds the explicit event types needed by the lifecycle:
+Approval lifecycle actions use the existing event types:
 
 - `APPROVAL_REQUESTED`
 - `APPROVAL_GRANTED`
@@ -79,13 +115,23 @@ Approval lifecycle actions use the existing audit boundary. The implementation a
 
 `APPROVAL_CONSUMED` is the authoritative audit evidence that the one-time authorization was successfully consumed.
 
-`create_pending()` records `APPROVAL_REQUESTED` with the actual requester type.
-Its backward-compatible default is `HUMAN`; authorized agent preparation passes
-`AGENT`. Only `HUMAN` and `AGENT` are valid requesters. `grant()` remains a
-human-authority action and always records `APPROVAL_GRANTED` as `HUMAN`.
+`create_pending()` records `APPROVAL_REQUESTED` with the actual requester type. Its backward-compatible default is `HUMAN`; authorized agent preparation may pass `AGENT`. Only `HUMAN` and `AGENT` are valid requesters. `grant()` remains a human-authority action and records `APPROVAL_GRANTED` as `HUMAN`.
+
+## Verification
+
+The durable lifecycle unit suite covers restart/reload, exact binding, terminal one-time consumption across restart, independent concurrent consumers, rollback on durable audit insertion failure, approval/audit integrity corruption, unknown schema versions, lifecycle audit coverage, and rejection of legacy review export as authority.
+
+The first CI run failed only because the newly targeted test was executed without the repository `src` import path. The workflow was corrected to set `PYTHONPATH=src` and rerun.
+
+Verified CI run `34508255413`:
+
+- Agent Bridge validator: **6 passed**;
+- durable approval lifecycle: **11 passed**;
+- full repository suite: **263 passed, 1 skipped**;
+- job conclusion: **success**.
 
 ## Integration boundary
 
-The implementation does not create or modify Manifest, Live Target Preflight, or a Physical Migration Executor. It performs no Drive mutation and cannot itself execute physical migration.
+This implementation does not create or modify Manifest, Live Target Preflight, or a Physical Migration Executor. It performs no Drive mutation and did not consume the existing real CASE-001 approval.
 
-`CaseState.approvals_ref` may point to an approval ID for case-level discoverability, but ApprovalStore remains the lifecycle authority.
+`CaseState.approvals_ref` may point to an approval ID for case-level discoverability, but executable authority belongs to the selected Approval Store implementation and must pass the exact D-017 binding gate.
