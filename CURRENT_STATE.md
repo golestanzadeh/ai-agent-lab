@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge Production and Durable Approval are human accepted. The Controlled Physical Migration Executor work package is implemented and technically verified; real CASE-001 execution is now at its separate consequential Human Gate.**
+**Agent Bridge Production and Durable Approval are human accepted. The Controlled Physical Migration Executor, guarded Google Drive mutation adapter, and controlled local execution harness are implemented and technically verified. Real CASE-001 execution is now at its separate consequential Human Gate.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -53,41 +53,48 @@ Implemented artifacts:
 - `tests/unit/test_case001_physical_migration.py`
 - `src/agent_lab/google_drive_mutation.py`
 - `tests/unit/test_google_drive_mutation.py`
+- `scripts/case001_controlled_migration.py`
+- `tests/unit/test_case001_controlled_migration.py`
 
 Implemented behavior:
 - `DRY_RUN` is the default and performs zero storage mutation and zero approval consumption;
-- `LIVE` fails before storage inspection unless explicitly enabled and supplied with exact durable approval authority;
+- `LIVE` fails before storage inspection unless explicitly enabled and supplied with exact newly created durable approval authority;
+- the local harness reconstructs fresh case scope, metadata inventory, Document Identity linkage, deterministic Manifest, and Live Target Preflight before any possible live mutation;
+- the harness requires the fresh real inventory to remain exactly **15 PDFs / 0 folders** and requires the target to remain empty;
 - only explicit manifest object IDs and explicit source/target parent IDs are accepted;
 - Google Drive mutation port exposes only explicit parent-scoped listing, single-parent inspection, and guarded parent move;
 - no taxpayer-name, filename, folder-name, or Drive-wide discovery path exists in the mutation adapter;
 - object IDs are preserved by parent moves;
-- target must still be empty at execution time;
-- every expected source object must still be directly under the explicit source parent;
 - partial move failure triggers reverse-order rollback;
 - post-migration verification requires exact target contents and absence of expected objects from source;
 - approval is consumed only after successful post-migration verification;
 - approval-consumption failure triggers storage rollback;
 - incomplete rollback produces explicit terminal `PhysicalMigrationRollbackError` and can never be reported as success;
-- a consumed approval replay fails closed before storage inspection.
+- a consumed approval replay fails closed before storage inspection;
+- LIVE requires the exact explicit authorization sentinel plus human approver and authorization reference;
+- the live harness refuses to create a second authority automatically when its durable approval database already exists, forcing human recovery/review instead of silent retry;
+- stdout summary deliberately omits provider object IDs, source/target parent IDs, filenames, and complete mappings.
 
 Verification evidence:
 - CI run `34509462092`: physical migration executor tests **9 passed**; full suite **272 passed, 1 skipped**; job **success**.
 - CI run `34509683965`: executor tests **9 passed**, guarded Drive mutation adapter tests **7 passed**, durable approval tests **11 passed**, Agent Bridge validator **6 passed**, full regression **279 passed, 1 skipped**; job **success**.
-- All migration tests use synthetic storage/fake Drive services and temporary test authority only.
+- CI run `34509914717`: all migration/durable/Bridge regression checks **success** after Human-Gate state advancement.
+- CI run `34510246145`: Bridge validator **6 passed**, Durable Approval **11 passed**, physical executor **9 passed**, guarded Drive adapter **7 passed**, controlled harness safety **6 passed**, full regression **285 passed, 1 skipped**; job **success**.
+- All CI migration tests use synthetic storage/fake Drive services and temporary test authority only.
 - No real Google Drive object was moved, renamed, deleted, overwritten, or otherwise mutated by these tests.
 
 ## REAL CASE-001 EXECUTION HUMAN GATE
 
-Technical implementation is complete enough to prepare real execution, but real CASE-001 remains blocked until a separate consequential Human Gate explicitly authorizes it.
+All implementation and non-production verification needed before the consequential gate are complete. Real CASE-001 remains blocked until the human explicitly authorizes the live attempt and the creation/grant of its new durable executable approval.
 
-Before a real move, the runtime must reconstruct fresh authoritative state and fail closed unless all of these still match:
+At the real attempt, the local harness will reconstruct fresh authoritative state and fail closed unless all of these still match:
 - `CASE-001`, tax period 2024 and the exact registered source scope;
 - live inventory remains exactly the expected 15 PDFs / 0 folders;
 - exact current Manifest identity and complete object mapping;
 - fresh successful Live Target Preflight and target still empty;
 - exact source/target parent IDs;
 - a **new durable approval request and explicit human grant** bound to the reconstructed manifest, preflight, run, actor, and `PHYSICAL_MIGRATION` operation;
-- explicit live execution enablement.
+- exact explicit live authorization sentinel.
 
 The historical process-local `APP-00000001` is **not** valid for this purpose and must not be imported or upgraded.
 
