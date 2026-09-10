@@ -10,9 +10,9 @@ Human authorization issued on 2026-09-08 produced an **APPROVED** state in the p
 
 ## LAST_ACCEPTED_STAGE
 
-**Durable Approval Architecture — human accepted 2026-09-10.**
+**Agent Bridge Production — human accepted 2026-09-10.**
 
-The implementation built from that accepted architecture is technically verified but is not yet human stage-accepted. Agent Bridge Production remains the last fully accepted productionization stage.
+**Durable Approval Architecture** was separately human-accepted on 2026-09-10 as the Step-11 design authority. Its implementation is technically verified but is not yet human stage-accepted.
 
 Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. Neither Agent Bridge acceptance nor Durable Approval implementation authorizes automatic merge, release, runtime approval consumption, or physical migration.
 
@@ -69,7 +69,7 @@ Verification evidence:
 - CI was repaired by setting `PYTHONPATH=src`.
 - Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
 - Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
-- Final state-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success** at commit `771d4b265cf955c35a6edc2a1747a44f90925a4d`.
+- State-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success** at commit `771d4b265cf955c35a6edc2a1747a44f90925a4d`.
 
 ## DURABLE APPROVAL SAFETY BOUNDARY
 
