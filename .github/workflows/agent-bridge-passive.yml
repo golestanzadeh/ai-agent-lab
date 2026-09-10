@@ -7,6 +7,7 @@ on:
     paths:
       - scripts/agent_bridge_validate.py
       - tests/unit/test_agent_bridge_validate.py
+      - requirements.txt
       - .github/workflows/agent-bridge-passive.yml
       - .github/agent-bridge-step10-trigger
   workflow_dispatch:
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       BRIDGE_ENABLED: 'false'
     steps:
@@ -35,8 +36,10 @@ jobs:
         run: |
           set -euo pipefail
           test "$BRIDGE_ENABLED" = "false"
-      - name: Install test dependency
-        run: python -m pip install pytest
+      - name: Install project and test dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install pytest
       - name: Run Agent Bridge validator tests
         run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
       - name: Run full regression suite
