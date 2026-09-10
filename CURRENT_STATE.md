@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge Production and Durable Approval are human accepted. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate. Local Sync Agent architecture is human accepted and its implementation is technically verified; Local Sync installation/live smoke test is at its own human stage-acceptance gate.**
+**Agent Bridge Production, Durable Approval, and Local Sync Agent implementation are human accepted. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate. Local Sync Agent is authorized for local Windows installation and first live synchronization smoke test.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -10,9 +10,9 @@ Human authorization issued on 2026-09-08 produced an **APPROVED** state in the h
 
 ## LAST_ACCEPTED_STAGE
 
-**Durable Approval Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
+**Local Sync Agent Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
 
-Agent Bridge Production was separately human accepted on 2026-09-10. Local Sync Agent architecture was separately human accepted on 2026-09-10; implementation stage acceptance is still pending.
+Durable Approval Stage and Agent Bridge Production were separately human accepted on 2026-09-10.
 
 Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. These acceptances do not themselves authorize automatic merge, release, runtime approval consumption, or physical migration.
 
@@ -85,7 +85,7 @@ Verification evidence:
 
 ## LOCAL SYNC AGENT
 
-Architecture human-accepted 2026-09-10. Implemented artifacts:
+Architecture and implementation stage human-accepted 2026-09-10. Implemented artifacts:
 - `docs/local-sync-agent.md`
 - `src/agent_lab/local_sync.py`
 - `scripts/local_sync_agent.py`
@@ -107,11 +107,11 @@ Verification evidence:
 - CI run `34512131024`: Local Sync Agent targeted tests **10 passed**; full regression **295 passed, 1 skipped**; job **success**.
 - Existing Agent Bridge, Durable Approval and controlled migration suites remained green in the same run.
 - Verification used fake Git behavior only and did not access or modify the user's Windows checkout.
+- Human stage acceptance issued 2026-09-10.
 
-Human gate:
-- implementation is technically verified;
-- local Windows installation and first live synchronization smoke test require human stage acceptance;
-- this gate is independent of the real CASE-001 physical migration Human Gate.
+Authorized next action:
+- install the scheduled Local Sync task on `C:\Users\rezag\ai-agent-lab` and perform the first live synchronization smoke test;
+- installation/smoke test does **not** authorize physical CASE-001 migration, approval consumption, protected-main merge, release, or destructive operations.
 
 ## REAL CASE-001 EXECUTION HUMAN GATE
 
@@ -147,7 +147,7 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - Historical run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
 - Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED / NOT EXECUTABLE**.
 - Physical Google Drive migration: **NOT STARTED**.
-- Local Sync Agent: **IMPLEMENTED + TECHNICALLY VERIFIED / NOT YET INSTALLED OR LIVE-SMOKE-TESTED**.
+- Local Sync Agent: **IMPLEMENTED + TECHNICALLY VERIFIED + HUMAN STAGE ACCEPTED / LOCAL INSTALLATION AND LIVE SMOKE TEST AUTHORIZED BUT NOT YET VERIFIED**.
 
 ## ACTIVE_CONSTRAINTS
 
