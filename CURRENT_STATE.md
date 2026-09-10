@@ -2,7 +2,7 @@
 
 ## CURRENT_STAGE
 
-**D-021 complete; Agent Bridge productionization has reached the Step-10 production acceptance gate.**
+**Agent Bridge production migration accepted; Step 11 has begun at the durable/reloadable approval lifecycle architecture boundary.**
 
 D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
 
@@ -10,9 +10,9 @@ Human authorization issued on 2026-09-08 produced an **APPROVED** state in the p
 
 ## LAST_ACCEPTED_STAGE
 
-**D-020 — CASE-001 Approval Context Composition: accepted, integrated, and closed.**
+**Agent Bridge Production — human accepted 2026-09-10 after Step-10 technical verification.**
 
-Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately accepted and merged through the protected-main workflow.
+Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. Production acceptance does not itself authorize merge, release, runtime approval consumption, or physical migration.
 
 ## AGENT BRIDGE PRODUCTION MIGRATION — 2026-09-10
 
@@ -25,8 +25,8 @@ Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is
 7. GitHub → Work owner-identity response path — **PASS**.
 8. Controlled low-risk continuation — **PASS**.
 9. Full Human Gate test — **PASS; HUMAN_REQUIRED terminal stop proved**.
-10. Final verification/rollback hardening — **TECHNICAL VERIFICATION PASS; HUMAN PRODUCTION ACCEPTANCE REQUIRED**.
-11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **NOT STARTED**.
+10. Final verification/rollback hardening — **TECHNICAL PASS; HUMAN PRODUCTION ACCEPTANCE ISSUED 2026-09-10**.
+11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **STARTED: ARCHITECTURE BOUNDARY ONLY**.
 
 ## STEP-10 VERIFIED EVIDENCE
 
@@ -34,17 +34,17 @@ Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is
 - Main requires pull-request based changes, blocks non-fast-forward updates, has no bypass actors, and the current user cannot bypass the rule.
 - Final passive verification workflow uses pinned checkout/setup-python actions, read-only repository permission, non-persisted checkout credentials, concurrency control and timeout.
 - Fail-closed rollback state is `BRIDGE_ENABLED=false`.
-- Bounded Codex and controlled continuation jobs now require repository variable `BRIDGE_ENABLED` to equal the exact string `true`; absent/false therefore skips agent execution.
+- Bounded Codex and controlled continuation jobs require repository variable `BRIDGE_ENABLED` to equal the exact string `true`; absent/false therefore skips agent execution.
 - Rollback drill evidence: Codex workflow run `34507216155` concluded **skipped** with the fail-closed switch not explicitly enabled.
 - Step-10 passive verification run `34507007733`: Agent Bridge validator **6 passed**; full suite **252 passed, 1 skipped**.
 - Finalized passive workflow run `34507288461`: **success**, including kill-switch check, validator tests and full regression suite.
-- Controlled continuation now independently reruns the six validator tests and verifies no tracked worktree changes before emitting PASS.
+- Controlled continuation independently reruns the six validator tests and verifies no tracked worktree changes before emitting PASS.
 - All tested Bridge actions are pinned to immutable SHAs.
 - Temporary Step-10 probe/checkpoint files were removed after verification.
 
 ## PRODUCTION SAFETY BOUNDARY
 
-Agent Bridge remains a **development control plane only**. It is not runtime tax authority.
+Agent Bridge is a **development control plane only**. It is not runtime tax authority.
 
 It does not authorize or perform:
 - physical Google Drive migration;
@@ -56,11 +56,23 @@ It does not authorize or perform:
 
 `HUMAN_REQUIRED` is terminal until explicit human authorization permits a new action. Bridge rollback must not touch Drive data, tax documents or runtime approval records.
 
-## NEXT_BOUNDARY
+## STEP-11 ARCHITECTURE BOUNDARY
 
-The technical portion of Step 10 is complete. Under D-019 and the proved Step-9 Human Gate, **production stage acceptance is reserved to the human**. No merge/release occurs automatically.
+Step 11 resumes AI-Tax-Agent development at the existing blocker: **durable/reloadable approval lifecycle architecture**.
 
-After explicit production acceptance, Step 11 resumes AI-Tax-Agent development at the existing blocker: design and separately accept a **durable/reloadable approval lifecycle architecture** before any physical migration executor or approval consumption is considered.
+Before implementation, the architecture must define at minimum:
+- durable authority source and storage boundary;
+- deterministic serialization/schema/versioning of approval records;
+- reload semantics after process restart;
+- atomic one-time consumption and concurrency behavior;
+- audit linkage for create/grant/revoke/expire/consume/reload events;
+- integrity and tamper/fail-closed behavior;
+- case/run/manifest/preflight/execution-context binding preservation;
+- recovery behavior after partial failure/crash;
+- separation between exported review evidence and executable approval authority;
+- migration/compatibility path from the current process-local `ApprovalStore` without treating historical exports as executable authority.
+
+This is an architecture/governance change under D-019. Implementation must not begin until that architecture is explicitly accepted by the human. Physical migration remains a later, separate Human Gate.
 
 ## VERIFIED_RUNTIME_STATE
 
