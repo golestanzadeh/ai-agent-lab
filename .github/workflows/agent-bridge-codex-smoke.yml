@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   codex-smoke:
+    if: ${{ vars.BRIDGE_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -46,6 +47,5 @@ jobs:
             Do not commit, push, open/merge PRs, modify main, modify governance/contracts, or perform runtime tax actions.
             Final response must report PASS or BLOCKED, exact test result, and whether any tracked file changed.
 
-# Step 6 only. Codex may write inside the disposable runner workspace but has no
-# GitHub write permission and checkout credentials are not persisted. No output
-# is automatically trusted as stage acceptance.
+# Fail closed by default: the bounded Codex job cannot run unless the repository
+# variable BRIDGE_ENABLED is explicitly set to the exact string true.
