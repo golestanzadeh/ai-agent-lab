@@ -221,6 +221,27 @@ Executor/harness constraints:
 - approval consumption occurs only after successful post-migration verification; consumption failure triggers storage rollback;
 - real CASE-001 execution, new durable grant, and approval consumption remain behind the separate consequential Human Gate.
 
+### Local Sync Agent — approved architecture and future-file registry
+
+Architecture human-accepted on 2026-09-10. GitHub remains the durable source of truth while the Windows checkout at `C:\Users\rezag\ai-agent-lab` is kept near-real-time synchronized without routine user intervention.
+
+Registered before implementation:
+- `docs/local-sync-agent.md` — sync authority, conflict/failure behavior, installation and operational boundaries.
+- `src/agent_lab/local_sync.py` — deterministic one-shot Git synchronization engine.
+- `scripts/local_sync_agent.py` — thin unattended CLI wrapper for the synchronization engine.
+- `scripts/install_local_sync_task.ps1` — one-time Windows Task Scheduler bootstrap for one-minute unattended runs.
+- `tests/unit/test_local_sync.py` — deterministic sync decision tests without network access.
+
+Local Sync Agent constraints:
+- remote GitHub state is authoritative when local is clean and strictly behind; update only by fast-forward;
+- an already committed local branch may be pushed only when it is strictly ahead of its matching remote branch, never by force;
+- uncommitted/staged local changes, branch mismatch, detached HEAD, missing remote ref, or divergent history fail closed with no merge/rebase/reset/stash/commit;
+- `main` is never auto-pushed by the Local Sync Agent;
+- the agent never auto-commits local working-tree changes and never touches ignored/local secret or runtime data;
+- no credentials are stored in the repository or emitted in logs;
+- overlapping runs are prevented by the scheduler and a local lock;
+- installation/configuration is local-machine bootstrap only and does not weaken protected-main, PR, Agent Bridge, Durable Approval, or Human Gate governance.
+
 ## Future-file registry rule
 
 A file listed as planned is **not** considered created or implemented until it exists in GitHub. A future file may be added, renamed, split, or cancelled only through an explicit update to this roadmap and, for significant changes, a decision record.
