@@ -9,18 +9,38 @@ import json
 import os
 from pathlib import Path
 import sys
+import time
 
-from agent_lab.local_sync import LocalSyncAgent, LocalSyncError
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
+
+from agent_lab.local_sync import LocalSyncAgent, LocalSyncError  # noqa: E402
+
+
+STALE_LOCK_SECONDS = 600
 
 
 def acquire_lock(lock_path: Path):
     lock_path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-    except FileExistsError:
-        return None
-    os.write(fd, str(os.getpid()).encode("ascii"))
-    return fd
+    for attempt in range(2):
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            if attempt == 0:
+                try:
+                    age = time.time() - lock_path.stat().st_mtime
+                except FileNotFoundError:
+                    continue
+                if age > STALE_LOCK_SECONDS:
+                    try:
+                        lock_path.unlink()
+                    except FileNotFoundError:
+                        pass
+                    continue
+            return None
+        os.write(fd, str(os.getpid()).encode("ascii"))
+        return fd
+    return None
 
 
 def release_lock(fd: int | None, lock_path: Path) -> None:
