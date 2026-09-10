@@ -44,64 +44,7 @@ jobs:
             Do not commit, push, merge, release, access Drive/tax documents/credentials,
             modify governance/contracts, consume approvals, or perform runtime tax actions.
             Final response must be PASS only if all 6 tests pass and git status confirms no tracked changes.
-      - name: Post owner-identity RESPONSE for Work wake-up
-        if: success()
-        env:
-          USER_TOKEN: ${{ secrets.AGENT_BRIDGE_USER_TOKEN }}
-          REPO: ${{ github.repository }}
-          PR_NUMBER: '1'
-          HEAD_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          test -n "$USER_TOKEN"
-          body=$(cat <<EOF
-          [AGENT_BRIDGE]
-          protocol_version: 1
-          task_id: STEP-8-CONTROLLED-CONTINUATION
-          parent_id: STEP-7-OWNER-IDENTITY-PROBE
-          sender: codex
-          recipient: work
-          status: RESPONSE
-
-          result: PASS
-          repository: ${REPO}
-          ref: agent-bridge-step8-test
-          response_commit: ${HEAD_SHA}
-          tests: agent-bridge-validator=PASS
-          files_changed: []
-          human_required: false
-
-          Controlled Step 8 probe only. No merge, release, main modification, Drive/tax-data action, approval consumption, or consequential authority is granted.
-          EOF
-          )
-          python - <<'PY' > /tmp/payload.json
-          import json, os
-          print(json.dumps({"body": os.environ["BODY"]}))
-          PY
-        env:
-          USER_TOKEN: ${{ secrets.AGENT_BRIDGE_USER_TOKEN }}
-          REPO: ${{ github.repository }}
-          PR_NUMBER: '1'
-          HEAD_SHA: ${{ github.sha }}
-          BODY: |
-            [AGENT_BRIDGE]
-            protocol_version: 1
-            task_id: STEP-8-CONTROLLED-CONTINUATION
-            parent_id: STEP-7-OWNER-IDENTITY-PROBE
-            sender: codex
-            recipient: work
-            status: RESPONSE
-
-            result: PASS
-            repository: golestanzadeh/ai-agent-lab
-            ref: agent-bridge-step8-test
-            response_commit: ${{ github.sha }}
-            tests: agent-bridge-validator=PASS
-            files_changed: []
-            human_required: false
-
-            Controlled Step 8 probe only. No merge, release, main modification, Drive/tax-data action, approval consumption, or consequential authority is granted.
-      - name: Deliver RESPONSE comment using owner-scoped token
+      - name: Deliver owner-identity RESPONSE comment
         if: success()
         env:
           USER_TOKEN: ${{ secrets.AGENT_BRIDGE_USER_TOKEN }}
