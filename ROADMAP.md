@@ -98,7 +98,7 @@ The provider-neutral contract, case-scoped resolver integration, metadata-only a
 
 ### CASE-001 inventory / identity / migration work package
 
-Status: **controlled physical migration executor and guarded Drive mutation adapter implemented and synthetically verified; real CASE-001 execution is Human-Gated**
+Status: **controlled physical migration executor and guarded Drive mutation adapter implemented and synthetically verified; controlled local execution harness is being completed; real CASE-001 execution is Human-Gated**
 
 - Metadata-only CASE-001 inventory: last recorded 15 PDFs, 0 folders; fresh live reconstruction is required before execution.
 - Document Identity and Inventory Evidence: implemented and verified.
@@ -200,20 +200,26 @@ Registered before implementation on 2026-09-10 and now present:
 - `src/agent_lab/google_drive_mutation.py`
 - `tests/unit/test_google_drive_mutation.py`
 
-Verification:
+Controlled harness registered before creation:
+- `scripts/case001_controlled_migration.py` — local runtime entry point for fresh inventory/manifest/preflight reconstruction, dry-run, and separately Human-Gated live execution using a new durable approval.
+- `tests/unit/test_case001_controlled_migration.py` — fail-closed mode/authorization and safe-summary tests without live Drive access.
+
+Verification already recorded:
 - CI run `34509462092`: executor tests **9 passed**, full suite **272 passed, 1 skipped**.
 - CI run `34509683965`: executor **9 passed**, guarded Drive adapter **7 passed**, durable approval **11 passed**, Bridge validator **6 passed**, full suite **279 passed, 1 skipped**.
+- CI run `34509914717`: all registered migration/durable/Bridge regression checks **success** after the Human-Gate state update.
 
-Executor constraints:
-- dry-run is the default and performs zero mutations;
-- live execution requires an exact durable `APPROVED` authorization and a separately enabled execution flag;
+Executor/harness constraints:
+- dry-run is the default and performs zero mutations and zero approval lifecycle changes;
+- live execution requires an exact newly created durable `APPROVED` authorization and separately explicit live enablement;
+- creation/grant of the real durable approval and the live attempt occur only after the final consequential Human Gate;
 - the executor operates only on explicit manifest object IDs and explicit source/target parent IDs, never names or Drive-wide search;
 - each mutation preserves provider object ID and logical document identity;
 - partial failure attempts reverse-order rollback of already-applied moves;
 - incomplete rollback or unverifiable post-state fails closed and is never success;
 - post-migration verification proves exact target placement before approval consumption;
 - approval consumption occurs only after successful post-migration verification; consumption failure triggers storage rollback;
-- real CASE-001 execution, creation/grant of new durable authority for it, and approval consumption remain behind the separate consequential Human Gate.
+- real CASE-001 execution, new durable grant, and approval consumption remain behind the separate consequential Human Gate.
 
 ## Future-file registry rule
 
