@@ -80,6 +80,7 @@ Verification evidence:
 - CI run `34509683965`: executor tests **9 passed**, guarded Drive mutation adapter tests **7 passed**, durable approval tests **11 passed**, Agent Bridge validator **6 passed**, full regression **279 passed, 1 skipped**; job **success**.
 - CI run `34509914717`: all migration/durable/Bridge regression checks **success** after Human-Gate state advancement.
 - CI run `34510246145`: Bridge validator **6 passed**, Durable Approval **11 passed**, physical executor **9 passed**, guarded Drive adapter **7 passed**, controlled harness safety **6 passed**, full regression **285 passed, 1 skipped**; job **success**.
+- Local Windows verification 2026-09-11: controlled migration work package **34 passed**; full regression **310 passed, 1 skipped**. Synthetic end-to-end harness coverage now proves durable approval creation/grant, exact 15-object move, post-verification consumption, durable reload, and terminal `CONSUMED` persistence without live Drive mutation.
 - All CI migration tests use synthetic storage/fake Drive services and temporary test authority only.
 - No real Google Drive object was moved, renamed, deleted, overwritten, or otherwise mutated by these tests.
 
@@ -139,7 +140,7 @@ Pending Human Gate:
 
 ## REAL CASE-001 EXECUTION HUMAN GATE
 
-All implementation and non-production verification needed before the consequential gate are complete. Real CASE-001 remains blocked until the human explicitly authorizes the live attempt and the creation/grant of its new durable executable approval.
+All implementation and non-production verification needed before the consequential gate are complete, including the 2026-09-11 synthetic end-to-end controlled harness test. Real CASE-001 remains blocked until the human explicitly authorizes the live attempt and the creation/grant of its new durable executable approval.
 
 At the real attempt, the local harness will reconstruct fresh authoritative state and fail closed unless all of these still match:
 - `CASE-001`, tax period 2024 and the exact registered source scope;

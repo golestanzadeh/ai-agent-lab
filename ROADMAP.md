@@ -98,7 +98,7 @@ The provider-neutral contract, case-scoped resolver integration, metadata-only a
 
 ### CASE-001 inventory / identity / migration work package
 
-Status: **controlled physical migration executor and guarded Drive mutation adapter implemented and synthetically verified; controlled local execution harness is being completed; real CASE-001 execution is Human-Gated**
+Status: **controlled physical migration executor, guarded Drive mutation adapter, and controlled local execution harness implemented and synthetically verified end-to-end; real CASE-001 execution is Human-Gated**
 
 - Metadata-only CASE-001 inventory: last recorded 15 PDFs, 0 folders; fresh live reconstruction is required before execution.
 - Document Identity and Inventory Evidence: implemented and verified.
@@ -208,6 +208,7 @@ Verification already recorded:
 - CI run `34509462092`: executor tests **9 passed**, full suite **272 passed, 1 skipped**.
 - CI run `34509683965`: executor **9 passed**, guarded Drive adapter **7 passed**, durable approval **11 passed**, Bridge validator **6 passed**, full suite **279 passed, 1 skipped**.
 - CI run `34509914717`: all registered migration/durable/Bridge regression checks **success** after the Human-Gate state update.
+- Local Windows verification 2026-09-11: controlled migration work package **34 passed**; full regression **310 passed, 1 skipped**. The added end-to-end harness test proved fresh run binding, durable approval creation/grant, exact 15-object synthetic move, verification, approval consumption, durable reload, and consumed-state persistence without live Drive access.
 
 Executor/harness constraints:
 - dry-run is the default and performs zero mutations and zero approval lifecycle changes;
