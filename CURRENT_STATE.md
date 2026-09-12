@@ -211,3 +211,20 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - 2026-09-12 D-022 extraction and validation completed. All 15 CASE-001 PDFs are readable through native-text or rendered-page vision fallback. Address/route endpoints and cross-year payment/service-year semantics are explicit dataset rules. Full regression: 317 passed, 1 skipped. Status: D022_DATASET_VALIDATED_HUMAN_REQUIRED.
 
 - 2026-09-12 D-022 dataset accepted by human authority. D-023 physical tax-category organization then completed under explicit phase authorization: exact 15-PDF precondition/manifest match, seven category folders, Documents=0, categorized=15, and independent Google Drive API post-verification=15. Private audit evidence is stored in CASE-001/Audit. Status: D023_COMPLETE.
+
+## D-027 TAX AGENT RUNTIME CHECKPOINT — PAUSED 2026-09-12
+
+Human authorized conversion of the conceptual tax-agent roles into real executable agents. Initial implementation now exists locally on `d021-agent-case-provisioning`:
+- `src/agent_lab/tax_agents.py`
+- `src/agent_lab/tax_agent_runtime.py`
+- `scripts/run_tax_agents.py`
+- `tests/unit/test_tax_agent_runtime.py`
+- `docs/d027-tax-agent-runtime.md`
+
+Defined execution chain: Evidence -> Tax Law -> Opportunity -> Calculation -> Adversarial Reviewer -> ELSTER/Form.
+
+Targeted runtime verification: **5 passed**. A real Gemini-backed smoke run proved actual LLM execution and structured output, but stopped after Evidence Agent with `HUMAN_REQUIRED` because ordinary evidence gaps were escalated too aggressively. Therefore full six-agent E2E is **NOT YET VERIFIED**.
+
+Challenge-01 also corrected the working 2024 refund baseline from EUR 451.83 to **EUR 244.83** under the currently accepted assumptions, after detecting invalid double counting of the EUR 1,230 Arbeitnehmer-Pauschbetrag. Official 2024 §9a confirms EUR 1,230 is used when higher Werbungskosten are not proven; the special rule allowing union dues alongside the Pauschbetrag belongs to the 2026 law version and must not be back-applied.
+
+PAUSE STATE: do not claim D-027 accepted or complete. Next action is to refine terminal/escalation policy, run the complete six-agent live smoke, run full regression, record final D-027 state, then commit/push through the approved non-main workflow. No ELSTER/Finanzamt submission or contact is authorized.
