@@ -1,0 +1,86 @@
+name: Agent Bridge Passive Validation
+
+on:
+  push:
+    branches:
+      - d021-agent-case-provisioning
+    paths:
+      - scripts/agent_bridge_validate.py
+      - tests/unit/test_agent_bridge_validate.py
+      - src/agent_lab/durable_approval.py
+      - tests/unit/test_durable_approval.py
+      - src/agent_lab/case001_physical_migration.py
+      - tests/unit/test_case001_physical_migration.py
+      - src/agent_lab/google_drive_mutation.py
+      - tests/unit/test_google_drive_mutation.py
+      - scripts/case001_controlled_migration.py
+      - tests/unit/test_case001_controlled_migration.py
+      - src/agent_lab/local_sync.py
+      - scripts/local_sync_agent.py
+      - scripts/install_local_sync_task.ps1
+      - tests/unit/test_local_sync.py
+      - docs/local-sync-agent.md
+      - src/agent_lab/windows_relay.py
+      - scripts/windows_relay.py
+      - scripts/install_windows_relay_task.ps1
+      - tests/unit/test_windows_relay.py
+      - docs/windows-relay.md
+      - docs/durable-approval-lifecycle.md
+      - docs/physical-migration-executor.md
+      - docs/approval-gate.md
+      - docs/case001-migration-compatibility.md
+      - DECISIONS.md
+      - CURRENT_STATE.md
+      - ROADMAP.md
+      - requirements.txt
+      - .github/workflows/agent-bridge-passive.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-bridge-passive-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BRIDGE_ENABLED: 'false'
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Verify fail-closed kill switch
+        run: |
+          set -euo pipefail
+          test "$BRIDGE_ENABLED" = "false"
+      - name: Install project and test dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install pytest
+      - name: Run Agent Bridge validator tests
+        run: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+      - name: Run durable approval tests
+        run: python -m pytest -q tests/unit/test_durable_approval.py
+      - name: Run physical migration executor tests
+        run: python -m pytest -q tests/unit/test_case001_physical_migration.py
+      - name: Run guarded Drive mutation adapter tests
+        run: python -m pytest -q tests/unit/test_google_drive_mutation.py
+      - name: Run controlled migration harness safety tests
+        run: PYTHONPATH="src:." python -m pytest -q tests/unit/test_case001_controlled_migration.py
+      - name: Run Local Sync Agent tests
+        run: python -m pytest -q tests/unit/test_local_sync.py
+      - name: Run Windows Relay tests
+        run: python -m pytest -q tests/unit/test_windows_relay.py
+      - name: Run full regression suite
+        run: PYTHONPATH="src:." python -m pytest -q
+
+# Observe-only verification: no secrets, no Codex, no comments, no repository writes,
+# no continuation and no runtime tax action. BRIDGE_ENABLED=false is the fail-closed rollback state.

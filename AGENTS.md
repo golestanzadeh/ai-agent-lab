@@ -19,6 +19,10 @@ Treat the repository as the durable project memory. Before making architectural 
 
 When documents conflict, flag the conflict and do not silently choose a version.
 
+## Agent execution protocol
+
+Before executing a development task, follow `docs/codex-agent-workflow.md` as the Agent Execution Protocol. Use progressive context loading: read the minimum sufficient context and expand only when required for safe execution. Prefer targeted tests before broader suites, and keep routine completion reports compact. Token efficiency must never weaken correctness, required testing, auditability, security, or governance.
+
 ## Case and data isolation
 
 - `case_id` is mandatory for every operation that reads or writes tax-case data.

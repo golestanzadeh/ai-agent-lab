@@ -1,0 +1,94 @@
+name: Agent Bridge Controlled Response
+
+on:
+  push:
+    branches:
+      - agent-bridge-step8-test
+    paths:
+      - .github/agent-bridge-step8-trigger
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-bridge-step8-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  controlled-response:
+    if: ${{ vars.BRIDGE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Install bounded test dependency
+        run: python -m pip install pytest
+      - name: Run bounded Codex continuation probe
+        id: codex
+        uses: openai/codex-action@86365089eb2b84e0a8fb0717b304f8bdcb13b20e
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ':workspace'
+          safety-strategy: drop-sudo
+          prompt: |
+            Agent Bridge Step 8 controlled low-risk continuation probe.
+            Read AGENTS.md, CURRENT_STATE.md, docs/agent-bridge-production.md,
+            scripts/agent_bridge_validate.py, and tests/unit/test_agent_bridge_validate.py.
+            Run only: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+            Do not change any tracked repository file.
+            Do not commit, push, merge, release, access Drive/tax documents/credentials,
+            modify governance/contracts, consume approvals, or perform runtime tax actions.
+            Final response must be PASS only if all 6 tests pass and git status confirms no tracked changes.
+      - name: Verify continuation evidence deterministically
+        run: |
+          set -euo pipefail
+          python -m pytest -q tests/unit/test_agent_bridge_validate.py
+          git diff --exit-code
+          test -z "$(git status --short --untracked-files=no)"
+      - name: Deliver owner-identity RESPONSE comment
+        if: success()
+        env:
+          USER_TOKEN: ${{ secrets.AGENT_BRIDGE_USER_TOKEN }}
+          API_URL: https://api.github.com/repos/${{ github.repository }}/issues/1/comments
+          BODY: |
+            [AGENT_BRIDGE]
+            protocol_version: 1
+            task_id: STEP-8-CONTROLLED-CONTINUATION
+            parent_id: STEP-7-OWNER-IDENTITY-PROBE
+            sender: codex
+            recipient: work
+            status: RESPONSE
+
+            result: PASS
+            repository: ${{ github.repository }}
+            ref: agent-bridge-step8-test
+            response_commit: ${{ github.sha }}
+            tests: agent-bridge-validator=PASS
+            files_changed: []
+            human_required: false
+
+            Controlled Step 8 probe only. No merge, release, main modification, Drive/tax-data action, approval consumption, or consequential authority is granted.
+        run: |
+          set -euo pipefail
+          test -n "$USER_TOKEN"
+          python - <<'PY' > /tmp/payload.json
+          import json, os
+          print(json.dumps({"body": os.environ["BODY"]}))
+          PY
+          curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${USER_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$API_URL" \
+            --data-binary @/tmp/payload.json
+
+# Fail closed by default: continuation cannot execute unless BRIDGE_ENABLED=true.
+# The response is emitted only after deterministic tests and tracked-worktree checks pass.
+# HUMAN_REQUIRED remains terminal and no continuation may target main or runtime tax actions.

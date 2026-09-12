@@ -1,0 +1,51 @@
+name: Agent Bridge Codex Smoke
+
+on:
+  push:
+    branches:
+      - d021-agent-case-provisioning
+    paths:
+      - .github/agent-bridge-step6-trigger
+      - .github/workflows/agent-bridge-codex-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-bridge-codex-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  codex-smoke:
+    if: ${{ vars.BRIDGE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Install bounded test dependency
+        run: python -m pip install pytest
+      - name: Run bounded Codex smoke task
+        id: codex
+        uses: openai/codex-action@86365089eb2b84e0a8fb0717b304f8bdcb13b20e
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ':workspace'
+          safety-strategy: drop-sudo
+          prompt: |
+            Agent Bridge Step 6 bounded smoke task.
+            Read AGENTS.md, CURRENT_STATE.md, docs/agent-bridge-production.md, scripts/agent_bridge_validate.py, and tests/unit/test_agent_bridge_validate.py.
+            Run only: python -m pytest -q tests/unit/test_agent_bridge_validate.py
+            Then create a temporary untracked file named .agent-bridge-step6-codex-proof.txt containing exactly AGENT_BRIDGE_CODEX_STEP6_PASS if and only if the test passes.
+            Verify with git status --short that no tracked repository file was changed.
+            Do not access network resources, secrets, Drive, tax documents, credentials, ignored private artifacts, or any repository other than this checkout.
+            Do not commit, push, open/merge PRs, modify main, modify governance/contracts, or perform runtime tax actions.
+            Final response must report PASS or BLOCKED, exact test result, and whether any tracked file changed.
+
+# Fail closed by default: the bounded Codex job cannot run unless the repository
+# variable BRIDGE_ENABLED is explicitly set to the exact string true.
