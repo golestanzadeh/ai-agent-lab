@@ -1,4 +1,4 @@
-"""Local Google Drive OAuth credential loading.
+﻿"""Local Google Drive OAuth credential loading.
 
 Keeps OAuth client configuration and the locally generated authorized-user
  token separate. Secrets and token files must remain outside the repository.
@@ -18,7 +18,7 @@ TOKEN_FILE = Path.home() / "ai-tax-agent" / "token.json"
 
 
 def get_drive_credentials() -> Credentials:
-    """Load or obtain local OAuth credentials for metadata-only Drive access."""
+    """Load or obtain local OAuth credentials for authorized Drive access."""
     credentials = None
 
     if TOKEN_FILE.exists():
@@ -37,3 +37,4 @@ def get_drive_credentials() -> Credentials:
     TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
     TOKEN_FILE.write_text(credentials.to_json(), encoding="utf-8")
     return credentials
+
