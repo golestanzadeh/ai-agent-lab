@@ -278,3 +278,5 @@ Do not jump directly to executable Agent implementation because coding feels pro
 - 2026-09-12 D-021 Live Execution Readiness completed: targeted suite **34 passed** and fresh provider-backed dry-run passed with unchanged 15-document scope and deterministic identities. The project is now stopped at **CASE001_LIVE_READY -> HUMAN_REQUIRED**; no real migration or durable approval lifecycle action may occur without explicit human authorization.
 
 - D-021 CASE-001 physical migration completed 2026-09-12: 15 documents migrated and post-verified; durable approval consumed only after successful verification. Next work may proceed beyond D-021 under normal phase governance.
+
+- D-022 active: Case Intake PASS (15 PDFs); initial document identification/extraction found 5 text-bearing PDFs and 10 image-only PDFs. Next required technical capability is OCR for those 10 documents, followed by extraction, tax classification, validation/gap detection, and final Tax Dataset Human Gate.
