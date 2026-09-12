@@ -200,3 +200,4 @@ It does not itself authorize physical Google Drive migration, D-017 approval con
 - `docs/codex-agent-workflow.md`
 - `docs/d-019-controlled-agent-assisted-development-workflow.md`
 - `docs/approval-gate.md`
+- Fresh local metadata-only CASE-001 dry-run 2026-09-12: **15 documents / 0 folders**, manifest `sha256:94b563afc299a1c3da3b5e57ab6deb023952e15ae8e6abb274223f5d72b85587`, preflight `sha256:16d9b1bd5ed8fb08d5cac0aa22a00333fa2d2c783da7fa38899efad747379853`; approval status remained null, approval consumption false, Drive mutation false. This reconfirms readiness at the Human Gate without authorizing live execution.
