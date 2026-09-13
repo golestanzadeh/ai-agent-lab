@@ -105,7 +105,8 @@ Git history remains the recovery path for deleted material. No source code, tax 
 ## Constitution v2 proposal checkpoint — 2026-09-13
 
 - Registered and created `docs/constitution-v2-proposal.md`.
-- The proposal contains 19 constitutional articles and an explicit ratification procedure.
+- The proposal contains 20 constitutional articles and an explicit ratification procedure.
+- It establishes Article 1 as an absolute external-data Default Deny rule with two separate Human approvals: exact-content release approval, followed by exact-recipient transmission approval.
 - It forbids any Agent, Master Orchestrator, automation, tool, or generic authorization from amending or bypassing the Constitution.
 - Any future constitutional change requires the exact proposed change, impact/risk disclosure, explicit Project Owner approval, a dedicated commit, Decision Log entry, and checkpoint update.
 - Status: **AWAITING EXPLICIT HUMAN RATIFICATION**.
