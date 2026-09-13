@@ -89,6 +89,7 @@ Review and explicitly ratify or reject `docs/constitution-v2-proposal.md`. Until
 ## Constitution v2 drafting checkpoint
 
 - Constitution v2 proposal drafted on 2026-09-13.
+- Proposed Article 1 establishes absolute Default Deny for external data transmission and requires two separate, ordered Human approvals: approval of the exact data for release, then approval of the exact destination/channel transfer.
 - Status: `PROPOSED / NOT YET IN FORCE`.
 - Scope: supreme authority, amendment control, durable truth, Orchestrator limits, governed Agent Factory, least privilege, Human Gates, case isolation, tax integrity, verification, audit, recovery, autonomy, cost control, repository retention, completion, and conflict resolution.
 - No Agent definitions or Orchestrator code were created in this phase.
