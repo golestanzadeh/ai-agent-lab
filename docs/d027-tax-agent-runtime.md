@@ -42,3 +42,12 @@ Next session must first narrow the Evidence Agent's stop authority to genuinely 
 Tax-year/effective-date awareness is mandatory. For VZ 2024, §9a EStG provides the EUR 1,230 Arbeitnehmer-Pauschbetrag when higher Werbungskosten are not proven. The additional treatment of union contributions beside the Pauschbetrag appears in the 2026 version and must not be back-applied to 2024. This must become a dedicated version-awareness regression test.
 
 No filing, ELSTER transmission, Finanzamt contact, main merge or release occurred in this checkpoint.
+## 2026-09-13 resume checkpoint
+
+The project resumed from commit `a0cf4dc`. Evidence-stage escalation was refined: ordinary evidence gaps no longer terminate the multi-agent pipeline. `BLOCKED`/`HUMAN_REQUIRED` at Evidence is normalized to PASS only when no finding itself is marked `HUMAN_REQUIRED`; explicit consequential evidence conflicts remain terminal.
+
+Live CASE-001/2024 controlled-packet execution then reached all six roles in order: Evidence, Tax Law, Opportunity, Calculation, Adversarial Reviewer, and ELSTER/Form. Overall runtime status: `PASS`; each role produced five structured findings.
+
+The live reviewer did not promote unsupported travel, school-fee, or section 35a candidates. It retained the 2024 Arbeitnehmer-Pauschbetrag treatment and flagged the 220-day travel scenario as an evidence gap pending duty-roster evidence. This run proves orchestration/handoff behavior, not final tax entitlement.
+
+Verification: targeted runtime suite `6 passed`; full regression `323 passed, 1 skipped` using a repository-local pytest basetemp after the default Windows temp cleanup hit an unrelated `WinError 5` on pytest's `pytest-current` link.

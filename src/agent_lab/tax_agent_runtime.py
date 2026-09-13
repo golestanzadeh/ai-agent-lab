@@ -67,10 +67,37 @@ class TaxAgentOrchestrator:
             report = self._backend.run(spec, task)
             self._validate_report(spec, report)
             reports.append(report)
-            if report.status in {AgentRunStatus.BLOCKED, AgentRunStatus.HUMAN_REQUIRED}:
+            if report.status == AgentRunStatus.BLOCKED:
+                if spec.role == TaxAgentRole.EVIDENCE and not self._has_consequential_evidence_conflict(report):
+                    reports[-1] = self._normalize_evidence_gap_status(report, "blocked_evidence_gap_nonterminal")
+                    continue
                 return TaxAgentRunResult(case_id, tax_year, tuple(reports), report.status)
+            if report.status == AgentRunStatus.HUMAN_REQUIRED:
+                if self._is_terminal_human_gate(spec, report):
+                    return TaxAgentRunResult(case_id, tax_year, tuple(reports), report.status)
+                reports[-1] = self._normalize_evidence_gap_status(report, "human_required_evidence_gap_nonterminal")
 
         return TaxAgentRunResult(case_id, tax_year, tuple(reports), AgentRunStatus.PASS)
+
+    @staticmethod
+    def _is_terminal_human_gate(spec: AgentSpec, report: AgentReport) -> bool:
+        # Evidence gaps are normal outputs; only explicit consequential findings stop the run.
+        if spec.role == TaxAgentRole.EVIDENCE:
+            return any(f.status == FindingStatus.HUMAN_REQUIRED for f in report.findings)
+        return True
+
+    @staticmethod
+    def _has_consequential_evidence_conflict(report: AgentReport) -> bool:
+        return any(f.status == FindingStatus.HUMAN_REQUIRED for f in report.findings)
+
+    @staticmethod
+    def _normalize_evidence_gap_status(report: AgentReport, reason: str) -> AgentReport:
+        return AgentReport(
+            role=report.role, status=AgentRunStatus.PASS, summary=report.summary,
+            findings=report.findings, evidence_gaps=report.evidence_gaps,
+            challenges=report.challenges, next_action=report.next_action,
+            metadata={**dict(report.metadata), "escalation_normalized": reason},
+        )
 
     def _validate_graph(self) -> None:
         if not self._specs:

@@ -228,3 +228,12 @@ Targeted runtime verification: **5 passed**. A real Gemini-backed smoke run prov
 Challenge-01 also corrected the working 2024 refund baseline from EUR 451.83 to **EUR 244.83** under the currently accepted assumptions, after detecting invalid double counting of the EUR 1,230 Arbeitnehmer-Pauschbetrag. Official 2024 §9a confirms EUR 1,230 is used when higher Werbungskosten are not proven; the special rule allowing union dues alongside the Pauschbetrag belongs to the 2026 law version and must not be back-applied.
 
 PAUSE STATE: do not claim D-027 accepted or complete. Next action is to refine terminal/escalation policy, run the complete six-agent live smoke, run full regression, record final D-027 state, then commit/push through the approved non-main workflow. No ELSTER/Finanzamt submission or contact is authorized.
+## D-027 TAX AGENT RUNTIME RESUMED — 2026-09-13
+
+D-027 resumed from `a0cf4dc`. Evidence-gap escalation was corrected so ordinary missing evidence flows downstream while explicit consequential evidence conflicts remain terminal.
+
+A live controlled CASE-001/2024 run completed the six-role chain: Evidence -> Tax Law -> Opportunity -> Calculation -> Adversarial Reviewer -> ELSTER/Form. Runtime status: PASS. The reviewer kept unsupported travel/school/section-35a items non-confirmed rather than silently claiming them.
+
+Verification: D-027 targeted tests 6 passed. Full local regression 323 passed, 1 skipped. The first full-suite invocation completed test bodies but pytest cleanup hit a Windows Temp permission error; rerun with repository-local basetemp completed cleanly.
+
+D-027 is technically operational. No ELSTER submission, Finanzamt contact, main merge, release, or external consequential tax action occurred. Final tax entitlement remains evidence-first and subject to unresolved CASE-001 evidence gaps.

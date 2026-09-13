@@ -1,4 +1,4 @@
-from agent_lab.tax_agent_runtime import TaxAgentOrchestrator, TaxAgentRuntimeError
+﻿from agent_lab.tax_agent_runtime import TaxAgentOrchestrator, TaxAgentRuntimeError
 from agent_lab.tax_agents import AgentReport, AgentRunStatus, TaxAgentRole, default_tax_agent_specs
 
 
@@ -72,3 +72,15 @@ def test_tax_year_mismatch_fails_closed():
         assert "another tax year" in str(exc)
     else:
         raise AssertionError("tax-year mismatch must fail closed")
+
+
+def test_evidence_gap_human_required_is_normalized_and_handoff_continues():
+    backend = RecordingBackend(stop_role=TaxAgentRole.EVIDENCE, stop_status=AgentRunStatus.HUMAN_REQUIRED)
+    result = TaxAgentOrchestrator(backend).run(
+        case_id="CASE-001", tax_year=2024, goal="audit", case_packet=packet()
+    )
+    assert result.status == AgentRunStatus.PASS
+    assert backend.roles == [s.role for s in default_tax_agent_specs()]
+    assert result.reports[0].status == AgentRunStatus.PASS
+    assert result.reports[0].metadata["escalation_normalized"] == "human_required_evidence_gap_nonterminal"
+
