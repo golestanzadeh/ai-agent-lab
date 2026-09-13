@@ -284,3 +284,11 @@ Do not jump directly to executable Agent implementation because coding feels pro
 - D-022 reached final Human Gate: 15/15 documents ingested; evidence-first dataset rules implemented; route/address and cross-year rules enforced; regression 317 passed, 1 skipped. Await human stage acceptance before D-023.
 
 - D-022 accepted by human authority on 2026-09-12. D-023 then materialized the accepted classification in Google Drive: seven category folders, all 15 PDFs moved from Documents, local and provider-backed post-verification passed, no document content changed. D-023 COMPLETE.
+
+
+## Session-independent project checkpoint — registered 2026-09-13
+
+Planned canonical file:
+- `PROJECT_CHECKPOINT.md` — the mandatory single entry point for every new ChatGPT/Codex/Agent session. It records the latest human-confirmed project state, completed boundaries, active work, remaining work, authority limits, verification references, and the exact continuation point.
+
+The checkpoint must be read before project questions are answered or work begins. Information already recorded there or in its referenced authoritative documents must not be requested from the human again. Every accepted stage or material state change must update the checkpoint in the same governed change set. Chat history is never authoritative project memory.
