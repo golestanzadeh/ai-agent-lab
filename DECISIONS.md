@@ -380,4 +380,4 @@ The contract set uses exact-version compatibility and Default Deny. Unknown or m
 
 **Non-authorization:** O2 created policy and schema artifacts only. It did not activate an Agent, grant a permission or credential, access private case data, implement the Master Orchestrator Kernel, merge protected main, release, perform a destructive action, submit tax data, contact ELSTER/Finanzamt, or transmit externally.
 
-**Acceptance record commit:** `O2_ACCEPTANCE_COMMIT_PENDING`.
+**Acceptance record commit:** `bd18777cf00cade02abfa58869417948742a7e28`.

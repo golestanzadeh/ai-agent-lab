@@ -144,6 +144,6 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Implementation and verification commit: `382a140e42496ad9edd92dc2016cfde51d091575`.
 - No Agent was activated; no permission, credential, private case access, merge, release, destructive action, tax submission, or external transfer occurred.
 - Human acceptance: exact contract-set commit `382a140e42496ad9edd92dc2016cfde51d091575` explicitly accepted on 2026-09-13.
-- Acceptance record commit: `O2_ACCEPTANCE_COMMIT_PENDING`.
+- Acceptance record commit: `bd18777cf00cade02abfa58869417948742a7e28`.
 - Status: **O2_ACCEPTED / PHASE COMPLETE**.
 - Exact next action: Phase O3 designs and implements the deterministic Orchestrator Kernel against the accepted O2 contracts, without activating Agents or crossing any later Human Gate.
