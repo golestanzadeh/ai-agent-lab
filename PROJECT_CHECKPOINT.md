@@ -122,7 +122,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 - Defined Human, independent control, Master/PMO, Engineering, and Tax Operations layers.
 - Preserved the existing seven tax-runtime Agent identifiers.
-- Defined 15 permanent Agent roles plus three inactive case-selected domain role templates.
+- Defined 20 permanent Agent roles plus three inactive case-selected domain role templates.
 - Distinguished all reasoning roles from deterministic identity, permission, approval, audit, budget, recovery, kill-switch, and transfer controls.
 - Defined access tiers A0–A6/AX, reporting lines, peer handoff rules, separation of duties, temporary instance lifecycle, and phases O0–P4.
 - Status: **AWAITING EXPLICIT HUMAN RATIFICATION**.
