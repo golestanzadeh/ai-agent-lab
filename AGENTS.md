@@ -1,5 +1,18 @@
 # AGENTS.md
 
+## Mandatory cross-session startup
+
+For every new ChatGPT conversation, Codex session, or Agent process concerning this project:
+
+1. Read `PROJECT_CHECKPOINT.md` first from the active development branch.
+2. Follow its required references before making project-status claims, proposing work, or asking the human for project facts.
+3. Do not ask the human to repeat information already present in the checkpoint, repository documentation, or authorized case evidence.
+4. When older records conflict with a later human-confirmed checkpoint, expose and reconcile the conflict; do not silently revive the older state.
+5. Never fabricate details that were not durably recovered. Mark them unknown/not recovered.
+6. Update the checkpoint in the same governed change set whenever a stage is accepted, closed, blocked, resumed, or materially changed.
+
+A task handoff is incomplete until durable project state—not chat memory alone—contains the result and exact continuation point.
+
 ## Mission
 
 AI Agent Lab is a practical, long-running learning project. Work must improve both the software and the user's understanding of Agentic AI.
