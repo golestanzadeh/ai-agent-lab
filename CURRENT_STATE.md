@@ -74,7 +74,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Define the stable Agent roles, the governed Agent Factory lifecycle, and the Permission Matrix under the ratified Constitution v2. Orchestrator implementation begins only after those contracts and applicable Human Gates are accepted.
+Human review and explicit ratification or amendment of `docs/agent-organization-v1-proposal.md`. No role activation, permission expansion, or Orchestrator implementation begins from the proposal alone.
 
 ## Non-negotiable constraints
 
@@ -94,3 +94,11 @@ Define the stable Agent roles, the governed Agent Factory lifecycle, and the Per
 - Scope: supreme authority, amendment control, durable truth, Orchestrator limits, governed Agent Factory, least privilege, Human Gates, case isolation, tax integrity, verification, audit, recovery, autonomy, cost control, repository retention, completion, and conflict resolution.
 - No Agent definitions or Orchestrator code were created during ratification.
 - Exact next phase: define stable Agent roles, Agent Factory lifecycle, and the Permission Matrix under the Constitution.
+
+
+## Agent Organization v1 drafting checkpoint
+
+- A complete organizational proposal now defines the Human authority, independent Control Office, Master Project Orchestrator, PMO, Engineering Division, Tax Operations Division, existing tax Agent chain, inactive future domain role templates, deterministic kernel boundaries, access tiers, communication protocol, lifecycle, separation of duties, and the O0–P4 execution path.
+- Existing implemented identifiers remain unchanged: CHIEF_TAX_AUDITOR_AGENT, EVIDENCE_AGENT, TAX_LAW_AGENT, OPPORTUNITY_AGENT, CALCULATION_AGENT, ADVERSARIAL_REVIEWER_AGENT, and ELSTER_FORM_AGENT.
+- Status: `PROPOSED / NOT YET OPERATIONAL`.
+- No Agent, credential, permission, external transfer, protected-main action, or Orchestrator implementation was activated.
