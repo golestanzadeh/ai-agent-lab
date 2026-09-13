@@ -2,11 +2,12 @@
 
 ## CURRENT_STAGE
 
-**Agent Bridge Production, Durable Approval, and Local Sync Agent implementation are human accepted. Windows Relay architecture is human accepted and its implementation is technically verified, but Windows Relay Stage acceptance is still pending. Controlled Physical Migration is implemented and technically verified but real CASE-001 execution remains at its separate consequential Human Gate.**
+**CASE-001 / tax year 2024 tax-analysis preparation is complete and Chief-approved by explicit human recovery confirmation on 2026-09-13. The remaining product work is limited to the controlled ELSTER/Finanzamt submission path and the user interface. No submission has occurred.**
 
-D-021 implementation remains complete on branch `d021-agent-case-provisioning`. Standard case-storage provisioning is not physical document migration.
+`PROJECT_CHECKPOINT.md` is now the mandatory cross-session entry point. Older D-024 through D-028 records remain historical but may not be used to reopen completed CASE-001 questions merely because their final closure was not durably recorded in the previous chat.
 
-Human authorization issued on 2026-09-08 produced an **APPROVED** state in the historical process-local `ApprovalStore`; it was **not consumed**. Physical migration was **not started** and source documents remain unchanged. That historical approval remains non-durable and is not executable authority after process exit.
+Exact final Chief response text, final calculation amount, final test count, and any post-D-028 stage identifier were not recovered and must not be invented.
+
 
 ## LAST_ACCEPTED_STAGE
 
@@ -270,3 +271,14 @@ Readiness decision:
 - The multi-case/multi-year isolation architecture and the tax-agent runtime are suitable foundations for creating the next tax-year case.
 - The next real tax year must not yet be handed over as an unattended autonomous operation. The blockers are operational, not a need to repeat foundational multi-year tests: development remains unmerged in a draft PR; main-repository Work automation is not active; host-side Local Sync/Windows Relay activation is unverified; the current Chief audit is intentionally at `HUMAN_REQUIRED`; UI and actual ELSTER submission remain outside the completed boundary.
 - Safe use is currently limited to supervised, case-scoped execution with Human Gates. No ELSTER submission, Finanzamt contact, merge to main, or irreversible action is authorized by this audit.
+
+
+## 2026-09-13 — Human-confirmed CASE-001 closure recovery
+
+Status: **CASE001_2024_ANALYSIS_COMPLETE / CHIEF_APPROVED / RECOVERED_CHECKPOINT**
+
+The human confirmed that the preceding project conversation completed and closed the CASE-001/2024 analysis under the Chief Agent. The only remaining product boundaries are UI and the controlled ELSTER/Finanzamt submission method. No actual submission occurred.
+
+This recovery supersedes older open-evidence language in D-024 through D-028 and the earlier 2026-09-13 readiness audit for purposes of current continuation. It does not fabricate unrecovered technical details and does not authorize filing, Finanzamt contact, irreversible action, protected-main merge, or Human-Gate bypass.
+
+Cross-session continuity is now governed by `PROJECT_CHECKPOINT.md`. Every new session must read it first, must not ask the human to repeat recorded facts, and must update it with every material stage transition.
