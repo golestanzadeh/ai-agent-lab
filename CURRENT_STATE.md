@@ -74,7 +74,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Human review and explicit ratification or amendment of `docs/agent-organization-v1-proposal.md`. No role activation, permission expansion, or Orchestrator implementation begins from the proposal alone.
+Begin Phase O2 design of the machine-readable role catalog, Agent manifest schema, Permission Matrix, task/response schema, lifecycle state machine, Human Gate and conflict-of-interest rules, and budget/retry/timeout/kill-switch policy. Agent activation, permission expansion, and Master Orchestrator implementation remain outside this authorization.
 
 ## Non-negotiable constraints
 
@@ -96,9 +96,12 @@ Human review and explicit ratification or amendment of `docs/agent-organization-
 - Exact next phase: define stable Agent roles, Agent Factory lifecycle, and the Permission Matrix under the Constitution.
 
 
-## Agent Organization v1 drafting checkpoint
+## Agent Organization v1 ratification checkpoint
 
-- A complete organizational proposal now defines the Human authority, independent Control Office, Master Project Orchestrator, PMO, Engineering Division, Tax Operations Division, existing tax Agent chain, inactive future domain role templates, deterministic kernel boundaries, access tiers, communication protocol, lifecycle, separation of duties, and the O0–P4 execution path.
-- Existing implemented identifiers remain unchanged: CHIEF_TAX_AUDITOR_AGENT, EVIDENCE_AGENT, TAX_LAW_AGENT, OPPORTUNITY_AGENT, CALCULATION_AGENT, ADVERSARIAL_REVIEWER_AGENT, and ELSTER_FORM_AGENT.
-- Status: `PROPOSED / NOT YET OPERATIONAL`.
-- No Agent, credential, permission, external transfer, protected-main action, or Orchestrator implementation was activated.
+- The Project Owner / Human explicitly ratified the redefined ten-section Agent Organization v1 model on 2026-09-13.
+- Status: `RATIFIED / ACTIVE ORGANIZATIONAL CONTRACT`.
+- The accepted structure contains 20 permanent Agent roles, three inactive case-selected specialist templates, deterministic kernel components, access tiers, registered communication, temporary-instance lifecycle, separation of duties, and the O0–P4 path.
+- Future organizational changes require explicit Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
+- Ratification opens Phase O2 machine-readable contract design only.
+- No Agent, credential, high-risk permission, protected-main action, production release, Orchestrator implementation, or external transfer was activated.
+- Activation commit: `ACTIVATION_COMMIT_PENDING`.

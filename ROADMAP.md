@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — constitutional foundation ratified**
+Status: **in progress — organizational contract ratified; Phase O2 authorized**
 
 Goals:
 
@@ -137,6 +137,6 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 ## Registered organizational artifact
 
-- `docs/agent-organization-v1-proposal.md` — unified proposal defining the Agent organizational chart, permanent role classes, temporary specialist roles, hierarchy, access tiers, authority boundaries, communication routes, Agent Factory lifecycle, Permission Matrix, separation of duties, and project execution path. It is a design/ratification artifact and grants no runtime permission until explicit Human acceptance and subsequent implementation verification.
+- `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-The acceptance of this organizational contract precedes Master Orchestrator implementation.
+Current authorized work is Phase O2 machine-readable contract design. Agent activation and Master Orchestrator implementation remain gated behind their later phases.

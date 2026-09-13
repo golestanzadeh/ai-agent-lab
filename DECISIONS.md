@@ -345,12 +345,18 @@ The exact ratified text is the active root `CONSTITUTION.md`. Activation commit:
 **Article 1 approval record — 2026-09-13:** At the Project Owner’s explicit instruction and ratification, Article 1 now establishes absolute Default Deny for any data transfer outside the approved project processing boundary. It requires two separate and ordered Human approvals: first, approval that the exact versioned artifact is correct and eligible for release; second, approval to transmit that same artifact to one exact named destination through one exact channel and purpose. Neither approval implies the other, and any mismatch or uncertainty fails closed.
 
 
-## D-032 — Agent Organization v1 proposal
+## D-032 — Ratification of Agent Organization v1
 
-**Status:** proposed; awaiting explicit Human ratification
+**Status:** accepted and ratified by explicit Project Owner / Human approval on 2026-09-13
 
-**Proposal:** Establish a two-plane organizational model: an independent governance/control office and an executive Master Project Orchestrator coordinating Project Management, Engineering, and Tax Operations divisions. Preserve the seven implemented tax-runtime identifiers, add bounded project-control roles, distinguish reasoning Agents from deterministic enforcement components, define authority/access tiers, prohibit unaudited peer command chains, require temporary manifest-bound Agent instances, and specify the phased path to chat-independent operation.
+**Decision:** Adopt the redefined ten-section Agent Organization v1 model in `docs/agent-organization-v1-proposal.md` as the governing organizational basis for continued project work.
 
-The exact proposal is `docs/agent-organization-v1-proposal.md`.
+The accepted organization contains the Human Project Owner; an independent Control Office; the Master Project Orchestrator; Project Management, Engineering, and Tax Operations divisions; 20 permanent Agent roles; three inactive case-selected domain specialist templates; deterministic enforcement components; access tiers A0–A6/AX; task-mediated communication; temporary Agent lifecycle; separation of duties; Human Gates; and the O0–P4 execution path.
 
-**Current authority:** This entry records a design proposal only. It does not activate any Agent, grant or expand permissions, authorize protected-main merge/release, authorize external data transfer, or begin Orchestrator implementation. Exact Human ratification is required before Phase O2 machine-readable role, manifest, permission, communication, and lifecycle contracts.
+The Project Owner / Human retains exclusive organizational change authority. The `MASTER_PROJECT_ORCHESTRATOR` may identify a need, prepare an exact change proposal, and request Human review. It may not approve or activate an organizational change.
+
+**Authorized next phase:** Phase O2 may design the machine-readable role catalog, Agent manifest schema, Permission Matrix, task/response communication schema, lifecycle state machine, Human Gate and conflict-of-interest rules, and budget/retry/timeout/kill-switch policy.
+
+**Non-authorization:** This ratification does not activate an Agent instance, grant or expand permissions, authorize credentials, begin Master Orchestrator implementation, authorize protected-main merge/release, destructive action, tax filing, ELSTER/Finanzamt contact, or external transfer.
+
+**Activation commit:** `ACTIVATION_COMMIT_PENDING`.

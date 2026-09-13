@@ -1,14 +1,14 @@
-# Agent Organization v1 — Ratification Proposal
+# Agent Organization v1 — Active Organizational Contract
 
-Status: **PROPOSED / NOT YET OPERATIONAL**  
-Proposed: **2026-09-13**  
-Authority required: **Project Owner / Human**
+Status: **ACCEPTED / ACTIVE CONTRACT**  
+Ratified: **2026-09-13**  
+Ratification authority: **Project Owner / Human**
 
 ## 1. Purpose
 
 This contract defines the permanent organizational structure of AI-Tax-Agent: named Agent roles, reporting lines, authority boundaries, access tiers, communication paths, temporary-role lifecycle, separation of duties, and the project path from governed planning to production operation.
 
-This document is subordinate to `CONSTITUTION.md`. It does not activate an Agent, grant credentials, expand permissions, authorize external transmission, authorize protected-main merge/release, or replace any existing case/run approval. Implementation begins only after explicit Human acceptance of the exact contract and the required technical controls.
+This document is subordinate to `CONSTITUTION.md`. It does not activate an Agent, grant credentials, expand permissions, authorize external transmission, authorize protected-main merge/release, or replace any existing case/run approval. The Human has explicitly ratified this exact organizational model. Ratification authorizes Phase O2 machine-readable contract design only; it does not activate Agents, grant permissions, authorize production release, or authorize external transfer.
 
 ## 2. Organizational doctrine
 
@@ -397,7 +397,7 @@ Status: **complete**. Constitution v2 is ratified and active.
 
 ### Phase O1 — Organizational contract
 
-Status: **this proposal**.
+Status: **complete — Human-ratified on 2026-09-13**.
 
 Required outcome:
 
@@ -407,6 +407,8 @@ Required outcome:
 - no runtime activation yet.
 
 ### Phase O2 — Machine-readable contracts
+
+Status: **current authorized phase**.
 
 Create and accept:
 
@@ -455,9 +457,9 @@ Activate separately accepted and tested Personal, Business, and Corporate specia
 
 Verify complete supported workflow, security/privacy, backup/recovery, current-law update process, dependency maintenance, cost/rate limits, audit reconstruction, UI-only ordinary operation, authorized real submission, receipt, and explicit Human production acceptance.
 
-## 16. Acceptance criteria for this organizational contract
+## 16. Ratified acceptance basis
 
-This proposal is ready for Human ratification only if:
+The Human ratified this organizational contract with the following accepted properties:
 
 1. all existing verified Agent identifiers are preserved;
 2. Human, Master, independent control, project engineering, and tax runtime authorities are unambiguous;
@@ -470,14 +472,14 @@ This proposal is ready for Human ratification only if:
 9. existing integrations are reused rather than redefined;
 10. the project path from organization design to chat-independent product operation is explicit.
 
-## 17. Ratification condition
+## 17. Ratification record
 
-This proposal becomes an accepted organizational contract only after the Project Owner explicitly approves **Agent Organization v1** or approves an exact amended version.
+The Project Owner / Human explicitly approved **Agent Organization v1** on 2026-09-13 as the governing organizational model for continued project work.
 
-Ratification must then:
+The accepted model contains the ten defined organizational areas, 20 permanent Agent roles, three inactive case-selected specialist templates, their hierarchy, role boundaries, access tiers, communication routes, lifecycle, separation-of-duties rules, deterministic kernel boundary, and O0–P4 execution path.
 
-1. change this document to `ACCEPTED / ACTIVE CONTRACT`;
-2. record the decision in `DECISIONS.md`;
-3. update `PROJECT_CHECKPOINT.md`, `CURRENT_STATE.md`, `ROADMAP.md`, and `docs/README.md`;
-4. record the exact activation commit;
-5. authorize only Phase O2 contract work—not Agent activation, high-risk permissions, production release, or external transfer.
+Future organizational changes require an explicit instruction or approval from the Project Owner / Human. The `MASTER_PROJECT_ORCHESTRATOR` may identify a need, prepare an exact proposal, and request Human review; it cannot ratify or activate the change.
+
+Ratification authorizes Phase O2 machine-readable contract work only. It does not activate any Agent instance, grant or expand permissions, authorize credentials, protected-main merge/release, destructive action, tax submission, or external transfer.
+
+Activation commit: `ACTIVATION_COMMIT_PENDING`.
