@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **next**
+Status: **in progress — constitutional foundation ratified**
 
 Goals:
 
@@ -131,6 +131,6 @@ A planned artifact must be registered here before creation. Registration must st
 - Code, tests, audit contracts, and recovery evidence are not disposable merely because their original stage completed.
 
 
-## Registered constitutional artifact
+## Constitutional foundation
 
-- `docs/constitution-v2-proposal.md` — proposed supreme constitution for the governed adaptive Orchestrator and Agent Factory. It must remain non-operative until the human explicitly ratifies its exact content. After ratification, it will replace the current `CONSTITUTION.md` through a dedicated governed commit and decision record.
+Project Constitution v2 is ratified and active at `CONSTITUTION.md`. The next governed artifacts are the stable Agent-role contracts, Agent Factory lifecycle contract, and Permission Matrix. Their acceptance precedes Master Orchestrator implementation.
