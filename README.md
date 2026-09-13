@@ -1,36 +1,41 @@
-# AI Agent Lab
+# AI-Tax-Agent
 
-A practical learning laboratory for designing, building, testing, evaluating, and operating serious Agentic AI systems.
+A case-scoped, evidence-driven Agentic AI system for German tax workflows.
 
-## Purpose
+## Current position
 
-This repository is the durable source of truth for the project. Chat sessions are working sessions; decisions, plans, architecture, experiments, code, tests, and current state belong here.
+CASE-001 for tax year 2024 completed its analytical preparation and was Chief-approved according to the recovered human checkpoint. No ELSTER/Finanzamt submission has occurred.
 
-## Learning objective
+The remaining product tracks are:
 
-Learn Agentic AI by building a real system from first principles rather than treating agents as a collection of prompts.
+1. controlled ELSTER/Finanzamt submission;
+2. user interface;
+3. operational automation toward supervised autonomous project execution.
 
-## Current direction
+Always read [PROJECT_CHECKPOINT.md](PROJECT_CHECKPOINT.md) before relying on historical status documents.
 
-The project will build a multi-agent system for a complex, document-heavy, evidence-driven workflow. A tax-domain scenario is currently a candidate use case, not a final commitment.
+## Core architecture
 
-## Repository map
+- GitHub: durable source of truth for code, governance, tests, decisions, and checkpoint state.
+- Google Drive: private case documents, evidence, calculations, reports, and audit artifacts.
+- Windows/Python/Docker: controlled execution environment.
+- ChatGPT Work + Agent Bridge + Codex: development orchestration and bounded implementation.
+- Gemini-backed tax agents: case-scoped specialist analysis under deterministic validation.
+- Human Gates: mandatory authority for filing and other consequential actions.
 
-- `AGENTS.md` — operating instructions and map for coding agents.
-- `PROJECT.md` — project scope, learning goals, and acceptance criteria.
-- `CONSTITUTION.md` — durable principles and non-negotiable rules.
-- `CURRENT_STATE.md` — verified current state and next action.
-- `ROADMAP.md` — phased development and planned future artifacts.
-- `DECISIONS.md` — decision log with rationale and status.
-- `docs/` — detailed architecture, agent design, evaluation, and safety documentation.
-- `src/` — implementation.
-- `tests/` — automated tests and evaluation harnesses.
-- `experiments/` — controlled experiments and findings.
+## Canonical documentation
 
-## Anti-hallucination rule
+- `PROJECT_CHECKPOINT.md` — current state and exact continuation point.
+- `AGENTS.md` — mandatory Agent operating rules.
+- `CONSTITUTION.md` — non-negotiable principles.
+- `PROJECT.md` — product mission, domain, and success criteria.
+- `MASTER_PLAN.md` — long-horizon destination and definition of done.
+- `CURRENT_STATE.md` — concise operational state.
+- `ROADMAP.md` — remaining work only.
+- `DECISIONS.md` — accepted decisions and rationale.
+- `docs/architecture.md` — system architecture.
+- `docs/README.md` — detailed documentation index.
 
-If a fact about the project is not supported by the repository, the current task context, or an explicitly verified external source, it must be marked as unknown rather than guessed.
+## Safety
 
-## Status
-
-Phase 0 — repository initialization and project definition.
+No Agent may guess missing case facts, cross case boundaries, expose private case data in GitHub, or submit to ELSTER/Finanzamt without the required explicit Human Gate.
