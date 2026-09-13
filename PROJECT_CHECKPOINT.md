@@ -107,6 +107,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 - The Project Owner / Human explicitly approved and ratified Project Constitution v2, including Article 1 and all 20 Articles.
 - The ratified text is active at `CONSTITUTION.md` and supersedes the original twelve-principle Constitution.
+- Exact Constitution activation commit: `ef935a4ba0493c1f2904d0983614b2b73e656254`.
 - Article 1 establishes absolute external-data Default Deny and requires two separate Human approvals: exact-content release approval, followed by exact-recipient/channel transmission approval.
 - No Agent, Master Orchestrator, automation, tool, or generic authorization may amend or bypass the Constitution.
 - Any future constitutional change requires the exact proposed change, impact/risk disclosure, explicit Project Owner approval, a dedicated commit, Decision Log entry, and checkpoint update.
