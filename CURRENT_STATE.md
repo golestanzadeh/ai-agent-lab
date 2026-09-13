@@ -1,284 +1,86 @@
 # Current State
 
-## CURRENT_STAGE
-
-**CASE-001 / tax year 2024 tax-analysis preparation is complete and Chief-approved by explicit human recovery confirmation on 2026-09-13. The remaining product work is limited to the controlled ELSTER/Finanzamt submission path and the user interface. No submission has occurred.**
-
-`PROJECT_CHECKPOINT.md` is now the mandatory cross-session entry point. Older D-024 through D-028 records remain historical but may not be used to reopen completed CASE-001 questions merely because their final closure was not durably recorded in the previous chat.
-
-Exact final Chief response text, final calculation amount, final test count, and any post-D-028 stage identifier were not recovered and must not be invented.
-
-
-## LAST_ACCEPTED_STAGE
-
-**Local Sync Agent Stage — human accepted 2026-09-10 after architecture acceptance, implementation, and technical verification.**
-
-Durable Approval Stage and Agent Bridge Production were separately human accepted on 2026-09-10. Windows Relay architecture was human accepted on 2026-09-10; its implementation stage still requires separate human acceptance before local bootstrap.
-
-Canonical main remains `ee59dadbc2c7f2433e8291f849fef3048b574a9c` until PR #1 is separately merged through the protected-main workflow. These acceptances do not themselves authorize automatic merge, release, runtime approval consumption, or physical migration.
-
-## AGENT BRIDGE PRODUCTION MIGRATION — 2026-09-10
-
-1. Baseline/canonical cleanup — **COMPLETE**.
-2. Production architecture/governance — **HUMAN ACCEPTED**.
-3. Protocol contract — **DEFINED**.
-4. Security model — **DEFINED**.
-5. Passive/observe-only Bridge — **PASS**.
-6. Controlled Codex connection — **PASS**.
-7. GitHub → Work owner-identity response path — **PASS**.
-8. Controlled low-risk continuation — **PASS**.
-9. Full Human Gate test — **PASS; HUMAN_REQUIRED terminal stop proved**.
-10. Final verification/rollback hardening — **TECHNICAL PASS; HUMAN PRODUCTION ACCEPTANCE ISSUED 2026-09-10**.
-11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle — **IMPLEMENTED + VERIFIED + HUMAN ACCEPTED 2026-09-10**.
-
-## DURABLE APPROVAL IMPLEMENTATION
-
-Human-accepted architecture: SQLite-backed durable/reloadable approval authority preserving the existing D-017 domain binding and lifecycle semantics.
-
-Implemented artifacts:
-- `docs/durable-approval-lifecycle.md`
-- `src/agent_lab/durable_approval.py`
-- `tests/unit/test_durable_approval.py`
-
-Verification evidence:
-- Run `34508255413`: durable approval tests **11 passed**; full suite **263 passed, 1 skipped**; job **success**.
-- Documentation follow-up run `34508370273`: validator, durable approval tests, and full regression all **success**.
-- State-recording run `34508467713`: kill-switch check, validator, durable approval tests, and full regression all **success**.
-- Human stage acceptance issued 2026-09-10.
-
-## CONTROLLED PHYSICAL MIGRATION EXECUTOR
-
-Implemented artifacts:
-- `docs/physical-migration-executor.md`
-- `src/agent_lab/case001_physical_migration.py`
-- `tests/unit/test_case001_physical_migration.py`
-- `src/agent_lab/google_drive_mutation.py`
-- `tests/unit/test_google_drive_mutation.py`
-- `scripts/case001_controlled_migration.py`
-- `tests/unit/test_case001_controlled_migration.py`
-
-Implemented behavior:
-- `DRY_RUN` is the default and performs zero storage mutation and zero approval consumption;
-- `LIVE` fails before storage inspection unless explicitly enabled and supplied with exact newly created durable approval authority;
-- the local harness reconstructs fresh case scope, metadata inventory, Document Identity linkage, deterministic Manifest, and Live Target Preflight before any possible live mutation;
-- the harness requires the fresh real inventory to remain exactly **15 PDFs / 0 folders** and requires the target to remain empty;
-- only explicit manifest object IDs and explicit source/target parent IDs are accepted;
-- Google Drive mutation port exposes only explicit parent-scoped listing, single-parent inspection, and guarded parent move;
-- no taxpayer-name, filename, folder-name, or Drive-wide discovery path exists in the mutation adapter;
-- object IDs are preserved by parent moves;
-- partial move failure triggers reverse-order rollback;
-- post-migration verification requires exact target contents and absence of expected objects from source;
-- approval is consumed only after successful post-migration verification;
-- approval-consumption failure triggers storage rollback;
-- incomplete rollback produces explicit terminal `PhysicalMigrationRollbackError` and can never be reported as success;
-- a consumed approval replay fails closed before storage inspection;
-- LIVE requires the exact explicit authorization sentinel plus human approver and authorization reference;
-- the live harness refuses to create a second authority automatically when its durable approval database already exists, forcing human recovery/review instead of silent retry;
-- stdout summary deliberately omits provider object IDs, source/target parent IDs, filenames, and complete mappings.
-
-Verification evidence:
-- CI run `34509462092`: physical migration executor tests **9 passed**; full suite **272 passed, 1 skipped**; job **success**.
-- CI run `34509683965`: executor tests **9 passed**, guarded Drive mutation adapter tests **7 passed**, durable approval tests **11 passed**, Agent Bridge validator **6 passed**, full regression **279 passed, 1 skipped**; job **success**.
-- CI run `34509914717`: all migration/durable/Bridge regression checks **success** after Human-Gate state advancement.
-- CI run `34510246145`: Bridge validator **6 passed**, Durable Approval **11 passed**, physical executor **9 passed**, guarded Drive adapter **7 passed**, controlled harness safety **6 passed**, full regression **285 passed, 1 skipped**; job **success**.
-- Local Windows verification 2026-09-11: controlled migration work package **34 passed**; full regression **310 passed, 1 skipped**. Synthetic end-to-end harness coverage now proves durable approval creation/grant, exact 15-object move, post-verification consumption, durable reload, and terminal `CONSUMED` persistence without live Drive mutation.
-- All CI migration tests use synthetic storage/fake Drive services and temporary test authority only.
-- No real Google Drive object was moved, renamed, deleted, overwritten, or otherwise mutated by these tests.
-
-## LOCAL SYNC AGENT
-
-Architecture and implementation stage human-accepted 2026-09-10. Implemented artifacts:
-- `docs/local-sync-agent.md`
-- `src/agent_lab/local_sync.py`
-- `scripts/local_sync_agent.py`
-- `scripts/install_local_sync_task.ps1`
-- `tests/unit/test_local_sync.py`
-
-Implemented behavior:
-- one-shot reconciliation intended for Windows Task Scheduler every minute;
-- exact repository-root and configured-branch validation;
-- dirty tree fails closed before fetch/merge/push;
-- strictly-behind local branch updates only through `merge --ff-only`;
-- strictly-ahead already committed non-main branch may push normally;
-- `main` is never auto-pushed;
-- divergence, detached/wrong branch, missing remote, or Git failures stop without reset/rebase/stash/commit/force-push;
-- the CLI stores its overlap lock only under `.git` and recovers a stale lock after ten minutes;
-- no repository credential, OAuth token, tax data, Drive artifact, or durable approval database is synchronized by this mechanism.
-
-Verification evidence:
-- CI run `34512131024`: Local Sync Agent targeted tests **10 passed**; full regression **295 passed, 1 skipped**; job **success**.
-- Existing Agent Bridge, Durable Approval and controlled migration suites remained green in the same run.
-- Verification used fake Git behavior only and did not access or modify the user's Windows checkout.
-- Human stage acceptance issued 2026-09-10.
-
-## WINDOWS RELAY
-
-Architecture human-accepted 2026-09-10. Implemented artifacts:
-- `docs/windows-relay.md`
-- `src/agent_lab/windows_relay.py`
-- `scripts/windows_relay.py`
-- `scripts/install_windows_relay_task.ps1`
-- `tests/unit/test_windows_relay.py`
-
-Implemented behavior:
-- closes the GitHub-to-local-Windows execution gap without installing a GitHub self-hosted Actions runner;
-- polls only the exact configured `origin/d021-agent-case-provisioning` relay request file;
-- strict protocol v1 rejects unknown fields and arbitrary command/script/path payloads;
-- initial allowlist contains only `LOCAL_SYNC_BOOTSTRAP`;
-- requires Windows, exact repository root, exact approved branch, and clean worktree;
-- uses local `.git/windows-relay-state.json` for replay/interruption fail-closed behavior;
-- may publish only the bounded `.github/windows-relay/response.json` result on the approved non-main branch;
-- response publication stages exactly that one path and uses normal non-force push;
-- cannot modify `main`, merge/release, access Drive/tax data, grant/consume approval, or perform CASE-001 migration;
-- local relay installation itself remains a one-time trusted host bootstrap.
+Last reconciled: **2026-09-13**
 
-Verification evidence:
-- CI run `34515017873`: Windows Relay targeted tests **14 passed**; Local Sync targeted tests **10 passed**; full regression **309 passed, 1 skipped**; job **success**.
-- Passive CI remained read-only and ran on GitHub-hosted Ubuntu only; it did not install or execute anything on the user's Windows host.
+## Authoritative status
 
-Pending Human Gate:
-- Windows Relay implementation requires explicit **Windows Relay Stage** acceptance before the one-time local relay bootstrap is performed.
+CASE-001 / tax year 2024 analytical preparation is **complete and Chief-approved** by explicit human recovery confirmation. No ELSTER submission or Finanzamt transmission has occurred.
 
-## REAL CASE-001 EXECUTION HUMAN GATE
+The exact final Chief response text, final calculation amount, final post-D-028 test count, and any uncommitted post-D-028 implementation details were not recovered. They must not be fabricated.
 
-All implementation and non-production verification needed before the consequential gate are complete, including the 2026-09-11 synthetic end-to-end controlled harness test. Real CASE-001 remains blocked until the human explicitly authorizes the live attempt and the creation/grant of its new durable executable approval.
+For every new session, read `PROJECT_CHECKPOINT.md` first.
 
-At the real attempt, the local harness will reconstruct fresh authoritative state and fail closed unless all of these still match:
-- `CASE-001`, tax period 2024 and the exact registered source scope;
-- live inventory remains exactly the expected 15 PDFs / 0 folders;
-- exact current Manifest identity and complete object mapping;
-- fresh successful Live Target Preflight and target still empty;
-- exact source/target parent IDs;
-- a **new durable approval request and explicit human grant** bound to the reconstructed manifest, preflight, run, actor, and `PHYSICAL_MIGRATION` operation;
-- exact explicit live authorization sentinel.
+## Completed foundations
 
-The historical process-local `APP-00000001` is **not** valid for this purpose and must not be imported or upgraded.
+- Multi-case and multi-year Case, Person/Entity, and tax-period model.
+- Deterministic case isolation and case-scoped Drive access.
+- Case state, run identity, audit, document inventory, document identity, and evidence boundaries.
+- Google Drive metadata/storage integration and live scope verification.
+- Durable approval lifecycle and fail-closed Human Gates.
+- CASE-001 controlled physical migration completed: 15 documents moved and post-verified; approval consumed only after successful verification.
+- CASE-001 dataset extraction/validation and category organization completed.
+- Agent Bridge production architecture and controlled PASS/BLOCKED/HUMAN_REQUIRED behavior verified.
+- D-027 six-role tax-agent runtime implemented and live-verified.
+- D-028 Chief Tax Auditor implemented and live-verified.
+- Local Sync implementation technically verified and human accepted.
+- Windows Relay architecture accepted and implementation technically verified.
 
-Because Google Drive and SQLite are not one distributed transaction, any crash that leaves external placement uncertain must fail closed on restart and require human recovery rather than automatic replay.
+## Active system boundaries
 
-## PRODUCTION SAFETY BOUNDARY
+### Development control plane
 
-Agent Bridge remains a **development control plane only**. It is not runtime tax authority.
+GitHub remains the durable source of truth. Agent Bridge connects Work, GitHub, and Codex for bounded development tasks. Local Sync and Windows Relay provide the designed bridge to the authoritative Windows runtime.
 
-It does not itself authorize physical Google Drive migration, D-017 approval consumption, source-document mutation, destructive operations, autonomous merge/release/stage acceptance, or direct autonomous write to `main`.
+Current operational caution:
 
-`HUMAN_REQUIRED` remains terminal until explicit human authorization permits a new action.
+- development after D-020 remains on draft PR #1 / branch `d021-agent-case-provisioning`;
+- `main` is behind that development branch;
+- currently enabled Work automations previously inspected were still scoped to `golestanzadeh/agent-bridge-poc`, not the main repository;
+- live host installation/enabled state of Local Sync and Windows Relay has not been re-verified in this checkpoint.
 
-## VERIFIED_RUNTIME_STATE
+### Tax runtime
 
-- GitHub is the durable source of truth; local Python/Docker is the execution environment; Google Drive holds private case data.
-- Multi-case architecture requires mandatory `case_id`, persistent `person_id`/`entity_id`, and explicit `tax_period`.
-- Last recorded real CASE-001 source inventory: **15 PDFs, 0 folders**.
-- Last recorded real CASE-001 / 2024 target Documents scope was empty at the D-021 checkpoint; it must be freshly revalidated before execution.
-- Historical run: `RUN-00000001`; historical process-local approval identifier: `APP-00000001`.
-- Historical approval: **APPROVED / NOT CONSUMED / NON-DURABLE / NOT AUTO-IMPORTED / NOT EXECUTABLE**.
-- Physical Google Drive migration: **NOT STARTED**.
-- Local Sync Agent: **IMPLEMENTED + TECHNICALLY VERIFIED + HUMAN STAGE ACCEPTED / LOCAL INSTALLATION AND LIVE SMOKE TEST AUTHORIZED BUT NOT YET VERIFIED**.
-- Windows Relay: **ARCHITECTURE HUMAN ACCEPTED + IMPLEMENTED + TECHNICALLY VERIFIED / STAGE ACCEPTANCE AND LOCAL BOOTSTRAP PENDING**.
+The specialist chain is:
 
-## ACTIVE_CONSTRAINTS
+`Evidence -> Tax Law -> Opportunity -> Calculation -> Adversarial Reviewer -> ELSTER/Form -> Chief Tax Auditor`
 
-- Source documents are immutable except for an explicitly authorized parent move performed by the controlled migration executor; document content must never be altered.
-- No broad/unscoped Drive search for case data.
-- Every case-data operation requires validated case scope and fails closed on ambiguity.
-- Private Drive IDs, OAuth tokens, credentials, client secrets and private document information must never be committed.
-- Human authority remains required wherever D-019 or a consequential-action contract requires it.
-- Local Sync may never auto-commit, force-push, repair divergence, or auto-push `main`.
-- Windows Relay may execute only versioned allowlisted local task types and may never accept arbitrary shell commands from GitHub state.
+All processing remains case/year-scoped, evidence-first, structured, and fail-closed. Current analytical policy is maintained in `docs/d025-tax-calculation-contract.md`.
 
-## AUTHORITATIVE_REFERENCES
+## Remaining product work
 
-- `AGENTS.md`
-- `CONSTITUTION.md`
-- `DECISIONS.md`
-- `ROADMAP.md`
-- `docs/agent-bridge-production.md`
-- `docs/durable-approval-lifecycle.md`
-- `docs/physical-migration-executor.md`
-- `docs/local-sync-agent.md`
-- `docs/windows-relay.md`
-- `docs/case001-migration-compatibility.md`
-- `docs/codex-agent-workflow.md`
-- `docs/d-019-controlled-agent-assisted-development-workflow.md`
-- `docs/approval-gate.md`
-- Fresh local metadata-only CASE-001 dry-run 2026-09-12: **15 documents / 0 folders**, manifest `sha256:94b563afc299a1c3da3b5e57ab6deb023952e15ae8e6abb274223f5d72b85587`, preflight `sha256:16d9b1bd5ed8fb08d5cac0aa22a00333fa2d2c783da7fa38899efad747379853`; approval status remained null, approval consumption false, Drive mutation false. This reconfirms readiness at the Human Gate without authorizing live execution.
+1. **Controlled ELSTER/Finanzamt path**
+   - supported official integration method;
+   - form/schema mapping and plausibility validation;
+   - preview and explicit Human Gate;
+   - authenticated transmission;
+   - receipt, audit, retry, and failure recovery;
+   - no silent or autonomous filing.
 
-- 2026-09-12 Live Execution Readiness Gate: targeted migration/approval suite **34 passed**; fresh provider-backed metadata-only dry-run reconfirmed **15 documents / 0 folders**, unchanged manifest/preflight identities, null approval status, no approval consumption, and zero Drive mutation. Status: **CASE001_LIVE_READY -> HUMAN_REQUIRED**. Real execution remains unauthorized.
+2. **User interface**
+   - case/year creation;
+   - document intake;
+   - Agent progress and evidence status;
+   - calculation/form preview;
+   - Human Gate decisions;
+   - submission authorization and receipt display.
 
-- 2026-09-12 CASE-001 live physical migration: human-authorized OAuth scope expansion completed; existing durable approval APP-00000001 was recovered and exact-context validated; 15/15 manifest documents moved from the legacy source to the accepted target; post-verification found source 0 and target 15 with exact target parents; approval reached CONSUMED. D-021 physical migration is complete.
+3. **Autonomous project operation**
+   - durable Master Orchestrator;
+   - task/dependency registry;
+   - specialist development Agents;
+   - independent QA/security review;
+   - retry, recovery, cost controls, reporting, and kill switch;
+   - routine autonomous continuation with consequential actions kept behind Human Gates.
 
-- 2026-09-12 D-022 started under human phase authorization. Step 1 intake completed against live CASE-001 target: 15 PDFs confirmed. Step 2 initial identification completed where evidence supports it. Native PDF text extraction succeeded for 5/15; 10/15 are image-only and require OCR before evidence-grounded extraction/classification can continue. No tax values were guessed. Status: D022_OCR_REQUIRED.
+## Exact next action
 
-- 2026-09-12 D-022 extraction and validation completed. All 15 CASE-001 PDFs are readable through native-text or rendered-page vision fallback. Address/route endpoints and cross-year payment/service-year semantics are explicit dataset rules. Full regression: 317 passed, 1 skipped. Status: D022_DATASET_VALIDATED_HUMAN_REQUIRED.
+Canonicalize the remaining architecture and produce the bounded design/acceptance contract for the Master Project Orchestrator without redefining existing integrations. ELSTER and UI work then proceed through the approved dependency order in `ROADMAP.md`.
 
-- 2026-09-12 D-022 dataset accepted by human authority. D-023 physical tax-category organization then completed under explicit phase authorization: exact 15-PDF precondition/manifest match, seven category folders, Documents=0, categorized=15, and independent Google Drive API post-verification=15. Private audit evidence is stored in CASE-001/Audit. Status: D023_COMPLETE.
+## Non-negotiable constraints
 
-## D-027 TAX AGENT RUNTIME CHECKPOINT — PAUSED 2026-09-12
-
-Human authorized conversion of the conceptual tax-agent roles into real executable agents. Initial implementation now exists locally on `d021-agent-case-provisioning`:
-- `src/agent_lab/tax_agents.py`
-- `src/agent_lab/tax_agent_runtime.py`
-- `scripts/run_tax_agents.py`
-- `tests/unit/test_tax_agent_runtime.py`
-- `docs/d027-tax-agent-runtime.md`
-
-Defined execution chain: Evidence -> Tax Law -> Opportunity -> Calculation -> Adversarial Reviewer -> ELSTER/Form.
-
-Targeted runtime verification: **5 passed**. A real Gemini-backed smoke run proved actual LLM execution and structured output, but stopped after Evidence Agent with `HUMAN_REQUIRED` because ordinary evidence gaps were escalated too aggressively. Therefore full six-agent E2E is **NOT YET VERIFIED**.
-
-Challenge-01 also corrected the working 2024 refund baseline from EUR 451.83 to **EUR 244.83** under the currently accepted assumptions, after detecting invalid double counting of the EUR 1,230 Arbeitnehmer-Pauschbetrag. Official 2024 §9a confirms EUR 1,230 is used when higher Werbungskosten are not proven; the special rule allowing union dues alongside the Pauschbetrag belongs to the 2026 law version and must not be back-applied.
-
-PAUSE STATE: do not claim D-027 accepted or complete. Next action is to refine terminal/escalation policy, run the complete six-agent live smoke, run full regression, record final D-027 state, then commit/push through the approved non-main workflow. No ELSTER/Finanzamt submission or contact is authorized.
-## D-027 TAX AGENT RUNTIME RESUMED — 2026-09-13
-
-D-027 resumed from `a0cf4dc`. Evidence-gap escalation was corrected so ordinary missing evidence flows downstream while explicit consequential evidence conflicts remain terminal.
-
-A live controlled CASE-001/2024 run completed the six-role chain: Evidence -> Tax Law -> Opportunity -> Calculation -> Adversarial Reviewer -> ELSTER/Form. Runtime status: PASS. The reviewer kept unsupported travel/school/section-35a items non-confirmed rather than silently claiming them.
-
-Verification: D-027 targeted tests 6 passed. Full local regression 323 passed, 1 skipped. The first full-suite invocation completed test bodies but pytest cleanup hit a Windows Temp permission error; rerun with repository-local basetemp completed cleanly.
-
-D-027 is technically operational. No ELSTER submission, Finanzamt contact, main merge, release, or external consequential tax action occurred. Final tax entitlement remains evidence-first and subject to unresolved CASE-001 evidence gaps.
-
-## 2026-09-13 — D-028 Chief Tax Auditor
-- Added real `CHIEF_TAX_AUDITOR_AGENT` as supervisory manager above the six D-027 specialists.
-- Chief owns challenge, re-check directives and analytical closure; deterministic orchestrator retains guardrails.
-- CLI now executes the six-specialist investigation followed by the Chief final-suspicion pass.
-- Live CASE-001/2024 run: six specialists executed; Chief returned `HUMAN_REQUIRED` and rejected premature closure.
-- Residual targets: duty roster, Jan-May EVG, commute distance, childcare, spouse Minijob treatment,
-  Section 35a payment/labour proof, school-fee payment/eligibility.
-- D-028 targeted tests: 8 passed.
-- Full regression: 325 passed, 1 skipped after isolated confirmation of one transient Drive test failure.
-- No ELSTER/Finanzamt submission/contact, main merge, release, or evidence mutation performed.
-
-
-## 2026-09-13 — Operational readiness audit for next tax year
-
-Status: **CONDITIONALLY READY / NOT READY FOR UNATTENDED HANDOFF**
-
-Verified repository state:
-- The authoritative development work is on draft PR #1, branch `d021-agent-case-provisioning`, at commit `2baaf66c90ba8a676098a616f3ab43cb67cdf7ba`; `main` remains at the accepted D-020 checkpoint and does not yet contain D-021 through D-028.
-- The D-027 six-specialist runtime completed a live controlled CASE-001/2024 run through Evidence, Tax Law, Opportunity, Calculation, Adversarial Reviewer, and ELSTER/Form; targeted tests passed 6 and the full regression passed 323 with 1 skipped.
-- D-028 added the Chief Tax Auditor. A live controlled run executed all six specialists and the Chief; the Chief correctly returned `HUMAN_REQUIRED` because material evidence gaps remained. Targeted tests passed 8 and the full regression passed 325 with 1 skipped.
-- No GitHub commit status and no pull-request-triggered workflow run is attached to the current branch-head commit. The latest green regression evidence is therefore recorded local execution evidence, not a fresh GitHub-hosted CI result for the head commit.
-
-Verified control-plane state:
-- Three ChatGPT Work webhook automations are enabled: Bridge PR Wake-up, Agent Bridge Continuation, and Agent Bridge Human Gate. Their configured repository is `golestanzadeh/agent-bridge-poc`, not `golestanzadeh/ai-agent-lab`.
-- The earlier Agent Bridge Response automation is disabled.
-- Production Agent Bridge paths exist in PR #1 and prior controlled probes reached PASS and HUMAN_REQUIRED as designed, but the currently enabled Work automations do not provide an active end-to-end production control plane for the main repository.
-- Local Sync and Windows Relay are implemented and technically tested, but operational evidence does not establish that they are currently installed and enabled on the authoritative Windows host. Project checkpoint comments explicitly kept Local Sync disabled and Windows Relay outside the critical path unless separately authorized.
-
-Readiness decision:
-- The multi-case/multi-year isolation architecture and the tax-agent runtime are suitable foundations for creating the next tax-year case.
-- The next real tax year must not yet be handed over as an unattended autonomous operation. The blockers are operational, not a need to repeat foundational multi-year tests: development remains unmerged in a draft PR; main-repository Work automation is not active; host-side Local Sync/Windows Relay activation is unverified; the current Chief audit is intentionally at `HUMAN_REQUIRED`; UI and actual ELSTER submission remain outside the completed boundary.
-- Safe use is currently limited to supervised, case-scoped execution with Human Gates. No ELSTER submission, Finanzamt contact, merge to main, or irreversible action is authorized by this audit.
-
-
-## 2026-09-13 — Human-confirmed CASE-001 closure recovery
-
-Status: **CASE001_2024_ANALYSIS_COMPLETE / CHIEF_APPROVED / RECOVERED_CHECKPOINT**
-
-The human confirmed that the preceding project conversation completed and closed the CASE-001/2024 analysis under the Chief Agent. The only remaining product boundaries are UI and the controlled ELSTER/Finanzamt submission method. No actual submission occurred.
-
-This recovery supersedes older open-evidence language in D-024 through D-028 and the earlier 2026-09-13 readiness audit for purposes of current continuation. It does not fabricate unrecovered technical details and does not authorize filing, Finanzamt contact, irreversible action, protected-main merge, or Human-Gate bypass.
-
-Cross-session continuity is now governed by `PROJECT_CHECKPOINT.md`. Every new session must read it first, must not ask the human to repeat recorded facts, and must update it with every material stage transition.
+- Never reopen completed CASE-001 questions solely from superseded historical reports.
+- Never ask the human to repeat information present in the checkpoint, canonical documents, or authorized case evidence.
+- Never mix cases or tax years.
+- Never store credentials, private Drive IDs, or private tax documents in GitHub.
+- Never treat tests alone as human stage acceptance.
+- Never submit, sign, release, merge protected `main`, expand permissions, or perform irreversible actions without the applicable explicit Human Gate.
