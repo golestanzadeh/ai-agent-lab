@@ -48,9 +48,10 @@ Agent Organization v1 was explicitly ratified by the Project Owner / Human on 20
 Current authorized continuation point:
 
 1. Phase O1 is complete.
-2. Phase O2 may define the machine-readable role catalog, Agent manifest schema, Permission Matrix, task/response communication schema, lifecycle state machine, Human Gate and conflict-of-interest rules, and budget/retry/timeout/kill-switch policy.
-3. Each Phase O2 contract remains subject to its own design, verification, and applicable acceptance gate.
-4. Agent activation, high-risk permission issuance, Master Orchestrator implementation, protected-main action, production release, and external transfer remain unauthorized.
+2. Phase O2 machine-readable contracts were designed and technically verified at commit `382a140e42496ad9edd92dc2016cfde51d091575`.
+3. The contract validator passed and the full regression completed with `337 passed, 1 skipped`.
+4. Current state is `O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` for exact Phase O2 acceptance or amendment.
+5. Phase O3, Agent activation, high-risk permission issuance, Master Orchestrator implementation, protected-main action, production release, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -79,7 +80,8 @@ A stage is not durably handed off until the checkpoint states:
 - `CONSTITUTION.md` — ratified supreme Project Constitution v2.
 - `AGENTS.md` — mandatory Agent behavior and governance.
 - `CURRENT_STATE.md` — detailed verified/recovered current state.
-- `docs/agent-organization-v1-proposal.md` — proposed Agent hierarchy, authority, communication, lifecycle, and execution path.
+- `docs/agent-organization-v1-proposal.md` — active Agent hierarchy, authority, communication, lifecycle, and execution path.
+- `docs/o2-machine-readable-contracts.md` and `contracts/orchestrator/v1/` — Phase O2 design, schemas, policies, and acceptance evidence.
 - `ROADMAP.md` — remaining work and registered future artifacts.
 - `DECISIONS.md` — accepted decisions and authority.
 - `docs/d027-tax-agent-runtime.md` — executable specialist runtime.
@@ -130,3 +132,16 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - No Agent instance, credential, permission expansion, protected-main action, production release, destructive action, tax submission, or external transfer was authorized.
 - Activation commit: `15c0f9855f361ade1133d22f20cee21f75a812fc`.
 - Status: **RATIFIED / ACTIVE ORGANIZATIONAL CONTRACT**.
+
+
+## Phase O2 technical completion checkpoint — 2026-09-13
+
+- Created the exact-version `ORCHESTRATOR_CONTRACT_SET_V1` under `contracts/orchestrator/v1/`.
+- Defined the 20 permanent roles, three inactive templates, Agent manifest, Permission Matrix, task/response schemas, lifecycle, Human Gates, conflict rules, budgets, retries, loop controls, and kill switch.
+- Added a deterministic offline validator and 12 positive/fail-closed tests.
+- Targeted result: `12 passed`.
+- Full regression: `337 passed, 1 skipped`.
+- Implementation and verification commit: `382a140e42496ad9edd92dc2016cfde51d091575`.
+- No Agent was activated; no permission, credential, private case access, merge, release, destructive action, tax submission, or external transfer occurred.
+- Status: **O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED**.
+- Exact next action: Human reviews and explicitly accepts the Phase O2 contract set or requests exact amendments. Only acceptance may authorize Phase O3.

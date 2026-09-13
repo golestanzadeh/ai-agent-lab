@@ -24,6 +24,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - D-028 Chief Tax Auditor implemented and live-verified.
 - Local Sync implementation technically verified and human accepted.
 - Windows Relay architecture accepted and implementation technically verified.
+- Phase O2 machine-readable Orchestrator contract set designed and technically verified; Human phase acceptance remains pending.
 
 ## Active system boundaries
 
@@ -74,7 +75,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Begin Phase O2 design of the machine-readable role catalog, Agent manifest schema, Permission Matrix, task/response schema, lifecycle state machine, Human Gate and conflict-of-interest rules, and budget/retry/timeout/kill-switch policy. Agent activation, permission expansion, and Master Orchestrator implementation remain outside this authorization.
+Human review and explicit acceptance or exact amendment of `contracts/orchestrator/v1/` and `docs/o2-machine-readable-contracts.md`. Phase O3, Agent activation, permission expansion, and Master Orchestrator implementation remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -93,7 +94,7 @@ Begin Phase O2 design of the machine-readable role catalog, Agent manifest schem
 - Status: `RATIFIED / IN FORCE`.
 - Scope: supreme authority, amendment control, durable truth, Orchestrator limits, governed Agent Factory, least privilege, Human Gates, case isolation, tax integrity, verification, audit, recovery, autonomy, cost control, repository retention, completion, and conflict resolution.
 - No Agent definitions or Orchestrator code were created during ratification.
-- Exact next phase: define stable Agent roles, Agent Factory lifecycle, and the Permission Matrix under the Constitution.
+- This historical checkpoint led to the ratified Agent Organization v1 and the technically verified Phase O2 contract set.
 
 
 ## Agent Organization v1 ratification checkpoint
@@ -105,3 +106,12 @@ Begin Phase O2 design of the machine-readable role catalog, Agent manifest schem
 - Ratification opens Phase O2 machine-readable contract design only.
 - No Agent, credential, high-risk permission, protected-main action, production release, Orchestrator implementation, or external transfer was activated.
 - Activation commit: `15c0f9855f361ade1133d22f20cee21f75a812fc`.
+
+
+## Phase O2 technical completion checkpoint
+
+- Status: `O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- `ORCHESTRATOR_CONTRACT_SET_V1` defines roles, manifests, permissions, task/response communication, lifecycle, Human Gates, conflicts of interest, budgets, retries, loop control, and kill-switch behavior.
+- The deterministic validator passed; targeted O2 tests: `12 passed`; full regression: `337 passed, 1 skipped`.
+- Implementation commit: `382a140e42496ad9edd92dc2016cfde51d091575`.
+- Technical completion grants no runtime authority. No Agent, permission, credential, private case access, Orchestrator Kernel, protected-main action, production release, destructive action, tax submission, or external transfer was activated.

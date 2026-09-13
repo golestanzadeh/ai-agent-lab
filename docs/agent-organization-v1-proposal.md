@@ -408,7 +408,7 @@ Required outcome:
 
 ### Phase O2 — Machine-readable contracts
 
-Status: **current authorized phase**.
+Status: **technically complete; Human phase acceptance required**.
 
 Create and accept:
 
