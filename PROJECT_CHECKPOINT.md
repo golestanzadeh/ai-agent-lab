@@ -128,5 +128,5 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Future organizational changes require explicit Project Owner / Human instruction or approval. The Master may request review and propose exact changes but cannot approve or activate them.
 - Ratification authorizes Phase O2 machine-readable contract work only.
 - No Agent instance, credential, permission expansion, protected-main action, production release, destructive action, tax submission, or external transfer was authorized.
-- Activation commit: `ACTIVATION_COMMIT_PENDING`.
+- Activation commit: `15c0f9855f361ade1133d22f20cee21f75a812fc`.
 - Status: **RATIFIED / ACTIVE ORGANIZATIONAL CONTRACT**.

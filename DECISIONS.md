@@ -359,4 +359,4 @@ The Project Owner / Human retains exclusive organizational change authority. The
 
 **Non-authorization:** This ratification does not activate an Agent instance, grant or expand permissions, authorize credentials, begin Master Orchestrator implementation, authorize protected-main merge/release, destructive action, tax filing, ELSTER/Finanzamt contact, or external transfer.
 
-**Activation commit:** `ACTIVATION_COMMIT_PENDING`.
+**Activation commit:** `15c0f9855f361ade1133d22f20cee21f75a812fc`.

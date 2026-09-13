@@ -482,4 +482,4 @@ Future organizational changes require an explicit instruction or approval from t
 
 Ratification authorizes Phase O2 machine-readable contract work only. It does not activate any Agent instance, grant or expand permissions, authorize credentials, protected-main merge/release, destructive action, tax submission, or external transfer.
 
-Activation commit: `ACTIVATION_COMMIT_PENDING`.
+Activation commit: `15c0f9855f361ade1133d22f20cee21f75a812fc`.
