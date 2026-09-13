@@ -74,7 +74,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Review and explicitly ratify or reject `docs/constitution-v2-proposal.md`. Until ratification, the existing `CONSTITUTION.md` remains the supreme active authority and no Agent/role/Orchestrator implementation may begin under Constitution v2.
+Define the stable Agent roles, the governed Agent Factory lifecycle, and the Permission Matrix under the ratified Constitution v2. Orchestrator implementation begins only after those contracts and applicable Human Gates are accepted.
 
 ## Non-negotiable constraints
 
@@ -86,11 +86,11 @@ Review and explicitly ratify or reject `docs/constitution-v2-proposal.md`. Until
 - Never submit, sign, release, merge protected `main`, expand permissions, or perform irreversible actions without the applicable explicit Human Gate.
 
 
-## Constitution v2 drafting checkpoint
+## Constitution v2 ratification checkpoint
 
-- Constitution v2 proposal drafted on 2026-09-13.
-- Proposed Article 1 establishes absolute Default Deny for external data transmission and requires two separate, ordered Human approvals: approval of the exact data for release, then approval of the exact destination/channel transfer.
-- Status: `PROPOSED / NOT YET IN FORCE`.
+- Constitution v2 was explicitly ratified by the Project Owner / Human on 2026-09-13 and is active at `CONSTITUTION.md`.
+- Article 1 establishes absolute Default Deny for external data transmission and requires two separate, ordered Human approvals: approval of the exact data for release, then approval of the exact destination/channel transfer.
+- Status: `RATIFIED / IN FORCE`.
 - Scope: supreme authority, amendment control, durable truth, Orchestrator limits, governed Agent Factory, least privilege, Human Gates, case isolation, tax integrity, verification, audit, recovery, autonomy, cost control, repository retention, completion, and conflict resolution.
-- No Agent definitions or Orchestrator code were created in this phase.
-- Required next authority: explicit human ratification of the exact proposed Constitution.
+- No Agent definitions or Orchestrator code were created during ratification.
+- Exact next phase: define stable Agent roles, Agent Factory lifecycle, and the Permission Matrix under the Constitution.
