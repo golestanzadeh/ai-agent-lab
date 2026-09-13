@@ -248,3 +248,25 @@ D-027 is technically operational. No ELSTER submission, Finanzamt contact, main 
 - D-028 targeted tests: 8 passed.
 - Full regression: 325 passed, 1 skipped after isolated confirmation of one transient Drive test failure.
 - No ELSTER/Finanzamt submission/contact, main merge, release, or evidence mutation performed.
+
+
+## 2026-09-13 — Operational readiness audit for next tax year
+
+Status: **CONDITIONALLY READY / NOT READY FOR UNATTENDED HANDOFF**
+
+Verified repository state:
+- The authoritative development work is on draft PR #1, branch `d021-agent-case-provisioning`, at commit `2baaf66c90ba8a676098a616f3ab43cb67cdf7ba`; `main` remains at the accepted D-020 checkpoint and does not yet contain D-021 through D-028.
+- The D-027 six-specialist runtime completed a live controlled CASE-001/2024 run through Evidence, Tax Law, Opportunity, Calculation, Adversarial Reviewer, and ELSTER/Form; targeted tests passed 6 and the full regression passed 323 with 1 skipped.
+- D-028 added the Chief Tax Auditor. A live controlled run executed all six specialists and the Chief; the Chief correctly returned `HUMAN_REQUIRED` because material evidence gaps remained. Targeted tests passed 8 and the full regression passed 325 with 1 skipped.
+- No GitHub commit status and no pull-request-triggered workflow run is attached to the current branch-head commit. The latest green regression evidence is therefore recorded local execution evidence, not a fresh GitHub-hosted CI result for the head commit.
+
+Verified control-plane state:
+- Three ChatGPT Work webhook automations are enabled: Bridge PR Wake-up, Agent Bridge Continuation, and Agent Bridge Human Gate. Their configured repository is `golestanzadeh/agent-bridge-poc`, not `golestanzadeh/ai-agent-lab`.
+- The earlier Agent Bridge Response automation is disabled.
+- Production Agent Bridge paths exist in PR #1 and prior controlled probes reached PASS and HUMAN_REQUIRED as designed, but the currently enabled Work automations do not provide an active end-to-end production control plane for the main repository.
+- Local Sync and Windows Relay are implemented and technically tested, but operational evidence does not establish that they are currently installed and enabled on the authoritative Windows host. Project checkpoint comments explicitly kept Local Sync disabled and Windows Relay outside the critical path unless separately authorized.
+
+Readiness decision:
+- The multi-case/multi-year isolation architecture and the tax-agent runtime are suitable foundations for creating the next tax-year case.
+- The next real tax year must not yet be handed over as an unattended autonomous operation. The blockers are operational, not a need to repeat foundational multi-year tests: development remains unmerged in a draft PR; main-repository Work automation is not active; host-side Local Sync/Windows Relay activation is unverified; the current Chief audit is intentionally at `HUMAN_REQUIRED`; UI and actual ELSTER submission remain outside the completed boundary.
+- Safe use is currently limited to supervised, case-scoped execution with Human Gates. No ELSTER submission, Finanzamt contact, merge to main, or irreversible action is authorized by this audit.
