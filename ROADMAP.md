@@ -156,3 +156,14 @@ The following Phase O2 artifacts were implemented at `382a140e42496ad9edd92dc201
 - `docs/o2-machine-readable-contracts.md` — authoritative design, invariants, compatibility rules, and Phase O2 acceptance evidence.
 - `scripts/validate_o2_contracts.py` — deterministic offline validator for cross-contract consistency; it grants no runtime authority.
 - `tests/unit/test_o2_contracts.py` — positive and fail-closed contract validation coverage.
+
+## Registered Phase O3 artifacts
+
+The following artifacts are registered for Phase O3. They depend on the Human-accepted `ORCHESTRATOR_CONTRACT_SET_V1` and grant no real Agent or external authority by their creation:
+
+- `src/agent_lab/orchestrator_kernel.py` — deterministic SQLite-backed Task/Dependency Registry, manifest validation, Permission Broker, lifecycle, audit, checkpoint/recovery, budget/retry, kill-switch, and Agent Bridge binding.
+- `scripts/inspect_orchestrator_kernel.py` — read-only operational inspection and integrity-check entry point for an explicitly selected Kernel database.
+- `tests/unit/test_orchestrator_kernel.py` — persistence, recovery, permission, isolation, lifecycle, budget, retry, kill-switch, audit, and Bridge-binding coverage using synthetic data only.
+- `docs/o3-deterministic-orchestrator-kernel.md` — architecture, schema, invariants, failure behavior, verification evidence, and activation boundary.
+
+Phase O3 implementation may create and validate synthetic local Kernel databases only. Real Agent activation, credential issuance, A6 authority, production deployment, protected-main action, private tax-case processing, and external transfer remain outside this phase.
