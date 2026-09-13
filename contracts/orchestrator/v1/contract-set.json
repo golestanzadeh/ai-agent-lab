@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "contract_set_id": "ORCHESTRATOR_CONTRACT_SET_V1",
+  "organization_contract": {
+    "path": "docs/agent-organization-v1-proposal.md",
+    "activation_commit": "15c0f9855f361ade1133d22f20cee21f75a812fc"
+  },
+  "compatibility": {
+    "mode": "exact-version",
+    "unknown_version_outcome": "BLOCKED",
+    "missing_contract_outcome": "BLOCKED",
+    "mixed_version_outcome": "BLOCKED"
+  },
+  "contracts": [
+    {"id": "ROLE_CATALOG", "path": "contracts/orchestrator/v1/roles.json", "schema_version": 1},
+    {"id": "AGENT_MANIFEST", "path": "contracts/orchestrator/v1/agent-manifest.schema.json", "schema_version": 1},
+    {"id": "PERMISSION_MATRIX", "path": "contracts/orchestrator/v1/permission-matrix.json", "schema_version": 1},
+    {"id": "TASK", "path": "contracts/orchestrator/v1/task.schema.json", "schema_version": 1},
+    {"id": "RESPONSE", "path": "contracts/orchestrator/v1/response.schema.json", "schema_version": 1},
+    {"id": "LIFECYCLE", "path": "contracts/orchestrator/v1/lifecycle.json", "schema_version": 1},
+    {"id": "HUMAN_GATES", "path": "contracts/orchestrator/v1/human-gates.json", "schema_version": 1},
+    {"id": "EXECUTION_POLICY", "path": "contracts/orchestrator/v1/execution-policy.json", "schema_version": 1}
+  ]
+}
