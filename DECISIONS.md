@@ -316,3 +316,18 @@ The human additionally confirmed as a recovery decision that CASE-001/tax year 2
 **Reason:** The prior conversation reached the message limit before the final state was durably synchronized to GitHub. A new conversation therefore revived an obsolete checkpoint and asked the human to repeat completed work. A single mandatory checkpoint plus same-change-set updates prevents chat boundaries from becoming project-state loss.
 
 **Safety:** This decision records state and continuity rules only. It does not authorize filing, Finanzamt contact, irreversible mutation, permission expansion, protected-main merge/release, or Human-Gate bypass.
+
+
+## D-030 — Canonical repository cleanup and retention policy
+
+**Status:** implemented under explicit human authorization on 2026-09-13
+
+**Decision:** The active repository must contain current canonical state, reusable contracts, implementation, regression tests, accepted decisions, verified lessons, and recovery-critical evidence. One-purpose probes, placeholder write tests, expired progress snapshots, and duplicated status narratives are removed once their durable rules and evidence are preserved.
+
+Current status belongs in `PROJECT_CHECKPOINT.md` and `CURRENT_STATE.md`. Future work belongs in `ROADMAP.md`. Historical implementation rationale belongs in this decision log, focused technical documents, `ERRORS_AND_LESSONS.md`, and Git history.
+
+The cleanup removed completed Agent Bridge probe triggers/workflows, placeholder repository-write artifacts, redundant populated-directory keep files, and superseded D-024/D-025 progress snapshots. Durable tax-analysis rules were consolidated in `docs/d025-tax-calculation-contract.md`. D-027, D-028, Agent Bridge, README, documentation index, current state, roadmap, and checkpoint were reconciled.
+
+**Retention boundary:** Source code, regression tests, reusable architecture/contracts, security and approval rules, verified lessons, audit/recovery evidence, and case-isolation guarantees are retained even after their originating stage completes.
+
+**Recovery:** Deleted repository material remains recoverable through Git history. This cleanup did not delete private Drive evidence, runtime approval/audit state, source code, or test coverage.
