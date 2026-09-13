@@ -25,7 +25,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Local Sync implementation technically verified and human accepted.
 - Windows Relay architecture accepted and implementation technically verified.
 - Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
-- Phase O3 deterministic Orchestrator Kernel implemented and technically verified; Human phase acceptance remains pending.
+- Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
 
 ## Active system boundaries
 
@@ -76,7 +76,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Human review and explicit acceptance or exact amendment of the Phase O3 Kernel at commit `d70a28b9b33710a81881855048baccb63f3fc176`. Phase O4, real Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Resume the already-authorized Phase O4 on or after 2026-09-14 by designing one bounded, low-risk, reversible, non-tax-private pilot and registering any future files before creation. Phase O4 work is intentionally deferred until then. Real Agent activation beyond that bounded pilot, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -120,11 +120,13 @@ Human review and explicit acceptance or exact amendment of the Phase O3 Kernel a
 - Technical completion grants no runtime authority. No Agent, permission, credential, private case access, Orchestrator Kernel, protected-main action, production release, destructive action, tax submission, or external transfer was activated.
 
 
-## Phase O3 technical completion checkpoint
+## Phase O3 acceptance and Phase O4 pause checkpoint
 
-- Status: `O3_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Status: `O3_ACCEPTED / PHASE COMPLETE`.
 - Implemented the persistent Task/Dependency Registry, explicit Human Gate Registry, Manifest Validator, Permission Broker, lifecycle and independent-acceptance controller, budget/retry/loop controls, kill switch, hash-chained audit, checkpoint/recovery, read-only inspector, and Agent Bridge binding.
 - The Kernel is cryptographically bound to the exact accepted O2 JSON contract set.
 - Verification: O2 validator `PASS`; O3 targeted `26 passed`; relevant O2/O3/Bridge suite `44 passed`; full regression `363 passed, 1 skipped`.
 - Implementation commit: `d70a28b9b33710a81881855048baccb63f3fc176`.
 - All execution evidence used synthetic local SQLite databases. No real Agent or external capability was activated.
+- Human acceptance: the Project Owner explicitly accepted implementation commit `d70a28b9b33710a81881855048baccb63f3fc176` on 2026-09-13 and authorized Phase O4.
+- Current state: `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED` until 2026-09-14 under an organized token-budget pause.

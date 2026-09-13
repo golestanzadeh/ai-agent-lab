@@ -385,7 +385,7 @@ The contract set uses exact-version compatibility and Default Deny. Unknown or m
 
 ## D-034 — Phase O3 deterministic Orchestrator Kernel
 
-**Status:** implemented and technically verified; awaiting explicit Human phase acceptance
+**Status:** accepted by explicit Project Owner / Human approval on 2026-09-13
 
 **Technical result:** The deterministic Orchestrator Kernel implements the accepted O2 contracts as a persistent SQLite control plane. It provides task/dependency registration, an explicit separate Human Gate registry, Agent manifest validation, Default-Deny permission decisions, case/run scope enforcement, lifecycle transitions, response and independent-acceptance recording, budget/retry/loop control, a fail-closed kill switch, hash-chained audit, checkpoint/recovery, read-only inspection, and exact binding to the existing Agent Bridge.
 
@@ -397,6 +397,19 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 
 **Implementation commit:** `d70a28b9b33710a81881855048baccb63f3fc176`.
 
-**Current gate:** Passing tests and implementation evidence do not constitute Human phase acceptance. The exact O3 result requires explicit Human acceptance or amendment before Phase O4.
+**Human acceptance:** The Project Owner explicitly accepted implementation commit `d70a28b9b33710a81881855048baccb63f3fc176` and authorized Phase O4 on 2026-09-13.
 
 **Non-authorization:** No real Agent was activated. No credential, external permission, A6 capability, private case-data access, production deployment, protected-main merge/release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer was authorized or performed.
+
+
+## D-035 — Organized token-budget pause before Phase O4
+
+**Status:** active pause requested by the Project Owner / Human on 2026-09-13
+
+**Decision:** Phase O4 is authorized but its start is intentionally deferred until 2026-09-14 because approximately 25% of the current five-hour token allowance remained. No O4 design, file registration, implementation, pilot execution, or Agent activation began before this pause.
+
+**Resume rule:** On or after 2026-09-14, continuation starts from `PROJECT_CHECKPOINT.md`, verifies the active branch and PR head, and designs one bounded low-risk, reversible, non-tax-private pilot. Any new artifact must first be registered in `ROADMAP.md`.
+
+**Efficiency rule:** Apply the existing progressive-context protocol: load only checkpoint and directly relevant O4 contracts first, keep one implementation owner for the bounded package, run targeted tests before relevant regression, and reserve full regression for integration risk or phase acceptance. Token savings may not weaken correctness, audit, privacy, security, or Human Gates.
+
+**Non-authorization:** This scheduling decision does not authorize production operation, private tax-case processing, credentials, A6, protected-main action, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.

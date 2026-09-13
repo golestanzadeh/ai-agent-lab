@@ -50,8 +50,9 @@ Current authorized continuation point:
 1. Phase O1 is complete.
 2. Phase O2 is complete and Human-accepted at exact contract-set commit `382a140e42496ad9edd92dc2016cfde51d091575`.
 3. Phase O3 deterministic Orchestrator Kernel was implemented and technically verified at commit `d70a28b9b33710a81881855048baccb63f3fc176`.
-4. Current state is `O3_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` for exact Phase O3 acceptance or amendment.
-5. Phase O4, real Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
+4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
+5. Current state is `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED`; Phase O4 is intentionally paused until 2026-09-14 because only about 25% of the current five-hour token allowance remained.
+6. Real Agent activation beyond the bounded O4 pilot, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -160,5 +161,16 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Full regression: `363 passed, 1 skipped`.
 - Implementation commit: `d70a28b9b33710a81881855048baccb63f3fc176`.
 - All tests used synthetic local state. No real Agent, credential, A6 permission, private tax-case data, production service, protected-main action, release, destructive action, tax submission, or external transfer was used or activated.
-- Status: **O3_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED**.
-- Exact next action: Human reviews and explicitly accepts the exact O3 implementation or requests exact amendments. Only acceptance may authorize Phase O4.
+- Human acceptance: the Project Owner explicitly accepted implementation commit `d70a28b9b33710a81881855048baccb63f3fc176` on 2026-09-13 and authorized Phase O4.
+- Status: **O3_ACCEPTED / PHASE COMPLETE**.
+
+
+## Organized pause before Phase O4 — 2026-09-13
+
+- Phase O4 is authorized but intentionally deferred until 2026-09-14 at the Project Owner's instruction because approximately 25% of the current five-hour token allowance remained.
+- No Phase O4 design, artifact registration, implementation, pilot execution, or Agent activation began in this session.
+- Resume state: `O4_AUTHORIZED_BUT_DEFERRED`.
+- Exact next action after resumption: read this checkpoint, inspect the active branch and PR head, then design the bounded Phase O4 pilot and register any future files in `ROADMAP.md` before creating them.
+- O4 scope remains one low-risk, reversible, non-tax-private work package that verifies multi-session continuation, bounded retries, independent acceptance, recovery, cost reporting, and concise Human interaction.
+- Token-efficient execution: use progressive context loading, one bounded work package, one implementation owner, targeted tests first, and broader regression only when integration risk or phase acceptance requires it.
+- This pause grants no real Agent, credential, A6, private case-data, production, protected-main, destructive, tax-submission, or external-transfer authority.

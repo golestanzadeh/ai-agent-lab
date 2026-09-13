@@ -422,7 +422,7 @@ Create and accept:
 
 ### Phase O3 — Deterministic Orchestrator Kernel
 
-Status: **technically complete; Human phase acceptance required**.
+Status: **complete — Human-accepted on 2026-09-13**.
 
 Implement:
 
@@ -436,6 +436,8 @@ Implement:
 - existing Agent Bridge binding.
 
 ### Phase O4 — Controlled autonomous development pilot
+
+Status: **authorized; intentionally deferred until 2026-09-14**.
 
 Use one low-risk, reversible, non-tax-private work package. Verify multi-session continuation, bounded retries, independent acceptance, recovery, cost reporting, and no repeated routine Human questioning.
 

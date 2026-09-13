@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O3 technically complete; Human acceptance gate open**
+Status: **in progress — Phase O3 accepted; Phase O4 authorized and deferred until 2026-09-14**
 
 Goals:
 
@@ -139,7 +139,7 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-Phase O2 contract design, technical verification, and Human acceptance are complete. Phase O3 deterministic Kernel implementation is authorized. Agent activation remains gated behind its later phase.
+Phase O2 and Phase O3 are complete and Human-accepted. Phase O4 is authorized and intentionally deferred until 2026-09-14. Agent activation beyond its bounded pilot remains gated behind later phases.
 
 ## Registered Phase O2 artifacts
 
@@ -168,4 +168,4 @@ The following artifacts are registered for Phase O3. They depend on the Human-ac
 
 Phase O3 implementation may create and validate synthetic local Kernel databases only. Real Agent activation, credential issuance, A6 authority, production deployment, protected-main action, private tax-case processing, and external transfer remain outside this phase.
 
-Phase O3 implementation and technical verification completed at `d70a28b9b33710a81881855048baccb63f3fc176`. Phase O4 remains blocked until explicit Human acceptance of this exact O3 result.
+Phase O3 implementation and technical verification completed at `d70a28b9b33710a81881855048baccb63f3fc176` and was explicitly Human-accepted on 2026-09-13. Phase O4 is authorized but intentionally deferred until 2026-09-14 to preserve the remaining five-hour token allowance. On resumption, design one bounded low-risk pilot and register any required future artifacts here before creating them.
