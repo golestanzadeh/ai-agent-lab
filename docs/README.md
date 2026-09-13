@@ -7,6 +7,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `../CONSTITUTION.md` — ratified supreme Project Constitution v2 governing all Agents, permissions, transfers, and Orchestrator work.
 - `agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the 20 permanent Agent roles, three inactive domain templates, hierarchy, access levels, communication rules, Agent lifecycle, separation of duties, and O0–P4 path.
 - `o2-machine-readable-contracts.md` — Phase O2 contract map, invariants, technical verification, and current Human acceptance boundary; machine-readable artifacts live under `../contracts/orchestrator/v1/`.
+- `o3-deterministic-orchestrator-kernel.md` — persistent Kernel architecture, controls, failure behavior, inspection path, verification, and activation boundary.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.
 - `use-cases.md` — workflow use cases.
