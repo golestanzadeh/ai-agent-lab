@@ -24,7 +24,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - D-028 Chief Tax Auditor implemented and live-verified.
 - Local Sync implementation technically verified and human accepted.
 - Windows Relay architecture accepted and implementation technically verified.
-- Phase O2 machine-readable Orchestrator contract set designed and technically verified; Human phase acceptance remains pending.
+- Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
 
 ## Active system boundaries
 
@@ -75,7 +75,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Human review and explicit acceptance or exact amendment of `contracts/orchestrator/v1/` and `docs/o2-machine-readable-contracts.md`. Phase O3, Agent activation, permission expansion, and Master Orchestrator implementation remain outside current authority.
+Begin Phase O3 implementation of the deterministic Orchestrator Kernel against the accepted O2 contracts. Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -108,10 +108,12 @@ Human review and explicit acceptance or exact amendment of `contracts/orchestrat
 - Activation commit: `15c0f9855f361ade1133d22f20cee21f75a812fc`.
 
 
-## Phase O2 technical completion checkpoint
+## Phase O2 acceptance checkpoint
 
-- Status: `O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Status: `O2_ACCEPTED / PHASE COMPLETE`.
 - `ORCHESTRATOR_CONTRACT_SET_V1` defines roles, manifests, permissions, task/response communication, lifecycle, Human Gates, conflicts of interest, budgets, retries, loop control, and kill-switch behavior.
 - The deterministic validator passed; targeted O2 tests: `12 passed`; full regression: `337 passed, 1 skipped`.
 - Implementation commit: `382a140e42496ad9edd92dc2016cfde51d091575`.
+- The Project Owner / Human explicitly accepted that exact contract set and authorized Phase O3 to begin on 2026-09-13.
+- Acceptance record commit: `O2_ACCEPTANCE_COMMIT_PENDING`.
 - Technical completion grants no runtime authority. No Agent, permission, credential, private case access, Orchestrator Kernel, protected-main action, production release, destructive action, tax submission, or external transfer was activated.

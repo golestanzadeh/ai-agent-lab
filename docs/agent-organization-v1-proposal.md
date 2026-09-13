@@ -408,7 +408,7 @@ Required outcome:
 
 ### Phase O2 — Machine-readable contracts
 
-Status: **technically complete; Human phase acceptance required**.
+Status: **complete — Human-accepted on 2026-09-13**.
 
 Create and accept:
 
@@ -421,6 +421,8 @@ Create and accept:
 - budget/retry/timeout/kill-switch policy.
 
 ### Phase O3 — Deterministic Orchestrator Kernel
+
+Status: **authorized to begin; no runtime activation authorized**.
 
 Implement:
 

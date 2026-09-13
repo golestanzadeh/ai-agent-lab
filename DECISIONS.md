@@ -364,7 +364,7 @@ The Project Owner / Human retains exclusive organizational change authority. The
 
 ## D-033 — Phase O2 machine-readable Orchestrator contract set
 
-**Status:** technically verified; awaiting explicit Human phase acceptance
+**Status:** accepted by explicit Project Owner / Human approval on 2026-09-13
 
 **Technical result:** The versioned `ORCHESTRATOR_CONTRACT_SET_V1` was implemented under `contracts/orchestrator/v1/` from the Human-ratified Agent Organization v1. It contains the exact role catalog, Agent manifest schema, Permission Matrix, task and response schemas, Agent-instance lifecycle, Human Gate and conflict-of-interest policy, and bounded execution policy.
 
@@ -374,6 +374,10 @@ The contract set uses exact-version compatibility and Default Deny. Unknown or m
 
 **Implementation commit:** `382a140e42496ad9edd92dc2016cfde51d091575`.
 
-**Current gate:** Technical verification is not Human phase acceptance. The exact O2 artifacts require explicit Human acceptance or amendment before Phase O3 begins.
+**Human acceptance:** The Project Owner explicitly accepted the exact Phase O2 contract set at commit `382a140e42496ad9edd92dc2016cfde51d091575` and authorized Phase O3 to begin.
+
+**Authorized next phase:** Phase O3 may implement the deterministic Task/Dependency Registry, Agent Factory Kernel and Manifest Validator, Permission Broker, state/checkpoint/recovery controls, audit/event store, budget and loop controls, kill switch, and binding to the existing Agent Bridge. This does not authorize Agent activation or consequential runtime authority.
 
 **Non-authorization:** O2 created policy and schema artifacts only. It did not activate an Agent, grant a permission or credential, access private case data, implement the Master Orchestrator Kernel, merge protected main, release, perform a destructive action, submit tax data, contact ELSTER/Finanzamt, or transmit externally.
+
+**Acceptance record commit:** `O2_ACCEPTANCE_COMMIT_PENDING`.

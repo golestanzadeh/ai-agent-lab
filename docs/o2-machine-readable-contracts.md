@@ -1,6 +1,6 @@
 # Phase O2 — Machine-Readable Orchestrator Contracts
 
-Status: **DESIGNED AND TECHNICALLY VERIFIED; HUMAN PHASE ACCEPTANCE REQUIRED**
+Status: **HUMAN-ACCEPTED / PHASE COMPLETE**
 
 ## Purpose
 
@@ -93,6 +93,8 @@ Phase O2 is technically complete when:
 
 ## Phase boundary
 
-Successful O2 validation proves contract consistency only. Phase O3 deterministic Orchestrator Kernel implementation remains unauthorized until the Human explicitly accepts the O2 phase result.
+The Project Owner / Human explicitly accepted the exact Phase O2 contract set at commit `382a140e42496ad9edd92dc2016cfde51d091575` on 2026-09-13 and authorized Phase O3 to begin.
+
+Phase O3 authorization is limited to implementing the deterministic Orchestrator Kernel against these accepted contracts. It does not activate Agent instances, grant high-risk permissions, authorize protected-main merge/release, or authorize external transfer.
 
 O2 performs no Agent activation, permission issuance, credential operation, private case-data access, protected-main action, production release, destructive action, ELSTER/Finanzamt contact, or external transfer.

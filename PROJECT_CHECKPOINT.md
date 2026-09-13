@@ -49,9 +49,9 @@ Current authorized continuation point:
 
 1. Phase O1 is complete.
 2. Phase O2 machine-readable contracts were designed and technically verified at commit `382a140e42496ad9edd92dc2016cfde51d091575`.
-3. The contract validator passed and the full regression completed with `337 passed, 1 skipped`.
-4. Current state is `O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` for exact Phase O2 acceptance or amendment.
-5. Phase O3, Agent activation, high-risk permission issuance, Master Orchestrator implementation, protected-main action, production release, and external transfer remain unauthorized.
+3. The Project Owner / Human explicitly accepted that exact contract set on 2026-09-13.
+4. Phase O2 is complete and Phase O3 deterministic Orchestrator Kernel implementation is authorized to begin.
+5. Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -134,7 +134,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **RATIFIED / ACTIVE ORGANIZATIONAL CONTRACT**.
 
 
-## Phase O2 technical completion checkpoint — 2026-09-13
+## Phase O2 acceptance checkpoint — 2026-09-13
 
 - Created the exact-version `ORCHESTRATOR_CONTRACT_SET_V1` under `contracts/orchestrator/v1/`.
 - Defined the 20 permanent roles, three inactive templates, Agent manifest, Permission Matrix, task/response schemas, lifecycle, Human Gates, conflict rules, budgets, retries, loop controls, and kill switch.
@@ -143,5 +143,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Full regression: `337 passed, 1 skipped`.
 - Implementation and verification commit: `382a140e42496ad9edd92dc2016cfde51d091575`.
 - No Agent was activated; no permission, credential, private case access, merge, release, destructive action, tax submission, or external transfer occurred.
-- Status: **O2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED**.
-- Exact next action: Human reviews and explicitly accepts the Phase O2 contract set or requests exact amendments. Only acceptance may authorize Phase O3.
+- Human acceptance: exact contract-set commit `382a140e42496ad9edd92dc2016cfde51d091575` explicitly accepted on 2026-09-13.
+- Acceptance record commit: `O2_ACCEPTANCE_COMMIT_PENDING`.
+- Status: **O2_ACCEPTED / PHASE COMPLETE**.
+- Exact next action: Phase O3 designs and implements the deterministic Orchestrator Kernel against the accepted O2 contracts, without activating Agents or crossing any later Human Gate.

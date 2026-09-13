@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O2 technically complete; Human acceptance gate open**
+Status: **in progress — Phase O2 accepted; Phase O3 authorized**
 
 Goals:
 
@@ -139,11 +139,11 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-Phase O2 contract design and technical verification are complete. Human acceptance is required before Phase O3. Agent activation and Master Orchestrator implementation remain gated behind their later phases.
+Phase O2 contract design, technical verification, and Human acceptance are complete. Phase O3 deterministic Kernel implementation is authorized. Agent activation remains gated behind its later phase.
 
 ## Registered Phase O2 artifacts
 
-The following Phase O2 artifacts were implemented at `382a140e42496ad9edd92dc2016cfde51d091575`. They depend on the ratified Agent Organization v1 contract and await Human phase acceptance before Phase O3 begins:
+The following Phase O2 artifacts were implemented at `382a140e42496ad9edd92dc2016cfde51d091575` and explicitly accepted by the Project Owner / Human:
 
 - `contracts/orchestrator/v1/contract-set.json` — versioned index and compatibility boundary for the complete O2 contract set.
 - `contracts/orchestrator/v1/roles.json` — canonical catalog of the 20 permanent Agent roles and three inactive domain templates.
