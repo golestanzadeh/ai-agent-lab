@@ -292,3 +292,13 @@ Planned canonical file:
 - `PROJECT_CHECKPOINT.md` — the mandatory single entry point for every new ChatGPT/Codex/Agent session. It records the latest human-confirmed project state, completed boundaries, active work, remaining work, authority limits, verification references, and the exact continuation point.
 
 The checkpoint must be read before project questions are answered or work begins. Information already recorded there or in its referenced authoritative documents must not be requested from the human again. Every accepted stage or material state change must update the checkpoint in the same governed change set. Chat history is never authoritative project memory.
+
+
+## Recovered product continuation — 2026-09-13
+
+Human-confirmed current boundary:
+- CASE-001 / tax year 2024 analytical preparation: **complete and Chief-approved**.
+- Remaining product track A: **controlled ELSTER/Finanzamt submission path**—design, validation/preview, explicit Human Gate, transmission, receipt, and failure recovery.
+- Remaining product track B: **user interface**—case/document workflow, Agent status, evidence and calculation/form review, Human Gates, and submission authorization.
+
+Older planned/general phases and D-024 through D-028 gap language must not be interpreted as authority to restart completed CASE-001 evidence collection. Detailed sequencing for tracks A and B must be registered before new artifacts are created. No filing is authorized by this roadmap entry.
