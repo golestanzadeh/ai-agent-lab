@@ -133,4 +133,10 @@ A planned artifact must be registered here before creation. Registration must st
 
 ## Constitutional foundation
 
-Project Constitution v2 is ratified and active at `CONSTITUTION.md`. The next governed artifacts are the stable Agent-role contracts, Agent Factory lifecycle contract, and Permission Matrix. Their acceptance precedes Master Orchestrator implementation.
+Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
+
+## Registered organizational artifact
+
+- `docs/agent-organization-v1-proposal.md` — unified proposal defining the Agent organizational chart, permanent role classes, temporary specialist roles, hierarchy, access tiers, authority boundaries, communication routes, Agent Factory lifecycle, Permission Matrix, separation of duties, and project execution path. It is a design/ratification artifact and grants no runtime permission until explicit Human acceptance and subsequent implementation verification.
+
+The acceptance of this organizational contract precedes Master Orchestrator implementation.
