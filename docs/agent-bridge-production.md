@@ -1,6 +1,6 @@
 # Agent Bridge Production Architecture
 
-Status: **architecture human-accepted 2026-09-10; implementation staged**
+Status: **architecture human-accepted; controlled behavior verified**
 
 ## Purpose
 
@@ -49,18 +49,23 @@ Before autonomous continuation, rollback must remain simple: disable Bridge work
 
 A global fail-closed kill switch must stop dispatch and continuation. HUMAN_REQUIRED remains terminal until explicit human authorization creates/permits a new action.
 
-## Sequential productionization
+## Verified baseline
 
-1. Baseline/canonical cleanup.
-2. Architecture/governance acceptance.
-3. Protocol contract.
-4. Security model.
-5. Passive observe-only validation.
-6. Bounded Codex execution.
-7. GitHub→Work response wake-up and independent review.
-8. Controlled low-risk continuation.
-9. Deliberate Human Gate stop test.
-10. Production acceptance and rollback drill.
-11. Resume AI-Tax-Agent development at durable/reloadable approval lifecycle.
+The PoC and production migration exercises proved:
 
-Each stage must preserve all existing case isolation, audit, security, approval and human-authority boundaries.
+- passive observe-only validation;
+- bounded Codex execution;
+- GitHub-to-Work response wake-up;
+- controlled low-risk continuation;
+- terminal HUMAN_REQUIRED behavior;
+- rollback and kill-switch behavior.
+
+Completed smoke/continuation trigger files and one-purpose workflow definitions were removed during repository cleanup. The reusable passive validation workflow, protocol validator, tests, and this contract remain.
+
+## Current operational boundary
+
+Agent Bridge remains the development control plane. It is not tax runtime authority and cannot replace case-scoped approval.
+
+The next control-plane step is to bind the durable Master Project Orchestrator to the main repository using the existing protocol, validation, GitHub, Work, Codex, Windows Relay, and Local Sync components. Do not create a parallel bridge.
+
+Current enabled Work automations must be verified as scoped to the main repository before autonomous project continuation is claimed.
