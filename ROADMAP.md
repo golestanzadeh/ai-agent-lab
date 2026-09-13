@@ -140,3 +140,19 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
 Current authorized work is Phase O2 machine-readable contract design. Agent activation and Master Orchestrator implementation remain gated behind their later phases.
+
+## Registered Phase O2 artifacts
+
+The following artifacts are registered for Phase O2. They depend on the ratified Agent Organization v1 contract and must be completed before Phase O3 begins:
+
+- `contracts/orchestrator/v1/contract-set.json` — versioned index and compatibility boundary for the complete O2 contract set.
+- `contracts/orchestrator/v1/roles.json` — canonical catalog of the 20 permanent Agent roles and three inactive domain templates.
+- `contracts/orchestrator/v1/agent-manifest.schema.json` — strict schema for temporary, task-bound Agent instances.
+- `contracts/orchestrator/v1/permission-matrix.json` — access-tier, capability, role-default, and A6-denial policy.
+- `contracts/orchestrator/v1/task.schema.json` and `response.schema.json` — registered command, lineage, evidence, status, and handoff contracts.
+- `contracts/orchestrator/v1/lifecycle.json` — Agent-instance lifecycle states, transitions, expiry, revocation, and retention rules.
+- `contracts/orchestrator/v1/human-gates.json` — Human Gate triggers, conflict-of-interest rules, and two-stage external-transfer policy.
+- `contracts/orchestrator/v1/execution-policy.json` — budget, timeout, retry, loop, escalation, and kill-switch policy.
+- `docs/o2-machine-readable-contracts.md` — authoritative design, invariants, compatibility rules, and Phase O2 acceptance evidence.
+- `scripts/validate_o2_contracts.py` — deterministic offline validator for cross-contract consistency; it grants no runtime authority.
+- `tests/unit/test_o2_contracts.py` — positive and fail-closed contract validation coverage.
