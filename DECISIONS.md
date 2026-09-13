@@ -333,15 +333,13 @@ The cleanup removed completed Agent Bridge probe triggers/workflows, placeholder
 **Recovery:** Deleted repository material remains recoverable through Git history. This cleanup did not delete private Drive evidence, runtime approval/audit state, source code, or test coverage.
 
 
-## D-031 — Constitution v2 proposal for governed adaptive orchestration
+## D-031 — Ratification of Constitution v2 for governed adaptive orchestration
 
-**Status:** proposed; awaiting explicit human ratification
+**Status:** accepted and ratified by explicit Project Owner / Human approval on 2026-09-13
 
-**Proposal:** Replace the original twelve-principle Constitution with a versioned supreme governance contract for the Adaptive Orchestrator Kernel and Governed Agent Factory. The proposal defines constitutional supremacy, exclusive Human amendment authority, durable truth, scope fidelity, deterministic governance, Orchestrator limits, Agent lifecycle, least privilege, separation of duties, Human Gates, case isolation, tax integrity, verification, audit, recovery, bounded autonomy, cost control, retention, trustworthy completion, and conflict resolution.
+**Decision:** Replace the original twelve-principle Constitution with a versioned supreme governance contract for the Adaptive Orchestrator Kernel and Governed Agent Factory. The proposal defines constitutional supremacy, exclusive Human amendment authority, durable truth, scope fidelity, deterministic governance, Orchestrator limits, Agent lifecycle, least privilege, separation of duties, Human Gates, case isolation, tax integrity, verification, audit, recovery, bounded autonomy, cost control, retention, trustworthy completion, and conflict resolution.
 
-The exact proposed text is `docs/constitution-v2-proposal.md`.
-
-**Current authority:** This entry records a proposal only. The existing `CONSTITUTION.md` remains active. No silence, generic continuation instruction, other-stage approval, Agent action, test result, or commit may activate Constitution v2. Explicit human ratification of the exact proposal is required before replacement or downstream Agent/Orchestrator design.
+The exact ratified text is the active root `CONSTITUTION.md`. The Project Owner explicitly approved “Project Constitution v2, including Article 1 on two-stage information transfer and all 20 recorded Articles.” Constitution v2 is now the supreme project authority. Every subsequent Agent, role, permission, Agent Factory, and Orchestrator contract must be subordinate to it.
 
 
-**Proposal amendment — 2026-09-13:** At the Project Owner’s explicit instruction, proposed Article 1 now establishes absolute Default Deny for any data transfer outside the approved project processing boundary. It requires two separate and ordered Human approvals: first, approval that the exact versioned artifact is correct and eligible for release; second, approval to transmit that same artifact to one exact named destination through one exact channel and purpose. Neither approval implies the other, and any mismatch or uncertainty fails closed.
+**Article 1 approval record — 2026-09-13:** At the Project Owner’s explicit instruction and ratification, Article 1 now establishes absolute Default Deny for any data transfer outside the approved project processing boundary. It requires two separate and ordered Human approvals: first, approval that the exact versioned artifact is correct and eligible for release; second, approval to transmit that same artifact to one exact named destination through one exact channel and purpose. Neither approval implies the other, and any mismatch or uncertainty fails closed.
