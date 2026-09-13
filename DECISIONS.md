@@ -301,3 +301,18 @@ When authorized, development may use the controlled workflow: inspect → implem
 Identical manifest contents intentionally share artifact identity. Attempt/run provenance is a separate concern and is not introduced. Composition does not create, grant, or consume approval, access Drive, or execute migration. D-017 remains generic; Manifest and Preflight do not become approval-aware.
 
 **Reason:** Different mappings can produce identical structural preflight results. Their distinct manifest identities must be retained in the live result to prevent substitution during composition. This provenance binding closes that ambiguity without redefining D-018 identity semantics. Implementation and verification are documented in `docs/case001-approval-context.md`; tests do not constitute human stage acceptance.
+
+
+## D-029 — Canonical cross-session checkpoint and recovered CASE-001 closure
+
+**Status:** accepted by explicit human instruction on 2026-09-13
+
+**Decision:** `PROJECT_CHECKPOINT.md` is the mandatory first-read and handoff record for every new ChatGPT conversation, Codex session, or Agent process. Chat history is not durable project authority. A material stage transition is incomplete until the checkpoint and relevant state/roadmap/decision documents are updated in the same governed change set.
+
+Agents must not ask the human to repeat facts already recorded in the checkpoint, referenced project documents, or authorized case evidence. When records conflict, the conflict must be exposed and reconciled before work continues. Missing historical detail must be labeled not recovered and must never be fabricated.
+
+The human additionally confirmed as a recovery decision that CASE-001/tax year 2024 completed its tax-analysis preparation, received Chief Agent approval, and was closed in the preceding project conversation. Only the controlled ELSTER/Finanzamt submission path and UI remain as product boundaries; no submission has occurred. This recovered current-state authority supersedes older D-024 through D-028 open-gap language for continuation purposes, while preserving those records as historical checkpoints.
+
+**Reason:** The prior conversation reached the message limit before the final state was durably synchronized to GitHub. A new conversation therefore revived an obsolete checkpoint and asked the human to repeat completed work. A single mandatory checkpoint plus same-change-set updates prevents chat boundaries from becoming project-state loss.
+
+**Safety:** This decision records state and continuity rules only. It does not authorize filing, Finanzamt contact, irreversible mutation, permission expansion, protected-main merge/release, or Human-Gate bypass.
