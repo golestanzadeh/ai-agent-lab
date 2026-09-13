@@ -39,15 +39,18 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-Do not restart CASE-001 evidence gathering or foundational multi-year testing.
+Repository cleanup and canonical-state consolidation completed on 2026-09-13. Do not recreate removed progress snapshots or completed bridge probes.
 
 Proceed in this order:
 
-1. Reconcile older D-024 through D-028 status documents with this human-confirmed closure without inventing unrecovered details.
-2. Define the safe ELSTER/Finanzamt integration contract, including preview/validation, explicit human approval, submission receipt, failure recovery, and prohibition on silent filing.
-3. Design and implement the UI for case creation, document intake, Agent progress, evidence/status review, calculation/form preview, Human Gates, and submission authorization.
-4. Run product-level end-to-end acceptance through the UI. This is not permission to repeat completed foundational architecture tests.
-5. Preserve mandatory Human Gates for filing, destructive/irreversible actions, permission/security changes, protected-main merge/release, and governance changes.
+1. Reconcile the current architecture and capability inventory without redefining existing integrations.
+2. Define and implement the durable Master Project Orchestrator and its task/dependency/permission model.
+3. Pilot autonomous development on one bounded low-risk module.
+4. Implement the controlled ELSTER/Finanzamt path.
+5. Implement the user interface.
+6. Complete product-level end-to-end acceptance and operational handoff.
+
+Do not restart CASE-001 evidence gathering or foundational multi-year testing.
 
 ## Cross-session update rule
 
@@ -83,3 +86,17 @@ A stage is not durably handed off until the checkpoint states:
 ## Authority and safety
 
 This checkpoint records state; it does not grant runtime authority. It does not authorize ELSTER submission, Finanzamt contact, irreversible mutation, secret/permission changes, protected-main merge, or bypass of any Human Gate.
+
+
+## Repository cleanup checkpoint — 2026-09-13
+
+The active branch was cleaned and canonicalized:
+
+- removed completed bridge trigger/probe artifacts and placeholder write-test files;
+- removed unnecessary `.gitkeep` files from populated directories;
+- removed superseded D-024/D-025 progress snapshots after preserving durable tax-analysis rules in `docs/d025-tax-calculation-contract.md`;
+- replaced accumulated historical content in `CURRENT_STATE.md` and `ROADMAP.md` with concise current-state and future-work records;
+- refreshed `README.md`, `docs/README.md`, D-027 runtime documentation, D-028 Chief documentation, and Agent Bridge documentation;
+- retained source code, regression tests, security/approval contracts, reusable architecture, verified lessons, and consequential migration/audit evidence.
+
+Git history remains the recovery path for deleted material. No source code, tax evidence, private Drive data, approval data, or audit data was deleted.
