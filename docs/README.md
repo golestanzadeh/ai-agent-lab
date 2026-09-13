@@ -4,6 +4,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 
 ## System and governance
 
+- `constitution-v2-proposal.md` — proposed supreme Orchestrator/Agent governance; not active until explicit human ratification.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.
 - `use-cases.md` — workflow use cases.
