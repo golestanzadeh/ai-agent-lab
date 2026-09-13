@@ -74,7 +74,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Canonicalize the remaining architecture and produce the bounded design/acceptance contract for the Master Project Orchestrator without redefining existing integrations. ELSTER and UI work then proceed through the approved dependency order in `ROADMAP.md`.
+Review and explicitly ratify or reject `docs/constitution-v2-proposal.md`. Until ratification, the existing `CONSTITUTION.md` remains the supreme active authority and no Agent/role/Orchestrator implementation may begin under Constitution v2.
 
 ## Non-negotiable constraints
 
@@ -84,3 +84,12 @@ Canonicalize the remaining architecture and produce the bounded design/acceptanc
 - Never store credentials, private Drive IDs, or private tax documents in GitHub.
 - Never treat tests alone as human stage acceptance.
 - Never submit, sign, release, merge protected `main`, expand permissions, or perform irreversible actions without the applicable explicit Human Gate.
+
+
+## Constitution v2 drafting checkpoint
+
+- Constitution v2 proposal drafted on 2026-09-13.
+- Status: `PROPOSED / NOT YET IN FORCE`.
+- Scope: supreme authority, amendment control, durable truth, Orchestrator limits, governed Agent Factory, least privilege, Human Gates, case isolation, tax integrity, verification, audit, recovery, autonomy, cost control, repository retention, completion, and conflict resolution.
+- No Agent definitions or Orchestrator code were created in this phase.
+- Required next authority: explicit human ratification of the exact proposed Constitution.
