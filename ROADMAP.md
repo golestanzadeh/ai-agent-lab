@@ -129,3 +129,8 @@ A planned artifact must be registered here before creation. Registration must st
 - Completed history must not remain in this roadmap as active work.
 - Obsolete progress snapshots may be deleted after their durable rules, decisions, verification evidence, and lessons are preserved canonically.
 - Code, tests, audit contracts, and recovery evidence are not disposable merely because their original stage completed.
+
+
+## Registered constitutional artifact
+
+- `docs/constitution-v2-proposal.md` — proposed supreme constitution for the governed adaptive Orchestrator and Agent Factory. It must remain non-operative until the human explicitly ratifies its exact content. After ratification, it will replace the current `CONSTITUTION.md` through a dedicated governed commit and decision record.
