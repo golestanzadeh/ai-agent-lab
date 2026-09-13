@@ -342,3 +342,6 @@ The cleanup removed completed Agent Bridge probe triggers/workflows, placeholder
 The exact proposed text is `docs/constitution-v2-proposal.md`.
 
 **Current authority:** This entry records a proposal only. The existing `CONSTITUTION.md` remains active. No silence, generic continuation instruction, other-stage approval, Agent action, test result, or commit may activate Constitution v2. Explicit human ratification of the exact proposal is required before replacement or downstream Agent/Orchestrator design.
+
+
+**Proposal amendment — 2026-09-13:** At the Project Owner’s explicit instruction, proposed Article 1 now establishes absolute Default Deny for any data transfer outside the approved project processing boundary. It requires two separate and ordered Human approvals: first, approval that the exact versioned artifact is correct and eligible for release; second, approval to transmit that same artifact to one exact named destination through one exact channel and purpose. Neither approval implies the other, and any mismatch or uncertainty fails closed.
