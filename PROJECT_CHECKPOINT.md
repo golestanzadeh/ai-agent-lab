@@ -43,14 +43,16 @@ Repository cleanup and canonical-state consolidation completed on 2026-09-13.
 
 Project Constitution v2 was explicitly ratified by the Project Owner / Human on 2026-09-13 and is now active in `CONSTITUTION.md`.
 
-Current continuation sequence:
+Agent Organization v1 has been drafted at `docs/agent-organization-v1-proposal.md`.
 
-1. Define the stable Agent roles and their bounded contracts.
-2. Define the governed Agent Factory and temporary Agent lifecycle.
-3. Define the Permission Matrix, separation of duties, budgets, expiry, escalation, and Human Gates.
-4. Only after those contracts are accepted, implement the Master Orchestrator under Constitution v2.
+Current mandatory gate:
 
-No Agent role, permission expansion, or Orchestrator implementation is authorized merely by ratification; each must follow the applicable constitutional governance and Human Gates.
+1. Human reviews the exact organizational proposal: hierarchy, roles, authorities, access tiers, communication, lifecycle, separation of duties, and project path.
+2. Human explicitly ratifies it or requests exact changes.
+3. Only after ratification may Phase O2 define machine-readable role, Agent manifest, Permission Matrix, communication, lifecycle, budget/retry, and kill-switch contracts.
+4. Agent activation and Master Orchestrator implementation remain unauthorized until their later gates.
+
+The proposal is not operational. No new Agent, permission, credential, runtime authority, protected-main action, or external transfer is authorized by its creation.
 
 ## Cross-session update rule
 
@@ -77,6 +79,7 @@ A stage is not durably handed off until the checkpoint states:
 - `CONSTITUTION.md` — ratified supreme Project Constitution v2.
 - `AGENTS.md` — mandatory Agent behavior and governance.
 - `CURRENT_STATE.md` — detailed verified/recovered current state.
+- `docs/agent-organization-v1-proposal.md` — proposed Agent hierarchy, authority, communication, lifecycle, and execution path.
 - `ROADMAP.md` — remaining work and registered future artifacts.
 - `DECISIONS.md` — accepted decisions and authority.
 - `docs/d027-tax-agent-runtime.md` — executable specialist runtime.
@@ -113,3 +116,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Any future constitutional change requires the exact proposed change, impact/risk disclosure, explicit Project Owner approval, a dedicated commit, Decision Log entry, and checkpoint update.
 - The superseded proposal file was removed after activation; Git history remains its recovery path.
 - Status: **RATIFIED / IN FORCE**.
+
+
+## Agent Organization v1 proposal checkpoint — 2026-09-13
+
+- Defined Human, independent control, Master/PMO, Engineering, and Tax Operations layers.
+- Preserved the existing seven tax-runtime Agent identifiers.
+- Defined 15 permanent Agent roles plus three inactive case-selected domain role templates.
+- Distinguished all reasoning roles from deterministic identity, permission, approval, audit, budget, recovery, kill-switch, and transfer controls.
+- Defined access tiers A0–A6/AX, reporting lines, peer handoff rules, separation of duties, temporary instance lifecycle, and phases O0–P4.
+- Status: **AWAITING EXPLICIT HUMAN RATIFICATION**.
