@@ -25,6 +25,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Local Sync implementation technically verified and human accepted.
 - Windows Relay architecture accepted and implementation technically verified.
 - Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
+- Phase O3 deterministic Orchestrator Kernel implemented and technically verified; Human phase acceptance remains pending.
 
 ## Active system boundaries
 
@@ -75,7 +76,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Begin Phase O3 implementation of the deterministic Orchestrator Kernel against the accepted O2 contracts. Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Human review and explicit acceptance or exact amendment of the Phase O3 Kernel at commit `d70a28b9b33710a81881855048baccb63f3fc176`. Phase O4, real Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -117,3 +118,13 @@ Begin Phase O3 implementation of the deterministic Orchestrator Kernel against t
 - The Project Owner / Human explicitly accepted that exact contract set and authorized Phase O3 to begin on 2026-09-13.
 - Acceptance record commit: `bd18777cf00cade02abfa58869417948742a7e28`.
 - Technical completion grants no runtime authority. No Agent, permission, credential, private case access, Orchestrator Kernel, protected-main action, production release, destructive action, tax submission, or external transfer was activated.
+
+
+## Phase O3 technical completion checkpoint
+
+- Status: `O3_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Implemented the persistent Task/Dependency Registry, explicit Human Gate Registry, Manifest Validator, Permission Broker, lifecycle and independent-acceptance controller, budget/retry/loop controls, kill switch, hash-chained audit, checkpoint/recovery, read-only inspector, and Agent Bridge binding.
+- The Kernel is cryptographically bound to the exact accepted O2 JSON contract set.
+- Verification: O2 validator `PASS`; O3 targeted `26 passed`; relevant O2/O3/Bridge suite `44 passed`; full regression `363 passed, 1 skipped`.
+- Implementation commit: `d70a28b9b33710a81881855048baccb63f3fc176`.
+- All execution evidence used synthetic local SQLite databases. No real Agent or external capability was activated.

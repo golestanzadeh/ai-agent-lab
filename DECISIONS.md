@@ -381,3 +381,22 @@ The contract set uses exact-version compatibility and Default Deny. Unknown or m
 **Non-authorization:** O2 created policy and schema artifacts only. It did not activate an Agent, grant a permission or credential, access private case data, implement the Master Orchestrator Kernel, merge protected main, release, perform a destructive action, submit tax data, contact ELSTER/Finanzamt, or transmit externally.
 
 **Acceptance record commit:** `bd18777cf00cade02abfa58869417948742a7e28`.
+
+
+## D-034 — Phase O3 deterministic Orchestrator Kernel
+
+**Status:** implemented and technically verified; awaiting explicit Human phase acceptance
+
+**Technical result:** The deterministic Orchestrator Kernel implements the accepted O2 contracts as a persistent SQLite control plane. It provides task/dependency registration, an explicit separate Human Gate registry, Agent manifest validation, Default-Deny permission decisions, case/run scope enforcement, lifecycle transitions, response and independent-acceptance recording, budget/retry/loop control, a fail-closed kill switch, hash-chained audit, checkpoint/recovery, read-only inspection, and exact binding to the existing Agent Bridge.
+
+The Kernel is bound to the canonical SHA-256 digest of the exact O2 JSON set accepted at `382a140e42496ad9edd92dc2016cfde51d091575`. Same-version contract modification, unknown database or contract versions, unregistered tasks, unresolved Human Gates, dependency cycles, lineage mismatch, A6 Agent requests, case mismatch, invalid transitions, hidden failed tests, cost-ledger mismatch, budget exhaustion, retry misuse, audit alteration, and Bridge scope expansion fail closed.
+
+An Agent `PASS` response cannot complete its task. The task remains `AWAITING_ACCEPTANCE` until a separate active `INDEPENDENT_ACCEPTANCE_AGENT` child task with a different actor instance records its decision.
+
+**Verification:** O2 validator `PASS`; O3 targeted suite `26 passed`; relevant O2/O3/Agent Bridge suite `44 passed`; full regression `363 passed, 1 skipped`; compile check passed.
+
+**Implementation commit:** `d70a28b9b33710a81881855048baccb63f3fc176`.
+
+**Current gate:** Passing tests and implementation evidence do not constitute Human phase acceptance. The exact O3 result requires explicit Human acceptance or amendment before Phase O4.
+
+**Non-authorization:** No real Agent was activated. No credential, external permission, A6 capability, private case-data access, production deployment, protected-main merge/release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer was authorized or performed.

@@ -422,7 +422,7 @@ Create and accept:
 
 ### Phase O3 — Deterministic Orchestrator Kernel
 
-Status: **authorized to begin; no runtime activation authorized**.
+Status: **technically complete; Human phase acceptance required**.
 
 Implement:
 
