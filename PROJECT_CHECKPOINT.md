@@ -39,18 +39,18 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-Repository cleanup and canonical-state consolidation completed on 2026-09-13. Do not recreate removed progress snapshots or completed bridge probes.
+Repository cleanup and canonical-state consolidation completed on 2026-09-13.
 
-Proceed in this order:
+The first governed Orchestrator phase has started with `docs/constitution-v2-proposal.md`.
 
-1. Reconcile the current architecture and capability inventory without redefining existing integrations.
-2. Define and implement the durable Master Project Orchestrator and its task/dependency/permission model.
-3. Pilot autonomous development on one bounded low-risk module.
-4. Implement the controlled ELSTER/Finanzamt path.
-5. Implement the user interface.
-6. Complete product-level end-to-end acceptance and operational handoff.
+Current mandatory gate:
 
-Do not restart CASE-001 evidence gathering or foundational multi-year testing.
+1. Human reviews the exact Constitution v2 proposal.
+2. Human explicitly ratifies it or requests changes.
+3. Only after ratification may the project define the stable Agent roles, governed Agent Factory, lifecycle, and Permission Matrix.
+4. Orchestrator implementation follows those accepted contracts.
+
+The proposal is not yet in force. The existing `CONSTITUTION.md` remains authoritative. Do not create Agent roles or Orchestrator code before ratification.
 
 ## Cross-session update rule
 
@@ -100,3 +100,12 @@ The active branch was cleaned and canonicalized:
 - retained source code, regression tests, security/approval contracts, reusable architecture, verified lessons, and consequential migration/audit evidence.
 
 Git history remains the recovery path for deleted material. No source code, tax evidence, private Drive data, approval data, or audit data was deleted.
+
+
+## Constitution v2 proposal checkpoint — 2026-09-13
+
+- Registered and created `docs/constitution-v2-proposal.md`.
+- The proposal contains 19 constitutional articles and an explicit ratification procedure.
+- It forbids any Agent, Master Orchestrator, automation, tool, or generic authorization from amending or bypassing the Constitution.
+- Any future constitutional change requires the exact proposed change, impact/risk disclosure, explicit Project Owner approval, a dedicated commit, Decision Log entry, and checkpoint update.
+- Status: **AWAITING EXPLICIT HUMAN RATIFICATION**.
