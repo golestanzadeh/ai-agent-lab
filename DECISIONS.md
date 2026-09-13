@@ -331,3 +331,14 @@ The cleanup removed completed Agent Bridge probe triggers/workflows, placeholder
 **Retention boundary:** Source code, regression tests, reusable architecture/contracts, security and approval rules, verified lessons, audit/recovery evidence, and case-isolation guarantees are retained even after their originating stage completes.
 
 **Recovery:** Deleted repository material remains recoverable through Git history. This cleanup did not delete private Drive evidence, runtime approval/audit state, source code, or test coverage.
+
+
+## D-031 — Constitution v2 proposal for governed adaptive orchestration
+
+**Status:** proposed; awaiting explicit human ratification
+
+**Proposal:** Replace the original twelve-principle Constitution with a versioned supreme governance contract for the Adaptive Orchestrator Kernel and Governed Agent Factory. The proposal defines constitutional supremacy, exclusive Human amendment authority, durable truth, scope fidelity, deterministic governance, Orchestrator limits, Agent lifecycle, least privilege, separation of duties, Human Gates, case isolation, tax integrity, verification, audit, recovery, bounded autonomy, cost control, retention, trustworthy completion, and conflict resolution.
+
+The exact proposed text is `docs/constitution-v2-proposal.md`.
+
+**Current authority:** This entry records a proposal only. The existing `CONSTITUTION.md` remains active. No silence, generic continuation instruction, other-stage approval, Agent action, test result, or commit may activate Constitution v2. Explicit human ratification of the exact proposal is required before replacement or downstream Agent/Orchestrator design.
