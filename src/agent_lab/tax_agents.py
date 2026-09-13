@@ -7,6 +7,7 @@ from typing import Mapping
 
 
 class TaxAgentRole(str, Enum):
+    CHIEF = "CHIEF_TAX_AUDITOR_AGENT"
     EVIDENCE = "EVIDENCE_AGENT"
     LAW = "TAX_LAW_AGENT"
     OPPORTUNITY = "OPPORTUNITY_AGENT"
@@ -83,6 +84,25 @@ _COMMON = (
     "source evidence, or contact ELSTER/Finanzamt."
 )
 
+
+
+def chief_tax_auditor_spec() -> AgentSpec:
+    """Return the supervisory agent contract for iterative tax investigation."""
+    return AgentSpec(
+        TaxAgentRole.CHIEF,
+        "Direct the tax investigation, challenge closure, and accept only source-grounded conclusions.",
+        ("case_packet", "specialist_reports"),
+        ("investigation_directives", "acceptance_decision", "residual_suspicions"),
+        ("READ_ALL_REPORTS", "ASSIGN_TASK", "CHALLENGE", "REQUEST_RERUN", "FINAL_ACCEPT"),
+        ("consequential_ambiguity", "irreconcilable_conflict", "high_risk_action"),
+        None,
+        _COMMON + " DEFAULT ASSUMPTION: SOMETHING MAY STILL BE WRONG OR MISSING. "
+        "Do not accept 'nothing else found' without a final suspicion pass. Require the chain "
+        "Fact -> Evidence -> tax-year Law -> Eligibility -> Amount -> Tax Effect -> Form/Line -> Reviewer Challenge. "
+        "Challenge stale-law risk, double counting, reimbursements, unused evidence, spouse/child effects, "
+        "misclassified expenses, and untested lawful opportunities. Missing ordinary evidence is a gap, not a reason "
+        "to fabricate or to stop. Never authorize submission, signing, release, merge, or external contact.",
+    )
 
 def default_tax_agent_specs() -> tuple[AgentSpec, ...]:
     """Return the approved manager-order role graph for one case-scoped run."""

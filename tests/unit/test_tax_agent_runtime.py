@@ -1,5 +1,5 @@
-﻿from agent_lab.tax_agent_runtime import TaxAgentOrchestrator, TaxAgentRuntimeError
-from agent_lab.tax_agents import AgentReport, AgentRunStatus, TaxAgentRole, default_tax_agent_specs
+﻿from agent_lab.tax_agent_runtime import ChiefTaxAuditOrchestrator, TaxAgentOrchestrator, TaxAgentRuntimeError
+from agent_lab.tax_agents import AgentReport, AgentRunStatus, TaxAgentRole, chief_tax_auditor_spec, default_tax_agent_specs
 
 
 class RecordingBackend:
@@ -84,3 +84,22 @@ def test_evidence_gap_human_required_is_normalized_and_handoff_continues():
     assert result.reports[0].status == AgentRunStatus.PASS
     assert result.reports[0].metadata["escalation_normalized"] == "human_required_evidence_gap_nonterminal"
 
+
+
+def test_chief_contract_is_supervisory_and_not_in_specialist_chain():
+    chief = chief_tax_auditor_spec()
+    assert chief.role == TaxAgentRole.CHIEF
+    assert chief.handoff_to is None
+    assert "REQUEST_RERUN" in chief.permissions
+    assert TaxAgentRole.CHIEF not in [s.role for s in default_tax_agent_specs()]
+
+
+def test_chief_runs_after_all_specialists_and_owns_final_status():
+    backend = RecordingBackend()
+    result = ChiefTaxAuditOrchestrator(backend).run(
+        case_id="CASE-001", tax_year=2024, goal="hunt missed tax items", case_packet=packet()
+    )
+    assert backend.roles[-1] == TaxAgentRole.CHIEF
+    assert backend.roles[:-1] == [s.role for s in default_tax_agent_specs()]
+    assert result.chief_report.role == TaxAgentRole.CHIEF
+    assert result.status == AgentRunStatus.PASS

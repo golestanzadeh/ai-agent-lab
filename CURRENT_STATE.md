@@ -237,3 +237,14 @@ A live controlled CASE-001/2024 run completed the six-role chain: Evidence -> Ta
 Verification: D-027 targeted tests 6 passed. Full local regression 323 passed, 1 skipped. The first full-suite invocation completed test bodies but pytest cleanup hit a Windows Temp permission error; rerun with repository-local basetemp completed cleanly.
 
 D-027 is technically operational. No ELSTER submission, Finanzamt contact, main merge, release, or external consequential tax action occurred. Final tax entitlement remains evidence-first and subject to unresolved CASE-001 evidence gaps.
+
+## 2026-09-13 — D-028 Chief Tax Auditor
+- Added real `CHIEF_TAX_AUDITOR_AGENT` as supervisory manager above the six D-027 specialists.
+- Chief owns challenge, re-check directives and analytical closure; deterministic orchestrator retains guardrails.
+- CLI now executes the six-specialist investigation followed by the Chief final-suspicion pass.
+- Live CASE-001/2024 run: six specialists executed; Chief returned `HUMAN_REQUIRED` and rejected premature closure.
+- Residual targets: duty roster, Jan-May EVG, commute distance, childcare, spouse Minijob treatment,
+  Section 35a payment/labour proof, school-fee payment/eligibility.
+- D-028 targeted tests: 8 passed.
+- Full regression: 325 passed, 1 skipped after isolated confirmation of one transient Drive test failure.
+- No ELSTER/Finanzamt submission/contact, main merge, release, or evidence mutation performed.

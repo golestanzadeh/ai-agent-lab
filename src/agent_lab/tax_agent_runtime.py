@@ -7,7 +7,7 @@ from typing import Any, Protocol
 
 from agent_lab.tax_agents import (
     AgentFinding, AgentReport, AgentRunStatus, AgentSpec, AgentTask,
-    FindingStatus, TaxAgentRole, default_tax_agent_specs,
+    FindingStatus, TaxAgentRole, chief_tax_auditor_spec, default_tax_agent_specs,
 )
 
 
@@ -123,6 +123,40 @@ class TaxAgentOrchestrator:
                     raise TaxAgentRuntimeError(f"confirmed finding lacks evidence: {finding.finding_id}")
             if spec.role == TaxAgentRole.FORM and finding.status == FindingStatus.CONFIRMED and not finding.form_refs:
                 raise TaxAgentRuntimeError(f"confirmed form finding lacks form reference: {finding.finding_id}")
+
+
+@dataclass(frozen=True, slots=True)
+class ChiefTaxAuditResult:
+    specialist_run: TaxAgentRunResult
+    chief_report: AgentReport
+    status: AgentRunStatus
+
+
+class ChiefTaxAuditOrchestrator:
+    """Supervisory manager: specialists investigate; Chief challenges and decides closure."""
+
+    def __init__(self, backend: TaxAgentBackend, *, max_investigation_rounds: int = 2) -> None:
+        if max_investigation_rounds < 1:
+            raise ValueError("max_investigation_rounds must be >= 1")
+        self._backend = backend
+        self._chief_spec = chief_tax_auditor_spec()
+        self._specialists = TaxAgentOrchestrator(backend)
+        self._max_rounds = max_investigation_rounds
+
+    def run(self, *, case_id: str, tax_year: int, goal: str, case_packet: dict[str, object]) -> ChiefTaxAuditResult:
+        specialist_run = self._specialists.run(
+            case_id=case_id, tax_year=tax_year, goal=goal, case_packet=case_packet
+        )
+        chief_task = AgentTask(
+            case_id=case_id, tax_year=tax_year,
+            goal=(goal + "\nPerform final suspicion pass. Reject premature closure; identify residual suspicious areas "
+                  "and issue concrete specialist re-check directives when warranted."),
+            case_packet=case_packet, prior_reports=specialist_run.reports,
+        )
+        chief_report = self._backend.run(self._chief_spec, chief_task)
+        TaxAgentOrchestrator._validate_report(self._chief_spec, chief_report)
+        status = chief_report.status
+        return ChiefTaxAuditResult(specialist_run, chief_report, status)
 
 
 def _report_to_payload(report: AgentReport) -> dict[str, object]:

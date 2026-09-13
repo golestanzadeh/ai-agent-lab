@@ -7,7 +7,7 @@ from pathlib import Path
 
 from google import genai
 
-from agent_lab.tax_agent_runtime import GeminiTaxAgentBackend, TaxAgentOrchestrator
+from agent_lab.tax_agent_runtime import ChiefTaxAuditOrchestrator, GeminiTaxAgentBackend
 
 
 def _load_env_file(path: Path) -> None:
@@ -39,13 +39,22 @@ def main() -> int:
     tax_year = int(packet["tax_year"])
 
     client = genai.Client(api_key=api_key)
-    runtime = TaxAgentOrchestrator(GeminiTaxAgentBackend(client, model=args.model))
-    result = runtime.run(case_id=case_id, tax_year=tax_year, goal=args.goal, case_packet=packet)
+    runtime = ChiefTaxAuditOrchestrator(GeminiTaxAgentBackend(client, model=args.model))
+    chief_result = runtime.run(case_id=case_id, tax_year=tax_year, goal=args.goal, case_packet=packet)
+    result = chief_result.specialist_run
 
     output = {
         "case_id": result.case_id,
         "tax_year": result.tax_year,
-        "status": result.status.value,
+        "status": chief_result.status.value,
+        "chief": {
+            "role": chief_result.chief_report.role.value,
+            "status": chief_result.chief_report.status.value,
+            "summary": chief_result.chief_report.summary,
+            "evidence_gaps": list(chief_result.chief_report.evidence_gaps),
+            "challenges": list(chief_result.chief_report.challenges),
+            "next_action": chief_result.chief_report.next_action,
+        },
         "reports": [
             {
                 "role": report.role.value,
