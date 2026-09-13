@@ -41,16 +41,16 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 Repository cleanup and canonical-state consolidation completed on 2026-09-13.
 
-The first governed Orchestrator phase has started with `docs/constitution-v2-proposal.md`.
+Project Constitution v2 was explicitly ratified by the Project Owner / Human on 2026-09-13 and is now active in `CONSTITUTION.md`.
 
-Current mandatory gate:
+Current continuation sequence:
 
-1. Human reviews the exact Constitution v2 proposal.
-2. Human explicitly ratifies it or requests changes.
-3. Only after ratification may the project define the stable Agent roles, governed Agent Factory, lifecycle, and Permission Matrix.
-4. Orchestrator implementation follows those accepted contracts.
+1. Define the stable Agent roles and their bounded contracts.
+2. Define the governed Agent Factory and temporary Agent lifecycle.
+3. Define the Permission Matrix, separation of duties, budgets, expiry, escalation, and Human Gates.
+4. Only after those contracts are accepted, implement the Master Orchestrator under Constitution v2.
 
-The proposal is not yet in force. The existing `CONSTITUTION.md` remains authoritative. Do not create Agent roles or Orchestrator code before ratification.
+No Agent role, permission expansion, or Orchestrator implementation is authorized merely by ratification; each must follow the applicable constitutional governance and Human Gates.
 
 ## Cross-session update rule
 
@@ -74,6 +74,7 @@ A stage is not durably handed off until the checkpoint states:
 
 ## Required references
 
+- `CONSTITUTION.md` — ratified supreme Project Constitution v2.
 - `AGENTS.md` — mandatory Agent behavior and governance.
 - `CURRENT_STATE.md` — detailed verified/recovered current state.
 - `ROADMAP.md` — remaining work and registered future artifacts.
@@ -102,11 +103,12 @@ The active branch was cleaned and canonicalized:
 Git history remains the recovery path for deleted material. No source code, tax evidence, private Drive data, approval data, or audit data was deleted.
 
 
-## Constitution v2 proposal checkpoint — 2026-09-13
+## Constitution v2 ratification checkpoint — 2026-09-13
 
-- Registered and created `docs/constitution-v2-proposal.md`.
-- The proposal contains 20 constitutional articles and an explicit ratification procedure.
-- It establishes Article 1 as an absolute external-data Default Deny rule with two separate Human approvals: exact-content release approval, followed by exact-recipient transmission approval.
-- It forbids any Agent, Master Orchestrator, automation, tool, or generic authorization from amending or bypassing the Constitution.
+- The Project Owner / Human explicitly approved and ratified Project Constitution v2, including Article 1 and all 20 Articles.
+- The ratified text is active at `CONSTITUTION.md` and supersedes the original twelve-principle Constitution.
+- Article 1 establishes absolute external-data Default Deny and requires two separate Human approvals: exact-content release approval, followed by exact-recipient/channel transmission approval.
+- No Agent, Master Orchestrator, automation, tool, or generic authorization may amend or bypass the Constitution.
 - Any future constitutional change requires the exact proposed change, impact/risk disclosure, explicit Project Owner approval, a dedicated commit, Decision Log entry, and checkpoint update.
-- Status: **AWAITING EXPLICIT HUMAN RATIFICATION**.
+- The superseded proposal file was removed after activation; Git history remains its recovery path.
+- Status: **RATIFIED / IN FORCE**.
