@@ -1,38 +1,34 @@
-# D-028 — Chief Tax Auditor & Investigation Control
+# D-028 — Chief Tax Auditor
 
-Status: IMPLEMENTED / LIVE-TESTED
-Date: 2026-09-13
+Status: **IMPLEMENTED, LIVE-VERIFIED, AND SUPERSEDED AS CURRENT CASE STATE**
 
-## Decision
-Add `CHIEF_TAX_AUDITOR_AGENT` above the six specialist tax agents.
-The Chief owns investigation closure, challenge, re-check directives, and final acceptance.
-The deterministic `TaxAgentOrchestrator` remains the execution/guardrail engine.
+## Purpose
+
+`CHIEF_TAX_AUDITOR_AGENT` supervises the six D-027 specialists. It owns challenge, re-check directives, residual-suspicion review, and analytical closure. The deterministic orchestrator retains execution guardrails.
 
 ## Authority
-The Chief may read all specialist reports, assign investigation tasks, challenge conclusions,
-request re-checks, and accept or reject analytical closure.
-It may not submit/sign a return, contact ELSTER/Finanzamt, merge/release code, or mutate evidence.
+
+The Chief may read specialist reports, assign analytical tasks, challenge conclusions, request re-checks, and accept or reject analytical closure. It may not submit or sign a return, contact ELSTER/Finanzamt, merge/release code, or mutate evidence.
 
 ## Operating doctrine
-Default assumption: SOMETHING MAY STILL BE WRONG OR MISSING.
-A conclusion is not filing-ready unless the chain is supported:
-Fact -> Evidence -> tax-year Law -> Eligibility -> Amount -> Tax Effect -> Form/Line -> Reviewer Challenge.
-Ordinary missing evidence remains an Evidence Gap; it is never fabricated.
 
-## Live validation
-A real Gemini-backed CASE-001/2024 run executed all six specialists and then the Chief.
-The Chief returned `HUMAN_REQUIRED`, deliberately rejecting premature closure.
-It preserved the EUR 244.83 working baseline and identified residual investigation targets:
-2024 duty roster, Jan-May EVG dues, commute distance, childcare, spouse Minijob tax treatment,
-Section 35a payment/labour proof, and school-fee payment/eligibility evidence.
+Assume something may still be wrong or missing until the chain is supported:
 
-## Test evidence
-D-028 targeted runtime tests: 8 passed.
-Full regression after implementation: 325 passed, 1 skipped.
-One preceding full-suite run had one transient Google Drive provisioning test failure;
-the exact failing parametrized test passed 3/3 on immediate isolated rerun, and the complete
-suite then passed 325/1. No product-code change was made to hide the transient failure.
+`Fact -> Evidence -> tax-year Law -> Eligibility -> Amount -> Tax Effect -> Form/Line -> Reviewer Challenge`
 
-## Next phase
-Chief-directed Opportunity Discovery begins from the residual suspicion list.
-No tax submission or external authority contact is authorized by this decision.
+Ordinary missing evidence remains an explicit gap and is never fabricated.
+
+## Implementation verification
+
+The first recorded CASE-001/2024 live validation executed all six specialists and the Chief. At that historical checkpoint the Chief returned `HUMAN_REQUIRED`, proving rejection of premature closure.
+
+Recorded verification:
+
+- D-028 targeted tests: **8 passed**;
+- full regression: **325 passed, 1 skipped** after isolated confirmation of one transient Drive test failure.
+
+## Current-state rule
+
+The historical first-run outcome above is not the current CASE-001 state. The human later confirmed that the preceding project conversation completed the 2024 analysis and that the Chief approved and closed it. That later state is authoritative in `PROJECT_CHECKPOINT.md`.
+
+The exact final Chief response and final post-D-028 technical details were not recovered and must not be fabricated. Current remaining product boundaries are the UI and controlled ELSTER/Finanzamt submission path.
