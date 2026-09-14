@@ -359,8 +359,8 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Revocation/editability: the Project Owner may revoke or amend this authority at any time; the latest explicit instruction controls future work.
 - Mandatory stop boundaries: registration/account creation, protected download, manufacturer ID, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, protected-main action, merge, or any other consequential Human Gate.
 - Token controller remains active: caution at 25% five-hour or 20% weekly remaining; durable pause at 15% five-hour or 10% weekly remaining; guarded automatic resume only under the accepted controller conditions.
-- Current continuation: design and implement the next registered local synthetic package, beginning with an immutable Human-readable preview bound to the accepted P1 artifacts and incapable of transmission.
-- Status: **P1_CONTINUOUS_NON_PRODUCTION_AUTHORITY_ACTIVE**.
+- Current continuation: package 4 preview is complete. The next registered work is the synthetic submission-lifecycle/idempotency package.
+- Status: **P1_CONTINUOUS_NON_PRODUCTION_AUTHORITY_ACTIVE / TOKEN_PAUSED**.
 
 
 ## Phase P1 package 4 synthetic preview completion — 2026-09-14
@@ -372,4 +372,5 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; Python compile check passed.
 - Implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`.
 - Status: **P1_PACKAGE_4_COMPLETE / NO PACKAGE-LEVEL HUMAN GATE**.
-- Exact next action: continue with a synthetic, non-production submission-lifecycle and idempotency package unless the token controller enters caution/pause or a mandatory Human Gate is reached.
+- Token checkpoint: a fresh service reading reported 24% five-hour and 51% weekly remaining. Work paused early inside the caution zone to protect checkpoint capacity; the hard 15% boundary was not approached.
+- Exact automatic-resume action: when the five-hour allowance is at least 80%, weekly remaining is above 10%, and repository recovery checks pass, implement the registered synthetic, non-production submission-lifecycle/idempotency package. No new Human approval is required inside D-051 authority.

@@ -640,3 +640,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Implementation commit `8237882d29c2d7171f776fe684e2f0d1b609d476`; relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; Python compile check passed.
 
 **Continuation:** No package-level Human Gate applies. Continue with the registered synthetic submission-lifecycle/idempotency package while D-051 authority remains active.
+
+
+## D-053 — Early token-caution pause after package 4
+
+**Status:** `TOKEN_PAUSED`; guarded automatic continuation authorized
+
+**Evidence:** After package 4 completed and was durably recorded, the live account service reported 24% five-hour and 51% weekly remaining. The controller entered an early safe pause inside the accepted caution zone rather than consume capacity toward the mandatory 15% boundary.
+
+**Resume:** When five-hour remaining is at least 80%, weekly remaining is above 10%, and repository recovery checks pass, resume automatically with the registered synthetic submission-lifecycle/idempotency package under D-051. No Human approval is required unless a D-051 stop boundary is reached.

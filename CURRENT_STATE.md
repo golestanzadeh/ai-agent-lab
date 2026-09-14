@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Continue autonomously across remaining local, synthetic, non-production Phase P1 work under the Project Owner's revocable continuous authority. Package 4 preview is complete; the next bounded package is a synthetic submission-lifecycle/idempotency design with no transmitter. Stop before any external, credential, protected-material, real-data, production, architecture/governance, or `main` boundary.
+State is `TOKEN_PAUSED` after package 4 completed, with 24% five-hour and 51% weekly remaining at the pause reading. On guarded recovery (five-hour at least 80%, weekly above 10%, repository safe), automatically implement the registered synthetic submission-lifecycle/idempotency package under active D-051 authority. No Human approval is required unless an explicit D-051 stop boundary is reached.
 
 ## Non-negotiable constraints
 
@@ -248,4 +248,5 @@ Continue autonomously across remaining local, synthetic, non-production Phase P1
 - Technical verification: relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; compile check passed.
 - Implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`.
 - Status: `P1_PACKAGE_4_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
-- Exact next action: implement a synthetic submission-lifecycle/idempotency package unless a token or Human Gate intervenes.
+- Token state: `TOKEN_PAUSED` early in the caution zone at 24% five-hour and 51% weekly remaining.
+- Exact next action after guarded recovery: implement the registered synthetic submission-lifecycle/idempotency package; stop only at a D-051 Human Gate.

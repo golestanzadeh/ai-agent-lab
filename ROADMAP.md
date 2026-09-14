@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase P1 package 4 complete; revocable continuous non-production authority active**
+Status: **TOKEN_PAUSED after Phase P1 package 4 completion; automatic guarded continuation authorized**
 
 Registered cross-phase cost-control artifact:
 
