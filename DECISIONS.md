@@ -673,3 +673,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** After the five-hour allowance recovered and package 5 completed, change the same-task guard from a reset-aligned five-hour cadence to an hourly cadence. Each run may perform at most one exact next package only when canonical state proves that it is local, synthetic, non-production, already authorized, and certainly free of a Human Gate.
 
 **Safety:** Live limit checks, caution/pause thresholds, repository recovery checks, one-package bounds, quiet non-actionable runs, and all D-051/constitutional Human Gates remain unchanged. This decision creates no production, external, credential, real-data, protected-main, merge, release, submission, or transmission authority.
+
+
+## D-056 — Privacy-minimized synthetic lifecycle audit and restart recovery
+
+**Status:** implemented and verified under continuous authority
+
+**Decision:** Convert validated synthetic lifecycle artifacts into an append-ordered hash chain containing only case/run identities, the stable idempotency key, attempt metadata, artifact references, timestamps, and synthetic outcomes. Restore state only from an exact versioned snapshot after chain, schema, transition, and caller-supplied scope validation.
+
+**Privacy and authority boundary:** Tax values, purpose text, protected material, credentials, external receipt content, and network details are excluded. Recovery is descriptive and cannot plan a retry, grant authority, or enable transmission.
+
+**Verification:** Targeted `12 passed`; relevant Phase P1 `104 passed`; full regression `486 passed, 1 skipped`; Python compile check passed.
+
+**Continuation:** Continue under D-051 with the registered local synthetic submission-readiness dossier. Existing Human Gates remain unchanged.

@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Package 5 synthetic submission lifecycle/idempotency is complete under active D-051 authority. Continue with the registered local synthetic lifecycle-audit and restart-recovery package. No Human approval is required unless an explicit D-051 stop boundary is reached.
+Package 6 synthetic lifecycle audit/restart recovery is complete under active D-051 authority. Continue with the registered local synthetic submission-readiness dossier. No Human approval is required unless an explicit D-051 stop boundary is reached.
 
 ## Non-negotiable constraints
 
@@ -259,3 +259,13 @@ Package 5 synthetic submission lifecycle/idempotency is complete under active D-
 - Verification: targeted `15 passed`; relevant P1 `92 passed`; full regression `474 passed, 1 skipped`; compile check passed.
 - Status: `P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 - Exact next action: implement the registered local synthetic lifecycle-audit and restart-recovery package; stop only at a D-051 Human Gate or token-controller threshold.
+
+
+## Phase P1 package 6 synthetic audit/recovery checkpoint
+
+- Implemented a privacy-minimized hash-chained event snapshot for synthetic attempt plans, results, and receipt placeholders.
+- Fresh-process recovery validates exact JSON shape, case/run/idempotency scope, event order, transition semantics, chain/head integrity, and receipt completeness before reconstructing lifecycle state.
+- Tax values and purpose text are excluded. Recovery cannot plan a retry, create authority, access credentials, connect to a network, claim a real receipt, or transmit.
+- Verification: targeted `12 passed`; relevant P1 `104 passed`; full regression `486 passed, 1 skipped`; compile check passed.
+- Status: `P1_PACKAGE_6_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+- Exact next action: implement the registered local synthetic submission-readiness dossier; stop only at a D-051 Human Gate or token-controller threshold.

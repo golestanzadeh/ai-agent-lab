@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **Phase P1 package 5 complete; continuous local synthetic work active**
+Status: **Phase P1 package 6 complete; continuous local synthetic work active**
 
 Registered cross-phase cost-control artifact:
 
@@ -92,6 +92,16 @@ Next registered continuous-authority package:
 - `src/agent_lab/elster_submission_audit.py` — privacy-minimized synthetic lifecycle audit and deterministic restart/recovery assessment.
 - `tests/unit/test_elster_submission_audit.py` — lineage, replay, corruption, restart, and capability-denial tests.
 - `docs/p1-synthetic-submission-audit.md` — audit/recovery contract, limitations, evidence, and external boundary.
+
+Package 6 is implemented and verified under continuous authority. Verification:
+targeted `12 passed`; relevant P1 `104 passed`; full regression `486 passed, 1 skipped`;
+Python compile check passed.
+
+Next registered continuous-authority package:
+
+- `src/agent_lab/elster_readiness_dossier.py` — immutable synthetic P1 evidence manifest and explicit external-readiness blockers with no execution capability.
+- `tests/unit/test_elster_readiness_dossier.py` — completeness, lineage, mutation, privacy, blocker, and capability-denial tests.
+- `docs/p1-synthetic-readiness-dossier.md` — dossier contract, verification evidence, and next Human Gate boundary.
 
 Goals:
 

@@ -63,6 +63,7 @@ Current authorized continuation point:
 14. The Project Owner granted revocable and editable continuous authority for all remaining local, synthetic, non-production Phase P1 design, implementation, repair, testing, documentation, commit, push, bounded Agent delegation, review, and result-control work. Package-by-package approval is no longer required inside that exact boundary. Work must stop before registration, protected download, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, or action on `main`.
 15. The continuous authority was durably activated at commit `4532328a8069393324d7cc63bd08a91c5620acd9`. The immutable synthetic Human-readable preview is implemented and verified at commit `8237882d29c2d7171f776fe684e2f0d1b609d476`.
 16. The token guard resumed at 99% five-hour and 49% weekly remaining after verifying a clean synchronized repository at `3c2ff2844bac94387969527b72a8c49c0f997415`. The synthetic submission-lifecycle/idempotency package is implemented and verified; current status is `P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+17. The privacy-minimized synthetic lifecycle audit and restart-recovery package is implemented and verified; current status is `P1_PACKAGE_6_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -386,3 +387,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted `15 passed`; relevant P1 `92 passed`; full regression `474 passed, 1 skipped`; Python compile check passed.
 - Status: **P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE**.
 - Exact next action: implement the registered local synthetic lifecycle-audit and restart-recovery package. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.
+
+
+## Phase P1 package 6 synthetic audit/recovery completion — 2026-09-15
+
+- Implemented `src/agent_lab/elster_submission_audit.py`, `tests/unit/test_elster_submission_audit.py`, and `docs/p1-synthetic-submission-audit.md`.
+- The package records only privacy-minimized synthetic lifecycle metadata in a hash-chained snapshot and excludes tax values and purpose text.
+- Fresh-process restoration validates exact schema, case/run/idempotency scope, chain/head integrity, ordering, lifecycle transitions, and receipt-placeholder completeness before reconstructing state.
+- Restart recovery cannot plan or authorize a retry, access credentials, use a network, claim an external receipt, or transmit.
+- Verification: targeted `12 passed`; relevant P1 `104 passed`; full regression `486 passed, 1 skipped`; Python compile check passed.
+- Status: **P1_PACKAGE_6_COMPLETE / CONTINUOUS AUTHORITY ACTIVE**.
+- Exact next action: implement the registered local synthetic submission-readiness dossier. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.
