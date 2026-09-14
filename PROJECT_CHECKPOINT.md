@@ -61,7 +61,8 @@ Current authorized continuation point:
 12. On 2026-09-14, the Project Owner explicitly authorized Phase P1 package 2 only for non-production design of a versioned ERiC adapter, without registration, credentials, live connectivity, or real transmission. After technical review, the Project Owner authorized three hardening amendments: make plans non-forgeable, bind material/capability policy into the contract identity, and replace the ambiguous ready outcome. The Project Owner then explicitly accepted the amended implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`; current status is `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
 13. The Project Owner authorized Phase P1 package 3 only for a synthetic, non-production ERiC material registration and verification-process design, without registration, protected download, credentials, connectivity, or transmission. The Project Owner explicitly accepted implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`; current status is `P1_PACKAGE_3_ACCEPTED / PACKAGE COMPLETE`.
 14. The Project Owner granted revocable and editable continuous authority for all remaining local, synthetic, non-production Phase P1 design, implementation, repair, testing, documentation, commit, push, bounded Agent delegation, review, and result-control work. Package-by-package approval is no longer required inside that exact boundary. Work must stop before registration, protected download, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, or action on `main`.
-15. The continuous authority was durably activated at commit `4532328a8069393324d7cc63bd08a91c5620acd9`. The first continuous package, an immutable synthetic Human-readable preview, is implemented and verified at commit `8237882d29c2d7171f776fe684e2f0d1b609d476`; current status is `P1_PACKAGE_4_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+15. The continuous authority was durably activated at commit `4532328a8069393324d7cc63bd08a91c5620acd9`. The immutable synthetic Human-readable preview is implemented and verified at commit `8237882d29c2d7171f776fe684e2f0d1b609d476`.
+16. The token guard resumed at 99% five-hour and 49% weekly remaining after verifying a clean synchronized repository at `3c2ff2844bac94387969527b72a8c49c0f997415`. The synthetic submission-lifecycle/idempotency package is implemented and verified; current status is `P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -374,3 +375,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **P1_PACKAGE_4_COMPLETE / NO PACKAGE-LEVEL HUMAN GATE**.
 - Token checkpoint: a fresh service reading reported 24% five-hour and 51% weekly remaining. Work paused early inside the caution zone to protect checkpoint capacity; the hard 15% boundary was not approached.
 - Exact automatic-resume action: when the five-hour allowance is at least 80%, weekly remaining is above 10%, and repository recovery checks pass, implement the registered synthetic, non-production submission-lifecycle/idempotency package. No new Human approval is required inside D-051 authority.
+
+
+## Phase P1 package 5 synthetic lifecycle/idempotency completion — 2026-09-14
+
+- Guarded automatic continuation resumed with 99% five-hour and 49% weekly remaining after branch, working-tree, and local/remote synchronization checks passed at `3c2ff2844bac94387969527b72a8c49c0f997415`.
+- Implemented `src/agent_lab/elster_submission_lifecycle.py`, `tests/unit/test_elster_submission_lifecycle.py`, and `docs/p1-synthetic-submission-lifecycle.md`.
+- The lifecycle uses one stable identity key, produces no duplicate plan while an attempt is unresolved, blocks all replay after uncertainty, permits at most one retry after definite synthetic failure only when the exact destination approval allows it, and accepts only explicitly synthetic receipt placeholders.
+- Transmitter availability, transmission permission, credential access, external receipt claims, and network calls remain non-forgeably disabled.
+- Verification: targeted `15 passed`; relevant P1 `92 passed`; full regression `474 passed, 1 skipped`; Python compile check passed.
+- Status: **P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE**.
+- Exact next action: implement the registered local synthetic lifecycle-audit and restart-recovery package. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.

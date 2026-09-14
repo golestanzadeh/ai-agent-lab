@@ -649,3 +649,18 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Evidence:** After package 4 completed and was durably recorded, the live account service reported 24% five-hour and 51% weekly remaining. The controller entered an early safe pause inside the accepted caution zone rather than consume capacity toward the mandatory 15% boundary.
 
 **Resume:** When five-hour remaining is at least 80%, weekly remaining is above 10%, and repository recovery checks pass, resume automatically with the registered synthetic submission-lifecycle/idempotency package under D-051. No Human approval is required unless a D-051 stop boundary is reached.
+
+
+## D-054 — Guarded resume and synthetic submission lifecycle/idempotency
+
+**Status:** implemented and verified under continuous authority
+
+**Resume evidence:** A fresh service reading reported 99% five-hour and 49% weekly remaining. The active branch was clean and synchronized locally/remotely at `3c2ff2844bac94387969527b72a8c49c0f997415`, satisfying D-045 recovery conditions.
+
+**Decision:** Bind each synthetic lifecycle to the exact preview, envelope, case/run, and destination approval through a stable SHA-256 idempotency key. Produce no duplicate plan for unresolved work; block uncertain outcomes without retry; permit at most one retry after a definite synthetic failure only when the exact destination approval permits it; and represent success only through a labelled synthetic receipt placeholder.
+
+**Capability boundary:** No attempt artifact is a transmission authorization or transmitter. Network, credential, signing, official receipt, real-data, and external capabilities remain absent and non-forgeably denied.
+
+**Verification:** Targeted `15 passed`; relevant Phase P1 `92 passed`; full regression `474 passed, 1 skipped`; Python compile check passed.
+
+**Continuation:** Continue under D-051 with the registered local synthetic lifecycle-audit and restart-recovery package. Existing Human Gates remain unchanged.

@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-State is `TOKEN_PAUSED` after package 4 completed, with 24% five-hour and 51% weekly remaining at the pause reading. On guarded recovery (five-hour at least 80%, weekly above 10%, repository safe), automatically implement the registered synthetic submission-lifecycle/idempotency package under active D-051 authority. No Human approval is required unless an explicit D-051 stop boundary is reached.
+Package 5 synthetic submission lifecycle/idempotency is complete under active D-051 authority. Continue with the registered local synthetic lifecycle-audit and restart-recovery package. No Human approval is required unless an explicit D-051 stop boundary is reached.
 
 ## Non-negotiable constraints
 
@@ -250,3 +250,12 @@ State is `TOKEN_PAUSED` after package 4 completed, with 24% five-hour and 51% we
 - Status: `P1_PACKAGE_4_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 - Token state: `TOKEN_PAUSED` early in the caution zone at 24% five-hour and 51% weekly remaining.
 - Exact next action after guarded recovery: implement the registered synthetic submission-lifecycle/idempotency package; stop only at a D-051 Human Gate.
+
+
+## Phase P1 package 5 synthetic lifecycle/idempotency checkpoint
+
+- Guarded continuation resumed after a fresh service reading reported 99% five-hour and 49% weekly remaining; branch, working tree, and local/remote head were safe at `3c2ff2844bac94387969527b72a8c49c0f997415`.
+- Implemented deterministic attempt planning, a stable lifecycle idempotency key, duplicate prevention, uncertain-outcome blocking, exact single-retry enforcement, synthetic receipt placeholders, and non-forgeable denial of transmitter/credential/network capability.
+- Verification: targeted `15 passed`; relevant P1 `92 passed`; full regression `474 passed, 1 skipped`; compile check passed.
+- Status: `P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+- Exact next action: implement the registered local synthetic lifecycle-audit and restart-recovery package; stop only at a D-051 Human Gate or token-controller threshold.
