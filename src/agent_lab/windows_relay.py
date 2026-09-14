@@ -11,9 +11,13 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 from typing import Callable, Protocol
 
 from agent_lab.local_sync import LocalSyncAgent, LocalSyncError, SyncAction
+
+
+SUBPROCESS_CREATION_FLAGS = getattr(subprocess, "CREATE_NO_WINDOW", 0) if sys.platform == "win32" else 0
 
 
 PROTOCOL_VERSION = 1
@@ -93,6 +97,7 @@ class SubprocessGitRunner:
             capture_output=True,
             text=True,
             encoding="utf-8",
+            creationflags=SUBPROCESS_CREATION_FLAGS,
         )
         if completed.returncode != 0:
             raise RelayError(f"git command failed: {args[0] if args else 'unknown'}")
@@ -113,6 +118,7 @@ class SubprocessRunner:
             capture_output=True,
             text=True,
             encoding="utf-8",
+            creationflags=SUBPROCESS_CREATION_FLAGS,
         )
         if completed.returncode != 0:
             raise RelayError(f"local step failed: {Path(argv[0]).name}")

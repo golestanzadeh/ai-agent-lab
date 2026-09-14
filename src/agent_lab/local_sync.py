@@ -10,7 +10,11 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 import subprocess
+import sys
 from typing import Protocol
+
+
+SUBPROCESS_CREATION_FLAGS = getattr(subprocess, "CREATE_NO_WINDOW", 0) if sys.platform == "win32" else 0
 
 
 class LocalSyncError(RuntimeError):
@@ -52,6 +56,7 @@ class SubprocessGitRunner:
             capture_output=True,
             text=True,
             encoding="utf-8",
+            creationflags=SUBPROCESS_CREATION_FLAGS,
         )
         if completed.returncode != 0:
             raise LocalSyncError(f"git command failed: {args[0] if args else 'unknown'}")

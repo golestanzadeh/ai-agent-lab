@@ -30,20 +30,36 @@ if ($status) {
 }
 
 $pythonCommand = Get-Command python -ErrorAction Stop
-$python = $pythonCommand.Source
-if (-not $python) {
+$pythonConsole = $pythonCommand.Source
+if (-not $pythonConsole) {
     throw 'PYTHON_NOT_FOUND'
 }
-
-$taskCommand = '"{0}" "{1}" --repo "{2}" --repository "{3}" --branch "{4}"' -f $python, $relayScript, $repo, $Repository, $Branch
-
-& schtasks.exe /Create /SC MINUTE /MO 1 /TN $TaskName /TR $taskCommand /F | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    throw 'TASK_CREATE_FAILED'
+$pythonWindowless = Join-Path (Split-Path -Parent $pythonConsole) 'pythonw.exe'
+if (-not (Test-Path -LiteralPath $pythonWindowless -PathType Leaf)) {
+    throw 'PYTHONW_NOT_FOUND'
 }
 
-& schtasks.exe /Query /TN $TaskName | Out-Null
-if ($LASTEXITCODE -ne 0) {
+$arguments = '"{0}" --repo "{1}" --repository "{2}" --branch "{3}"' -f $relayScript, $repo, $Repository, $Branch
+$action = New-ScheduledTaskAction -Execute $pythonWindowless -Argument $arguments -WorkingDirectory $repo
+$trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) `
+    -RepetitionInterval (New-TimeSpan -Minutes 1) `
+    -RepetitionDuration (New-TimeSpan -Days 3650)
+$settings = New-ScheduledTaskSettingsSet `
+    -MultipleInstances IgnoreNew `
+    -StartWhenAvailable `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 2) `
+    -Hidden
+
+Register-ScheduledTask `
+    -TaskName $TaskName `
+    -Action $action `
+    -Trigger $trigger `
+    -Settings $settings `
+    -Description 'Fail-closed GitHub-to-Windows relay for AI-Tax-Agent' `
+    -Force | Out-Null
+
+$installed = Get-ScheduledTask -TaskName $TaskName -ErrorAction Stop
+if ($installed.Actions.Execute -ne $pythonWindowless -or -not $installed.Settings.Hidden) {
     throw 'TASK_VERIFY_FAILED'
 }
 
