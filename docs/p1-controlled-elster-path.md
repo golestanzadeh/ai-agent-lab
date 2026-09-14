@@ -62,4 +62,4 @@ The exact official schema, plausibility rules, ERiC API, supported platform pack
 
 On 2026-09-14, the Project Owner explicitly accepted package 1 and exact implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Package 1 is therefore `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
 
-This acceptance does not begin or authorize package 2. Any package-2 work must remain non-production and may only proceed after separate exact authority. Registration, account creation, manufacturer ID, package download, credential/certificate handling, live connectivity, or any real transmission likewise requires separate exact authority.
+The Project Owner later gave separate exact authority for package 2, limited to a non-production versioned-adapter design. Package 2 is technically verified at commit `a024ff5c608700ff7650c4b9c02c643fa72884fd` and awaits Human acceptance. Registration, account creation, manufacturer ID, package download, credential/certificate handling, live connectivity, or any real transmission still requires separate exact authority.

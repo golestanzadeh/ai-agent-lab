@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O5 Human-accepted and complete; Phase P1 not yet authorized**
+Status: **in progress — Phase O5 Human-accepted and complete; Phase P1 package 2 technically complete and awaiting Human review**
 
 Registered cross-phase cost-control artifact:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 2 authorized for non-production versioned-adapter design — no external capability or transmission authorized**
+Status: **Phase P1 package 2 technically complete; Human acceptance required — no external capability or transmission authorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -51,13 +51,15 @@ Registered Phase P1 package 1 artifacts:
 - `tests/unit/test_elster_dry_run.py` — exact-route, synthetic isolation, immutable identity, two-stage ordering/binding, expiry, mutation, and no-transmission tests.
 - `docs/p1-controlled-elster-path.md` — official-route evidence, bounded architecture, acceptance criteria, limitations, and next Human Gate.
 
-Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted this exact package and commit on 2026-09-14. Package 2 and every developer-access or external-capability step require separate explicit authority.
+Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted this exact package and commit on 2026-09-14. The later package-2 authority below supersedes only its design gate; every developer-access or external-capability step still requires separate explicit authority.
 
 Registered Phase P1 package 2 artifacts:
 
 - `src/agent_lab/eric_adapter_contract.py` — versioned, non-production ERiC adapter contract and deterministic fail-closed compatibility assessment; no FFI, XML mapping, credential, network, signing, or transmission capability.
 - `tests/unit/test_eric_adapter_contract.py` — exact-version, route-binding, official-material completeness, synthetic isolation, and capability-denial tests.
 - `docs/p1-eric-adapter-contract.md` — package-2 boundary, unknowns, acceptance criteria, and next Human Gate.
+
+Package 2 implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`. Verification: relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; Python compile check passed. Human acceptance is required before any further package. Developer access and all external capabilities remain unauthorized.
 
 Goals:
 
@@ -212,4 +214,4 @@ Phase O4 implementation and technical verification completed at `b81f4060c5973ad
 
 The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.
 
-The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. On 2026-09-14, all three active Agent Bridge Work automations were updated in place and independently verified active with Repository condition and prompt scoped to `golestanzadeh/ai-agent-lab`. A fresh evaluator snapshot returned `PASS` with fourteen verified conditions and no blockers. The Project Owner explicitly accepted Phase O5 and readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`. Phase P1 and production activation remain unauthorized pending separate explicit instruction; work pauses with approximately 9% of the five-hour token allowance reported remaining at acceptance.
+The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. On 2026-09-14, all three active Agent Bridge Work automations were updated in place and independently verified active with Repository condition and prompt scoped to `golestanzadeh/ai-agent-lab`. A fresh evaluator snapshot returned `PASS` with fourteen verified conditions and no blockers. The Project Owner explicitly accepted Phase O5 and readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`. That historical gate was later superseded by the exact bounded Phase P1 package authorizations recorded above; production activation remains unauthorized.

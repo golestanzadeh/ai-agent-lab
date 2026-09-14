@@ -1,6 +1,6 @@
 # Phase P1 package 2 — Versioned ERiC Adapter Contract
 
-Status: **AUTHORIZED / NON-PRODUCTION DESIGN IN PROGRESS**
+Status: **TECHNICALLY VERIFIED / HUMAN ACCEPTANCE REQUIRED**
 
 ## Authorized boundary
 
@@ -22,6 +22,14 @@ The contract records three official inputs that are still not recovered: the ERi
 - The three missing official material categories are explicit and no XML element, ERiC function, endpoint, response, or plausibility rule is guessed.
 - Only a package-1 `SyntheticSubmissionEnvelope` may be bound.
 - A boundary-ready result never permits mapping, validation, signing, credential access, networking, or transmission.
+
+## Verification evidence
+
+- Implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
+- Relevant package-1/package-2 suite: `36 passed`.
+- Full repository regression: `418 passed, 1 skipped`.
+- Python compile check: passed.
+- The first targeted invocation omitted the repository `src` import path and stopped during test collection with two import errors. The command was corrected to use the documented `PYTHONPATH=src` environment and passed; no test failure was hidden.
 
 ## Next Human Gate
 

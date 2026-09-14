@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Await separate explicit Project Owner authority for the next bounded Phase P1 package or developer-access step. Phase P1 package 1 is Human-accepted and complete, but package 2, developer registration/account creation, manufacturer ID, official ERiC package retrieval, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
+Review and explicitly accept Phase P1 package 2 implementation commit `a024ff5c608700ff7650c4b9c02c643fa72884fd` or request exact amendments. Developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -202,7 +202,7 @@ Await separate explicit Project Owner authority for the next bounded Phase P1 pa
 - Active heartbeat: `Plan Limit Continuation Guard` (`plan-limit-continuation-guard`), attached to this task on a five-hour cadence.
 - Policy: caution at five-hour 25% or weekly 20%; `TOKEN_PAUSED` at five-hour 15% or weekly 10%; resume only with five-hour at least 80%, weekly above 10%, a safe repository state, and an exact already-authorized next action.
 - If live usage is unavailable, the controller fails closed. It stays quiet when state is unchanged or non-actionable.
-- Current observed state: `RUN`, with 99% five-hour remaining and 62% weekly remaining on 2026-09-14.
+- Controller activation observation: `RUN`, with 99% five-hour remaining and 62% weekly remaining on 2026-09-14. This is historical activation evidence; live decisions use a fresh service reading.
 
 
 ## Phase P1 package 1 technical checkpoint
@@ -213,4 +213,14 @@ Await separate explicit Project Owner authority for the next bounded Phase P1 pa
 - Implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`.
 - Human acceptance: the Project Owner explicitly accepted package 1 and exact implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862` on 2026-09-14.
 - Status: `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
-- Exact next action: await separate explicit authority for package 2 or any developer-access step. No package 2 or external capability is authorized.
+- Gate at package-1 acceptance: await separate authority for package 2 or any developer-access step. The later package-2 authorization below supersedes only the design restriction; it grants no external capability.
+
+
+## Phase P1 package 2 technical checkpoint
+
+- Authorized boundary: non-production versioned ERiC adapter design and implementation only; no registration, credentials, live connectivity, or real transmission.
+- Implemented `src/agent_lab/eric_adapter_contract.py`: immutable contract version `1`, exact ERiC 41.2 / UFA10 / tax-year 2024 / envelope-schema binding, explicit missing-official-material state, and no mapping or execution capability.
+- Technical verification: relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; compile check passed.
+- Implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
+- Status: `P1_PACKAGE_2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Exact next action: Human acceptance or exact amendments for package 2. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.

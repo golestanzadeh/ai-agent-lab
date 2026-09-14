@@ -564,4 +564,19 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Effect:** Package 1 moves from `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` to `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
 
-**Next gate:** This decision does not authorize package 2 or any external capability. Developer registration/account creation, manufacturer ID, ERiC package retrieval, credentials, certificates, real taxpayer data, live connectivity, submission, Finanzamt contact, and external transfer require separate exact Project Owner authority.
+**Next gate at acceptance:** This decision did not authorize package 2 or any external capability. The later D-048 authority supersedes only the package-2 design gate; developer registration/account creation, manufacturer ID, ERiC package retrieval, credentials, certificates, real taxpayer data, live connectivity, submission, Finanzamt contact, and external transfer still require separate exact Project Owner authority.
+
+
+## D-048 — Phase P1 package 2 versioned ERiC adapter boundary
+
+**Status:** technically verified; Human acceptance required
+
+**Authority:** On 2026-09-14, the Project Owner explicitly authorized package 2 only for non-production design and implementation of a versioned ERiC adapter, without registration, credentials, live connectivity, or real transmission.
+
+**Decision:** Implement adapter contract version `1`, bound exactly to package-1 envelope schema `1`, ERiC `41.2`, procedure `UFA10`, and tax year `2024`. Treat the ERiC interface specification, UFA10 2024 XML schema, and UFA10 2024 plausibility rules as `NOT_RECOVERED`; do not guess their contents or let caller input advance their status.
+
+**Capability boundary:** `BOUNDARY_READY` means only that the inert local contract is well formed. It does not permit official mapping, plausibility validation, FFI use, signing, credential/certificate access, networking, or transmission.
+
+**Verification:** Implementation commit `a024ff5c608700ff7650c4b9c02c643fa72884fd`; relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; Python compile check passed. The first targeted invocation omitted `PYTHONPATH=src` and stopped at collection; the corrected documented environment passed.
+
+**Next gate:** The Project Owner must accept package 2 or request exact amendments. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission remain unauthorized.
