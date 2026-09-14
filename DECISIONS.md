@@ -436,6 +436,19 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 
 **Decision:** Accept Phase O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` and authorize Phase O5 production-control-plane readiness work, with explicit emphasis on token-efficient execution.
 
-**Initial O5 finding:** Read-only host inspection found the Local Sync scheduled task present, the Windows Relay scheduled task absent, and no local automation record proving Work automation scope for `golestanzadeh/ai-agent-lab`. O5 must represent these as blockers rather than claim production readiness.
+**Initial O5 finding:** Read-only host inspection found the Local Sync scheduled task present but disabled, the Windows Relay scheduled task absent, and no local automation record proving Work automation scope for `golestanzadeh/ai-agent-lab`. O5 must represent these as blockers rather than claim production readiness.
 
 **Non-authorization:** Phase O5 authorization permits readiness design, implementation, tests, and read-only verification. It does not authorize production Agent activation, service installation, credential or permission changes, protected-main action, merge/release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
+
+
+## D-038 — Phase O5 deterministic readiness evaluation
+
+**Status:** evaluator technically verified; readiness blocked
+
+**Decision:** Production-control-plane readiness is decided from one strict, non-secret evidence snapshot. Every repository, Work automation, Codex, GitHub, Local Sync, Windows Relay, monitoring, recovery, and protected-main-gate condition must be proven simultaneously. Missing, malformed, disabled, mismatched, or unknown evidence returns `BLOCKED`.
+
+**Verification:** Targeted suite `11 passed`; relevant suite `72 passed`; full regression `379 passed, 1 skipped`; compile check passed. Implementation commit: `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
+
+**Current result:** Six blockers remain: Work automation repository scope, Work automation enabled state, monitoring configuration, protected-main Human Gate enforcement, disabled Local Sync, and absent Windows Relay.
+
+**Gate:** Enabling/installing scheduled services, changing an automation, establishing monitoring, or changing repository protection requires exact governed authority. O5 cannot become ready until those actions complete and a fresh evaluator run returns `PASS`.

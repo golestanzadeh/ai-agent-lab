@@ -1,6 +1,6 @@
 # Phase O5 — Production Control-Plane Readiness
 
-Status: **IN PROGRESS; BLOCKERS PRESENT**
+Status: **READINESS EVALUATOR VERIFIED; BLOCKED / HUMAN REQUIRED**
 
 ## Purpose
 
@@ -22,6 +22,25 @@ The evaluator accepts one explicit, non-secret JSON snapshot and requires exact 
 - Monitoring configuration and current protected-main enforcement have not yet been durably verified.
 
 The deterministic evaluator returned `BLOCKED` with six exact blockers: Work automation repository scope, Work automation enabled state, monitoring verification, protected-main Human Gate verification, disabled Local Sync, and missing Windows Relay. Missing evidence is not interpreted as readiness.
+
+## Verification evidence
+
+- Targeted readiness suite: `11 passed`.
+- Relevant O3/O4/O5/Agent Bridge/Local Sync/Windows Relay suite: `72 passed`.
+- Full repository regression: `379 passed, 1 skipped`.
+- Python compile check passed for the evaluator and CLI.
+- Evaluator implementation commit: `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
+- The current host snapshot produced eight verified conditions and six blockers.
+
+## Required governed actions
+
+1. Explicitly authorize enabling the existing `AI-Tax-Agent Local Sync` scheduled task.
+2. Explicitly authorize installing the reviewed `AI-Tax-Agent Windows Relay` task through `scripts/install_windows_relay_task.ps1`.
+3. Identify and update the exact Work automation so its repository scope is `golestanzadeh/ai-agent-lab`, then verify its enabled state.
+4. Define and verify the O5 monitoring configuration.
+5. Verify protected `main` Human-Gate enforcement; any protection change remains a separate governed action.
+
+After these actions, collect a fresh evidence snapshot and require evaluator `PASS`.
 
 ## Resolution boundary
 

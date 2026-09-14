@@ -77,7 +77,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Implement and verify the Phase O5 deterministic readiness evaluator, preserving the current Windows Relay and Work-automation evidence gaps as blockers. Production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Resolve the six governed Phase O5 readiness blockers, collect a fresh non-secret evidence snapshot, and require evaluator `PASS`. Production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -156,5 +156,14 @@ Implement and verify the Phase O5 deterministic readiness evaluator, preserving 
 
 - O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` was explicitly Human-accepted on 2026-09-14.
 - Phase O5 is authorized with an explicit token-efficiency constraint.
-- Initial read-only host inspection found Local Sync installed and Windows Relay absent; main-repository Work automation scope is not yet proven.
+- Initial read-only host inspection found Local Sync installed but disabled and Windows Relay absent; main-repository Work automation scope is not yet proven.
 - Status: `O5_IN_PROGRESS / READINESS_BLOCKERS_PRESENT`.
+
+
+## Phase O5 readiness checkpoint
+
+- Evaluator implementation commit: `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
+- Verification: targeted `11 passed`; relevant `72 passed`; full regression `379 passed, 1 skipped`.
+- Current result: `O5_BLOCKED -> HUMAN_REQUIRED`.
+- Blockers: Work automation scope and enabled state; monitoring; protected-main Human Gate; disabled Local Sync; absent Windows Relay.
+- No production or external authority was activated.

@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O4 accepted; Phase O5 readiness evaluation authorized**
+Status: **in progress — Phase O5 readiness blocked at Human/operational gate**
 
 Goals:
 
@@ -191,3 +191,5 @@ Phase O4 implementation and technical verification completed at `b81f4060c5973ad
 - `docs/o5-production-control-plane-readiness.md` — readiness contract, current evidence, blockers, acceptance criteria, and activation boundary.
 
 The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.
+
+The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Current readiness is `BLOCKED` by the six exact conditions recorded in `docs/o5-production-control-plane-readiness.md`.

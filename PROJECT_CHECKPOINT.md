@@ -53,7 +53,8 @@ Current authorized continuation point:
 4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
 5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 6. The Project Owner / Human explicitly accepted that exact O4 implementation on 2026-09-14 and authorized Phase O5 with emphasis on token efficiency.
-7. Phase O5 readiness evaluation is in progress. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
+7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`, but the current environment returned six blockers.
+8. Current state is `O5_BLOCKED -> HUMAN_REQUIRED`. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -207,7 +208,17 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The Project Owner explicitly accepted Phase O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` and authorized Phase O5.
 - O4 status: **O4_ACCEPTED / PHASE COMPLETE**.
 - O5 resumed under the existing 11:30 Europe/Berlin scheduled stop and an explicit token-efficiency constraint.
-- Initial read-only evidence: Local Sync scheduled task exists; Windows Relay scheduled task is not installed; no local Codex automation record proving main-repository Work scope was found.
+- Initial read-only evidence: Local Sync scheduled task exists but is disabled; Windows Relay scheduled task is not installed; no local Codex automation record proving main-repository Work scope was found.
 - Phase O5 readiness artifacts were registered in `ROADMAP.md` before creation.
 - Current status: `O5_IN_PROGRESS / READINESS_BLOCKERS_PRESENT`.
 - Exact next action: implement the deterministic readiness evaluator, verify the blockers, and stop at the applicable Human/operational gate without activating production authority.
+
+
+## Phase O5 readiness checkpoint — 2026-09-14
+
+- Implemented the deterministic fail-closed readiness evaluator at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
+- Verification: targeted `11 passed`; relevant O3/O4/O5/Bridge/Local Sync/Windows Relay `72 passed`; full regression `379 passed, 1 skipped`; compile check passed.
+- Current evaluator outcome: `BLOCKED` with six blockers: Work automation repository scope, Work automation enabled state, monitoring, protected-main Human Gate, disabled Local Sync, and absent Windows Relay.
+- Status: **O5_BLOCKED -> HUMAN_REQUIRED**.
+- Exact next action: obtain explicit authority for the local service changes, identify the exact Work automation, define monitoring, and verify protected-main enforcement; then collect fresh evidence and require evaluator `PASS`.
+- No service, automation, credential, permission, repository protection, production authority, merge, release, or external transfer was changed.

@@ -443,7 +443,7 @@ Use one low-risk, reversible, non-tax-private work package. Verify multi-session
 
 ### Phase O5 — Production control-plane readiness
 
-Status: **authorized; readiness evaluation in progress**.
+Status: **readiness evaluator verified; blocked at Human/operational gate**.
 
 Bind the main repository, verified Work automation scope, Codex, GitHub, Windows Relay, Local Sync, and monitoring. Verify restart/recovery and protected-main Human Gate.
 
