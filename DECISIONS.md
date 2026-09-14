@@ -533,3 +533,22 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Initial evidence:** The live service reported five-hour `usedPercent: 1` (99% remaining; UI rounded to 100%), weekly `usedPercent: 38` (62% remaining), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
 
 **Authority boundary:** The controller preserves and resumes existing authority; it cannot grant Phase P1, production, permission, protected-main, merge, release, destructive, tax-submission, ELSTER/Finanzamt, or external-transfer authority.
+
+
+## D-046 — Phase P1 authorization and first non-production ERiC boundary
+
+**Status:** package 1 technically verified; Human acceptance required
+
+**Authority:** The Project Owner explicitly authorized Phase P1 only for design and non-production implementation with synthetic data and without real transmission to ELSTER or Finanzamt.
+
+**Official route decision:** Use ERiC as the target third-party integration boundary. Official ELSTER material describes ERiC as a C library that plausibility-checks tax data and transmits it encrypted to tax-administration acceptance servers. The official availability schedule records ERiC `41.2` for unlimited income tax (`UFA 10`) for tax year 2024.
+
+**Package 1:** Implement only an immutable synthetic envelope, exact route metadata, two separately bound and ordered Human approvals, and a deterministic dry-run plan that always denies transmission. Do not implement an ERiC FFI, XML field mapping, signing, authentication, certificate handling, endpoints, network calls, or receipt ingestion.
+
+**Unknown/blocked facts:** Exact 2024 XML schemas, annual plausibility rules, and ERiC API details require the official developer package and are not durably available. They must not be reconstructed from memory or unofficial examples.
+
+**Verification:** Targeted package-1 suite `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The first full-suite invocation completed all test cases but failed during Windows pytest temporary-link cleanup; rerunning with an isolated temporary base completed successfully.
+
+**Gate:** Package 1 requires exact Project Owner acceptance before package 2. Technical success is not approval to obtain developer access or use an external capability.
+
+**Non-authorization:** Developer registration, account creation, manufacturer ID, ERiC download, credentials, certificates, real taxpayer data, live connectivity, submission, Finanzamt contact, and external transfer remain unauthorized.

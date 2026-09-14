@@ -43,7 +43,15 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **planned; no transmission performed**
+Status: **Phase P1 package 1 technically complete; Human acceptance required — no transmission performed**
+
+Registered Phase P1 package 1 artifacts:
+
+- `src/agent_lab/elster_dry_run.py` — deterministic synthetic-only submission-envelope identity, two-stage approval-binding evaluator, and permanently non-transmitting dry-run plan.
+- `tests/unit/test_elster_dry_run.py` — exact-route, synthetic isolation, immutable identity, two-stage ordering/binding, expiry, mutation, and no-transmission tests.
+- `docs/p1-controlled-elster-path.md` — official-route evidence, bounded architecture, acceptance criteria, limitations, and next Human Gate.
+
+Package 1 verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. Package 2 is not authorized.
 
 Goals:
 

@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Obtain or identify explicit Project Owner authority for the next project phase before starting it. The plan-limit controller is active and the latest live observation was 99% five-hour remaining (UI rounded to 100%) and 62% weekly remaining, but capacity does not create project authority. Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Review and explicitly accept Phase P1 package 1 or request exact amendments. The package is technically verified but package 2, developer registration/access, official ERiC package retrieval, credentials, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -203,3 +203,12 @@ Obtain or identify explicit Project Owner authority for the next project phase b
 - Policy: caution at five-hour 25% or weekly 20%; `TOKEN_PAUSED` at five-hour 15% or weekly 10%; resume only with five-hour at least 80%, weekly above 10%, a safe repository state, and an exact already-authorized next action.
 - If live usage is unavailable, the controller fails closed. It stays quiet when state is unchanged or non-actionable.
 - Current observed state: `RUN`, with 99% five-hour remaining and 62% weekly remaining on 2026-09-14.
+
+
+## Phase P1 package 1 technical checkpoint
+
+- Authorized boundary: non-production design and implementation, synthetic data only, and no real ELSTER or Finanzamt transmission.
+- Implemented `src/agent_lab/elster_dry_run.py`: exact ERiC 41.2 / UFA 10 / tax-year 2024 metadata, synthetic-only envelope, deterministic artifact identity, separate ordered approval binding, and permanently disabled transmission/network/credential capability.
+- Technical verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; compile check passed.
+- Status: `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Exact next action: Human acceptance or exact amendments for package 1. No package 2 or external capability is authorized.

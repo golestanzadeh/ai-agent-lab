@@ -57,6 +57,7 @@ Current authorized continuation point:
 8. A fresh Phase O5 evaluation on 2026-09-14 returned `PASS` with all fourteen conditions verified and no blockers. The Project Owner / Human explicitly accepted the Phase O5 readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc` on 2026-09-14. Current state is `O5_ACCEPTED / PHASE COMPLETE`.
 9. At acceptance, the Project Owner reported that only approximately 9% of the current five-hour token allowance remained. Work must pause at the completed O5 boundary; Phase P1, production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized pending separate explicit instruction.
 10. On 2026-09-14, the Project Owner requested a live plan-limit stop/resume controller before further project work. The account service reported 99% five-hour remaining (UI rounded to 100%) and 62% weekly remaining. The documented controller and active same-task heartbeat `plan-limit-continuation-guard` now enforce caution, durable token pause, and guarded continuation thresholds. This operational controller grants no Phase P1 or production authority.
+11. The Project Owner then explicitly authorized Phase P1 only for non-production design and implementation with synthetic data and no real ELSTER or Finanzamt transmission. Phase P1 package 1 is implemented and technically verified as a deterministic ERiC 41.2 / UFA 10 / tax-year 2024 dry-run boundary; exact official XML mapping remains blocked until separately governed developer documentation is available. Current status is `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -300,3 +301,16 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Active same-task heartbeat: `Plan Limit Continuation Guard`, automation id `plan-limit-continuation-guard`, five-hour cadence.
 - Status: **PLAN_LIMIT_CONTROLLER_ACTIVE**.
 - Exact next action: obtain or identify explicit authority for the next project phase before starting it. The controller may resume only an exact action already authorized and durably recorded as `TOKEN_PAUSED`; it cannot create authority.
+
+
+## Phase P1 package 1 technical completion — 2026-09-14
+
+- The Project Owner explicitly authorized Phase P1 design and implementation only in a non-production environment, using synthetic data and without real transmission to ELSTER or Finanzamt.
+- Official ELSTER evidence identifies ERiC as the third-party software integration route. The official availability schedule identifies ERiC `41.2` for unlimited income tax (`UFA 10`) for tax year 2024.
+- Exact XML schemas, plausibility rules, and developer API details are not publicly recovered in the repository and must not be invented. Developer registration, account access, manufacturer ID, ERiC download, credentials, certificates, endpoints, and live connectivity remain outside current authority.
+- Registered package 1 artifacts: `src/agent_lab/elster_dry_run.py`, `tests/unit/test_elster_dry_run.py`, and `docs/p1-controlled-elster-path.md`.
+- Implementation: a synthetic-only immutable envelope, ordered two-stage approval binding, and a dry-run result that can never permit or perform transmission.
+- Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed.
+- The first full-suite invocation completed all test cases but hit a Windows pytest temporary-link cleanup error. The suite was rerun with an isolated temporary base and completed successfully; no test failure was hidden or reclassified.
+- Status: **P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED**.
+- Exact next action: the Project Owner reviews and explicitly accepts package 1 or requests exact amendments. Package 2, developer registration/access, official ERiC package retrieval, credentials, live connectivity, and any real transmission remain unauthorized.
