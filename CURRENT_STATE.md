@@ -210,5 +210,6 @@ Review and explicitly accept Phase P1 package 1 or request exact amendments. The
 - Authorized boundary: non-production design and implementation, synthetic data only, and no real ELSTER or Finanzamt transmission.
 - Implemented `src/agent_lab/elster_dry_run.py`: exact ERiC 41.2 / UFA 10 / tax-year 2024 metadata, synthetic-only envelope, deterministic artifact identity, separate ordered approval binding, and permanently disabled transmission/network/credential capability.
 - Technical verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; compile check passed.
+- Implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`.
 - Status: `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
 - Exact next action: Human acceptance or exact amendments for package 1. No package 2 or external capability is authorized.

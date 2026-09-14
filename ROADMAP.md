@@ -51,7 +51,7 @@ Registered Phase P1 package 1 artifacts:
 - `tests/unit/test_elster_dry_run.py` — exact-route, synthetic isolation, immutable identity, two-stage ordering/binding, expiry, mutation, and no-transmission tests.
 - `docs/p1-controlled-elster-path.md` — official-route evidence, bounded architecture, acceptance criteria, limitations, and next Human Gate.
 
-Package 1 verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. Package 2 is not authorized.
+Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. Package 2 is not authorized.
 
 Goals:
 

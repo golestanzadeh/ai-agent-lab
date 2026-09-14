@@ -52,6 +52,7 @@ The exact official schema, plausibility rules, ERiC API, supported platform pack
 
 ## Verification evidence
 
+- Implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`.
 - Targeted package-1 suite: `23 passed`.
 - Full repository regression: `405 passed, 1 skipped`.
 - Python compile check: passed.

@@ -547,7 +547,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Unknown/blocked facts:** Exact 2024 XML schemas, annual plausibility rules, and ERiC API details require the official developer package and are not durably available. They must not be reconstructed from memory or unofficial examples.
 
-**Verification:** Targeted package-1 suite `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The first full-suite invocation completed all test cases but failed during Windows pytest temporary-link cleanup; rerunning with an isolated temporary base completed successfully.
+**Verification:** Implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862`; targeted package-1 suite `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The first full-suite invocation completed all test cases but failed during Windows pytest temporary-link cleanup; rerunning with an isolated temporary base completed successfully.
 
 **Gate:** Package 1 requires exact Project Owner acceptance before package 2. Technical success is not approval to obtain developer access or use an external capability.
 
