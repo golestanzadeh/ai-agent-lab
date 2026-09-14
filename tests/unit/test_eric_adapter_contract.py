@@ -4,10 +4,12 @@ import pytest
 
 from agent_lab.eric_adapter_contract import (
     AdapterDesignOutcome,
+    DENIED_CAPABILITIES,
     EricAdapterContract,
     EricAdapterContractError,
     OfficialMaterialKind,
     OfficialMaterialStatus,
+    REQUIRED_OFFICIAL_MATERIALS,
     design_eric_adapter,
 )
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope, SyntheticTaxSummary
@@ -54,6 +56,26 @@ def test_official_material_status_cannot_be_advanced_by_the_design_package():
         replace(EricAdapterContract(), material_status="VERIFIED")
 
 
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        (
+            "required_official_materials",
+            REQUIRED_OFFICIAL_MATERIALS[:-1],
+            "contract version change",
+        ),
+        (
+            "denied_capabilities",
+            DENIED_CAPABILITIES[:-1],
+            "contract version change",
+        ),
+    ],
+)
+def test_contract_policy_cannot_drift_without_a_version_change(field, value, message):
+    with pytest.raises(EricAdapterContractError, match=message):
+        replace(EricAdapterContract(), **{field: value})
+
+
 def test_contract_names_every_missing_official_material_without_guessing_content():
     contract = EricAdapterContract()
     assert contract.material_status is OfficialMaterialStatus.NOT_RECOVERED
@@ -68,7 +90,7 @@ def test_design_plan_binds_contract_and_synthetic_envelope_identity():
     item = envelope()
     contract = EricAdapterContract()
     plan = design_eric_adapter(item, contract=contract)
-    assert plan.outcome is AdapterDesignOutcome.BOUNDARY_READY
+    assert plan.outcome is AdapterDesignOutcome.BOUNDARY_READY_MAPPING_BLOCKED
     assert plan.contract_reference == contract.artifact_identity.reference
     assert plan.envelope_reference == item.artifact_identity.reference
     assert plan.contract_version == "1"
@@ -83,8 +105,27 @@ def test_boundary_ready_never_means_mapping_or_execution_ready():
     assert plan.transmission_permitted is False
     assert plan.credential_access is False
     assert plan.network_calls == ()
-    assert "NO_XML_MAPPING" in plan.limitations
-    assert "NO_NETWORK_OR_TRANSMISSION" in plan.limitations
+    assert "XML_MAPPING" in plan.denied_capabilities
+    assert "NETWORK" in plan.denied_capabilities
+    assert "TRANSMISSION" in plan.denied_capabilities
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("mapping_permitted", True, "cannot enable"),
+        ("validation_permitted", True, "cannot enable"),
+        ("signing_permitted", True, "cannot enable"),
+        ("transmission_permitted", True, "cannot enable"),
+        ("credential_access", True, "cannot enable"),
+        ("network_calls", ("https://example.invalid",), "network calls"),
+        ("denied_capabilities", DENIED_CAPABILITIES[:-1], "capability policy"),
+    ],
+)
+def test_design_plan_cannot_be_forged_to_enable_a_capability(field, value, message):
+    plan = design_eric_adapter(envelope())
+    with pytest.raises(EricAdapterContractError, match=message):
+        replace(plan, **{field: value})
 
 
 def test_non_synthetic_or_unknown_input_is_rejected():

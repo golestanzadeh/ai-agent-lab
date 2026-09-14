@@ -12,16 +12,20 @@ The Project Owner authorized package 2 only to design and implement a non-produc
 
 The contract records three official inputs that are still not recovered: the ERiC interface specification, the UFA10 2024 XML schema, and the UFA10 2024 plausibility rules. Package 2 cannot advance their status or infer their contents.
 
-`design_eric_adapter` produces an immutable local plan that binds the contract identity to the synthetic envelope identity. `BOUNDARY_READY` means only that the inert software boundary is well-formed. The plan still lists the three missing official materials as blockers and keeps mapping, validation, signing, credential access, networking, and transmission disabled.
+`design_eric_adapter` produces an immutable local plan that binds the contract identity to the synthetic envelope identity. `BOUNDARY_READY_MAPPING_BLOCKED` means only that the inert software boundary is well-formed while official mapping remains blocked. The plan still lists the three missing official materials as blockers and keeps mapping, validation, signing, credential access, networking, and transmission disabled.
+
+The required-material list and complete denied-capability policy are fields inside the hash-bound contract. Neither policy may change under contract version `1`. The design-plan constructor independently rejects any attempt to enable an execution flag, add a network call, remove a blocker, or weaken the denied-capability policy.
 
 ## Acceptance criteria
 
 - Only adapter contract version `1` and environment `NON_PRODUCTION_DESIGN` are accepted.
 - The exact ERiC version, procedure, tax year, and envelope schema are fail-closed bindings.
 - Official-material status cannot be advanced by caller input or this package.
+- Required-material and denied-capability policy cannot drift without a contract-version change.
 - The three missing official material categories are explicit and no XML element, ERiC function, endpoint, response, or plausibility rule is guessed.
 - Only a package-1 `SyntheticSubmissionEnvelope` may be bound.
 - A boundary-ready result never permits mapping, validation, signing, credential access, networking, or transmission.
+- Direct construction or replacement of a plan cannot enable a forbidden capability or insert a network call.
 
 ## Verification evidence
 

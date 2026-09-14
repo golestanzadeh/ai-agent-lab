@@ -24,7 +24,7 @@ class EricAdapterContractError(ValueError):
 
 
 class AdapterDesignOutcome(str, Enum):
-    BOUNDARY_READY = "BOUNDARY_READY"
+    BOUNDARY_READY_MAPPING_BLOCKED = "BOUNDARY_READY_MAPPING_BLOCKED"
 
 
 class OfficialMaterialStatus(str, Enum):
@@ -37,9 +37,38 @@ class OfficialMaterialKind(str, Enum):
     PLAUSIBILITY_RULES = "UFA10_2024_PLAUSIBILITY_RULES"
 
 
+REQUIRED_OFFICIAL_MATERIALS = (
+    OfficialMaterialKind.INTERFACE_SPECIFICATION,
+    OfficialMaterialKind.XML_SCHEMA,
+    OfficialMaterialKind.PLAUSIBILITY_RULES,
+)
+DENIED_CAPABILITIES = (
+    "ERIC_FFI",
+    "XML_MAPPING",
+    "PLAUSIBILITY_VALIDATION",
+    "SIGNING",
+    "CREDENTIAL_OR_CERTIFICATE_ACCESS",
+    "NETWORK",
+    "TRANSMISSION",
+)
+MISSING_MATERIAL_BLOCKERS = (
+    "OFFICIAL_ERIC_INTERFACE_SPECIFICATION_NOT_RECOVERED",
+    "OFFICIAL_UFA10_2024_XML_SCHEMA_NOT_RECOVERED",
+    "OFFICIAL_UFA10_2024_PLAUSIBILITY_RULES_NOT_RECOVERED",
+)
+
+
 def _required(name: str, value: str) -> None:
     if not isinstance(value, str) or not value.strip():
         raise EricAdapterContractError(f"{name} is required")
+
+
+def _artifact_reference(name: str, value: str) -> None:
+    _required(name, value)
+    prefix = "sha256:"
+    digest = value[len(prefix) :] if value.startswith(prefix) else ""
+    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+        raise EricAdapterContractError(f"{name} must be a canonical sha256 reference")
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,6 +82,10 @@ class EricAdapterContract:
     tax_year: int = SUPPORTED_TAX_YEAR
     envelope_schema_version: int = SUPPORTED_ENVELOPE_SCHEMA_VERSION
     material_status: OfficialMaterialStatus = OfficialMaterialStatus.NOT_RECOVERED
+    required_official_materials: tuple[OfficialMaterialKind, ...] = (
+        REQUIRED_OFFICIAL_MATERIALS
+    )
+    denied_capabilities: tuple[str, ...] = DENIED_CAPABILITIES
 
     def __post_init__(self) -> None:
         _required("contract_version", self.contract_version)
@@ -72,14 +105,14 @@ class EricAdapterContract:
             raise EricAdapterContractError(
                 "official material status cannot advance without a governed review"
             )
-
-    @property
-    def required_official_materials(self) -> tuple[OfficialMaterialKind, ...]:
-        return (
-            OfficialMaterialKind.INTERFACE_SPECIFICATION,
-            OfficialMaterialKind.XML_SCHEMA,
-            OfficialMaterialKind.PLAUSIBILITY_RULES,
-        )
+        if self.required_official_materials != REQUIRED_OFFICIAL_MATERIALS:
+            raise EricAdapterContractError(
+                "required official materials cannot change without a contract version change"
+            )
+        if self.denied_capabilities != DENIED_CAPABILITIES:
+            raise EricAdapterContractError(
+                "denied capabilities cannot change without a contract version change"
+            )
 
     @property
     def artifact_identity(self) -> ArtifactIdentity:
@@ -99,13 +132,44 @@ class EricAdapterDesignPlan:
     required_official_materials: tuple[OfficialMaterialKind, ...]
     material_status: OfficialMaterialStatus
     blockers: tuple[str, ...]
-    limitations: tuple[str, ...]
+    denied_capabilities: tuple[str, ...]
     mapping_permitted: bool = False
     validation_permitted: bool = False
     signing_permitted: bool = False
     transmission_permitted: bool = False
     credential_access: bool = False
     network_calls: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.outcome is not AdapterDesignOutcome.BOUNDARY_READY_MAPPING_BLOCKED:
+            raise EricAdapterContractError("unsupported adapter design outcome")
+        _artifact_reference("contract_reference", self.contract_reference)
+        _artifact_reference("envelope_reference", self.envelope_reference)
+        if self.contract_version != ADAPTER_CONTRACT_VERSION:
+            raise EricAdapterContractError("plan contract_version mismatch")
+        if self.required_official_materials != REQUIRED_OFFICIAL_MATERIALS:
+            raise EricAdapterContractError("plan official-material policy mismatch")
+        if self.material_status is not OfficialMaterialStatus.NOT_RECOVERED:
+            raise EricAdapterContractError("plan official-material status mismatch")
+        if self.blockers != MISSING_MATERIAL_BLOCKERS:
+            raise EricAdapterContractError("plan blockers must remain fail-closed")
+        if self.denied_capabilities != DENIED_CAPABILITIES:
+            raise EricAdapterContractError("plan capability policy mismatch")
+        capability_flags = (
+            self.mapping_permitted,
+            self.validation_permitted,
+            self.signing_permitted,
+            self.transmission_permitted,
+            self.credential_access,
+        )
+        if any(value is not False for value in capability_flags):
+            raise EricAdapterContractError(
+                "non-production adapter plan cannot enable execution capabilities"
+            )
+        if self.network_calls != ():
+            raise EricAdapterContractError(
+                "non-production adapter plan cannot contain network calls"
+            )
 
 
 def design_eric_adapter(
@@ -128,22 +192,12 @@ def design_eric_adapter(
         raise EricAdapterContractError("envelope and adapter route binding mismatch")
 
     return EricAdapterDesignPlan(
-        outcome=AdapterDesignOutcome.BOUNDARY_READY,
+        outcome=AdapterDesignOutcome.BOUNDARY_READY_MAPPING_BLOCKED,
         contract_reference=active_contract.artifact_identity.reference,
         contract_version=active_contract.contract_version,
         envelope_reference=envelope.artifact_identity.reference,
         required_official_materials=active_contract.required_official_materials,
         material_status=active_contract.material_status,
-        blockers=(
-            "OFFICIAL_ERIC_INTERFACE_SPECIFICATION_NOT_RECOVERED",
-            "OFFICIAL_UFA10_2024_XML_SCHEMA_NOT_RECOVERED",
-            "OFFICIAL_UFA10_2024_PLAUSIBILITY_RULES_NOT_RECOVERED",
-        ),
-        limitations=(
-            "NON_PRODUCTION_DESIGN_ONLY",
-            "NO_ERIC_FFI",
-            "NO_XML_MAPPING",
-            "NO_CREDENTIAL_OR_CERTIFICATE_ACCESS",
-            "NO_NETWORK_OR_TRANSMISSION",
-        ),
+        blockers=MISSING_MATERIAL_BLOCKERS,
+        denied_capabilities=active_contract.denied_capabilities,
     )
