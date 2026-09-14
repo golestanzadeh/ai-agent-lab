@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O4 technically complete; Human acceptance gate open**
+Status: **in progress — Phase O4 accepted; Phase O5 readiness evaluation authorized**
 
 Goals:
 
@@ -181,4 +181,13 @@ Phase O4 resumed on 2026-09-14 under the Project Owner's existing authorization 
 
 Generated pilot databases and evidence remain outside version control. Technical completion cannot authorize Phase O5, production operation, private case access, credential use, protected-main action, or external transfer.
 
-Phase O4 implementation and technical verification completed at `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`. Phase O5 remains blocked until explicit Human acceptance of this exact O4 result.
+Phase O4 implementation and technical verification completed at `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`. The Project Owner explicitly accepted that implementation and authorized Phase O5 on 2026-09-14.
+
+## Registered Phase O5 readiness artifacts
+
+- `src/agent_lab/control_plane_readiness.py` — deterministic fail-closed evaluator for repository, Work automation, Codex, GitHub, Windows Relay, Local Sync, monitoring, recovery, and protected-main-gate evidence.
+- `scripts/check_control_plane_readiness.py` — read-only evaluator for an explicit non-secret JSON evidence snapshot.
+- `tests/unit/test_control_plane_readiness.py` — PASS, missing evidence, scope mismatch, installation, monitoring, recovery, and Human-Gate coverage.
+- `docs/o5-production-control-plane-readiness.md` — readiness contract, current evidence, blockers, acceptance criteria, and activation boundary.
+
+The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.

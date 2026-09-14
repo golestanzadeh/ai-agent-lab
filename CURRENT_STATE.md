@@ -26,7 +26,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Windows Relay architecture accepted and implementation technically verified.
 - Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
-- Phase O4 bounded autonomous-development pilot implemented and technically verified; Human phase acceptance remains pending.
+- Phase O4 bounded autonomous-development pilot implemented, technically verified, and explicitly Human-accepted.
 
 ## Active system boundaries
 
@@ -77,7 +77,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Human review and explicit acceptance or exact amendment of the Phase O4 pilot at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`. Phase O5, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Implement and verify the Phase O5 deterministic readiness evaluator, preserving the current Windows Relay and Work-automation evidence gaps as blockers. Production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -150,3 +150,11 @@ Human review and explicit acceptance or exact amendment of the Phase O4 pilot at
 - Demonstration: audit `PASS`, final kill switch `HALTED`, one acceptance record, two checkpoints, 21 audit events, zero model tokens, 12 bounded local tool operations, and zero external cost.
 - Implementation commit: `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 - Phase O5 remains behind exact Human acceptance.
+
+
+## Phase O4 acceptance and Phase O5 start checkpoint
+
+- O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` was explicitly Human-accepted on 2026-09-14.
+- Phase O5 is authorized with an explicit token-efficiency constraint.
+- Initial read-only host inspection found Local Sync installed and Windows Relay absent; main-repository Work automation scope is not yet proven.
+- Status: `O5_IN_PROGRESS / READINESS_BLOCKERS_PRESENT`.

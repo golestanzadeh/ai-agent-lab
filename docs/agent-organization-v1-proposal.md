@@ -437,11 +437,13 @@ Implement:
 
 ### Phase O4 — Controlled autonomous development pilot
 
-Status: **technically complete; Human phase acceptance required**.
+Status: **complete — Human-accepted on 2026-09-14**.
 
 Use one low-risk, reversible, non-tax-private work package. Verify multi-session continuation, bounded retries, independent acceptance, recovery, cost reporting, and no repeated routine Human questioning.
 
 ### Phase O5 — Production control-plane readiness
+
+Status: **authorized; readiness evaluation in progress**.
 
 Bind the main repository, verified Work automation scope, Codex, GitHub, Windows Relay, Local Sync, and monitoring. Verify restart/recovery and protected-main Human Gate.
 

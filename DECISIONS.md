@@ -428,3 +428,14 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 **Current gate:** Technical success is not phase acceptance. Phase O5 requires explicit Project Owner acceptance of the exact O4 implementation or an exact amendment request.
 
 **Non-authorization:** The pilot used no tax-case data, network, credential, external service, LLM dispatch, protected-main write, merge, release, production operation, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
+
+
+## D-037 — Phase O4 acceptance and Phase O5 authorization
+
+**Status:** accepted and authorized by explicit Project Owner / Human approval on 2026-09-14
+
+**Decision:** Accept Phase O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` and authorize Phase O5 production-control-plane readiness work, with explicit emphasis on token-efficient execution.
+
+**Initial O5 finding:** Read-only host inspection found the Local Sync scheduled task present, the Windows Relay scheduled task absent, and no local automation record proving Work automation scope for `golestanzadeh/ai-agent-lab`. O5 must represent these as blockers rather than claim production readiness.
+
+**Non-authorization:** Phase O5 authorization permits readiness design, implementation, tests, and read-only verification. It does not authorize production Agent activation, service installation, credential or permission changes, protected-main action, merge/release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
