@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 1 Human-accepted and complete — package 2 not authorized; no transmission performed**
+Status: **Phase P1 package 2 authorized for non-production versioned-adapter design — no external capability or transmission authorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -52,6 +52,12 @@ Registered Phase P1 package 1 artifacts:
 - `docs/p1-controlled-elster-path.md` — official-route evidence, bounded architecture, acceptance criteria, limitations, and next Human Gate.
 
 Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted this exact package and commit on 2026-09-14. Package 2 and every developer-access or external-capability step require separate explicit authority.
+
+Registered Phase P1 package 2 artifacts:
+
+- `src/agent_lab/eric_adapter_contract.py` — versioned, non-production ERiC adapter contract and deterministic fail-closed compatibility assessment; no FFI, XML mapping, credential, network, signing, or transmission capability.
+- `tests/unit/test_eric_adapter_contract.py` — exact-version, route-binding, official-material completeness, synthetic isolation, and capability-denial tests.
+- `docs/p1-eric-adapter-contract.md` — package-2 boundary, unknowns, acceptance criteria, and next Human Gate.
 
 Goals:
 
