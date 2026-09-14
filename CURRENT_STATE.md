@@ -166,6 +166,6 @@ Resolve the six governed Phase O5 readiness blockers, collect a fresh non-secret
 - Verification: targeted `11 passed`; relevant `72 passed`; full regression `379 passed, 1 skipped`.
 - Current result: `O5_BLOCKED -> HUMAN_REQUIRED`.
 - Windows Relay is installed, enabled, `READY`, and returned last task result `0`.
-- Local Sync manual smoke returned `UP_TO_DATE`, but its scheduled task remains disabled because activation returned `Access is denied`.
-- Remaining blockers: Work automation scope and enabled state; monitoring; protected-main Human Gate; disabled Local Sync.
+- Local Sync is enabled and `READY`; latest task result is `0`, and local/remote branch heads match.
+- Remaining blockers: Work automation scope and enabled state; monitoring; protected-main Human Gate.
 - No production or external authority was activated.

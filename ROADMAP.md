@@ -192,4 +192,4 @@ Phase O4 implementation and technical verification completed at `b81f4060c5973ad
 
 The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.
 
-The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay is installed and ready. Current readiness remains `BLOCKED` by five exact conditions recorded in `docs/o5-production-control-plane-readiness.md`.
+The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay and Local Sync are installed, enabled, and ready. Current readiness remains `BLOCKED` by four exact conditions recorded in `docs/o5-production-control-plane-readiness.md`.

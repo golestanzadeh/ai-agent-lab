@@ -53,7 +53,7 @@ Current authorized continuation point:
 4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
 5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 6. The Project Owner / Human explicitly accepted that exact O4 implementation on 2026-09-14 and authorized Phase O5 with emphasis on token efficiency.
-7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay is now installed and ready; five blockers remain.
+7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay and Local Sync are now installed, enabled, and ready; four blockers remain.
 8. Current state is `O5_BLOCKED -> HUMAN_REQUIRED`. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
@@ -232,4 +232,15 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Local Sync activation failed with Windows `Access is denied`; it remains `Disabled`. No privilege or security boundary was bypassed.
 - Manual Local Sync smoke result: `UP_TO_DATE`; local and remote SHA both `ef9078b7c853d2d920430632a8aecdc4c0ec3e17`.
 - Refreshed readiness outcome: `BLOCKED` with five remaining blockers.
-- Exact next action: enable Local Sync from an elevated Windows session, then resolve Work automation scope/enabled state, monitoring, and protected-main verification before rerunning readiness.
+- At this checkpoint, the next action was elevated Local Sync activation; the later verification record below supersedes that blocker.
+
+
+## Phase O5 Local Sync elevated activation result — 2026-09-14
+
+- The Project Owner reported executing the approved Local Sync activation commands from an elevated PowerShell session.
+- Independent verification: task state `READY`, enabled `true`, run level `Limited`, latest task result `0`.
+- Local and remote `d021-agent-case-provisioning` heads match at `bc1749317450c449e8446bdf813bf13afa885715`.
+- Refreshed readiness evaluation verified both Local Sync and Windows Relay and returned `BLOCKED` with four remaining conditions.
+- Remaining blockers: Work automation repository scope, Work automation enabled state, monitoring, and protected-main Human Gate verification.
+- Status remains **O5_BLOCKED -> HUMAN_REQUIRED**.
+- Exact next action: identify and govern the Work automation update, then define monitoring and verify protected-main enforcement.

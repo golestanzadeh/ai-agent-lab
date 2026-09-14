@@ -464,4 +464,13 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 
 The two known user-owned untracked files were added to local `.git/info/exclude` so scheduled components cannot stage or process them. Their contents and locations were not changed, and this local exclusion is not committed.
 
-**Current gate:** O5 remains `BLOCKED`. Local Sync requires an elevated Windows activation, and Work automation scope/enabled state, monitoring, and protected-main enforcement remain unresolved. No privilege bypass, credential change, production activation, merge, release, or external transfer occurred.
+**Gate at this decision:** O5 remained `BLOCKED`; Local Sync required elevated Windows activation. The later D-040 record resolves that item. No privilege bypass, credential change, production activation, merge, release, or external transfer occurred.
+
+
+## D-040 — Phase O5 Local Sync elevated activation verification
+
+**Status:** completed and independently verified on 2026-09-14
+
+**Result:** After the Project Owner executed the approved commands in elevated PowerShell, `AI-Tax-Agent Local Sync` was independently verified enabled and `READY`, with run level `Limited` and latest task result `0`. Local and remote active-branch heads matched at `bc1749317450c449e8446bdf813bf13afa885715`.
+
+The refreshed readiness evaluator now verifies both Windows scheduled components and returns `BLOCKED` only for Work automation scope/enabled state, monitoring, and protected-main Human Gate verification. No credential, permission expansion, merge, release, production Agent activation, or external transfer occurred.

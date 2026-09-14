@@ -21,9 +21,9 @@ The evaluator accepts one explicit, non-secret JSON snapshot and requires exact 
 - No local Codex automation record proved an enabled Work automation scoped to `golestanzadeh/ai-agent-lab`.
 - Monitoring configuration and current protected-main enforcement have not yet been durably verified.
 
-The initial deterministic evaluation returned six blockers. After explicit Human authorization, Windows Relay was installed and verified `READY`; its first scheduled run returned success. Local Sync activation was attempted but Windows returned `Access is denied`, so it remains disabled. A manual bounded Local Sync smoke run returned `UP_TO_DATE` with matching local and remote commit `ef9078b7c853d2d920430632a8aecdc4c0ec3e17`.
+The initial deterministic evaluation returned six blockers. After explicit Human authorization, Windows Relay was installed and verified `READY`; its first scheduled run returned success. The first Local Sync activation attempt was denied by Windows, after which the Project Owner ran the activation commands from an elevated PowerShell session. Local Sync is now enabled and `READY`, its latest result is `0`, and local/remote branch heads match at `bc1749317450c449e8446bdf813bf13afa885715`.
 
-The refreshed evaluator remains `BLOCKED` with five conditions: Work automation repository scope, Work automation enabled state, monitoring verification, protected-main Human Gate verification, and the disabled Local Sync scheduled task.
+The refreshed evaluator remains `BLOCKED` with four conditions: Work automation repository scope, Work automation enabled state, monitoring verification, and protected-main Human Gate verification.
 
 ## Verification evidence
 
@@ -36,10 +36,9 @@ The refreshed evaluator remains `BLOCKED` with five conditions: Work automation 
 
 ## Required governed actions
 
-1. Enable the existing `AI-Tax-Agent Local Sync` scheduled task from an elevated Windows session; the current process lacks permission.
-2. Identify and update the exact Work automation so its repository scope is `golestanzadeh/ai-agent-lab`, then verify its enabled state.
-3. Define and verify the O5 monitoring configuration.
-4. Verify protected `main` Human-Gate enforcement; any protection change remains a separate governed action.
+1. Identify and update the exact Work automation so its repository scope is `golestanzadeh/ai-agent-lab`, then verify its enabled state.
+2. Define and verify the O5 monitoring configuration.
+3. Verify protected `main` Human-Gate enforcement; any protection change remains a separate governed action.
 
 After these actions, collect a fresh evidence snapshot and require evaluator `PASS`.
 
