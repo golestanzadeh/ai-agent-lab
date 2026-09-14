@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O5 and Phase P1 package 2 Human-accepted and complete; next package not authorized**
+Status: **in progress — Phase P1 package 3 authorized for synthetic, non-production official-material process design**
 
 Registered cross-phase cost-control artifact:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Amended Phase P1 package 2 Human-accepted and complete — next package and all external capabilities remain unauthorized**
+Status: **Phase P1 package 3 authorized for synthetic, non-production material registration and verification-process design — all external capabilities remain unauthorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -60,6 +60,12 @@ Registered Phase P1 package 2 artifacts:
 - `docs/p1-eric-adapter-contract.md` — package-2 boundary, unknowns, acceptance criteria, and next Human Gate.
 
 Initial package 2 implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`. The three Human-authorized hardening amendments are implemented at `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`: non-forgeable plans, hash-bound material/capability policies, and explicit blocked-mapping outcome. Amended verification: relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted the amended package and exact commit on 2026-09-14. Every further package, developer-access step, and external capability requires separate exact authority.
+
+Registered Phase P1 package 3 artifacts:
+
+- `src/agent_lab/eric_material_process.py` — deterministic synthetic-only registration and independent-review process for the three required ERiC material categories; official status remains blocked.
+- `tests/unit/test_eric_material_process.py` — completeness, uniqueness, route/version binding, review independence, mutation, and no-external-capability tests.
+- `docs/p1-eric-material-process.md` — package-3 process, acceptance criteria, limitations, and next boundary.
 
 Goals:
 
