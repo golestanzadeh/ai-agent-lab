@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase P1 package 3 authorized for synthetic, non-production official-material process design**
+Status: **in progress — Phase P1 package 3 technically complete; consolidated Human decision available**
 
 Registered cross-phase cost-control artifact:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 3 authorized for synthetic, non-production material registration and verification-process design — all external capabilities remain unauthorized**
+Status: **Phase P1 package 3 technically complete; Human acceptance required — all external capabilities remain unauthorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -66,6 +66,8 @@ Registered Phase P1 package 3 artifacts:
 - `src/agent_lab/eric_material_process.py` — deterministic synthetic-only registration and independent-review process for the three required ERiC material categories; official status remains blocked.
 - `tests/unit/test_eric_material_process.py` — completeness, uniqueness, route/version binding, review independence, mutation, and no-external-capability tests.
 - `docs/p1-eric-material-process.md` — package-3 process, acceptance criteria, limitations, and next boundary.
+
+Package 3 implementation commit: `2d6efd25e85ba9874ccbdad695b5b24c0c205887`. Verification: relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; Python compile check passed. The synthetic process is ready while official material status remains blocked. Package-3 acceptance may be combined with bounded continuous authority for remaining synthetic/non-production design work, but no such authority can cross an external or consequential Human Gate.
 
 Goals:
 

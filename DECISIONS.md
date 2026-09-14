@@ -597,3 +597,18 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Effect:** Package 2 moves from `P1_PACKAGE_2_AMENDED_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` to `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
 
 **Next gate:** This acceptance does not authorize a further package or any external capability. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission require separate exact Project Owner authority.
+
+
+## D-050 — Phase P1 package 3 synthetic ERiC material process
+
+**Status:** technically verified; Human acceptance required
+
+**Authority:** The Project Owner authorized only a synthetic, non-production design and implementation of the ERiC material registration and verification process. Registration, protected download, credentials, live connectivity, and real transmission were explicitly excluded.
+
+**Decision:** Require exactly one immutable synthetic record and one later independent synthetic review for each of the three material categories in the accepted adapter contract. Bind every record and review to exact identities, timestamps, route metadata, and canonical SHA-256 references. Fail closed on missing, duplicate, rejected, self-reviewed, reordered, mismatched, or mutated evidence.
+
+**Boundary:** `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` validates only the designed workflow. It cannot advance official status beyond `NOT_RECOVERED`, retrieve protected material, access a credential, make a network call, or transmit data.
+
+**Verification:** Implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`; relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; Python compile check passed. The first targeted run produced `13 failed, 53 passed` because `datetime` was not JSON serializable; deterministic ISO timestamp canonicalization fixed the defect before the successful rerun.
+
+**Workflow improvement:** Package-3 acceptance may be combined with one bounded authorization for continuous synthetic/non-production Phase P1 design and implementation. Routine inspection, implementation, repair, testing, documentation, commit, and checkpoint work may then continue without package-by-package approval until an external, credential, protected-material, production, transmission, constitutional, or other consequential Human Gate is reached.

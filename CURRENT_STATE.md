@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Await separate exact Project Owner authority for the next bounded Phase P1 package or developer-access/material-retrieval step. Phase P1 package 2 is Human-accepted and complete, but developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
+Review Phase P1 package 3 implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`. To reduce approval churn, the Project Owner may combine package-3 acceptance with continuous authority for all remaining synthetic/non-production Phase P1 design work until the first external, credential, protected-material, production, or transmission boundary.
 
 ## Non-negotiable constraints
 
@@ -227,3 +227,13 @@ Await separate exact Project Owner authority for the next bounded Phase P1 packa
 - Human acceptance: the Project Owner explicitly accepted amended package 2 and exact implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` on 2026-09-14.
 - Status: `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
 - Exact next action: await separate exact authority for the next Phase P1 package or developer-access/material-retrieval step. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.
+
+
+## Phase P1 package 3 technical checkpoint
+
+- Authorized boundary: synthetic, non-production material-registration and independent-review process only.
+- Implemented `src/agent_lab/eric_material_process.py`: exact three-category completeness, immutable SHA-256 identities, independent reviewer binding, deterministic ordering, mutation detection, and non-forgeable denial of every external capability.
+- Technical verification: relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; compile check passed.
+- Implementation commit: `2d6efd25e85ba9874ccbdad695b5b24c0c205887`.
+- Status: `P1_PACKAGE_3_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Exact next action: accept package 3 and optionally grant one bounded continuous authorization for remaining synthetic/non-production P1 work. Registration, protected retrieval, official-status advancement, credentials, live connectivity, production, and transmission remain unauthorized.
