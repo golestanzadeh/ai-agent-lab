@@ -584,3 +584,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Amended verification:** Commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`; relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; Python compile check passed.
 
 **Next gate:** The Project Owner must accept amended package 2 commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or request further exact amendments. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission remain unauthorized.
+
+
+## D-049 — Amended Phase P1 package 2 Human acceptance
+
+**Status:** accepted; package complete
+
+**Decision:** On 2026-09-14, the Project Owner explicitly accepted amended Phase P1 package 2 and exact implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
+
+**Accepted evidence:** Non-forgeable plan enforcement, hash-bound required-material and denied-capability policies, explicit `BOUNDARY_READY_MAPPING_BLOCKED` outcome, relevant package-1/package-2 suite `45 passed`, full regression `427 passed, 1 skipped`, and successful Python compile check.
+
+**Effect:** Package 2 moves from `P1_PACKAGE_2_AMENDED_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` to `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
+
+**Next gate:** This acceptance does not authorize a further package or any external capability. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission require separate exact Project Owner authority.

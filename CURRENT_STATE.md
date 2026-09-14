@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Review and explicitly accept amended Phase P1 package 2 implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or request further exact amendments. Developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
+Await separate exact Project Owner authority for the next bounded Phase P1 package or developer-access/material-retrieval step. Phase P1 package 2 is Human-accepted and complete, but developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -224,5 +224,6 @@ Review and explicitly accept amended Phase P1 package 2 implementation commit `3
 - Approved amendments implemented: non-forgeable plans, hash-bound material/capability policies, and explicit `BOUNDARY_READY_MAPPING_BLOCKED` outcome.
 - Amended technical verification: relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; compile check passed.
 - Amended implementation commit: `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
-- Status: `P1_PACKAGE_2_AMENDED_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
-- Exact next action: Human acceptance of commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or further exact amendments. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.
+- Human acceptance: the Project Owner explicitly accepted amended package 2 and exact implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` on 2026-09-14.
+- Status: `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
+- Exact next action: await separate exact authority for the next Phase P1 package or developer-access/material-retrieval step. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.

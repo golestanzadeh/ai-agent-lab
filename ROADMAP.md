@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O5 Human-accepted and complete; amended Phase P1 package 2 technically complete and awaiting Human review**
+Status: **in progress — Phase O5 and Phase P1 package 2 Human-accepted and complete; next package not authorized**
 
 Registered cross-phase cost-control artifact:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Amended Phase P1 package 2 technically complete; Human acceptance required — no external capability or transmission authorized**
+Status: **Amended Phase P1 package 2 Human-accepted and complete — next package and all external capabilities remain unauthorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -59,7 +59,7 @@ Registered Phase P1 package 2 artifacts:
 - `tests/unit/test_eric_adapter_contract.py` — exact-version, route-binding, official-material completeness, synthetic isolation, and capability-denial tests.
 - `docs/p1-eric-adapter-contract.md` — package-2 boundary, unknowns, acceptance criteria, and next Human Gate.
 
-Initial package 2 implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`. The three Human-authorized hardening amendments are implemented at `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`: non-forgeable plans, hash-bound material/capability policies, and explicit blocked-mapping outcome. Amended verification: relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; Python compile check passed. Human acceptance is required before any further package. Developer access and all external capabilities remain unauthorized.
+Initial package 2 implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`. The three Human-authorized hardening amendments are implemented at `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`: non-forgeable plans, hash-bound material/capability policies, and explicit blocked-mapping outcome. Amended verification: relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted the amended package and exact commit on 2026-09-14. Every further package, developer-access step, and external capability requires separate exact authority.
 
 Goals:
 

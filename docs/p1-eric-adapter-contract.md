@@ -1,6 +1,6 @@
 # Phase P1 package 2 — Versioned ERiC Adapter Contract
 
-Status: **TECHNICALLY VERIFIED / HUMAN ACCEPTANCE REQUIRED**
+Status: **HUMAN-ACCEPTED / PACKAGE COMPLETE**
 
 ## Authorized boundary
 
@@ -38,4 +38,6 @@ The required-material list and complete denied-capability policy are fields insi
 
 ## Next Human Gate
 
-After technical verification, the Project Owner must accept package 2 or request exact amendments. Obtaining developer access or official protected materials, recording verified material digests, implementing an ERiC FFI/XML mapping, using credentials/certificates, making a live connection, or transmitting anything requires separate exact authority.
+On 2026-09-14, the Project Owner explicitly accepted amended package 2 and exact implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
+
+Any further Phase P1 package, developer access, official protected-material retrieval, verified material digest registration, ERiC FFI/XML mapping, credential/certificate use, live connection, or transmission requires separate exact authority.
