@@ -29,9 +29,10 @@ The required-material list and complete denied-capability policy are fields insi
 
 ## Verification evidence
 
-- Implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
-- Relevant package-1/package-2 suite: `36 passed`.
-- Full repository regression: `418 passed, 1 skipped`.
+- Initial implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
+- Amended implementation commit: `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
+- Relevant package-1/package-2 suite after amendment: `45 passed`.
+- Full repository regression after amendment: `427 passed, 1 skipped`.
 - Python compile check: passed.
 - The first targeted invocation omitted the repository `src` import path and stopped during test collection with two import errors. The command was corrected to use the documented `PYTHONPATH=src` environment and passed; no test failure was hidden.
 

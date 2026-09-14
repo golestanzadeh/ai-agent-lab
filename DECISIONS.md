@@ -577,6 +577,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Capability boundary:** `BOUNDARY_READY` means only that the inert local contract is well formed. It does not permit official mapping, plausibility validation, FFI use, signing, credential/certificate access, networking, or transmission.
 
-**Verification:** Implementation commit `a024ff5c608700ff7650c4b9c02c643fa72884fd`; relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; Python compile check passed. The first targeted invocation omitted `PYTHONPATH=src` and stopped at collection; the corrected documented environment passed.
+**Initial verification:** Implementation commit `a024ff5c608700ff7650c4b9c02c643fa72884fd`; relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; Python compile check passed. The first targeted invocation omitted `PYTHONPATH=src` and stopped at collection; the corrected documented environment passed.
 
-**Next gate:** The Project Owner must accept package 2 or request exact amendments. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission remain unauthorized.
+**Authorized amendments:** The Project Owner approved three precise hardening changes: reject forged plans that enable a forbidden capability or network call; include required-material and denied-capability policies in the hash-bound contract and reject policy drift without a version change; replace `BOUNDARY_READY` with `BOUNDARY_READY_MAPPING_BLOCKED`.
+
+**Amended verification:** Commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`; relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; Python compile check passed.
+
+**Next gate:** The Project Owner must accept amended package 2 commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or request further exact amendments. Developer registration/account creation, manufacturer ID, official material retrieval or verification, ERiC FFI/XML implementation, credentials, certificates, live connectivity, ELSTER/Finanzamt contact, and transmission remain unauthorized.

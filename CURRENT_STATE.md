@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Review and explicitly accept Phase P1 package 2 implementation commit `a024ff5c608700ff7650c4b9c02c643fa72884fd` or request exact amendments. Developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
+Review and explicitly accept amended Phase P1 package 2 implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or request further exact amendments. Developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -220,7 +220,9 @@ Review and explicitly accept Phase P1 package 2 implementation commit `a024ff5c6
 
 - Authorized boundary: non-production versioned ERiC adapter design and implementation only; no registration, credentials, live connectivity, or real transmission.
 - Implemented `src/agent_lab/eric_adapter_contract.py`: immutable contract version `1`, exact ERiC 41.2 / UFA10 / tax-year 2024 / envelope-schema binding, explicit missing-official-material state, and no mapping or execution capability.
-- Technical verification: relevant package-1/package-2 suite `36 passed`; full regression `418 passed, 1 skipped`; compile check passed.
-- Implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
-- Status: `P1_PACKAGE_2_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
-- Exact next action: Human acceptance or exact amendments for package 2. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.
+- Initial implementation commit: `a024ff5c608700ff7650c4b9c02c643fa72884fd`.
+- Approved amendments implemented: non-forgeable plans, hash-bound material/capability policies, and explicit `BOUNDARY_READY_MAPPING_BLOCKED` outcome.
+- Amended technical verification: relevant package-1/package-2 suite `45 passed`; full regression `427 passed, 1 skipped`; compile check passed.
+- Amended implementation commit: `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
+- Status: `P1_PACKAGE_2_AMENDED_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- Exact next action: Human acceptance of commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd` or further exact amendments. No developer-access, official-material retrieval, FFI/XML, credential, live-connectivity, or transmission capability is authorized.
