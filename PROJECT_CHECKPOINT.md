@@ -53,7 +53,7 @@ Current authorized continuation point:
 4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
 5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 6. The Project Owner / Human explicitly accepted that exact O4 implementation on 2026-09-14 and authorized Phase O5 with emphasis on token efficiency.
-7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay and Local Sync are now installed, enabled, and ready; four blockers remain.
+7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay, Local Sync, monitoring, and protected-main enforcement are verified; only two Work automation blockers remain.
 8. Current state is `O5_BLOCKED -> HUMAN_REQUIRED`. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
@@ -254,4 +254,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Local Sync and Windows Relay now start subprocesses with `CREATE_NO_WINDOW`; the Relay installer uses `pythonw.exe` and registers a hidden task.
 - Windows Relay was reinstalled and verified enabled, hidden, `READY`, using `C:\Python314\pythonw.exe`, with last result `0`.
 - Regression verification: Local Sync and Windows Relay targeted suite `27 passed`.
-- O5 remains blocked only by Work automation scope/enabled state, monitoring, and protected-main Human Gate verification.
+- At this checkpoint, O5 still had Work automation, monitoring, and protected-main blockers; the later verification record below resolves the latter two.
+
+
+## Phase O5 monitoring and protected-main verification — 2026-09-14
+
+- GitHub ruleset `22799423` is active and targets `main`.
+- Its bypass list is empty; pull requests are required before merging; force pushes are blocked.
+- Monitoring evidence: Agent Bridge Passive Validation run `34821613554` completed successfully, and both Local Sync and Windows Relay report latest task result `0`.
+- A fresh readiness evaluation verified twelve conditions and returned `BLOCKED` only for Work automation repository scope and enabled state.
+- Current status: **O5_BLOCKED -> WORK_AUTOMATION_EVIDENCE_REQUIRED**.
+- Exact next action: identify the existing ChatGPT Work automation, change its repository scope from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab`, verify it is enabled, and rerun readiness.

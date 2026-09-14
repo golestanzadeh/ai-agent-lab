@@ -473,7 +473,7 @@ The two known user-owned untracked files were added to local `.git/info/exclude`
 
 **Result:** After the Project Owner executed the approved commands in elevated PowerShell, `AI-Tax-Agent Local Sync` was independently verified enabled and `READY`, with run level `Limited` and latest task result `0`. Local and remote active-branch heads matched at `bc1749317450c449e8446bdf813bf13afa885715`.
 
-The refreshed readiness evaluator now verifies both Windows scheduled components and returns `BLOCKED` only for Work automation scope/enabled state, monitoring, and protected-main Human Gate verification. No credential, permission expansion, merge, release, production Agent activation, or external transfer occurred.
+At this checkpoint, the evaluator verified both Windows scheduled components and still blocked on Work automation, monitoring, and protected-main verification. D-042 later resolves the monitoring and protected-main items. No credential, permission expansion, merge, release, production Agent activation, or external transfer occurred.
 
 
 ## D-041 — Windowless Windows scheduled execution
@@ -485,3 +485,14 @@ The refreshed readiness evaluator now verifies both Windows scheduled components
 **Decision:** Use `pythonw.exe` for the Windows Relay scheduled action, mark that task hidden, and pass Windows `CREATE_NO_WINDOW` to Local Sync and Windows Relay subprocess calls.
 
 **Verification:** Implementation commit `345cadb83ce0fd6b30b851c394cebdc891037672`; targeted regression `27 passed`. The reinstalled Relay is enabled, hidden, `READY`, uses `C:\Python314\pythonw.exe`, and returned last result `0`.
+
+
+## D-042 — Phase O5 monitoring and protected-main verification
+
+**Status:** verified on 2026-09-14
+
+**Protected main:** Active GitHub ruleset `22799423` targets `main`, has an empty bypass list, requires pull requests before merge, and blocks force pushes. This satisfies the current deterministic protected-main Human-Gate evidence requirement without changing repository settings.
+
+**Monitoring:** Agent Bridge Passive Validation run `34821613554` completed successfully for the latest windowless-execution checkpoint. Local Sync and Windows Relay were independently verified enabled and `READY`, with latest result `0`.
+
+**Readiness result:** A fresh evaluator snapshot verified twelve conditions and returned `BLOCKED` only for the unproven ChatGPT Work automation repository scope and enabled state. No GitHub setting, automation, permission, credential, merge, release, or external-transfer state was changed during this verification.
