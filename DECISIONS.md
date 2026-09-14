@@ -627,3 +627,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Mandatory stop boundaries:** Registration/account creation, protected download, manufacturer ID, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, action on protected `main`, merge, or any other consequential Human Gate require separate exact authority.
 
 **Continuation:** Begin with the registered immutable synthetic Human-readable preview package, then continue through other registered work inside the same boundary until a mandatory stop or token-controller pause.
+
+
+## D-052 — Synthetic Human-readable ELSTER preview
+
+**Status:** implemented and verified under continuous authority
+
+**Decision:** Create a deterministic preview artifact bound to the exact synthetic envelope, accepted adapter contract, completed synthetic material process, ERiC route metadata, and immutable non-production warning. JSON-quote free text so it cannot inject preview structure.
+
+**Boundary:** The preview is not an official tax form and proves no official XML mapping or plausibility result. Its constructor cannot enable credential access, network calls, or transmission, and its disclaimer cannot be weakened.
+
+**Verification:** Implementation commit `8237882d29c2d7171f776fe684e2f0d1b609d476`; relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; Python compile check passed.
+
+**Continuation:** No package-level Human Gate applies. Continue with the registered synthetic submission-lifecycle/idempotency package while D-051 authority remains active.

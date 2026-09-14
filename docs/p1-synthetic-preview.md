@@ -1,6 +1,6 @@
 # Phase P1 continuous package — Synthetic Human-readable Preview
 
-Status: **IMPLEMENTED UNDER CONTINUOUS NON-PRODUCTION AUTHORITY**
+Status: **COMPLETE / VERIFIED UNDER CONTINUOUS NON-PRODUCTION AUTHORITY**
 
 ## Boundary
 
@@ -20,3 +20,11 @@ The rendered text uses a fixed field order. Free-text purpose content is JSON-qu
 - Official-material status remains `NOT_RECOVERED` and official mapping remains blocked.
 - Direct construction or replacement cannot weaken the disclaimer or enable credentials, networking, or transmission.
 - No real data, protected material, credential, connection, or external transfer is used.
+
+## Verification evidence
+
+- Implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`.
+- Relevant P1 suite: `77 passed`.
+- Full repository regression: `459 passed, 1 skipped`.
+- Python compile check: passed.
+- No package-level Human Gate applies under the active revocable continuous authority.

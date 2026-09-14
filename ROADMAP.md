@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase P1 package 3 Human-accepted; revocable continuous non-production authority active**
+Status: **in progress — Phase P1 package 4 complete; revocable continuous non-production authority active**
 
 Registered cross-phase cost-control artifact:
 
@@ -74,6 +74,14 @@ Next registered continuous-authority package:
 - `src/agent_lab/elster_preview.py` — immutable Human-readable synthetic preview bound to accepted P1 identities with no execution capability.
 - `tests/unit/test_elster_preview.py` — preview completeness, deterministic rendering, mutation sensitivity, binding, and capability-denial tests.
 - `docs/p1-synthetic-preview.md` — preview contract, limitations, evidence, and continuation boundary.
+
+Package 4 implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`. Verification: relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; Python compile check passed. It completed under continuous authority without a package-level Human Gate.
+
+Next registered continuous-authority package:
+
+- `src/agent_lab/elster_submission_lifecycle.py` — synthetic-only state machine for idempotency, bounded retry planning, duplicate prevention, and receipt placeholders with no transmitter.
+- `tests/unit/test_elster_submission_lifecycle.py` — transition, identity, retry, duplicate, mutation, and capability-denial tests.
+- `docs/p1-synthetic-submission-lifecycle.md` — lifecycle contract, limitations, evidence, and external boundary.
 
 Goals:
 

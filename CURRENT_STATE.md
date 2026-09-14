@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Continue autonomously across remaining local, synthetic, non-production Phase P1 work under the Project Owner's revocable continuous authority. The next bounded package is an immutable Human-readable preview tied to accepted P1 artifact identities and incapable of network access or transmission. Stop before any external, credential, protected-material, real-data, production, architecture/governance, or `main` boundary.
+Continue autonomously across remaining local, synthetic, non-production Phase P1 work under the Project Owner's revocable continuous authority. Package 4 preview is complete; the next bounded package is a synthetic submission-lifecycle/idempotency design with no transmitter. Stop before any external, credential, protected-material, real-data, production, architecture/governance, or `main` boundary.
 
 ## Non-negotiable constraints
 
@@ -239,3 +239,13 @@ Continue autonomously across remaining local, synthetic, non-production Phase P1
 - Status: `P1_PACKAGE_3_ACCEPTED / PACKAGE COMPLETE`.
 - Continuous authority: all remaining local, synthetic, non-production P1 design, implementation, repair, testing, documentation, commit, push, bounded delegation, review, and result-control work may continue without package-by-package approval. This authority is revocable and editable at any time.
 - Exact next action: implement the synthetic Human-readable preview package. Registration, protected retrieval, official-status advancement, credentials, real data, external connectivity, production, architecture/governance changes, `main`, and transmission remain Human Gates.
+
+
+## Phase P1 package 4 synthetic preview checkpoint
+
+- Continuous-authority activation commit: `4532328a8069393324d7cc63bd08a91c5620acd9`.
+- Implemented an immutable Human-readable preview with exact upstream identity binding, deterministic rendering, line-injection resistance, mutation sensitivity, and non-forgeable denial of credential/network/transmission capability.
+- Technical verification: relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; compile check passed.
+- Implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`.
+- Status: `P1_PACKAGE_4_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+- Exact next action: implement a synthetic submission-lifecycle/idempotency package unless a token or Human Gate intervenes.

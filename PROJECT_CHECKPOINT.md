@@ -61,6 +61,7 @@ Current authorized continuation point:
 12. On 2026-09-14, the Project Owner explicitly authorized Phase P1 package 2 only for non-production design of a versioned ERiC adapter, without registration, credentials, live connectivity, or real transmission. After technical review, the Project Owner authorized three hardening amendments: make plans non-forgeable, bind material/capability policy into the contract identity, and replace the ambiguous ready outcome. The Project Owner then explicitly accepted the amended implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`; current status is `P1_PACKAGE_2_ACCEPTED / PACKAGE COMPLETE`.
 13. The Project Owner authorized Phase P1 package 3 only for a synthetic, non-production ERiC material registration and verification-process design, without registration, protected download, credentials, connectivity, or transmission. The Project Owner explicitly accepted implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`; current status is `P1_PACKAGE_3_ACCEPTED / PACKAGE COMPLETE`.
 14. The Project Owner granted revocable and editable continuous authority for all remaining local, synthetic, non-production Phase P1 design, implementation, repair, testing, documentation, commit, push, bounded Agent delegation, review, and result-control work. Package-by-package approval is no longer required inside that exact boundary. Work must stop before registration, protected download, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, or action on `main`.
+15. The continuous authority was durably activated at commit `4532328a8069393324d7cc63bd08a91c5620acd9`. The first continuous package, an immutable synthetic Human-readable preview, is implemented and verified at commit `8237882d29c2d7171f776fe684e2f0d1b609d476`; current status is `P1_PACKAGE_4_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -360,3 +361,15 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Token controller remains active: caution at 25% five-hour or 20% weekly remaining; durable pause at 15% five-hour or 10% weekly remaining; guarded automatic resume only under the accepted controller conditions.
 - Current continuation: design and implement the next registered local synthetic package, beginning with an immutable Human-readable preview bound to the accepted P1 artifacts and incapable of transmission.
 - Status: **P1_CONTINUOUS_NON_PRODUCTION_AUTHORITY_ACTIVE**.
+
+
+## Phase P1 package 4 synthetic preview completion — 2026-09-14
+
+- Implemented `src/agent_lab/elster_preview.py`, `tests/unit/test_elster_preview.py`, and `docs/p1-synthetic-preview.md` under the active continuous authority.
+- The preview binds package-1 envelope identity, accepted adapter-contract identity, completed synthetic material-process evidence, route/version metadata, synthetic values, official-material status, and an immutable warning.
+- Rendering is deterministic; free-text purpose content is JSON-quoted to prevent structure injection; any payload or binding mutation changes the artifact identity.
+- Official mapping remains blocked. Credential access, network calls, signing, and transmission are absent and direct capability-forging attempts fail closed.
+- Verification: relevant P1 suite `77 passed`; full regression `459 passed, 1 skipped`; Python compile check passed.
+- Implementation commit: `8237882d29c2d7171f776fe684e2f0d1b609d476`.
+- Status: **P1_PACKAGE_4_COMPLETE / NO PACKAGE-LEVEL HUMAN GATE**.
+- Exact next action: continue with a synthetic, non-production submission-lifecycle and idempotency package unless the token controller enters caution/pause or a mandatory Human Gate is reached.
