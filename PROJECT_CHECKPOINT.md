@@ -174,3 +174,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - O4 scope remains one low-risk, reversible, non-tax-private work package that verifies multi-session continuation, bounded retries, independent acceptance, recovery, cost reporting, and concise Human interaction.
 - Token-efficient execution: use progressive context loading, one bounded work package, one implementation owner, targeted tests first, and broader regression only when integration risk or phase acceptance requires it.
 - This pause grants no real Agent, credential, A6, private case-data, production, protected-main, destructive, tax-submission, or external-transfer authority.
+
+
+## Phase O4 resumed — 2026-09-14
+
+- The Project Owner instructed continuation from the checkpoint at 09:40 Europe/Berlin with a scheduled stop at 11:30 Europe/Berlin.
+- The bounded pilot is a deterministic local consistency check of explicitly allowlisted public governance documents.
+- Planned artifacts were registered in `ROADMAP.md` before creation.
+- The pilot may use only local synthetic Kernel state and temporary JSON evidence. It may not access tax-case data, network services, credentials, protected `main`, production, or any external destination.
+- Resume status: `O4_RESUMED / DESIGN_REGISTERED`.
+- Exact next action: implement the registered pilot, run targeted and relevant verification, preserve a recovery checkpoint, and stop no later than 11:30 Europe/Berlin.

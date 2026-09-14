@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-13**
+Last reconciled: **2026-09-14**
 
 ## Authoritative status
 
@@ -76,7 +76,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Resume the already-authorized Phase O4 on or after 2026-09-14 by designing one bounded, low-risk, reversible, non-tax-private pilot and registering any future files before creation. Phase O4 work is intentionally deferred until then. Real Agent activation beyond that bounded pilot, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Implement and verify the registered Phase O4 deterministic governance-document consistency pilot before the scheduled 11:30 Europe/Berlin stop. Real Agent activation beyond the bounded pilot, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -130,3 +130,12 @@ Resume the already-authorized Phase O4 on or after 2026-09-14 by designing one b
 - All execution evidence used synthetic local SQLite databases. No real Agent or external capability was activated.
 - Human acceptance: the Project Owner explicitly accepted implementation commit `d70a28b9b33710a81881855048baccb63f3fc176` on 2026-09-13 and authorized Phase O4.
 - Current state: `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED` until 2026-09-14 under an organized token-budget pause.
+
+
+## Phase O4 resumed checkpoint
+
+- Phase O4 resumed at the Project Owner's instruction on 2026-09-14 at 09:40 Europe/Berlin.
+- Scheduled stop: 11:30 Europe/Berlin on 2026-09-14.
+- Selected pilot: deterministic local consistency validation of explicitly allowlisted public governance documents.
+- Registered artifacts: `src/agent_lab/orchestrator_pilot.py`, `scripts/run_o4_pilot.py`, `tests/unit/test_orchestrator_pilot.py`, and `docs/o4-controlled-autonomous-development-pilot.md`.
+- Status: `O4_RESUMED / DESIGN_REGISTERED`.

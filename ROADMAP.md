@@ -169,3 +169,14 @@ The following artifacts are registered for Phase O3. They depend on the Human-ac
 Phase O3 implementation may create and validate synthetic local Kernel databases only. Real Agent activation, credential issuance, A6 authority, production deployment, protected-main action, private tax-case processing, and external transfer remain outside this phase.
 
 Phase O3 implementation and technical verification completed at `d70a28b9b33710a81881855048baccb63f3fc176` and was explicitly Human-accepted on 2026-09-13. Phase O4 is authorized but intentionally deferred until 2026-09-14 to preserve the remaining five-hour token allowance. On resumption, design one bounded low-risk pilot and register any required future artifacts here before creating them.
+
+## Registered Phase O4 pilot artifacts
+
+Phase O4 resumed on 2026-09-14 under the Project Owner's existing authorization and the scheduled 11:30 Europe/Berlin stop. The selected work package is a deterministic local consistency check of explicitly allowlisted public governance documents. It reads no tax-case data, uses no network or credential, and performs no external or protected-main action.
+
+- `src/agent_lab/orchestrator_pilot.py` — resumable pilot controller and allowlisted deterministic work-package executor.
+- `scripts/run_o4_pilot.py` — local initialize/resume/inspect command with explicit database and evidence paths.
+- `tests/unit/test_orchestrator_pilot.py` — end-to-end continuation, retry, independent acceptance, recovery, budget, scope, and stop-control coverage.
+- `docs/o4-controlled-autonomous-development-pilot.md` — pilot contract, scope, state flow, acceptance criteria, evidence, and authority boundary.
+
+Generated pilot databases and evidence remain outside version control. Technical completion cannot authorize Phase O5, production operation, private case access, credential use, protected-main action, or external transfer.
