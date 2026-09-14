@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 1 technically complete; Human acceptance required — no transmission performed**
+Status: **Phase P1 package 1 Human-accepted and complete — package 2 not authorized; no transmission performed**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -51,7 +51,7 @@ Registered Phase P1 package 1 artifacts:
 - `tests/unit/test_elster_dry_run.py` — exact-route, synthetic isolation, immutable identity, two-stage ordering/binding, expiry, mutation, and no-transmission tests.
 - `docs/p1-controlled-elster-path.md` — official-route evidence, bounded architecture, acceptance criteria, limitations, and next Human Gate.
 
-Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. Package 2 is not authorized.
+Package 1 implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted this exact package and commit on 2026-09-14. Package 2 and every developer-access or external-capability step require separate explicit authority.
 
 Goals:
 

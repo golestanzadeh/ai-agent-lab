@@ -1,6 +1,6 @@
 # Phase P1 — Controlled ELSTER/Finanzamt Path
 
-Status: **PACKAGE 1 TECHNICALLY VERIFIED; HUMAN ACCEPTANCE REQUIRED**
+Status: **PACKAGE 1 HUMAN-ACCEPTED / COMPLETE**
 
 ## Authorized boundary
 
@@ -58,6 +58,8 @@ The exact official schema, plausibility rules, ERiC API, supported platform pack
 - Python compile check: passed.
 - The first full-suite invocation executed all cases but failed during cleanup of pytest's shared Windows temporary link. A rerun with a unique isolated temporary base completed successfully. This was an environment cleanup failure, not a test-case failure, and it is preserved here rather than silently omitted.
 
-## Next Human Gate
+## Human acceptance and next gate
 
-After technical verification, the Project Owner must review and accept package 1 before package 2 begins. Package 2 should remain non-production and may only design a versioned adapter boundary around verified official ERiC documentation. Registration, account creation, manufacturer ID, package download, credential/certificate handling, or any live test requires separate exact authority.
+On 2026-09-14, the Project Owner explicitly accepted package 1 and exact implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862`. Package 1 is therefore `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
+
+This acceptance does not begin or authorize package 2. Any package-2 work must remain non-production and may only proceed after separate exact authority. Registration, account creation, manufacturer ID, package download, credential/certificate handling, live connectivity, or any real transmission likewise requires separate exact authority.

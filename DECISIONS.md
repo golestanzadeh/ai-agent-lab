@@ -552,3 +552,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Gate:** Package 1 requires exact Project Owner acceptance before package 2. Technical success is not approval to obtain developer access or use an external capability.
 
 **Non-authorization:** Developer registration, account creation, manufacturer ID, ERiC download, credentials, certificates, real taxpayer data, live connectivity, submission, Finanzamt contact, and external transfer remain unauthorized.
+
+
+## D-047 — Phase P1 package 1 Human acceptance
+
+**Status:** accepted; package complete
+
+**Decision:** On 2026-09-14, the Project Owner explicitly accepted Phase P1 package 1 and exact implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862`.
+
+**Accepted evidence:** Targeted package-1 suite `23 passed`; full regression `405 passed, 1 skipped`; Python compile check passed. The acceptance preserves the recorded Windows pytest temporary-link cleanup incident and the successful isolated-base rerun.
+
+**Effect:** Package 1 moves from `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` to `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
+
+**Next gate:** This decision does not authorize package 2 or any external capability. Developer registration/account creation, manufacturer ID, ERiC package retrieval, credentials, certificates, real taxpayer data, live connectivity, submission, Finanzamt contact, and external transfer require separate exact Project Owner authority.

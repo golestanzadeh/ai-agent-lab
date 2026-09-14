@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Review and explicitly accept Phase P1 package 1 or request exact amendments. The package is technically verified but package 2, developer registration/access, official ERiC package retrieval, credentials, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
+Await separate explicit Project Owner authority for the next bounded Phase P1 package or developer-access step. Phase P1 package 1 is Human-accepted and complete, but package 2, developer registration/account creation, manufacturer ID, official ERiC package retrieval, credentials, certificates, live connectivity, production Agent activation, protected-main action, release, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -211,5 +211,6 @@ Review and explicitly accept Phase P1 package 1 or request exact amendments. The
 - Implemented `src/agent_lab/elster_dry_run.py`: exact ERiC 41.2 / UFA 10 / tax-year 2024 metadata, synthetic-only envelope, deterministic artifact identity, separate ordered approval binding, and permanently disabled transmission/network/credential capability.
 - Technical verification: targeted `23 passed`; full regression `405 passed, 1 skipped`; compile check passed.
 - Implementation commit: `aaf5bec86e103480ef5d36cedca29cfbfb607862`.
-- Status: `P1_PACKAGE_1_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
-- Exact next action: Human acceptance or exact amendments for package 1. No package 2 or external capability is authorized.
+- Human acceptance: the Project Owner explicitly accepted package 1 and exact implementation commit `aaf5bec86e103480ef5d36cedca29cfbfb607862` on 2026-09-14.
+- Status: `P1_PACKAGE_1_ACCEPTED / PACKAGE COMPLETE`.
+- Exact next action: await separate explicit authority for package 2 or any developer-access step. No package 2 or external capability is authorized.
