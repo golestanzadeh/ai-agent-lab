@@ -51,8 +51,9 @@ Current authorized continuation point:
 2. Phase O2 is complete and Human-accepted at exact contract-set commit `382a140e42496ad9edd92dc2016cfde51d091575`.
 3. Phase O3 deterministic Orchestrator Kernel was implemented and technically verified at commit `d70a28b9b33710a81881855048baccb63f3fc176`.
 4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
-5. Current state is `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED`; Phase O4 is intentionally paused until 2026-09-14 because only about 25% of the current five-hour token allowance remained.
-6. Real Agent activation beyond the bounded O4 pilot, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
+5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
+6. Current state is `O4_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED` for exact Phase O4 acceptance or amendment.
+7. Phase O5, production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -183,4 +184,19 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Planned artifacts were registered in `ROADMAP.md` before creation.
 - The pilot may use only local synthetic Kernel state and temporary JSON evidence. It may not access tax-case data, network services, credentials, protected `main`, production, or any external destination.
 - Resume status: `O4_RESUMED / DESIGN_REGISTERED`.
-- Exact next action: implement the registered pilot, run targeted and relevant verification, preserve a recovery checkpoint, and stop no later than 11:30 Europe/Berlin.
+
+
+## Phase O4 technical completion checkpoint — 2026-09-14
+
+- Implemented the deterministic governance-document consistency pilot at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
+- Verified separate start/resume Kernel instances, durable pause/recovery, allowlisted document hashing, evidence-drift rejection, independent acceptance, budget reporting, bounded retry enforcement, audit integrity, final checkpoint, and final `HALTED` kill-switch state.
+- Targeted O4 suite: `5 passed`.
+- Relevant O2/O3/O4/Agent Bridge suite: `49 passed`.
+- Full regression: `368 passed, 1 skipped`.
+- Local two-invocation demonstration: `COMPLETED`; audit `PASS`; 2 tasks, 2 manifests, 1 response, 1 independent acceptance, 2 checkpoints, and 21 audit events.
+- Recorded pilot cost: 0 model tokens, 12 bounded local tool operations, USD 0 external cost.
+- Generated SQLite and JSON evidence remained in a local temporary directory outside version control.
+- Completion time was approximately 09:47 Europe/Berlin, before the scheduled 11:30 stop.
+- No tax-case data, network, credential, external service, LLM dispatch, protected-main action, production operation, or external transfer was used.
+- Status: **O4_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED**.
+- Exact next action: Human reviews and explicitly accepts implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` or requests exact amendments. Phase O5 may not begin before that acceptance.

@@ -26,6 +26,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Windows Relay architecture accepted and implementation technically verified.
 - Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
+- Phase O4 bounded autonomous-development pilot implemented and technically verified; Human phase acceptance remains pending.
 
 ## Active system boundaries
 
@@ -76,7 +77,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Implement and verify the registered Phase O4 deterministic governance-document consistency pilot before the scheduled 11:30 Europe/Berlin stop. Real Agent activation beyond the bounded pilot, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Human review and explicit acceptance or exact amendment of the Phase O4 pilot at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`. Phase O5, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -129,7 +130,7 @@ Implement and verify the registered Phase O4 deterministic governance-document c
 - Implementation commit: `d70a28b9b33710a81881855048baccb63f3fc176`.
 - All execution evidence used synthetic local SQLite databases. No real Agent or external capability was activated.
 - Human acceptance: the Project Owner explicitly accepted implementation commit `d70a28b9b33710a81881855048baccb63f3fc176` on 2026-09-13 and authorized Phase O4.
-- Current state: `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED` until 2026-09-14 under an organized token-budget pause.
+- Prior pause state: `O3_ACCEPTED / O4_AUTHORIZED_BUT_DEFERRED`; that planned pause ended when O4 resumed on 2026-09-14.
 
 
 ## Phase O4 resumed checkpoint
@@ -138,4 +139,14 @@ Implement and verify the registered Phase O4 deterministic governance-document c
 - Scheduled stop: 11:30 Europe/Berlin on 2026-09-14.
 - Selected pilot: deterministic local consistency validation of explicitly allowlisted public governance documents.
 - Registered artifacts: `src/agent_lab/orchestrator_pilot.py`, `scripts/run_o4_pilot.py`, `tests/unit/test_orchestrator_pilot.py`, and `docs/o4-controlled-autonomous-development-pilot.md`.
-- Status: `O4_RESUMED / DESIGN_REGISTERED`.
+- Resumption record: `O4_RESUMED / DESIGN_REGISTERED`; superseded by the technical-completion checkpoint below.
+
+
+## Phase O4 technical completion checkpoint
+
+- Status: `O4_TECHNICALLY_COMPLETE -> HUMAN_REQUIRED`.
+- The two-stage local pilot completed through durable pause, recovery, independent acceptance, and final halt.
+- Verification: O4 targeted `5 passed`; relevant O2/O3/O4/Bridge `49 passed`; full regression `368 passed, 1 skipped`; compile check passed.
+- Demonstration: audit `PASS`, final kill switch `HALTED`, one acceptance record, two checkpoints, 21 audit events, zero model tokens, 12 bounded local tool operations, and zero external cost.
+- Implementation commit: `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
+- Phase O5 remains behind exact Human acceptance.

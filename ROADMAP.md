@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O3 accepted; Phase O4 authorized and deferred until 2026-09-14**
+Status: **in progress — Phase O4 technically complete; Human acceptance gate open**
 
 Goals:
 
@@ -139,7 +139,7 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-Phase O2 and Phase O3 are complete and Human-accepted. Phase O4 is authorized and intentionally deferred until 2026-09-14. Agent activation beyond its bounded pilot remains gated behind later phases.
+Phase O2 and Phase O3 are complete and Human-accepted. Phase O4 resumed on 2026-09-14 and is technically complete pending Human acceptance. Agent activation beyond its bounded pilot remains gated behind later phases.
 
 ## Registered Phase O2 artifacts
 
@@ -168,7 +168,7 @@ The following artifacts are registered for Phase O3. They depend on the Human-ac
 
 Phase O3 implementation may create and validate synthetic local Kernel databases only. Real Agent activation, credential issuance, A6 authority, production deployment, protected-main action, private tax-case processing, and external transfer remain outside this phase.
 
-Phase O3 implementation and technical verification completed at `d70a28b9b33710a81881855048baccb63f3fc176` and was explicitly Human-accepted on 2026-09-13. Phase O4 is authorized but intentionally deferred until 2026-09-14 to preserve the remaining five-hour token allowance. On resumption, design one bounded low-risk pilot and register any required future artifacts here before creating them.
+Phase O3 implementation and technical verification completed at `d70a28b9b33710a81881855048baccb63f3fc176` and was explicitly Human-accepted on 2026-09-13. The planned token-budget pause ended when Phase O4 resumed on 2026-09-14.
 
 ## Registered Phase O4 pilot artifacts
 
@@ -180,3 +180,5 @@ Phase O4 resumed on 2026-09-14 under the Project Owner's existing authorization 
 - `docs/o4-controlled-autonomous-development-pilot.md` — pilot contract, scope, state flow, acceptance criteria, evidence, and authority boundary.
 
 Generated pilot databases and evidence remain outside version control. Technical completion cannot authorize Phase O5, production operation, private case access, credential use, protected-main action, or external transfer.
+
+Phase O4 implementation and technical verification completed at `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`. Phase O5 remains blocked until explicit Human acceptance of this exact O4 result.

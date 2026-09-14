@@ -413,3 +413,18 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 **Efficiency rule:** Apply the existing progressive-context protocol: load only checkpoint and directly relevant O4 contracts first, keep one implementation owner for the bounded package, run targeted tests before relevant regression, and reserve full regression for integration risk or phase acceptance. Token savings may not weaken correctness, audit, privacy, security, or Human Gates.
 
 **Non-authorization:** This scheduling decision does not authorize production operation, private tax-case processing, credentials, A6, protected-main action, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
+
+
+## D-036 — Phase O4 controlled autonomous-development pilot
+
+**Status:** implemented and technically verified; awaiting explicit Human phase acceptance
+
+**Decision:** Use a deterministic local consistency check of five explicitly allowlisted public governance documents as the single Phase O4 work package. The pilot records document hashes and required markers, stops at a durable paused checkpoint, recovers in a separate Kernel instance, requires a distinct Independent Acceptance identity, and ends with a verified checkpoint and the global kill switch halted.
+
+**Verification:** O4 targeted suite `5 passed`; relevant O2/O3/O4/Agent Bridge suite `49 passed`; full regression `368 passed, 1 skipped`; Python compile check passed. A local two-invocation demonstration completed with audit integrity `PASS`, 2 tasks, 2 manifests, 1 response, 1 independent acceptance record, 2 checkpoints, 21 audit events, zero model tokens, 12 bounded local tool operations, and zero external cost.
+
+**Implementation commit:** `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
+
+**Current gate:** Technical success is not phase acceptance. Phase O5 requires explicit Project Owner acceptance of the exact O4 implementation or an exact amendment request.
+
+**Non-authorization:** The pilot used no tax-case data, network, credential, external service, LLM dispatch, protected-main write, merge, release, production operation, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.

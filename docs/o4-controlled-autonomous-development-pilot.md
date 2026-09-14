@@ -1,6 +1,6 @@
 # Phase O4 — Controlled Autonomous Development Pilot
 
-Status: **IMPLEMENTED; VERIFICATION PENDING**
+Status: **IMPLEMENTED AND TECHNICALLY VERIFIED; HUMAN PHASE ACCEPTANCE REQUIRED**
 
 ## Work package
 
@@ -43,6 +43,19 @@ python scripts/run_o4_pilot.py inspect C:\temporary\o4.sqlite3
 7. Durable budget reporting matches the response record.
 8. Retry count and identity are bounded and audited.
 9. Targeted and relevant regression tests pass.
+
+## Verification evidence
+
+- Targeted O4 suite: `5 passed`.
+- Relevant O2/O3/O4/Agent Bridge suite: `49 passed`.
+- Full repository regression: `368 passed, 1 skipped`.
+- Python compile check passed for the pilot controller and CLI.
+- A real local two-invocation demonstration completed with one independent acceptance record, two checkpoints, 21 audit events, audit integrity `PASS`, final kill switch `HALTED`, zero model tokens, 12 bounded local tool operations, and zero external cost.
+- Demonstration evidence SHA-256: `sha256:62a593e1940fc0c09a5ec849ff3e29c75baa406d8cb9e4947e6d46efdba4c680`.
+- Final demonstration checkpoint SHA-256: `sha256:24cb8d7fb5fd6f4343863de668a9604f75e44bc9b75d4ff66d5e2dc643111f38`.
+- Implementation commit: `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
+
+All generated state and evidence remained in a local temporary directory outside version control. No private or external system was accessed.
 
 ## Phase boundary
 
