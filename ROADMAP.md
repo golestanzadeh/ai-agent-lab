@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase P1 package 3 technically complete; consolidated Human decision available**
+Status: **in progress — Phase P1 package 3 Human-accepted; revocable continuous non-production authority active**
 
 Registered cross-phase cost-control artifact:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 3 technically complete; Human acceptance required — all external capabilities remain unauthorized**
+Status: **Phase P1 package 3 Human-accepted; continuous local synthetic/non-production work authorized — all external capabilities remain unauthorized**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -67,7 +67,13 @@ Registered Phase P1 package 3 artifacts:
 - `tests/unit/test_eric_material_process.py` — completeness, uniqueness, route/version binding, review independence, mutation, and no-external-capability tests.
 - `docs/p1-eric-material-process.md` — package-3 process, acceptance criteria, limitations, and next boundary.
 
-Package 3 implementation commit: `2d6efd25e85ba9874ccbdad695b5b24c0c205887`. Verification: relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; Python compile check passed. The synthetic process is ready while official material status remains blocked. Package-3 acceptance may be combined with bounded continuous authority for remaining synthetic/non-production design work, but no such authority can cross an external or consequential Human Gate.
+Package 3 implementation commit: `2d6efd25e85ba9874ccbdad695b5b24c0c205887`. Verification: relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; Python compile check passed. The Project Owner explicitly accepted the package and activated revocable continuous authority for remaining local synthetic/non-production P1 work. No such authority crosses an external or consequential Human Gate.
+
+Next registered continuous-authority package:
+
+- `src/agent_lab/elster_preview.py` — immutable Human-readable synthetic preview bound to accepted P1 identities with no execution capability.
+- `tests/unit/test_elster_preview.py` — preview completeness, deterministic rendering, mutation sensitivity, binding, and capability-denial tests.
+- `docs/p1-synthetic-preview.md` — preview contract, limitations, evidence, and continuation boundary.
 
 Goals:
 

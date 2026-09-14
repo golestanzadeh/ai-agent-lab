@@ -612,3 +612,18 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`; relevant P1 suite `66 passed`; full regression `448 passed, 1 skipped`; Python compile check passed. The first targeted run produced `13 failed, 53 passed` because `datetime` was not JSON serializable; deterministic ISO timestamp canonicalization fixed the defect before the successful rerun.
 
 **Workflow improvement:** Package-3 acceptance may be combined with one bounded authorization for continuous synthetic/non-production Phase P1 design and implementation. Routine inspection, implementation, repair, testing, documentation, commit, and checkpoint work may then continue without package-by-package approval until an external, credential, protected-material, production, transmission, constitutional, or other consequential Human Gate is reached.
+
+
+## D-051 — Package 3 acceptance and revocable continuous Phase P1 authority
+
+**Status:** accepted and active
+
+**Acceptance:** On 2026-09-14, the Project Owner explicitly accepted package 3 and exact implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`.
+
+**Continuous authority:** Remaining local, synthetic, non-production Phase P1 inspection, design, implementation, repair, testing, documentation, commit, push, bounded Agent delegation, review, and result-control work may continue without package-by-package approval.
+
+**Revocation and amendment:** This authority is explicitly revocable and editable. The latest Project Owner instruction controls future work and cannot retroactively authorize an already forbidden action.
+
+**Mandatory stop boundaries:** Registration/account creation, protected download, manufacturer ID, credentials/certificates, real data, external connectivity, ELSTER/Finanzamt contact or transmission, production, architecture or governing-rule change, action on protected `main`, merge, or any other consequential Human Gate require separate exact authority.
+
+**Continuation:** Begin with the registered immutable synthetic Human-readable preview package, then continue through other registered work inside the same boundary until a mandatory stop or token-controller pause.

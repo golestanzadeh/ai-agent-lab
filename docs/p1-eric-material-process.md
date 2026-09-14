@@ -1,6 +1,6 @@
 # Phase P1 package 3 — ERiC Material Registration and Verification Process
 
-Status: **TECHNICALLY VERIFIED / HUMAN ACCEPTANCE REQUIRED**
+Status: **HUMAN-ACCEPTED / PACKAGE COMPLETE**
 
 ## Authorized boundary
 
@@ -25,7 +25,7 @@ Package 3 designs and implements only a synthetic, local process for registering
 
 ## Next boundary
 
-After technical verification, package 3 requires Human acceptance under the current package-by-package workflow. A separate consolidated authorization may instead permit continuous work across remaining synthetic/non-production design packages, but it cannot include registration, protected retrieval, credentials, live connectivity, production, or transmission.
+On 2026-09-14, the Project Owner explicitly accepted package 3 and implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`, and activated revocable continuous authority for remaining local synthetic/non-production Phase P1 work. This authority cannot include registration, protected retrieval, credentials, real data, external connectivity, architecture/governance change, production, `main`, or transmission.
 
 ## Verification evidence
 
