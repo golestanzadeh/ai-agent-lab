@@ -443,7 +443,7 @@ Use one low-risk, reversible, non-tax-private work package. Verify multi-session
 
 ### Phase O5 — Production control-plane readiness
 
-Status: **technically ready; Human acceptance required**.
+Status: **complete — Human-accepted on 2026-09-14 at readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`**.
 
 Bind the main repository, verified Work automation scope, Codex, GitHub, Windows Relay, Local Sync, and monitoring. Verify restart/recovery and protected-main Human Gate.
 

@@ -1,6 +1,6 @@
 # Phase O5 — Production Control-Plane Readiness
 
-Status: **TECHNICALLY READY; HUMAN ACCEPTANCE REQUIRED**
+Status: **HUMAN-ACCEPTED / PHASE COMPLETE**
 
 ## Purpose
 
@@ -40,7 +40,15 @@ A fresh non-secret snapshot collected at `2026-09-14T10:49:00+02:00` verified al
 
 ## Required governed actions
 
-The Work automation remediation and fresh deterministic readiness evaluation are complete. The remaining action is exact Project Owner review and acceptance of the Phase O5 readiness result. Phase P1 and production activation require separate authorization.
+The Work automation remediation and fresh deterministic readiness evaluation are complete. The Project Owner explicitly accepted the readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc` on 2026-09-14. Phase P1 and production activation require separate authorization.
+
+## Human acceptance
+
+- Accepted result: deterministic `PASS`, `ready: true`, fourteen verified conditions, and zero blockers.
+- Accepted readiness-record commit: `d64da2588b18f548c877aed6044f8884e7644cdc`.
+- Current-commit GitHub validation: successful run `34824845788`.
+- Human-reported token state at acceptance: approximately 9% remained in the current five-hour allowance.
+- Continuation: controlled pause; await separate explicit instruction before Phase P1 or any production-related action.
 
 ## Resolution boundary
 

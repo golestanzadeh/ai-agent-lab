@@ -509,3 +509,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Each task was reopened and inspected after update. A fresh non-secret readiness snapshot collected at `2026-09-14T10:49:00+02:00` also verified synchronized branch head `bac8a4cf279952fab92fc4ab0cb54fe7fdfea2c8`, draft PR #1, active ruleset `22799423`, successful Passive Validation run `34821985936`, and both Windows scheduled tasks `READY` with latest result `0`. The deterministic evaluator returned `PASS`, `ready: true`, fourteen verified conditions, and zero blockers.
 
 **Boundary:** This technical PASS does not authorize Phase P1, production Agent activation, permission or credential expansion, protected-main action, merge, release, destructive action, tax submission, or external transfer. Exact Human acceptance remains required.
+
+
+## D-044 — Phase O5 Human acceptance and controlled pause
+
+**Status:** accepted and complete by explicit Project Owner / Human approval on 2026-09-14
+
+**Decision:** Accept the Phase O5 technical-readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`. The acceptance basis is deterministic `PASS`, `ready: true`, fourteen verified conditions, zero blockers, and successful GitHub validation run `34824845788` at that commit.
+
+**Token constraint:** At acceptance, the Project Owner reported that approximately 9% of the current five-hour token allowance remained. The governed continuation point is therefore a controlled pause after completing the acceptance record.
+
+**Next gate:** Phase P1 or any other next work requires separate explicit Project Owner instruction. This acceptance grants no production activation, credential or permission expansion, protected-main action or merge, release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer authority.

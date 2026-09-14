@@ -27,6 +27,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Phase O2 machine-readable Orchestrator contract set technically verified and explicitly Human-accepted.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
 - Phase O4 bounded autonomous-development pilot implemented, technically verified, and explicitly Human-accepted.
+- Phase O5 production-control-plane readiness returned deterministic `PASS` and was explicitly Human-accepted at readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
 
 ## Active system boundaries
 
@@ -77,7 +78,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Review and explicitly accept the Phase O5 readiness result or request exact amendments. The fresh evaluator result is `PASS`, but Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Pause at the completed Phase O5 boundary and await separate explicit Project Owner instruction. Approximately 9% of the current five-hour token allowance remained when O5 was accepted. Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -183,3 +184,12 @@ Review and explicitly accept the Phase O5 readiness result or request exact amen
 - Fresh evidence at branch head `bac8a4cf279952fab92fc4ab0cb54fe7fdfea2c8` included draft PR #1, successful Passive Validation run `34821985936`, active protected-main ruleset `22799423`, synchronized local/remote heads, and both Windows tasks `READY` with latest result `0`.
 - The deterministic evaluator returned `PASS`, `ready: true`, fourteen verified conditions, and no blockers.
 - Status: `O5_TECHNICALLY_READY -> HUMAN_REQUIRED`.
+
+
+## Phase O5 acceptance checkpoint
+
+- The Project Owner / Human explicitly accepted the Phase O5 readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc` on 2026-09-14.
+- Accepted evidence includes deterministic `PASS`, fourteen verified conditions, zero blockers, and successful GitHub validation run `34824845788` at the accepted commit.
+- Status: `O5_ACCEPTED / PHASE COMPLETE`.
+- Human-reported token state at acceptance: approximately 9% remained in the current five-hour allowance.
+- Phase P1 and every production, permission, protected-main, release, destructive, tax-submission, or external-transfer action remain unauthorized pending separate explicit instruction.

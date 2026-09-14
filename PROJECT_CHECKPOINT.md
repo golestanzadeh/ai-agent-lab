@@ -54,7 +54,8 @@ Current authorized continuation point:
 5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 6. The Project Owner / Human explicitly accepted that exact O4 implementation on 2026-09-14 and authorized Phase O5 with emphasis on token efficiency.
 7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay, Local Sync, monitoring, protected-main enforcement, and all three active Work automations are now verified against the main repository.
-8. A fresh Phase O5 evaluation on 2026-09-14 returned `PASS` with all fourteen conditions verified and no blockers. Current state is `O5_TECHNICALLY_READY -> HUMAN_REQUIRED`. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
+8. A fresh Phase O5 evaluation on 2026-09-14 returned `PASS` with all fourteen conditions verified and no blockers. The Project Owner / Human explicitly accepted the Phase O5 readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc` on 2026-09-14. Current state is `O5_ACCEPTED / PHASE COMPLETE`.
+9. At acceptance, the Project Owner reported that only approximately 9% of the current five-hour token allowance remained. Work must pause at the completed O5 boundary; Phase P1, production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized pending separate explicit instruction.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -277,3 +278,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The deterministic readiness evaluator ran against a fresh non-secret snapshot collected at `2026-09-14T10:49:00+02:00` and returned `PASS`, `ready: true`, fourteen verified conditions, and zero blockers.
 - Status: **O5_TECHNICALLY_READY -> HUMAN_REQUIRED**.
 - Exact next action: the Project Owner reviews and explicitly accepts the Phase O5 readiness result or requests exact amendments. Phase P1 and any production activation remain unauthorized until separately approved.
+
+
+## Phase O5 acceptance checkpoint — 2026-09-14
+
+- The Project Owner / Human explicitly accepted the Phase O5 technical-readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
+- Accepted evidence: deterministic `PASS`, `ready: true`, fourteen verified conditions, zero blockers, and successful GitHub validation run `34824845788` at the accepted commit.
+- Status: **O5_ACCEPTED / PHASE COMPLETE**.
+- Token constraint at acceptance: the Project Owner reported approximately 9% remaining in the current five-hour allowance.
+- Exact continuation point: pause at the O5 boundary and await separate explicit Project Owner instruction for Phase P1 or any other next work.
+- This acceptance does not authorize Phase P1, production activation, credentials or permission expansion, protected-main mutation or merge, release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.

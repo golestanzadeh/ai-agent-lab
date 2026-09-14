@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O5 technically ready; Human acceptance required**
+Status: **in progress — Phase O5 Human-accepted and complete; Phase P1 not yet authorized**
 
 Goals:
 
@@ -139,7 +139,7 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-Phase O2 and Phase O3 are complete and Human-accepted. Phase O4 resumed on 2026-09-14 and is technically complete pending Human acceptance. Agent activation beyond its bounded pilot remains gated behind later phases.
+Phases O2, O3, O4, and O5 are complete and Human-accepted. Agent activation beyond the bounded O4 pilot remains gated behind later phases.
 
 ## Registered Phase O2 artifacts
 
@@ -192,4 +192,4 @@ Phase O4 implementation and technical verification completed at `b81f4060c5973ad
 
 The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.
 
-The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. On 2026-09-14, all three active Agent Bridge Work automations were updated in place and independently verified active with Repository condition and prompt scoped to `golestanzadeh/ai-agent-lab`. A fresh evaluator snapshot returned `PASS` with fourteen verified conditions and no blockers. Phase O5 now awaits explicit Human acceptance; Phase P1 and production activation remain unauthorized.
+The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. On 2026-09-14, all three active Agent Bridge Work automations were updated in place and independently verified active with Repository condition and prompt scoped to `golestanzadeh/ai-agent-lab`. A fresh evaluator snapshot returned `PASS` with fourteen verified conditions and no blockers. The Project Owner explicitly accepted Phase O5 and readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`. Phase P1 and production activation remain unauthorized pending separate explicit instruction; work pauses with approximately 9% of the five-hour token allowance reported remaining at acceptance.
