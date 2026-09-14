@@ -56,19 +56,19 @@ Commit and push this checkpoint only when those Git actions remain safe and auth
 
 ## Scheduled continuation guard
 
-Use one heartbeat attached to the current task, aligned shortly after the current five-hour reset and repeated every five hours. On each run it must:
+Use one hourly heartbeat attached to the current task. On each run it must:
 
 1. read live five-hour and weekly limits;
-2. remain quiet if no token pause exists, another turn is active, the repository is not safely recoverable, or no next action is already authorized;
+2. remain quiet if another turn is active, the repository is not safely recoverable, or no exact next action is already authorized;
 3. remain quiet and make no project changes while either resume threshold is unmet;
-4. resume only from a durable `TOKEN_PAUSED` checkpoint when five-hour remaining is at least 80% and weekly remaining is above 10%;
-5. reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform only the recorded bounded next action;
+4. resume from a durable `TOKEN_PAUSED` checkpoint only when five-hour remaining is at least 80% and weekly remaining is above 10%;
+5. while continuous authority is active, reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform exactly one recorded local synthetic non-production package that certainly requires no Human Gate;
 6. reapply this controller before every subsequent package and stop at any Human Gate;
 7. notify the Project Owner only on a meaningful pause, resume, completion, failure, conflict, or required Human action.
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The active same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and runs on a five-hour cadence. It was created and reopened successfully on 2026-09-14. Its first action on every run is a fresh account-limit read; schedule timing never substitutes for the service-provided reset state.
+The active same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and runs hourly. It was updated on 2026-09-15 after the first guarded recovery completed. Its first action on every run is a fresh account-limit read; schedule timing never substitutes for the service-provided reset state.
 
 ## Host and scheduler limitation
 

@@ -28,7 +28,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
 - Phase O4 bounded autonomous-development pilot implemented, technically verified, and explicitly Human-accepted.
 - Phase O5 production-control-plane readiness returned deterministic `PASS` and was explicitly Human-accepted at readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
-- Plan-limit continuation control is active: live five-hour/weekly inspection, conservative stop thresholds, durable `TOKEN_PAUSED` recovery, and a guarded five-hour same-task heartbeat.
+- Plan-limit continuation control is active: live five-hour/weekly inspection, conservative stop thresholds, durable `TOKEN_PAUSED` recovery, and a guarded hourly same-task heartbeat that performs at most one clearly authorized package per run.
 
 ## Active system boundaries
 

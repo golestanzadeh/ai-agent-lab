@@ -528,7 +528,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Decision:** Treat the Codex account usage-limit service as the authoritative runtime source. Enter caution at five-hour remaining 25% or weekly remaining 20%; enter a durable `TOKEN_PAUSED` state at five-hour remaining 15% or weekly remaining 10%; fail closed when usage is unknown. Resume only when five-hour remaining is at least 80%, weekly remaining is above 10%, repository recovery is safe, and the checkpoint contains one exact next action that was already authorized.
 
-**Automation:** Active same-task heartbeat `Plan Limit Continuation Guard`, id `plan-limit-continuation-guard`, on a five-hour cadence. It stays quiet while state is unchanged or non-actionable and reports only meaningful pause, resume, completion, failure, conflict, or required Human action.
+**Automation:** Active same-task heartbeat `Plan Limit Continuation Guard`, id `plan-limit-continuation-guard`. After the first guarded recovery it runs hourly and may perform at most one exact, clearly authorized local synthetic package per run. It stays quiet while state is unchanged or non-actionable and reports only meaningful pause, resume, completion, failure, conflict, or required Human action.
 
 **Initial evidence:** The live service reported five-hour `usedPercent: 1` (99% remaining; UI rounded to 100%), weekly `usedPercent: 38` (62% remaining), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
 
@@ -664,3 +664,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Targeted `15 passed`; relevant Phase P1 `92 passed`; full regression `474 passed, 1 skipped`; Python compile check passed.
 
 **Continuation:** Continue under D-051 with the registered local synthetic lifecycle-audit and restart-recovery package. Existing Human Gates remain unchanged.
+
+
+## D-055 — Hourly bounded continuation after token recovery
+
+**Status:** active by explicit Project Owner continuation instruction
+
+**Decision:** After the five-hour allowance recovered and package 5 completed, change the same-task guard from a reset-aligned five-hour cadence to an hourly cadence. Each run may perform at most one exact next package only when canonical state proves that it is local, synthetic, non-production, already authorized, and certainly free of a Human Gate.
+
+**Safety:** Live limit checks, caution/pause thresholds, repository recovery checks, one-package bounds, quiet non-actionable runs, and all D-051/constitutional Human Gates remain unchanged. This decision creates no production, external, credential, real-data, protected-main, merge, release, submission, or transmission authority.
