@@ -10,7 +10,7 @@ GitHub remains the durable source of truth. The local checkout is an execution w
 
 ## One-shot model
 
-The synchronization engine performs one bounded reconciliation per invocation. Windows Task Scheduler invokes it every minute. This avoids a long-lived daemon and makes restart/recovery simple.
+The synchronization engine performs one bounded reconciliation per invocation. Windows Task Scheduler invokes it every minute. This avoids a long-lived daemon and makes restart/recovery simple. The task uses `pythonw.exe`, and Windows subprocesses use `CREATE_NO_WINDOW`, so routine Git checks do not open transient command windows.
 
 The synchronization decision is deterministic:
 

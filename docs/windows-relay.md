@@ -102,3 +102,5 @@ The relay never converts uncertainty into PASS.
 ## Observability
 
 Successful execution produces a compact response containing only non-sensitive facts such as task ID, PASS/BLOCKED, local test result, Local Sync smoke status, and scheduled-task status. Provider IDs, credentials, private paths beyond the already-approved repository root, tax data, and shell output that may contain secrets are excluded.
+
+The Windows scheduled task runs hidden through `pythonw.exe`. On Windows, Relay and Local Sync subprocesses use `CREATE_NO_WINDOW`, preventing their one-minute Git and PowerShell checks from opening transient command windows.

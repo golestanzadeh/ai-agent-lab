@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -15,6 +17,20 @@ from agent_lab.windows_relay import (
     WindowsRelay,
     parse_request,
 )
+
+
+def test_windows_subprocess_creation_is_windowless():
+    from agent_lab.windows_relay import SUBPROCESS_CREATION_FLAGS
+
+    if sys.platform == "win32":
+        assert SUBPROCESS_CREATION_FLAGS == subprocess.CREATE_NO_WINDOW
+
+
+def test_installer_registers_hidden_pythonw_task():
+    root = Path(__file__).resolve().parents[2]
+    installer = (root / "scripts" / "install_windows_relay_task.ps1").read_text(encoding="utf-8")
+    assert "pythonw.exe" in installer
+    assert "-Hidden" in installer
 
 
 def request_payload(**changes):

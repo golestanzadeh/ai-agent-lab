@@ -474,3 +474,14 @@ The two known user-owned untracked files were added to local `.git/info/exclude`
 **Result:** After the Project Owner executed the approved commands in elevated PowerShell, `AI-Tax-Agent Local Sync` was independently verified enabled and `READY`, with run level `Limited` and latest task result `0`. Local and remote active-branch heads matched at `bc1749317450c449e8446bdf813bf13afa885715`.
 
 The refreshed readiness evaluator now verifies both Windows scheduled components and returns `BLOCKED` only for Work automation scope/enabled state, monitoring, and protected-main Human Gate verification. No credential, permission expansion, merge, release, production Agent activation, or external transfer occurred.
+
+
+## D-041 — Windowless Windows scheduled execution
+
+**Status:** implemented and live-verified on 2026-09-14
+
+**Problem:** The one-minute scheduled checks opened and closed multiple command windows because Windows Relay used console `python.exe` and child Git/PowerShell processes lacked no-window creation flags.
+
+**Decision:** Use `pythonw.exe` for the Windows Relay scheduled action, mark that task hidden, and pass Windows `CREATE_NO_WINDOW` to Local Sync and Windows Relay subprocess calls.
+
+**Verification:** Implementation commit `345cadb83ce0fd6b30b851c394cebdc891037672`; targeted regression `27 passed`. The reinstalled Relay is enabled, hidden, `READY`, uses `C:\Python314\pythonw.exe`, and returned last result `0`.

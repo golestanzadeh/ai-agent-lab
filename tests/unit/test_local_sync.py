@@ -1,8 +1,17 @@
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
 from agent_lab.local_sync import LocalSyncAgent, LocalSyncError, SyncAction
+
+
+def test_windows_subprocess_creation_is_windowless():
+    from agent_lab.local_sync import SUBPROCESS_CREATION_FLAGS
+
+    if sys.platform == "win32":
+        assert SUBPROCESS_CREATION_FLAGS == subprocess.CREATE_NO_WINDOW
 
 
 class FakeGit:

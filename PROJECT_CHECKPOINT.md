@@ -244,3 +244,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Remaining blockers: Work automation repository scope, Work automation enabled state, monitoring, and protected-main Human Gate verification.
 - Status remains **O5_BLOCKED -> HUMAN_REQUIRED**.
 - Exact next action: identify and govern the Work automation update, then define monitoring and verify protected-main enforcement.
+
+
+## Phase O5 scheduled-task window fix — 2026-09-14
+
+- The Project Owner reported repeated command windows opening during the one-minute scheduled runs.
+- Root cause: Windows Relay used console `python.exe`, was visible, and Windows subprocesses lacked no-window creation flags.
+- Fix commit: `345cadb83ce0fd6b30b851c394cebdc891037672`.
+- Local Sync and Windows Relay now start subprocesses with `CREATE_NO_WINDOW`; the Relay installer uses `pythonw.exe` and registers a hidden task.
+- Windows Relay was reinstalled and verified enabled, hidden, `READY`, using `C:\Python314\pythonw.exe`, with last result `0`.
+- Regression verification: Local Sync and Windows Relay targeted suite `27 passed`.
+- O5 remains blocked only by Work automation scope/enabled state, monitoring, and protected-main Human Gate verification.

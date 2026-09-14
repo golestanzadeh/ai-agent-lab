@@ -168,4 +168,5 @@ Resolve the six governed Phase O5 readiness blockers, collect a fresh non-secret
 - Windows Relay is installed, enabled, `READY`, and returned last task result `0`.
 - Local Sync is enabled and `READY`; latest task result is `0`, and local/remote branch heads match.
 - Remaining blockers: Work automation scope and enabled state; monitoring; protected-main Human Gate.
+- One-minute Windows tasks are configured for windowless execution; Windows Relay is hidden and uses `pythonw.exe`. Targeted regression: `27 passed`.
 - No production or external authority was activated.
