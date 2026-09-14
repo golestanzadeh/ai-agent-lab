@@ -53,7 +53,7 @@ Current authorized continuation point:
 4. The Project Owner / Human explicitly accepted that exact O3 implementation on 2026-09-13 and authorized Phase O4.
 5. Phase O4 resumed on 2026-09-14 and its bounded pilot was implemented and technically verified at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 6. The Project Owner / Human explicitly accepted that exact O4 implementation on 2026-09-14 and authorized Phase O5 with emphasis on token efficiency.
-7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`, but the current environment returned six blockers.
+7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay is now installed and ready; five blockers remain.
 8. Current state is `O5_BLOCKED -> HUMAN_REQUIRED`. Production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
@@ -218,7 +218,18 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 - Implemented the deterministic fail-closed readiness evaluator at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
 - Verification: targeted `11 passed`; relevant O3/O4/O5/Bridge/Local Sync/Windows Relay `72 passed`; full regression `379 passed, 1 skipped`; compile check passed.
-- Current evaluator outcome: `BLOCKED` with six blockers: Work automation repository scope, Work automation enabled state, monitoring, protected-main Human Gate, disabled Local Sync, and absent Windows Relay.
+- Current evaluator outcome: `BLOCKED` with five blockers: Work automation repository scope, Work automation enabled state, monitoring, protected-main Human Gate, and disabled Local Sync.
 - Status: **O5_BLOCKED -> HUMAN_REQUIRED**.
 - Exact next action: obtain explicit authority for the local service changes, identify the exact Work automation, define monitoring, and verify protected-main enforcement; then collect fresh evidence and require evaluator `PASS`.
 - No service, automation, credential, permission, repository protection, production authority, merge, release, or external transfer was changed.
+
+
+## Phase O5 local service authorization result — 2026-09-14
+
+- Human authorization covered enabling `AI-Tax-Agent Local Sync` and installing `AI-Tax-Agent Windows Relay` through the registered script.
+- The two user-owned untracked files were added only to local `.git/info/exclude`; their contents and locations were not changed, and no repository commit contains them.
+- Windows Relay installation succeeded. Task state: `READY`, enabled: `true`, run level: `Limited`, last task result: `0`.
+- Local Sync activation failed with Windows `Access is denied`; it remains `Disabled`. No privilege or security boundary was bypassed.
+- Manual Local Sync smoke result: `UP_TO_DATE`; local and remote SHA both `ef9078b7c853d2d920430632a8aecdc4c0ec3e17`.
+- Refreshed readiness outcome: `BLOCKED` with five remaining blockers.
+- Exact next action: enable Local Sync from an elevated Windows session, then resolve Work automation scope/enabled state, monitoring, and protected-main verification before rerunning readiness.

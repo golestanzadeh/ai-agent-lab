@@ -452,3 +452,16 @@ An Agent `PASS` response cannot complete its task. The task remains `AWAITING_AC
 **Current result:** Six blockers remain: Work automation repository scope, Work automation enabled state, monitoring configuration, protected-main Human Gate enforcement, disabled Local Sync, and absent Windows Relay.
 
 **Gate:** Enabling/installing scheduled services, changing an automation, establishing monitoring, or changing repository protection requires exact governed authority. O5 cannot become ready until those actions complete and a fresh evaluator run returns `PASS`.
+
+
+## D-039 — Phase O5 local scheduled-service actions
+
+**Status:** partially completed under explicit Human authorization on 2026-09-14
+
+**Authorized actions:** Enable the existing `AI-Tax-Agent Local Sync` task and install `AI-Tax-Agent Windows Relay` through the registered installer.
+
+**Result:** Windows Relay installation succeeded and the task is enabled, `READY`, limited-run-level, with last result `0`. Local Sync activation was attempted but Windows denied access; the task remains disabled. A manual bounded Local Sync smoke run returned `UP_TO_DATE` with identical local and remote SHA `ef9078b7c853d2d920430632a8aecdc4c0ec3e17`.
+
+The two known user-owned untracked files were added to local `.git/info/exclude` so scheduled components cannot stage or process them. Their contents and locations were not changed, and this local exclusion is not committed.
+
+**Current gate:** O5 remains `BLOCKED`. Local Sync requires an elevated Windows activation, and Work automation scope/enabled state, monitoring, and protected-main enforcement remain unresolved. No privilege bypass, credential change, production activation, merge, release, or external transfer occurred.
