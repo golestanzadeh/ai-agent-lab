@@ -38,8 +38,8 @@ Current operational caution:
 
 - development after D-020 remains on draft PR #1 / branch `d021-agent-case-provisioning`;
 - `main` is behind that development branch;
-- currently enabled Work automations previously inspected were still scoped to `golestanzadeh/agent-bridge-poc`, not the main repository;
-- live host installation/enabled state of Local Sync and Windows Relay has not been re-verified in this checkpoint.
+- all three active Agent Bridge Work automations are verified scoped to `golestanzadeh/ai-agent-lab` in both their Repository condition and prompt;
+- Local Sync and Windows Relay are installed, enabled, and currently verified `READY` with latest result `0`.
 
 ### Tax runtime
 
@@ -77,7 +77,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Identify and update the exact ChatGPT Work automation so it is enabled and scoped to `golestanzadeh/ai-agent-lab`, then collect a fresh non-secret evidence snapshot and require evaluator `PASS`. Production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Review and explicitly accept the Phase O5 readiness result or request exact amendments. The fresh evaluator result is `PASS`, but Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -172,3 +172,14 @@ Identify and update the exact ChatGPT Work automation so it is enabled and scope
 - GitHub ruleset `22799423` actively targets `main`, has no bypass actor, requires a pull request, and blocks force pushes.
 - Monitoring evidence includes successful Agent Bridge Passive Validation run `34821613554` and latest result `0` for both Windows tasks.
 - No production or external authority was activated.
+
+
+## Phase O5 Work automation resolution and readiness PASS checkpoint
+
+- The Project Owner explicitly authorized updating the three active ChatGPT Work Agent Bridge automations.
+- `Bridge PR Wake-up`, `Agent Bridge Human Gate`, and `Agent Bridge Continuation` were updated in place from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab` in both Repository condition and prompt.
+- All three were reopened and verified active. Their event filters, exact markers, Human Gate behavior, duplicate prevention, no-merge constraints, and remaining safety restrictions were preserved.
+- No automation run, GitHub mutation, plugin-permission change, credential change, branch/file/PR creation, merge, or release occurred during the update.
+- Fresh evidence at branch head `bac8a4cf279952fab92fc4ab0cb54fe7fdfea2c8` included draft PR #1, successful Passive Validation run `34821985936`, active protected-main ruleset `22799423`, synchronized local/remote heads, and both Windows tasks `READY` with latest result `0`.
+- The deterministic evaluator returned `PASS`, `ready: true`, fourteen verified conditions, and no blockers.
+- Status: `O5_TECHNICALLY_READY -> HUMAN_REQUIRED`.

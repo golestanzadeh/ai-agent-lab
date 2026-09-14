@@ -12,7 +12,7 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **in progress — Phase O5 readiness blocked at Human/operational gate**
+Status: **in progress — Phase O5 technically ready; Human acceptance required**
 
 Goals:
 
@@ -192,4 +192,4 @@ Phase O4 implementation and technical verification completed at `b81f4060c5973ad
 
 The evaluator grants no runtime authority and may not install services, modify automations, issue credentials, change repository protection, merge, release, or transfer data.
 
-The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. Current readiness remains `BLOCKED` only by Work automation repository scope and enabled-state evidence.
+The evaluator was implemented at `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772` and verified with `11` targeted, `72` relevant, and `379 passed, 1 skipped` full-regression results. Windows Relay, Local Sync, monitoring, restart/recovery, and protected-main enforcement are verified. On 2026-09-14, all three active Agent Bridge Work automations were updated in place and independently verified active with Repository condition and prompt scoped to `golestanzadeh/ai-agent-lab`. A fresh evaluator snapshot returned `PASS` with fourteen verified conditions and no blockers. Phase O5 now awaits explicit Human acceptance; Phase P1 and production activation remain unauthorized.

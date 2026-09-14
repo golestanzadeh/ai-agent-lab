@@ -1,6 +1,6 @@
 # Phase O5 — Production Control-Plane Readiness
 
-Status: **PARTIALLY CONFIGURED; BLOCKED / HUMAN REQUIRED**
+Status: **TECHNICALLY READY; HUMAN ACCEPTANCE REQUIRED**
 
 ## Purpose
 
@@ -25,7 +25,9 @@ The initial deterministic evaluation returned six blockers. After explicit Human
 
 GitHub inspection then verified active ruleset `22799423` targeting `main`, with an empty bypass list, required pull requests, and blocked force pushes. Monitoring was verified through successful Agent Bridge Passive Validation run `34821613554` and successful latest results from both Windows scheduled tasks.
 
-The refreshed evaluator now verifies twelve conditions and remains `BLOCKED` only for Work automation repository scope and Work automation enabled state.
+The Project Owner then explicitly authorized updating the three active ChatGPT Work Agent Bridge automations. `Bridge PR Wake-up`, `Agent Bridge Human Gate`, and `Agent Bridge Continuation` were each updated in place from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab` in both their Repository condition and prompt. Each was reopened and verified active; existing event filters, exact markers, Human Gate behavior, duplicate prevention, no-merge constraints, and other safeguards were preserved. No automation was run and no GitHub data or plugin permission changed during the update.
+
+A fresh non-secret snapshot collected at `2026-09-14T10:49:00+02:00` verified all fourteen conditions and returned `PASS` with no blockers.
 
 ## Verification evidence
 
@@ -34,15 +36,12 @@ The refreshed evaluator now verifies twelve conditions and remains `BLOCKED` onl
 - Full repository regression: `379 passed, 1 skipped`.
 - Python compile check passed for the evaluator and CLI.
 - Evaluator implementation commit: `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
-- The initial host snapshot produced eight verified conditions and six blockers; the latest snapshot verifies twelve conditions and leaves two Work automation blockers.
+- The initial host snapshot produced eight verified conditions and six blockers; the final fresh snapshot verifies all fourteen conditions and leaves no blockers.
 
 ## Required governed actions
 
-1. Identify the exact ChatGPT Work automation that previously targeted `golestanzadeh/agent-bridge-poc`.
-2. Change that automation's repository scope to `golestanzadeh/ai-agent-lab` and verify it is enabled.
-
-After these actions, collect a fresh evidence snapshot and require evaluator `PASS`.
+The Work automation remediation and fresh deterministic readiness evaluation are complete. The remaining action is exact Project Owner review and acceptance of the Phase O5 readiness result. Phase P1 and production activation require separate authorization.
 
 ## Resolution boundary
 
-Resolving the remaining blockers requires identifying and changing the exact ChatGPT Work automation. That external automation is not present in the local Codex automation registry, so its identity cannot be safely inferred. O5 authorization does not authorize credentials, permission expansion, production activation, protected-main mutation, merge, or release.
+The three external Work automations were identified through the authenticated ChatGPT Work Scheduled interface and updated only under explicit Project Owner authority. The resulting technical `PASS` does not authorize credentials, permission expansion, production activation, protected-main mutation, merge, release, tax submission, or external transfer.

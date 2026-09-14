@@ -496,3 +496,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Monitoring:** Agent Bridge Passive Validation run `34821613554` completed successfully for the latest windowless-execution checkpoint. Local Sync and Windows Relay were independently verified enabled and `READY`, with latest result `0`.
 
 **Readiness result:** A fresh evaluator snapshot verified twelve conditions and returned `BLOCKED` only for the unproven ChatGPT Work automation repository scope and enabled state. No GitHub setting, automation, permission, credential, merge, release, or external-transfer state was changed during this verification.
+
+
+## D-043 — Phase O5 Work automation scope resolution and readiness PASS
+
+**Status:** technically ready; Human acceptance required
+
+**Authority:** On 2026-09-14, the Project Owner explicitly authorized changing all three active ChatGPT Work Agent Bridge automations from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab` while preserving their existing behavior and safety restrictions.
+
+**Decision and result:** `Bridge PR Wake-up`, `Agent Bridge Human Gate`, and `Agent Bridge Continuation` were updated in place. Each automation's GitHub Repository condition and prompt now reference `golestanzadeh/ai-agent-lab`; each remains active. Exact event filters, Agent Bridge markers, Human Gate behavior, duplicate-prevention logic, no-merge constraints, and other safeguards were retained. No task was run and no GitHub data or plugin permission was changed during the updates.
+
+**Verification:** Each task was reopened and inspected after update. A fresh non-secret readiness snapshot collected at `2026-09-14T10:49:00+02:00` also verified synchronized branch head `bac8a4cf279952fab92fc4ab0cb54fe7fdfea2c8`, draft PR #1, active ruleset `22799423`, successful Passive Validation run `34821985936`, and both Windows scheduled tasks `READY` with latest result `0`. The deterministic evaluator returned `PASS`, `ready: true`, fourteen verified conditions, and zero blockers.
+
+**Boundary:** This technical PASS does not authorize Phase P1, production Agent activation, permission or credential expansion, protected-main action, merge, release, destructive action, tax submission, or external transfer. Exact Human acceptance remains required.
