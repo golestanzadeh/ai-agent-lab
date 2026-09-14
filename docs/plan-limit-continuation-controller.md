@@ -1,0 +1,85 @@
+# Plan-Limit Continuation Controller
+
+Status: **ACTIVE / SCHEDULED GUARD VERIFIED**
+
+## Purpose
+
+Prevent a long-running project turn from exhausting the Codex five-hour or weekly allowance, preserve an exact durable continuation point before stopping, and resume previously authorized work in the same task after capacity returns.
+
+This controller is an operational cost guard. It grants no new project, production, permission, merge, release, tax-submission, or external-transfer authority.
+
+## Authoritative limit source
+
+Use the Codex account usage-limit service exposed by the desktop app. For each available window:
+
+`remaining_percent = max(0, 100 - used_percent)`
+
+UI percentages may be rounded. Decisions use the service value and its actual `resetsAt` timestamp, not an assumed five-hour delay or a screenshot. If the service is unavailable or a required value is unknown, fail closed and start no new work package.
+
+## Control states
+
+| State | Five-hour remaining | Weekly remaining | Allowed behavior |
+|---|---:|---:|---|
+| `RUN` | above 25% | above 20% | Start or continue one bounded authorized package. |
+| `CAUTION` | 16–25% | 11–20% | Start no large package; finish only the current atomic step, verify it, and prepare a checkpoint. |
+| `TOKEN_PAUSED` | 15% or less | 10% or less | Start no project work; record the stop reason, exact continuation point, branch/HEAD, dirty-state ownership, next authorized action, and relevant Human Gates. |
+| `UNKNOWN_PAUSED` | unknown | unknown | Fail closed until usage can be read reliably. |
+
+The lower weekly threshold avoids permanently stranding the acceptance/checkpoint write near the weekly boundary. A task may choose to pause earlier when the next atomic operation cannot safely complete inside the remaining allowance.
+
+## Required observations
+
+Read limits:
+
+1. at the start of every project turn;
+2. before starting each bounded work package;
+3. before a broad test suite or other expensive operation;
+4. before commit/push and immediately after a material checkpoint;
+5. whenever the app warns that a limit is nearly exhausted.
+
+An individual tool call cannot be interrupted midway. Therefore work packages must remain small enough that the next observation occurs before the safety buffer is consumed.
+
+## Durable stop contract
+
+Before ending for a limit, update the governed project state with:
+
+- status `TOKEN_PAUSED` or `UNKNOWN_PAUSED`;
+- the limiting window and observed remaining percentage;
+- the service-provided reset timestamp;
+- exact branch, HEAD, and local/remote synchronization state;
+- any user-owned or incomplete working-tree changes;
+- the last completed verification;
+- one exact next action that is already authorized;
+- every Human Gate that still blocks later work.
+
+Commit and push this checkpoint only when those Git actions remain safe and authorized. If capacity is too low to do so, do not begin another operation; report that the durable update is incomplete.
+
+## Scheduled continuation guard
+
+Use one heartbeat attached to the current task, aligned shortly after the current five-hour reset and repeated every five hours. On each run it must:
+
+1. read live five-hour and weekly limits;
+2. remain quiet if no token pause exists, another turn is active, the repository is not safely recoverable, or no next action is already authorized;
+3. remain quiet and make no project changes while either resume threshold is unmet;
+4. resume only from a durable `TOKEN_PAUSED` checkpoint when five-hour remaining is at least 80% and weekly remaining is above 10%;
+5. reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform only the recorded bounded next action;
+6. reapply this controller before every subsequent package and stop at any Human Gate;
+7. notify the Project Owner only on a meaningful pause, resume, completion, failure, conflict, or required Human action.
+
+If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
+
+The active same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and runs on a five-hour cadence. It was created and reopened successfully on 2026-09-14. Its first action on every run is a fresh account-limit read; schedule timing never substitutes for the service-provided reset state.
+
+## Host and scheduler limitation
+
+Scheduled local-project work requires the computer to remain on, the Codex desktop app to be running, and the saved project directory to remain available. A missed run is not proof of project failure; the next run must recover from the repository checkpoint rather than chat memory.
+
+## Initial live observation
+
+On 2026-09-14, the account service reported five-hour `usedPercent: 1` (99% remaining; the UI may display 100%), weekly `usedPercent: 38` (62% remaining), five-hour reset at `2026-09-14 23:47:38 +02:00`, and weekly reset at `2026-09-20 13:48:09 +02:00`.
+
+The initial state is `RUN`. This design itself does not authorize Phase P1; project phase authority remains in `PROJECT_CHECKPOINT.md` and `DECISIONS.md`.
+
+## Official product basis
+
+OpenAI's scheduled-task documentation states that a task can return to the same chat with its existing context, can run on minute/daily/weekly schedules, and should use a reusable prompt that defines when to report, stop, or request input. Local-project scheduled work requires the desktop app and computer to remain running. See: <https://learn.chatgpt.com/docs/automations>.

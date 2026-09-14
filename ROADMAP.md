@@ -14,6 +14,12 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 Status: **in progress — Phase O5 Human-accepted and complete; Phase P1 not yet authorized**
 
+Registered cross-phase cost-control artifact:
+
+- `docs/plan-limit-continuation-controller.md` — design for live Codex plan-limit inspection, conservative stop thresholds, durable `TOKEN_PAUSED` checkpoints, and guarded same-thread scheduled continuation after the actual account reset.
+
+Implementation status: **active** through same-task heartbeat `plan-limit-continuation-guard` on a five-hour cadence. The controller may resume only previously authorized work and cannot cross a Human Gate.
+
 Goals:
 
 - preserve all existing GitHub, ChatGPT Work, Codex, Windows, Python/Docker, Google Drive, Gemini, Agent Bridge, Local Sync, Windows Relay, approval, audit, and tax-agent integrations;

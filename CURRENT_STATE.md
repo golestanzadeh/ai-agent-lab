@@ -28,6 +28,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
 - Phase O4 bounded autonomous-development pilot implemented, technically verified, and explicitly Human-accepted.
 - Phase O5 production-control-plane readiness returned deterministic `PASS` and was explicitly Human-accepted at readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
+- Plan-limit continuation control is active: live five-hour/weekly inspection, conservative stop thresholds, durable `TOKEN_PAUSED` recovery, and a guarded five-hour same-task heartbeat.
 
 ## Active system boundaries
 
@@ -78,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Pause at the completed Phase O5 boundary and await separate explicit Project Owner instruction. Approximately 9% of the current five-hour token allowance remained when O5 was accepted. Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
+Obtain or identify explicit Project Owner authority for the next project phase before starting it. The plan-limit controller is active and the latest live observation was 99% five-hour remaining (UI rounded to 100%) and 62% weekly remaining, but capacity does not create project authority. Phase P1, production Agent activation, high-risk permission expansion, protected-main action, production release, destructive action, tax submission, and external transfer remain outside current authority.
 
 ## Non-negotiable constraints
 
@@ -193,3 +194,12 @@ Pause at the completed Phase O5 boundary and await separate explicit Project Own
 - Status: `O5_ACCEPTED / PHASE COMPLETE`.
 - Human-reported token state at acceptance: approximately 9% remained in the current five-hour allowance.
 - Phase P1 and every production, permission, protected-main, release, destructive, tax-submission, or external-transfer action remain unauthorized pending separate explicit instruction.
+
+
+## Plan-limit continuation controller checkpoint
+
+- Design: `docs/plan-limit-continuation-controller.md`.
+- Active heartbeat: `Plan Limit Continuation Guard` (`plan-limit-continuation-guard`), attached to this task on a five-hour cadence.
+- Policy: caution at five-hour 25% or weekly 20%; `TOKEN_PAUSED` at five-hour 15% or weekly 10%; resume only with five-hour at least 80%, weekly above 10%, a safe repository state, and an exact already-authorized next action.
+- If live usage is unavailable, the controller fails closed. It stays quiet when state is unchanged or non-actionable.
+- Current observed state: `RUN`, with 99% five-hour remaining and 62% weekly remaining on 2026-09-14.

@@ -56,6 +56,7 @@ Current authorized continuation point:
 7. The Phase O5 readiness evaluator is implemented and verified at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`. Windows Relay, Local Sync, monitoring, protected-main enforcement, and all three active Work automations are now verified against the main repository.
 8. A fresh Phase O5 evaluation on 2026-09-14 returned `PASS` with all fourteen conditions verified and no blockers. The Project Owner / Human explicitly accepted the Phase O5 readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc` on 2026-09-14. Current state is `O5_ACCEPTED / PHASE COMPLETE`.
 9. At acceptance, the Project Owner reported that only approximately 9% of the current five-hour token allowance remained. Work must pause at the completed O5 boundary; Phase P1, production Agent activation, high-risk permission issuance, protected-main action, production release, destructive action, tax submission, and external transfer remain unauthorized pending separate explicit instruction.
+10. On 2026-09-14, the Project Owner requested a live plan-limit stop/resume controller before further project work. The account service reported 99% five-hour remaining (UI rounded to 100%) and 62% weekly remaining. The documented controller and active same-task heartbeat `plan-limit-continuation-guard` now enforce caution, durable token pause, and guarded continuation thresholds. This operational controller grants no Phase P1 or production authority.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -288,3 +289,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Token constraint at acceptance: the Project Owner reported approximately 9% remaining in the current five-hour allowance.
 - Exact continuation point: pause at the O5 boundary and await separate explicit Project Owner instruction for Phase P1 or any other next work.
 - This acceptance does not authorize Phase P1, production activation, credentials or permission expansion, protected-main mutation or merge, release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
+
+
+## Plan-limit continuation controller — 2026-09-14
+
+- The Project Owner requested that Codex inspect live five-hour and weekly account limits, stop early enough to preserve a durable checkpoint, and automatically return to this task after capacity recovers.
+- Live service evidence at design time: five-hour 99% remaining (`usedPercent: 1`; UI rounded to 100%), weekly 62% remaining (`usedPercent: 38`), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
+- The accepted operational thresholds are: caution at five-hour 25% or weekly 20%; hard token pause at five-hour 15% or weekly 10%; guarded resume only at five-hour at least 80% and weekly above 10%.
+- Design: `docs/plan-limit-continuation-controller.md`.
+- Active same-task heartbeat: `Plan Limit Continuation Guard`, automation id `plan-limit-continuation-guard`, five-hour cadence.
+- Status: **PLAN_LIMIT_CONTROLLER_ACTIVE**.
+- Exact next action: obtain or identify explicit authority for the next project phase before starting it. The controller may resume only an exact action already authorized and durably recorded as `TOKEN_PAUSED`; it cannot create authority.

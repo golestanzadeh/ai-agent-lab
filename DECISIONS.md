@@ -520,3 +520,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Token constraint:** At acceptance, the Project Owner reported that approximately 9% of the current five-hour token allowance remained. The governed continuation point is therefore a controlled pause after completing the acceptance record.
 
 **Next gate:** Phase P1 or any other next work requires separate explicit Project Owner instruction. This acceptance grants no production activation, credential or permission expansion, protected-main action or merge, release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer authority.
+
+
+## D-045 — Live plan-limit stop and guarded continuation control
+
+**Status:** designed and activated by explicit Project Owner request on 2026-09-14
+
+**Decision:** Treat the Codex account usage-limit service as the authoritative runtime source. Enter caution at five-hour remaining 25% or weekly remaining 20%; enter a durable `TOKEN_PAUSED` state at five-hour remaining 15% or weekly remaining 10%; fail closed when usage is unknown. Resume only when five-hour remaining is at least 80%, weekly remaining is above 10%, repository recovery is safe, and the checkpoint contains one exact next action that was already authorized.
+
+**Automation:** Active same-task heartbeat `Plan Limit Continuation Guard`, id `plan-limit-continuation-guard`, on a five-hour cadence. It stays quiet while state is unchanged or non-actionable and reports only meaningful pause, resume, completion, failure, conflict, or required Human action.
+
+**Initial evidence:** The live service reported five-hour `usedPercent: 1` (99% remaining; UI rounded to 100%), weekly `usedPercent: 38` (62% remaining), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
+
+**Authority boundary:** The controller preserves and resumes existing authority; it cannot grant Phase P1, production, permission, protected-main, merge, release, destructive, tax-submission, ELSTER/Finanzamt, or external-transfer authority.
