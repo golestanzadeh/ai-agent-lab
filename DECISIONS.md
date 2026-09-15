@@ -729,3 +729,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Targeted `7 passed`; relevant case/UI/P1 safety suite `70 passed`; full regression `512 passed, 1 skipped`; Python compile check passed.
 
 **Next gate:** No further architecture-neutral UI implementation package is registered. An interactive prototype requires the Project Owner's explicit framework/architecture choice. The separately authorized ERiC registration remains temporarily paused until 09:00 Europe/Berlin on 2026-09-15.
+
+
+## D-060 — Local interactive UI architecture
+
+**Status:** explicitly selected by the Project Owner on 2026-09-15
+
+**Decision:** Use FastAPI with server-rendered Jinja templates and HTMX for the local interactive prototype. Serve the pinned HTMX asset locally so opening the prototype makes no CDN request. Bind all rendered case state to the architecture-neutral package-2 contract and its Case Registry checks.
+
+**Boundary:** Listen on loopback only; use only synthetic in-memory examples; provide no authentication, persistence, protected-material access, external connection, deployment, production mode, official receipt, or submission action. A disabled submission control is informational and cannot trigger a route.
+
+**Dependencies:** Pin verified package versions in `requirements.txt`; use the official FastAPI template/TestClient pattern and HTMX `2.0.10` local distribution.

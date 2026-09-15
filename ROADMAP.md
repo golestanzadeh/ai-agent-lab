@@ -160,6 +160,18 @@ Python compile check passed. No further architecture-neutral UI
 implementation package is registered; the interactive layer requires an explicit
 framework/architecture choice.
 
+Registered UI package 3 artifacts after Human architecture approval:
+
+- `src/agent_lab/ui_app.py` — loopback-only FastAPI application using the package-2 state contract and a synthetic in-memory Case Registry.
+- `src/agent_lab/ui_templates/base.html`, `index.html`, and `_workspace.html` — Jinja/HTMX Persian right-to-left shell and case-scoped partial rendering.
+- `src/agent_lab/ui_static/app.css` and `htmx.min.js` — responsive local styling and a pinned local HTMX 2.0.10 asset, with no runtime CDN dependency.
+- `tests/unit/test_ui_app.py` — route, case isolation, HTMX partial, no-real-data, no-network, and disabled-submission tests.
+- `docs/ui-interactive-prototype.md` — local run instructions, dependency evidence, verification, and remaining Human Gates.
+
+Authority: FastAPI + Jinja/HTMX, local only, as explicitly selected by the Project
+Owner on 2026-09-15. The existing synthetic/non-production and no-external-action
+boundaries remain in force.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

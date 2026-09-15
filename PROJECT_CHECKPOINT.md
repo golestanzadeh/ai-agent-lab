@@ -423,3 +423,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted `7 passed`; relevant case/UI/P1 safety suite `70 passed`; full regression `512 passed, 1 skipped`; Python compile check passed.
 - Status: **UI_PACKAGE_2_COMPLETE -> FRAMEWORK_ARCHITECTURE_HUMAN_REQUIRED / ERIC_REGISTRATION_TIME_PAUSED**.
 - Exact continuation: before 09:00 Europe/Berlin on 2026-09-15, make no registration entry, submission, or ELSTER contact. No further local implementation is registered that is certainly free of a Human Gate; await the UI framework/architecture choice or the end of the temporary registration pause.
+
+
+## UI package 3 architecture authorization — 2026-09-15
+
+- The Project Owner explicitly selected FastAPI + Jinja/HTMX for the local interactive prototype.
+- The latest instruction preserves the prior local, synthetic, non-production scope; it does not authorize real data, authentication, external connectivity, deployment, production, ELSTER/Finanzamt contact or transmission, or action on `main`.
+- Registered package: loopback-only FastAPI shell, Jinja/HTMX case selection and partial rendering, responsive Persian UI, local pinned HTMX asset, route/safety tests, and run documentation.
+- Exact next action: implement and verify UI package 3, commit and push on `d021-agent-case-provisioning`; registration remains paused until 09:00 Europe/Berlin.
