@@ -511,3 +511,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Conversational reporting is exception-only: interrupt the Human for an actual approval/information gate, material failure/conflict, token-controller pause, or consequential risk; routine successful packages need no full report.
 - This instruction does not expand authority across real data, credentials, Human authentication, protected access before login, external connectivity, production, submission, Finanzamt contact, protected-main action, merge, release, destructive action, or existing Human Gates.
 - Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / EXCEPTION_ONLY_REPORTING / ERIC_ACCESS_EMAIL_PENDING**.
+
+
+## UI package 6 autonomous registration — 2026-09-15
+
+- Agent review selected the highest-value next prerequisite-ready package: a synthetic review, evidence-gap, calculation, and form-preview view completing the next major portion of the ordinary UI journey.
+- Registered new artifacts: `src/agent_lab/ui_review_contract.py`, `src/agent_lab/ui_templates/_review_preview.html`, `tests/unit/test_ui_review_contract.py`, and `docs/ui-synthetic-review-preview.md`, plus bounded extensions to existing UI files/tests.
+- Exact acceptance: one validated synthetic case/run; ordered allowlisted findings/gaps; nonnegative explicitly synthetic numeric summary; preview reference equality; official mapping `NOT_RECOVERED`; case-switch stale-state denial; no private/free-form content, credentials, networking, persistence, authentication, receipt, or transmission.
+- Status: **UI_PACKAGE_6_REGISTERED_AND_AUTHORIZED / AGENT_LED_CONTINUATION_ACTIVE**.
+- Exact next action: implement, test, visually inspect, document, commit, and push UI package 6. No Human Gate applies inside this exact scope.

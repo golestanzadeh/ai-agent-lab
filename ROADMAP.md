@@ -208,6 +208,17 @@ Package UI-5 is implemented and verified. Verification: UI targeted `24 passed`;
 full regression `529 passed, 1 skipped`; Python compile and loopback visual
 inspection passed. The known upstream TestClient deprecation warning is unchanged.
 
+Registered independent UI package 6 artifacts:
+
+- `src/agent_lab/ui_review_contract.py` — immutable case/run-bound synthetic findings, allowlisted evidence gaps, calculation summary, and form-preview presentation contract using canonical references and explicit `NOT_RECOVERED` official mapping.
+- `src/agent_lab/ui_templates/_review_preview.html` — accessible Persian findings, evidence, calculation, route, preview, and blocker panel.
+- `tests/unit/test_ui_review_contract.py` and UI route-test extensions — scope, ordering, privacy, numeric, preview-binding, case-switch, and denied-capability tests.
+- `docs/ui-synthetic-review-preview.md` — package contract, verification, and remaining gates.
+
+Package UI-6 reuses accepted UI/P1 synthetic contracts and changes no architecture.
+It excludes real/free-form private content, persistence, authentication, protected
+ERiC access, external connectivity, official validation, production, and transmission.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
