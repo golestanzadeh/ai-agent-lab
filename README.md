@@ -6,11 +6,14 @@ A case-scoped, evidence-driven Agentic AI system for German tax workflows.
 
 CASE-001 for tax year 2024 completed its analytical preparation and was Chief-approved according to the recovered human checkpoint. No ELSTER/Finanzamt submission has occurred.
 
+The local synthetic ERiC boundary is complete through P1 package 7, the local four-role Agent Runtime Activation Layer is verified, and the Persian FastAPI + Jinja/HTMX prototype is complete through UI-8. ELSTER developer registration was submitted; protected access email and private Human authentication are pending.
+
 The remaining product tracks are:
 
 1. controlled ELSTER/Finanzamt submission;
 2. user interface;
-3. operational automation toward supervised autonomous project execution.
+3. hardened recovery and governed provider/production activation;
+4. product acceptance and release.
 
 Always read [PROJECT_CHECKPOINT.md](PROJECT_CHECKPOINT.md) before relying on historical status documents.
 

@@ -39,6 +39,17 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### Authoritative current snapshot — 2026-09-15
+
+- ELSTER developer registration was submitted after action-time Human approval; the access email and private Human authentication are pending.
+- Phase P1 local synthetic work is complete through package 7.
+- The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
+- Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
+- **Exact next action:** only a small architecture-compatible local synthetic maintenance or implementation package may proceed while the token guard permits. Protected ERiC work waits for the access email and private Human login.
+
+All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
+
 Repository cleanup and canonical-state consolidation completed on 2026-09-13.
 
 Project Constitution v2 was explicitly ratified by the Project Owner / Human on 2026-09-13 and is now active in `CONSTITUTION.md`.
@@ -107,7 +118,9 @@ A stage is not durably handed off until the checkpoint states:
 This checkpoint records state; it does not grant runtime authority. It does not authorize ELSTER submission, Finanzamt contact, irreversible mutation, secret/permission changes, protected-main merge, or bypass of any Human Gate.
 
 
-## Repository cleanup checkpoint — 2026-09-13
+## Historical checkpoints
+
+### Repository cleanup checkpoint — 2026-09-13
 
 The active branch was cleaned and canonicalized:
 
@@ -587,4 +600,15 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Local demonstration: `COMPLETED`; 6 tasks/manifests, 4 exact roles, 2 dependencies, 3 independent acceptances, 2 checkpoints, 46 audit events, audit `PASS`, final kill switch `HALTED`.
 - Deliberate limitation: recovery is proven only at the `PLANNED/PAUSED` boundary. A crash after the resume transaction begins fails closed and is not silently replayed. No model/provider, network, subprocess, credential, real data, protected-main, production, or external capability exists.
 - Status: **AGENT_RUNTIME_ACTIVATION_LAYER_TECHNICALLY_COMPLETE / LOCAL SYNTHETIC ONLY**.
-- Exact next action: return to the already registered and authorized UI package 6, unless the Project Owner requests amendments to this runtime result. Provider-backed or broader runtime activation requires separate exact authorization.
+- Historical next action at that commit: return to UI package 6. This was completed and then superseded by UI-7 and UI-8; the authoritative next action is the current snapshot above. Provider-backed or broader runtime activation still requires separate exact authorization.
+
+### Repository information-consolidation checkpoint — 2026-09-15
+
+- A complete tracked-repository hygiene audit found 215 tracked files, no tracked caches/logs/databases/keys/environment files, no duplicate tracked hashes, no broken local Markdown links, no basic secret-pattern findings, and no Git object-database or history-bloat problem.
+- `CURRENT_STATE.md` was reduced to verified live state, current boundaries, remaining work, and one exact next action.
+- `ROADMAP.md` was reduced to incomplete work, dependency order, constraints, and the future-file register; completed package detail remains recoverable from this checkpoint, `DECISIONS.md`, focused documents, and Git history.
+- The stale runtime-era instruction to return to UI-6 was explicitly marked historical; UI-6 through UI-8 are complete.
+- ERiC registration, runtime, UI, decision-status, README, and documentation-index records were reconciled.
+- Machine-local caches, generated artifacts, the excluded official PDF, `.venv`, and old remote branches were not deleted. The PDF and case/artifact material require retention judgment; remote-branch deletion remains a destructive Human-authority boundary.
+- No architecture, organizational rule, case data, source code, test, security control, or production capability changed.
+- Exact next action remains the authoritative current snapshot at the top of this section.

@@ -812,7 +812,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 ## D-067 — Local Agent Runtime Activation Layer
 
-**Status:** explicitly authorized by the Project Owner on 2026-09-15
+**Status:** implemented and verified on 2026-09-15 at `cb41d13`
 
 **Decision:** Implement a local, non-production, low-risk runtime layer that connects the existing Planning, Implementation, Quality Engineering, and Independent Acceptance roles to the accepted deterministic Orchestrator Kernel. Preserve exact task/manifest lineage, dependency order, bounded budgets, separate actor identities, evidence binding, independent acceptance, checkpoint/recovery, and the global kill switch.
 
@@ -836,7 +836,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 ## D-069 — Synthetic display-only Human Decision Queue
 
-**Status:** registered for implementation on 2026-09-15
+**Status:** implemented and verified on 2026-09-15 at `388e8db`
 
 **Decision:** Add a local presentation contract and Persian UI panel for one exact synthetic Human Gate bound to the selected case/run and immutable preview artifact. The queue communicates the boundary but cannot make or persist a decision.
 
@@ -847,7 +847,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 ## D-070 — Synthetic display-only submission readiness
 
-**Status:** registered for implementation on 2026-09-15
+**Status:** implemented and verified on 2026-09-15 at `c153014`
 
 **Decision:** Present a case/run-bound synthetic readiness summary with Article 1 content-release and destination-transmission approvals as two distinct `NOT_APPROVED` stages and an exact closed blocker list.
 

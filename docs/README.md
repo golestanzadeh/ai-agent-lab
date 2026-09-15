@@ -8,6 +8,11 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the 20 permanent Agent roles, three inactive domain templates, hierarchy, access levels, communication rules, Agent lifecycle, separation of duties, and O0–P4 path.
 - `o2-machine-readable-contracts.md` — Phase O2 contract map, invariants, technical verification, and current Human acceptance boundary; machine-readable artifacts live under `../contracts/orchestrator/v1/`.
 - `o3-deterministic-orchestrator-kernel.md` — persistent Kernel architecture, controls, failure behavior, inspection path, verification, and activation boundary.
+- `o4-controlled-autonomous-development-pilot.md` — bounded autonomous-development pilot and recovery boundary.
+- `o5-production-control-plane-readiness.md` — deterministic production-control-plane readiness evidence and activation boundary.
+- `agent-runtime-activation-layer.md` — local synthetic Planning/Implementation/QE/Independent Acceptance runtime layer.
+- `plan-limit-continuation-controller.md` — live plan-limit inspection, pause thresholds, and guarded continuation.
+- `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.
 - `use-cases.md` — workflow use cases.
@@ -56,6 +61,27 @@ These contracts remain reusable even though the CASE-001 migration stage complet
 - `d023-tax-category-organization.md` — retained evidence of real category organization.
 
 Historical D-024/D-025 progress snapshots were removed after their durable rules were consolidated. Current CASE status must be taken only from `PROJECT_CHECKPOINT.md`.
+
+## Controlled ERiC path
+
+- `p1-controlled-elster-path.md`
+- `p1-eric-adapter-contract.md`
+- `p1-eric-material-process.md`
+- `p1-synthetic-preview.md`
+- `p1-synthetic-submission-lifecycle.md`
+- `p1-synthetic-submission-audit.md`
+- `p1-synthetic-readiness-dossier.md`
+
+## Local user interface
+
+- `ui-phase-foundation.md`
+- `ui-state-contract.md`
+- `ui-interactive-prototype.md`
+- `ui-synthetic-workflow.md`
+- `ui-synthetic-document-intake.md`
+- `ui-synthetic-review-preview.md`
+- `ui-synthetic-decision-queue.md`
+- `ui-synthetic-submission-readiness.md`
 
 ## Documentation rules
 
