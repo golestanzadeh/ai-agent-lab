@@ -1,242 +1,133 @@
-# Codex Agent Workflow and Operational Record
+# Codex Agent Workflow and Agent Execution Protocol
 
 ## Purpose
 
-This document records how an AI coding agent, particularly OpenAI Codex, may be used during development of this project.
+This document is the operational execution protocol for AI coding agents used during development of this project, including Codex.
 
-Codex is an optional development tool. The project does not depend on its continued availability.
+Codex is optional. The repository, contracts, tests, and Git history remain authoritative and the project must remain continuable without Codex.
 
-## Standard Workflow
+## Optimization objective
 
-### Phase 1: Understand
+Optimize for **minimum tokens per accepted implementation**, not minimum tokens per individual prompt.
 
-Before implementation, Codex must:
+Context reduction must never weaken correctness, acceptance criteria, test coverage required by the task, security, auditability, traceability, or human-governance boundaries. Reading additional context is correct when it materially reduces implementation risk or rework.
 
-1. identify the current D-stage;
-2. read `AGENTS.md`;
-3. read applicable governance and design documents;
-4. inspect the relevant implementation;
-5. identify the exact implementation boundary;
-6. identify required tests and acceptance criteria.
+## Progressive Context Loading
 
-No implementation should begin when the governing contract is materially ambiguous.
-
-### Phase 2: Implement
-
-Codex implements only the approved scope. Unrelated refactoring and silent scope expansion are prohibited.
-
-### Phase 3: Execute
-
-Codex may execute local development commands through the available PowerShell/terminal environment.
-
-Typical commands include:
-
-```powershell
-python --version
-git --version
-python -m pytest
-```
-
-Project-specific commands must come from project documentation rather than being invented.
-
-### Phase 4: Test
-
-The normal cycle is:
+Agents must load the minimum sufficient context and expand only when the current level is insufficient for safe execution.
 
 ```text
-Implement
-   ↓
-Run targeted test
-   ↓
-Run relevant project tests
-   ↓
-Analyze failure
-   ↓
-Correct
-   ↓
-Run tests again
+Level 0 — current task, constraints, CURRENT_STATE.md, AGENTS.md
+    ↓ only if required
+Level 1 — directly relevant contracts, interfaces, tests, acceptance criteria
+    ↓ only if required
+Level 2 — direct implementation dependencies and adjacent state/decision records
+    ↓ only if required
+Level 3 — broader repository/history inspection
 ```
 
-A failed test is an input to the development cycle, not something to hide or bypass.
+Rules:
 
-### Phase 5: Review the Change
+- Do not scan the entire repository by default.
+- Prefer exact file paths, symbols, tests, and governing contracts over broad searches.
+- Do not reread historical material already summarized by an authoritative current-state or decision record unless verification is required.
+- Expand context immediately when ambiguity, architecture risk, security impact, conflicting documentation, or a failing test requires it.
+- Never guess missing project history or contracts to save tokens.
 
-Before committing:
-
-```powershell
-git status
-git diff
-```
-
-The agent must verify that only intended files changed, no temporary/generated files are unintentionally included, no secrets were introduced, and the implementation corresponds to the approved scope.
-
-### Phase 6: Git
-
-When authorized:
+## Standard Task Workflow
 
 ```text
-Create/use appropriate branch
+Inspect minimum sufficient context
         ↓
-Commit intended changes
+Implement bounded approved change
         ↓
-Push authorized branch
+Run targeted tests
         ↓
-Verify remote state
+Analyze and repair failures
+        ↓
+Run relevant acceptance/regression suite
+        ↓
+Run full suite when justified
+        ↓
+Inspect diff/status
+        ↓
+Commit and push when authorized
+        ↓
+Return compact report
 ```
 
-Direct modification of `main` is not the default workflow.
+One agent should normally own inspect → edit → test → repair → commit for a bounded task. Do not create separate agents for routine substeps unless parallelism or specialist isolation provides demonstrated value.
 
-### Phase 7: Report
+## Implementation discipline
 
-Every completed agent task should report:
+- Implement only the approved task boundary.
+- Reuse existing contracts and abstractions before introducing new ones.
+- Avoid unrelated refactoring, speculative production code, and documentation duplication.
+- Stop for genuine human-authority boundaries defined by project governance; ordinary coding, test repair, local commands, and authorized Git operations are not reasons to stop.
 
-- what changed;
-- files changed;
-- tests executed;
-- test results;
-- failures encountered;
-- corrections performed;
-- commit hash;
-- branch;
-- push result;
-- unexpected environmental limitations.
+## Testing policy
 
-# Initial Codex Capability Test
+Testing remains mandatory. Use the least expensive sequence that still proves the required behavior:
 
-## Environment
+1. targeted tests for the changed boundary;
+2. relevant acceptance/regression suite;
+3. full suite when justified by task acceptance criteria, integration risk, cross-cutting changes, release/stage validation, or governing documentation.
 
-The initial local execution test established:
+A full suite is not automatically required after every trivial edit, but token/time optimization never overrides explicit acceptance criteria. Failed tests must be analyzed and repaired or reported, never hidden or bypassed.
+
+Project-specific commands must come from repository documentation or verified project configuration rather than being invented.
+
+## Change review and Git
+
+Before commit, inspect `git status` and `git diff`. Confirm only intended files changed, generated/private artifacts are excluded, no secrets or private IDs were introduced, and the change matches the approved boundary.
+
+For non-trivial work, use the authorized development branch. Commit and push only when authorized. Do not rewrite history or modify `main` outside the approved workflow.
+
+## Completion reporting
+
+Successful routine tasks should return a compact report by default:
 
 ```text
-PowerShell: 7.6.5
-Python:     3.14.2
-Git:        2.41.0.windows.1
-pytest:     9.1.1
+STATUS: PASS
+Changed: <files or concise summary>
+Tests: targeted PASS; relevant PASS; full PASS/NOT REQUIRED
+Commit: <hash>
+Branch: <branch>
+Next: <next boundary>
 ```
 
-A project-local virtual environment was used for pytest.
+Expand the report only for failures, unresolved risks, architecture/contract decisions, security issues, unexpected environment limitations, or a human-authority boundary. Do not repeat large task prompts, repository history, or unchanged governance in completion reports.
 
-## Local Execution Test
+## Human authority
 
-Codex successfully:
+Architectural decisions, domain rules, accepted contracts, stage acceptance, migration authorization, destructive operations, and other consequential governance decisions remain under human control as defined by D-019 and related decisions. Passing tests does not itself constitute stage or architectural acceptance.
 
-1. created a writable project-local test directory;
-2. created a Python test file;
-3. executed Python locally;
-4. created a Git repository;
-5. staged and committed a file;
-6. executed pytest;
-7. observed a real failing assertion;
-8. analyzed the failure;
-9. modified the test as instructed;
-10. reran pytest and obtained a passing result.
+## Security and case isolation
 
-The demonstrated cycle was:
+All existing security, privacy, case-isolation, approval, and migration restrictions remain in force. Token efficiency is never justification for broad Drive searches, weakened validation, omitted provenance, hidden failures, private-data commits, or bypassing fail-closed behavior.
 
-```text
-Failure
-   ↓
-Analysis
-   ↓
-Code correction
-   ↓
-pytest
-   ↓
-Pass
-```
+## Enforcement
 
-No commit was created for the deliberate pytest repair test.
+Prompt instructions are not the sole enforcement mechanism. Where practical, stable rules should be enforced by tests, CI checks, deterministic scope checks, acceptance criteria, and repository contracts.
 
-# Git Environment Findings
+Repository documents contain durable rules; task prompts should primarily specify the current mission, boundary, and acceptance criteria.
 
-## Repository Ownership
+## Measuring effectiveness
 
-The Codex PowerShell environment executed under:
+Evaluate this protocol over multiple suitable tasks. The useful metric is accepted implementation efficiency, considering:
 
-`DESKTOP-HVRUQB7\codexsandboxonline`
+- unnecessary context loaded;
+- repair iterations;
+- execution time;
+- test/acceptance quality;
+- token consumption per accepted implementation.
 
-The tested repository directory was owned by:
+If the protocol adds documentation overhead without improving execution behavior or accepted-implementation efficiency, revise or remove the ineffective parts.
 
-`DESKTOP-HVRUQB7\CodexSandboxOffline`
+## Known environment constraints
 
-Git therefore produced `fatal: detected dubious ownership`.
+Environment observations are not permanent product guarantees. The tested Windows/Codex environment has required a per-command Git `safe.directory` override because sandbox execution identity differs from repository ownership. Direct HTTPS Git credential persistence has also been unreliable in some runs. Never paste credentials or access tokens into chat or commit them to the repository.
 
-A per-command `safe.directory` override allowed repository operation without changing global Git configuration.
+## Operational principle
 
-This is an environment/sandbox constraint, not a project defect.
-
-## Direct HTTPS Authentication
-
-A direct `git ls-remote https://github.com/...` test reached GitHub but encountered the `wincredman` credential-store persistence limitation and a non-interactive terminal error.
-
-Direct Git HTTPS credential handling from the tested sandbox must therefore not be assumed to be reliable.
-
-Credentials and access tokens must never be pasted into ChatGPT conversation text.
-
-# GitHub Integration Test
-
-The controlled write test used repository `ai-agent-lab`.
-
-It successfully demonstrated:
-
-```text
-Create branch
-      ↓
-Create one file
-      ↓
-Commit
-      ↓
-Push
-      ↓
-Verify
-```
-
-Branch: `codex-github-test`
-
-File: `codex_github_test.txt`
-
-Content: `CODEX_GITHUB_WRITE_TEST`
-
-Commit: `02236f4696cc5761e0ac00f0edf1e32a8ac4bcdc`
-
-The test confirmed that the authorized Codex environment could create a branch, commit, and push to the connected GitHub repository without modifying `main`.
-
-# Usage Limitation
-
-During the continuation test, Codex reported:
-
-```text
-You've hit your usage limit.
-```
-
-The displayed continuation time was `October 7, 2026, 1:02 PM`.
-
-This is recorded as an observation of the tested Free-plan environment at that time. It must not be treated as a permanent product limit because service limits and reset policies may change.
-
-Practical conclusion:
-
-```text
-Codex capability: demonstrated
-Codex continuous capacity: limited by available usage quota
-```
-
-# Operational Principle
-
-Codex is an execution accelerator inside the project's existing engineering process.
-
-It is not:
-
-- the project owner;
-- the architectural authority;
-- the source of truth;
-- the approval authority;
-- a mandatory runtime dependency.
-
-The project's source of truth remains the repository's governed documentation, contracts, source code, tests, Git history, and explicit human decisions.
-
-# Current Project State at Documentation Time
-
-- D-017: Implemented.
-- D-018: Accepted and implemented.
-- Physical Google Drive migration: Not performed.
-- Next implementation boundary: exact real migration manifest + successful live-target-preflight artifact identities → D-017 approval context.
+The coding agent is an execution accelerator inside the governed engineering process. It is not the project owner, architectural authority, source of truth, approval authority, or runtime dependency.

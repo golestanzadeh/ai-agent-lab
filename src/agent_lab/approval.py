@@ -193,6 +193,7 @@ class ApprovalStore:
         preflight_result: str,
         intended_operation: IntendedOperation,
         actor: str,
+        requester_actor_type: ActorType = ActorType.HUMAN,
         timestamp: datetime | None = None,
     ) -> MigrationApproval:
         with self._lock:
@@ -203,6 +204,11 @@ class ApprovalStore:
                 preflight_result=preflight_result, intended_operation=intended_operation,
                 actor=actor,
             )
+            if (
+                not isinstance(requester_actor_type, ActorType)
+                or requester_actor_type not in {ActorType.HUMAN, ActorType.AGENT}
+            ):
+                raise InvalidApprovalError("approval requester must be HUMAN or AGENT")
             ts = timestamp or datetime.now(timezone.utc)
             self._validate_timestamp(ts)
             self._counter += 1
@@ -227,7 +233,7 @@ class ApprovalStore:
             self._audit.atomic_append(
                 case_id=case_id, run_id=run_id,
                 event_type=AuditEventType.APPROVAL_REQUESTED,
-                actor_type=ActorType.HUMAN, actor_id=actor,
+                actor_type=requester_actor_type, actor_id=actor,
                 operation="request_approval", status=AuditStatus.INFO,
                 approval_ref=approval_id,
                 commit=commit, rollback=rollback,

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-agent-lab.local/contracts/orchestrator/v1/agent-manifest.schema.json",
+  "title": "Agent Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "manifest_id", "role_id", "actor_instance_id", "task_id",
+    "parent_task_id", "scope", "inputs", "expected_outputs", "allowed_tools",
+    "requested_access_tiers", "requested_capabilities", "forbidden_actions",
+    "budget", "timeout_seconds", "max_retries", "stop_conditions",
+    "escalation_route", "issued_at", "expires_at", "status"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "manifest_id": {"type": "string", "pattern": "^MAN-[A-Z0-9][A-Z0-9._-]{2,63}$"},
+    "role_id": {"type": "string", "minLength": 1},
+    "actor_instance_id": {"type": "string", "pattern": "^AGI-[A-Z0-9][A-Z0-9._-]{2,63}$"},
+    "task_id": {"type": "string", "pattern": "^TASK-[A-Z0-9][A-Z0-9._-]{2,63}$"},
+    "parent_task_id": {"type": ["string", "null"]},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "ref", "allowed_paths", "case_context"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "ref": {"type": "string", "minLength": 1},
+        "allowed_paths": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "case_context": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["case_id", "tax_year", "run_id"],
+              "properties": {
+                "case_id": {"type": "string", "minLength": 1},
+                "tax_year": {"type": "integer", "minimum": 2000, "maximum": 2200},
+                "run_id": {"type": "string", "minLength": 1}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "inputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "expected_outputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "allowed_tools": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "requested_access_tiers": {"type": "array", "items": {"enum": ["A0", "A1", "A2", "A3", "A4", "A5"]}, "minItems": 1, "uniqueItems": true},
+    "requested_capabilities": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "forbidden_actions": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["token_limit", "tool_call_limit", "cost_limit_usd"],
+      "properties": {
+        "token_limit": {"type": "integer", "minimum": 1},
+        "tool_call_limit": {"type": "integer", "minimum": 1},
+        "cost_limit_usd": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "timeout_seconds": {"type": "integer", "minimum": 1},
+    "max_retries": {"type": "integer", "minimum": 0},
+    "stop_conditions": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "escalation_route": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["PROPOSED", "VALIDATED", "HUMAN_REQUIRED", "ACTIVE", "BLOCKED", "COMPLETED", "FAILED", "REJECTED", "CANCELLED", "EXPIRED", "REVOKED"]}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "requested_access_tiers": {"contains": {"enum": ["A3", "A4"]}}
+        },
+        "required": ["requested_access_tiers"]
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "properties": {
+              "case_context": {"type": "object"}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

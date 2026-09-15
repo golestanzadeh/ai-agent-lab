@@ -1,0 +1,8 @@
+<section aria-labelledby="decision-title" data-classification="{{ decisions.data_classification }}">
+  <p class="eyebrow">نمایشی · مصنوعی · غیرعملیاتی</p><h3 id="decision-title">صف تصمیم انسانی</h3>
+  {% for item in decisions.items %}<article class="card" data-gate-id="{{ item.gate_id }}">
+    <strong>{{ item.status.value }}</strong><p>{{ item.action }} · {{ item.destination }}</p>
+    <p class="mono">{{ item.artifact_reference }}</p><time datetime="{{ item.expires_at.isoformat() }}">{{ item.expires_at.isoformat() }}</time>
+    <p>تصمیم فقط از مسیر حاکمیتی جداگانه انجام می‌شود؛ این نما هیچ عملی انجام نمی‌دهد.</p>
+  </article>{% endfor %}
+</section>
