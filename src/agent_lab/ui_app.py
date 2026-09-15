@@ -31,6 +31,7 @@ from agent_lab.ui_workflow_contract import build_synthetic_ui_workflow
 from agent_lab.ui_document_contract import build_synthetic_document_inventory
 from agent_lab.ui_review_contract import build_synthetic_review
 from agent_lab.ui_decision_contract import build_synthetic_decision_queue
+from agent_lab.ui_submission_readiness_contract import build_synthetic_submission_readiness
 
 
 UI_ROOT = Path(__file__).resolve().parent
@@ -112,7 +113,7 @@ def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
         return TEMPLATES.TemplateResponse(
             request=request,
             name="index.html",
-            context={"cases": cases, "workspace": selected, "workflow": build_synthetic_ui_workflow(selected), "documents": build_synthetic_document_inventory(selected), "review": build_synthetic_review(selected), "decisions": build_synthetic_decision_queue(selected)},
+            context={"cases": cases, "workspace": selected, "workflow": build_synthetic_ui_workflow(selected), "documents": build_synthetic_document_inventory(selected), "review": build_synthetic_review(selected), "decisions": build_synthetic_decision_queue(selected), "readiness": build_synthetic_submission_readiness(selected)},
         )
 
     @app.get("/workspace", response_class=HTMLResponse)
@@ -128,7 +129,7 @@ def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
         return TEMPLATES.TemplateResponse(
             request=request,
             name="_workspace.html",
-            context={"workspace": selected, "workflow": build_synthetic_ui_workflow(selected), "documents": build_synthetic_document_inventory(selected), "review": build_synthetic_review(selected), "decisions": build_synthetic_decision_queue(selected)},
+            context={"workspace": selected, "workflow": build_synthetic_ui_workflow(selected), "documents": build_synthetic_document_inventory(selected), "review": build_synthetic_review(selected), "decisions": build_synthetic_decision_queue(selected), "readiness": build_synthetic_submission_readiness(selected)},
         )
 
     @app.get("/health", include_in_schema=False)

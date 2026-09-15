@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-UI package 8, a local synthetic display-only submission-readiness boundary, is registered for implementation. Both Article 1 approvals, real decisions, credentials, transmitter, receipt, network, production, and protected-main action remain gated or absent.
+UI package 8, the local synthetic display-only submission-readiness boundary, is technically complete. Continue only with a small architecture-compatible synthetic package while weekly capacity remains above its caution threshold. Both Article 1 approvals and every real operational capability remain gated or absent.
 
 ## Non-negotiable constraints
 

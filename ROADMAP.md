@@ -249,6 +249,10 @@ Package UI-8 is local, display-only, and synthetic. It creates no approval,
 authentication, credential, transmitter, retry, receipt, network, or submission
 capability.
 
+Package UI-8 is implemented and verified. Targeted UI-8/app: `19 passed`; full
+regression: `564 passed, 1 skipped`; loopback visual/accessibility inspection
+passed. The known TestClient warning is unchanged.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

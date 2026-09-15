@@ -87,3 +87,8 @@ def test_decision_queue_is_display_only():
     response=_client().get("/")
     assert "صف تصمیم انسانی" in response.text and "SYNTH-GATE-" in response.text
     assert "<form" not in response.text and "تأیید تصمیم" not in response.text
+
+def test_submission_readiness_keeps_both_approvals_separate_and_unapproved():
+    text=_client().get("/").text
+    assert "مرحلهٔ یک · مجوز محتوا" in text and "مرحلهٔ دو · مجوز مقصد" in text
+    assert text.count("NOT_APPROVED") >= 2 and "REAL_TRANSMISSION_NOT_AUTHORIZED" in text
