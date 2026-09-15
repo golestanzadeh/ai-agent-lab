@@ -234,6 +234,10 @@ Package UI-7 is display-only and architecture-compatible. It creates no approval
 decision persistence, authentication, credential, network, protected access,
 production, receipt, or transmission capability.
 
+Package UI-7 is implemented and verified. Targeted UI-7/app: `16 passed`; full
+regression: `555 passed, 1 skipped`; loopback visual/accessibility inspection
+passed. The known TestClient warning is unchanged.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
