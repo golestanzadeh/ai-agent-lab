@@ -686,3 +686,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Targeted `12 passed`; relevant Phase P1 `104 passed`; full regression `486 passed, 1 skipped`; Python compile check passed.
 
 **Continuation:** Continue under D-051 with the registered local synthetic submission-readiness dossier. Existing Human Gates remain unchanged.
+
+
+## D-057 — Synthetic readiness dossier and local P1 boundary
+
+**Status:** implemented and verified; Human Gate reached
+
+**Decision:** Aggregate the exact ordered synthetic P1 evidence lineage into one immutable readiness dossier. Preserve the complete external-blocker and denied-capability policies and reject cross-bound, missing, reordered, duplicated, privacy-expanding, or execution-enabling construction.
+
+**Result:** The dossier is technically complete but explicitly not externally ready. It contains no tax values or purpose text and grants no mapping, validation, credential, network, signing, transmission, or real-receipt capability.
+
+**Verification:** Targeted `19 passed`; relevant Phase P1 `123 passed`; full regression `505 passed, 1 skipped`; Python compile check passed.
+
+**Gate:** D-051 local synthetic authority has been fully exercised through the registered package sequence. Further P1 work requires exact authority for developer registration/manufacturer-ID/protected material retrieval. The separate user-interface phase also requires exact phase authorization. No such step is inferred.

@@ -64,6 +64,7 @@ Current authorized continuation point:
 15. The continuous authority was durably activated at commit `4532328a8069393324d7cc63bd08a91c5620acd9`. The immutable synthetic Human-readable preview is implemented and verified at commit `8237882d29c2d7171f776fe684e2f0d1b609d476`.
 16. The token guard resumed at 99% five-hour and 49% weekly remaining after verifying a clean synchronized repository at `3c2ff2844bac94387969527b72a8c49c0f997415`. The synthetic submission-lifecycle/idempotency package is implemented and verified; current status is `P1_PACKAGE_5_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
 17. The privacy-minimized synthetic lifecycle audit and restart-recovery package is implemented and verified; current status is `P1_PACKAGE_6_COMPLETE / CONTINUOUS AUTHORITY ACTIVE`.
+18. The synthetic submission-readiness dossier is implemented and verified. The registered local synthetic P1 scope is complete; current status is `P1_PACKAGE_7_COMPLETE / LOCAL_SYNTHETIC_SCOPE_COMPLETE -> HUMAN_REQUIRED`.
 
 Future changes to the organizational model require explicit Project Owner / Human instruction or approval. The Master Project Orchestrator may request review and propose an exact change but cannot activate it.
 
@@ -398,3 +399,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted `12 passed`; relevant P1 `104 passed`; full regression `486 passed, 1 skipped`; Python compile check passed.
 - Status: **P1_PACKAGE_6_COMPLETE / CONTINUOUS AUTHORITY ACTIVE**.
 - Exact next action: implement the registered local synthetic submission-readiness dossier. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.
+
+
+## Phase P1 package 7 synthetic readiness-dossier completion — 2026-09-15
+
+- Implemented `src/agent_lab/elster_readiness_dossier.py`, `tests/unit/test_elster_readiness_dossier.py`, and `docs/p1-synthetic-readiness-dossier.md`.
+- The immutable dossier binds the exact envelope, adapter, synthetic material-process, preview, lifecycle-audit, and recovery lineage while excluding tax values and purpose text.
+- The only valid outcome remains externally blocked by unrecovered official materials, absent official mapping/plausibility implementation, unauthorized credentials/certificates, absent transmitter, and unauthorized real transmission.
+- Verification: targeted `19 passed`; relevant P1 `123 passed`; full regression `505 passed, 1 skipped`; Python compile check passed.
+- Status: **P1_PACKAGE_7_COMPLETE / LOCAL_SYNTHETIC_SCOPE_COMPLETE -> HUMAN_REQUIRED**.
+- Exact continuation choice: the Project Owner must exactly authorize either (a) the next protected P1 developer-registration/material-retrieval boundary, or (b) the separate user-interface phase. No registration, retrieval, credential, connectivity, production, protected-main, or transmission action has begun.
