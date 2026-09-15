@@ -148,6 +148,12 @@ regression: `63 passed`. The next interactive prototype requires an explicit UI
 architecture/framework choice. Production architecture, real-data use, external
 deployment, and submission capability remain separate Human Gates.
 
+Registered architecture-neutral UI package 2 artifacts:
+
+- `src/agent_lab/ui_state_contract.py` — immutable synthetic presentation-state contract that resolves `case_id` through the Case Registry, clears stale scope on case changes, represents Human Gates exactly, and permanently disables submission.
+- `tests/unit/test_ui_state_contract.py` — case isolation, stale-state clearing, exact gate binding, synthetic privacy, and denied-submission tests.
+- `docs/ui-state-contract.md` — state fields, invariants, verification evidence, and framework Human Gate.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
