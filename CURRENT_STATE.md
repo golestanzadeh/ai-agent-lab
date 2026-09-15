@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-UI package 7, the local synthetic display-only Human Decision Queue, is technically complete. Select and register the next architecture-compatible local synthetic UI package. Provider-backed Agents, real decisions, persistence, real data, protected ERiC access before Human login, external connectivity, production authority, and protected-main action remain gated.
+UI package 8, a local synthetic display-only submission-readiness boundary, is registered for implementation. Both Article 1 approvals, real decisions, credentials, transmitter, receipt, network, production, and protected-main action remain gated or absent.
 
 ## Non-negotiable constraints
 

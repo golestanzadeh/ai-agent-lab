@@ -843,3 +843,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Approval, rejection, authentication, credentials, persistence, networking, protected access, production, receipts, and transmission remain absent and disabled. Implementing a real Human decision lifecycle requires separate exact authorization.
 
 **Implementation result:** The exact case/run/gate-bound display queue is integrated and verified with `16` targeted tests and `555 passed, 1 skipped` full regression; loopback visual/accessibility inspection passed.
+
+
+## D-070 — Synthetic display-only submission readiness
+
+**Status:** registered for implementation on 2026-09-15
+
+**Decision:** Present a case/run-bound synthetic readiness summary with Article 1 content-release and destination-transmission approvals as two distinct `NOT_APPROVED` stages and an exact closed blocker list.
+
+**Safety:** The view has no approval control, authentication, credential, transmitter, retry, receipt, networking, production, or submission capability. Displaying the stages grants no authority.

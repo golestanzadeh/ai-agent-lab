@@ -238,6 +238,17 @@ Package UI-7 is implemented and verified. Targeted UI-7/app: `16 passed`; full
 regression: `555 passed, 1 skipped`; loopback visual/accessibility inspection
 passed. The known TestClient warning is unchanged.
 
+Registered independent UI package 8 artifacts:
+
+- `src/agent_lab/ui_submission_readiness_contract.py` — immutable synthetic submission-readiness boundary with separate Article 1 Stage One/Stage Two `NOT_APPROVED` states and exact blocker codes.
+- `src/agent_lab/ui_templates/_submission_readiness.html` — Persian readiness and transfer-boundary panel with no action controls.
+- `tests/unit/test_ui_submission_readiness_contract.py` and UI route-test extensions — separation, scope, blocker, denial, and rendering tests.
+- `docs/ui-synthetic-submission-readiness.md` — package contract and remaining Human Gates.
+
+Package UI-8 is local, display-only, and synthetic. It creates no approval,
+authentication, credential, transmitter, retry, receipt, network, or submission
+capability.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
