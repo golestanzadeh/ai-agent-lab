@@ -431,3 +431,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The latest instruction preserves the prior local, synthetic, non-production scope; it does not authorize real data, authentication, external connectivity, deployment, production, ELSTER/Finanzamt contact or transmission, or action on `main`.
 - Registered package: loopback-only FastAPI shell, Jinja/HTMX case selection and partial rendering, responsive Persian UI, local pinned HTMX asset, route/safety tests, and run documentation.
 - Exact next action: implement and verify UI package 3, commit and push on `d021-agent-case-provisioning`; registration remains paused until 09:00 Europe/Berlin.
+
+
+## UI package 3 completion — 2026-09-15
+
+- Implemented the authorized FastAPI + Jinja/HTMX local prototype with Persian RTL responsive templates, local integrity-verified HTMX `2.0.10`, synthetic case switching, scoped status panels, an exact Human Gate, and visibly disabled submission/operation controls.
+- Runtime boundary: loopback only, synthetic in-memory registry, no CDN request, no authentication/persistence, no protected ERiC access, no real data, no external API, no submission route, and no official receipt.
+- Verification: UI-2/UI-3 targeted `13 passed`; full regression `518 passed, 1 skipped`; Python compile check passed; loopback visual inspection passed. One upstream Starlette TestClient deprecation warning is recorded and did not affect results.
+- Status: **UI_PACKAGE_3_COMPLETE / LOCAL_SYNTHETIC_PROTOTYPE_RUNNING**.
+- Exact continuation: keep ERiC registration paused until 09:00 Europe/Berlin. Further local synthetic UI refinement may continue only when it does not introduce persistence, authentication, external access, real data, deployment, production, or transmission; otherwise stop for the applicable Human Gate.

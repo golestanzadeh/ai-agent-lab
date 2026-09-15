@@ -172,6 +172,13 @@ Authority: FastAPI + Jinja/HTMX, local only, as explicitly selected by the Proje
 Owner on 2026-09-15. The existing synthetic/non-production and no-external-action
 boundaries remain in force.
 
+Package UI-3 is implemented and verified. Verification: UI-2/UI-3 targeted
+`13 passed`; full regression `518 passed, 1 skipped` with one upstream
+Starlette TestClient deprecation warning. Visual inspection on the loopback server
+confirmed the Persian RTL shell and disabled submission control. The next package
+may improve synthetic interactions but must not cross into real data,
+authentication, persistence, external access, deployment, or transmission.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

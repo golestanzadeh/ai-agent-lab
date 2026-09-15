@@ -740,3 +740,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** Listen on loopback only; use only synthetic in-memory examples; provide no authentication, persistence, protected-material access, external connection, deployment, production mode, official receipt, or submission action. A disabled submission control is informational and cannot trigger a route.
 
 **Dependencies:** Pin verified package versions in `requirements.txt`; use the official FastAPI template/TestClient pattern and HTMX `2.0.10` local distribution.
+
+**Implementation result:** The local app is implemented with exact case/year partial rendering, Persian responsive templates, local static assets, and no submission endpoint. The HTMX asset matches the official SHA-384 integrity value. UI-2/UI-3 targeted verification returned `13 passed`; full regression returned `518 passed, 1 skipped`, with one recorded upstream TestClient deprecation warning. Loopback visual inspection passed.

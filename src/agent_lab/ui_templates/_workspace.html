@@ -1,0 +1,44 @@
+<section id="workspace" class="workspace" aria-live="polite" data-case-id="{{ workspace.case_id }}">
+  <div class="scope-strip">
+    <div><span>پرونده</span><strong>{{ workspace.case_id }}</strong></div>
+    <div><span>سال</span><strong>{{ workspace.tax_year }}</strong></div>
+    <div><span>وضعیت</span><strong>{{ workspace.lifecycle_status.value }}</strong></div>
+    <div><span>اجرای فعال</span><strong>{{ workspace.run_id }}</strong></div>
+  </div>
+
+  <div class="grid">
+    <article class="card">
+      <p class="step">۱ · مدارک</p><h3>مدارک پرونده</h3>
+      <p class="metric">{{ workspace.document_references|length }}</p>
+      <p>مرجع تغییرناپذیر مصنوعی؛ محتوای خصوصی در این نما حمل نمی‌شود.</p>
+    </article>
+    <article class="card">
+      <p class="step">۲ · بررسی</p><h3>یافته‌های ایجنت</h3>
+      <p class="metric">{{ workspace.finding_references|length }}</p>
+      <p>هر یافته به همین پرونده و اجرای انتخاب‌شده متصل است.</p>
+    </article>
+    <article class="card warning-card">
+      <p class="step">۳ · شکاف شواهد</p><h3>نیازمند تکمیل</h3>
+      <ul>{% for gap in workspace.evidence_gap_codes %}<li>{{ gap }}</li>{% endfor %}</ul>
+    </article>
+    <article class="card">
+      <p class="step">۴ · پیش‌نمایش</p><h3>فرم مصنوعی</h3>
+      <p class="mono">{{ workspace.preview_reference }}</p>
+      <span class="status-chip">نگاشت رسمی هنوز بازیابی نشده</span>
+    </article>
+  </div>
+
+  <article class="gate" aria-labelledby="gate-title">
+    <div>
+      <p class="eyebrow">Human Gate</p><h3 id="gate-title">بازبینی پیش‌نمایش لازم است</h3>
+      <p>اقدام: {{ workspace.human_gate.action }} · مقصد: {{ workspace.human_gate.destination }}</p>
+    </div>
+    <button type="button" disabled aria-describedby="submit-help">ارسال به ELSTER</button>
+    <p id="submit-help" class="disabled-reason">ارسال تولیدی مجاز و پیاده‌سازی نشده است.</p>
+  </article>
+
+  <nav class="operations" aria-label="کنترل عملیات">
+    <button type="button" disabled>توقف</button><button type="button" disabled>ادامه</button>
+    <button type="button" disabled>بازیابی</button><span>کنترل‌ها در نمونهٔ فعلی نمایشی‌اند.</span>
+  </nav>
+</section>

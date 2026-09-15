@@ -299,3 +299,13 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - Verification: targeted `7 passed`; relevant case/UI/P1 safety suite `70 passed`; full regression `512 passed, 1 skipped`; Python compile check passed.
 - Status: `UI_PACKAGE_2_COMPLETE -> FRAMEWORK_ARCHITECTURE_HUMAN_REQUIRED`.
 - Registration remains paused until 09:00 Europe/Berlin on 2026-09-15 by Human instruction. No form entry, submission, or ELSTER contact occurred.
+
+
+## UI package 3 local interactive prototype checkpoint
+
+- The Project Owner selected FastAPI + Jinja/HTMX for a local prototype. Implemented a loopback-only FastAPI app, Persian RTL Jinja templates, HTMX case switching, responsive local CSS, and a locally served integrity-verified HTMX `2.0.10` asset.
+- The app uses only an in-memory synthetic Case Registry and package-2 state contract. Unknown cases and tax-year mismatches fail closed; there is no submission route, authentication, persistence, external API, official receipt, or runtime CDN request.
+- Visual inspection on `127.0.0.1` confirmed the case summary, document/finding/gap/preview panels, exact Human Gate, synthetic/local label, and disabled submission/operation controls.
+- Verification: UI-2/UI-3 targeted `13 passed`; full regression `518 passed, 1 skipped`; Python compile check passed. One upstream Starlette deprecation warning reports future migration from `httpx` to `httpx2`; it did not affect test behavior and remains explicit.
+- Status: `UI_PACKAGE_3_COMPLETE / LOCAL_SYNTHETIC_PROTOTYPE_RUNNING`.
+- ERiC registration remains paused until 09:00 Europe/Berlin under the latest Human instruction.
