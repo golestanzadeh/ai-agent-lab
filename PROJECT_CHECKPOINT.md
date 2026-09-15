@@ -409,3 +409,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted `19 passed`; relevant P1 `123 passed`; full regression `505 passed, 1 skipped`; Python compile check passed.
 - Status: **P1_PACKAGE_7_COMPLETE / LOCAL_SYNTHETIC_SCOPE_COMPLETE -> HUMAN_REQUIRED**.
 - Exact continuation choice: the Project Owner must exactly authorize either (a) the next protected P1 developer-registration/material-retrieval boundary, or (b) the separate user-interface phase. No registration, retrieval, credential, connectivity, production, protected-main, or transmission action has begun.
+
+
+## Protected ERiC access and UI phase start — 2026-09-15
+
+- Human authority: developer registration and protected retrieval of official ERiC documentation/package are authorized first; starting the user-interface phase is also authorized.
+- Registration progress: the official ELSTER developer-registration form is open and ready. No personal/organizational value was entered and no submission occurred. The Human must enter the exact form values, solve the CAPTCHA, and leave final submission for action-time confirmation.
+- Registration exclusions: manufacturer-ID work, tax-transmission credentials/certificates, real taxpayer data, acceptance-server connectivity, transmission, Finanzamt contact, production activation, architecture/governing-rule change, and action on protected `main` remain Human Gates.
+- UI progress: package UI-1 is registered as `docs/ui-phase-foundation.md`, a local synthetic non-production interaction-and-safety contract based on the stable backend, identity, state, approval, audit, and synthetic ELSTER boundaries. It selects no framework and enables no external capability.
+- Status: **ERIC_REGISTRATION_READY_FOR_HUMAN_INPUT / UI_PHASE_STARTED / CONTINUOUS AUTHORITY ACTIVE**.
+- Exact autonomous next action: implement and verify `docs/ui-phase-foundation.md`; stop before any framework or production-architecture choice, real data, external deployment/connectivity, registration submission, credential/certificate action, manufacturer-ID work, ELSTER/Finanzamt contact or transmission, protected-main action, merge, or release.

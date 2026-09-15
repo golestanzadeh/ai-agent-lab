@@ -701,3 +701,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Gate:** D-051 local synthetic authority has been fully exercised through the registered package sequence. Further P1 work requires exact authority for developer registration/manufacturer-ID/protected material retrieval. The separate user-interface phase also requires exact phase authorization. No such step is inferred.
 
 **Automation state:** Pause `plan-limit-continuation-guard` at this Human Gate so hourly non-actionable checks do not consume plan capacity. Preserve its configuration and task attachment for reactivation after the Project Owner supplies an exact authorized continuation point.
+
+
+## D-058 — Protected ERiC access and user-interface phase authority
+
+**Status:** authorized and started on 2026-09-15
+
+**Authority:** The Project Owner explicitly authorized, in priority order, the developer-registration/protected-official-material retrieval stage and the start of the user-interface phase.
+
+**Registration boundary:** Registration is limited to ELSTER developer access needed to retrieve and inspect protected ERiC documentation/package. The official form is ready for Human-owned contact data and CAPTCHA entry. No field has been populated and no submission has occurred. Final submission requires action-time Human confirmation. Manufacturer-ID work, tax-transmission credentials or certificates, real taxpayer data, acceptance-server connectivity, transmission, Finanzamt contact, production activation, and protected-main action are not authorized.
+
+**UI boundary:** Begin with a local, synthetic, non-production interaction-and-safety foundation derived from the already stable case, identity, state, approval, audit, and synthetic ELSTER contracts. Package UI-1 chooses no framework and creates no external connection, real-data path, deployment, or submission capability. Any architecture choice remains a separate Human Gate.
+
+**Parallel continuation:** The registration step retains first priority. Because it currently waits only for Human-owned form values and CAPTCHA, the separately authorized local UI foundation may proceed without treating that wait as a project-wide stop.

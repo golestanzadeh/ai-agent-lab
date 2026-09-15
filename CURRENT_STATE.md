@@ -28,7 +28,7 @@ For every new session, read `PROJECT_CHECKPOINT.md` first.
 - Phase O3 deterministic Orchestrator Kernel implemented, technically verified, and explicitly Human-accepted.
 - Phase O4 bounded autonomous-development pilot implemented, technically verified, and explicitly Human-accepted.
 - Phase O5 production-control-plane readiness returned deterministic `PASS` and was explicitly Human-accepted at readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
-- Plan-limit continuation control remains configured with live five-hour/weekly inspection and conservative thresholds. Its hourly heartbeat is paused at the package-7 Human Gate to avoid non-actionable token use and may resume after exact authority is recorded.
+- Plan-limit continuation control remains configured with live five-hour/weekly inspection and conservative thresholds. Exact UI-1 continuation authority is now recorded, so its hourly heartbeat may resume for bounded local synthetic work while preserving all consequential gates.
 
 ## Active system boundaries
 
@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Package 7 synthetic submission-readiness dossier is complete. The currently registered local synthetic Phase P1 scope is exhausted and the project is at a Human Gate: obtain exact authority for a protected developer-access/material-retrieval step, or separately authorize the user-interface phase. No external or next-phase action has begun.
+Package 7 synthetic submission-readiness dossier is complete. The Project Owner has now authorized protected developer registration/material retrieval and the separate UI phase. The registration form awaits Human-owned data and CAPTCHA; UI package 1 has started as a local synthetic design foundation.
 
 ## Non-negotiable constraints
 
@@ -279,3 +279,13 @@ Package 7 synthetic submission-readiness dossier is complete. The currently regi
 - Verification: targeted `19 passed`; relevant P1 `123 passed`; full regression `505 passed, 1 skipped`; compile check passed.
 - Status: `P1_PACKAGE_7_COMPLETE / LOCAL_SYNTHETIC_SCOPE_COMPLETE -> HUMAN_REQUIRED`.
 - Exact next action: the Project Owner chooses and exactly authorizes either the next protected P1 developer-access/material-retrieval boundary or the separate user-interface phase. Until then, make no project change.
+
+
+## Protected ERiC access and UI phase authorization checkpoint
+
+- On 2026-09-15, the Project Owner explicitly authorized, in priority order, developer registration and protected retrieval of official ERiC documentation/package, followed by starting the user-interface phase.
+- The official ELSTER developer-registration form was opened. It requires Human-owned personal/organizational contact values and a CAPTCHA; no value was entered and no submission occurred.
+- Final registration submission remains an action-time Human confirmation. Manufacturer-ID work, tax-transmission credentials/certificates, real taxpayer data, acceptance-server connectivity, ELSTER/Finanzamt transmission or contact, production activation, architecture/governing-rule change, and action on `main` remain outside this authority.
+- UI package 1 is registered as a local, synthetic, non-production interaction-and-safety foundation. It selects no framework and enables no external or submission capability.
+- Status: `ERIC_REGISTRATION_READY_FOR_HUMAN_INPUT / UI_PHASE_STARTED`.
+- Exact continuation: the Human completes the visible registration fields and CAPTCHA without pressing submit; meanwhile implement and verify `docs/ui-phase-foundation.md` under the existing stable backend/identity/state/approval/audit contracts.

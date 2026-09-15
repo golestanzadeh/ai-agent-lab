@@ -12,13 +12,13 @@ CASE-001 / tax year 2024 analytical preparation is human-confirmed complete and 
 
 ## Track 1 — Canonical architecture and autonomous project control
 
-Status: **Phase P1 local synthetic scope complete through package 7; Human Gate reached**
+Status: **Phase P1 local synthetic scope complete through package 7; protected ERiC access and UI-1 continuation authorized**
 
 Registered cross-phase cost-control artifact:
 
 - `docs/plan-limit-continuation-controller.md` — design for live Codex plan-limit inspection, conservative stop thresholds, durable `TOKEN_PAUSED` checkpoints, and guarded same-thread scheduled continuation after the actual account reset.
 
-Implementation status: **paused at the package-7 Human Gate**. Hourly same-task heartbeat `plan-limit-continuation-guard` remains configured but does not consume non-actionable runs. It may be reactivated after an exact authorized continuation point is durably recorded.
+Implementation status: **exact continuation authority recorded**. Hourly same-task heartbeat `plan-limit-continuation-guard` may be reactivated for one bounded local UI package per run; it must stop at registration submission, protected-download authentication, architecture, production, real-data, external-connectivity, or other consequential gates.
 
 Goals:
 
@@ -43,7 +43,7 @@ Exit criteria:
 
 ## Track 2 — Controlled ELSTER/Finanzamt integration
 
-Status: **Phase P1 package 3 Human-accepted; continuous local synthetic/non-production work authorized — all external capabilities remain unauthorized**
+Status: **protected ERiC developer-registration/material-retrieval boundary authorized and started; awaiting Human-entered registration data and CAPTCHA**
 
 Registered Phase P1 package 1 artifacts:
 
@@ -107,10 +107,14 @@ Package 7 is implemented and verified under continuous authority. Verification:
 targeted `19 passed`; relevant P1 `123 passed`; full regression `505 passed, 1 skipped`;
 Python compile check passed.
 
-No further local synthetic Phase P1 package is currently registered. The next P1
-step requires exact Human authority before developer registration, manufacturer-ID
-work, or protected official-material retrieval. Starting the separate user-interface
-phase likewise requires exact phase authorization.
+The Project Owner authorized developer registration and protected retrieval of the
+official ERiC documentation/package on 2026-09-15. The official registration form
+has been opened, but no personal/organizational value has been entered and no form
+has been submitted. Human entry of the exact contact values, CAPTCHA completion,
+and action-time confirmation before final submission are still required. This
+authority does not include manufacturer-ID work, tax-transmission credentials or
+certificates, real taxpayer data, acceptance-server connectivity, transmission,
+Finanzamt contact, production activation, or action on `main`.
 
 Goals:
 
@@ -133,7 +137,16 @@ Exit criteria:
 
 ## Track 3 — User interface
 
-Status: **planned**
+Status: **started — package UI-1 foundation registered**
+
+Registered UI package 1 artifact:
+
+- `docs/ui-phase-foundation.md` — non-production interaction and safety foundation for the ordinary cross-device workflow, derived from the stable case, identity, state, approval, audit, and synthetic ELSTER contracts; no framework selection, external connection, real data, or submission capability.
+
+Package UI-1 may proceed locally with synthetic examples while protected ERiC
+registration waits for Human-entered form values. Any framework choice, production
+architecture, real-data use, external deployment, or submission capability remains
+a separate Human Gate.
 
 Goals:
 
