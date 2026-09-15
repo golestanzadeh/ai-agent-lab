@@ -194,6 +194,16 @@ full regression `524 passed, 1 skipped`; Python compile and loopback visual
 inspection passed. The previously recorded upstream TestClient deprecation warning
 remains unchanged.
 
+Registered independent UI package 5 artifacts:
+
+- `src/agent_lab/ui_document_contract.py` — synthetic, metadata-only document/provenance presentation contract bound to one validated case/run.
+- `src/agent_lab/ui_templates/_documents.html` — case-scoped document inventory and provenance-status table in the local prototype.
+- `tests/unit/test_ui_document_contract.py` and UI route-test extensions — cross-case denial, private-name rejection, exact provenance binding, and rendering tests.
+- `docs/ui-synthetic-document-intake.md` — package boundary, verification, and real-upload gate.
+
+Package UI-5 uses no document contents, file upload, Drive lookup, persistence, real
+identifier, authentication, external connection, or transmission.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

@@ -486,3 +486,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: UI targeted `19 passed`; full regression `524 passed, 1 skipped`; Python compile and loopback visual inspection passed. The known upstream TestClient deprecation warning remains explicit.
 - Status: **UI_PACKAGE_4_COMPLETE / ERIC_ACCESS_EMAIL_PENDING**.
 - Exact continuation: do not wait idly for ELSTER. Select the next registered, authorized, prerequisite-ready local synthetic package; stop before persistence, authentication, protected materials, real data, external connectivity, production, transmission, or another Human Gate.
+
+
+## UI package 5 registration — 2026-09-15
+
+- Under the explicit no-wait parallel-delivery instruction, registered a synthetic metadata-only document intake and provenance view for the local UI.
+- Exact scope: generic synthetic document labels, immutable references, processing/category status, and one case/run binding. No contents, real names, upload, Drive access, persistence, authentication, external connectivity, or transmission.
+- Status: **ERIC_ACCESS_EMAIL_PENDING / UI_PACKAGE_5_REGISTERED_AND_AUTHORIZED**.
+- Exact next action: implement, verify, visually inspect, commit, and push UI package 5 on the active development branch.
