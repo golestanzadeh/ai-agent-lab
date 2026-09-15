@@ -334,3 +334,12 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - This establishes only an application for developer access; it does not prove account approval or grant access to protected ERiC materials.
 - Exact continuation: wait for the ELSTER access email. The Human performs any authentication privately; do not request, store, transmit, or commit the username/password. After Human login, protected official-material download and governed verification may resume under the existing authority.
 - Status: `ERIC_DEVELOPER_REGISTRATION_SUBMITTED / ACCESS_EMAIL_PENDING`.
+
+
+## UI package 4 synthetic workflow checkpoint
+
+- While ELSTER developer-account review remains pending, implemented an immutable ten-stage workflow bound to one validated synthetic case/run and integrated it into the local FastAPI/Jinja/HTMX workspace.
+- Exactly one workflow boundary is active or blocked; all prior stages must be complete and all later stages locked. Case switching replaces the complete scoped workflow.
+- A closed diagnostic allowlist prevents private content or arbitrary errors from reaching the UI. Real data, operational controls, submission, and network calls remain non-forgeably disabled.
+- Verification: UI targeted `19 passed`; full regression `524 passed, 1 skipped`; Python compile check and loopback visual inspection passed. The known upstream TestClient deprecation warning remains explicit.
+- Status: `UI_PACKAGE_4_COMPLETE / ERIC_ACCESS_EMAIL_PENDING`.

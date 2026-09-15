@@ -189,6 +189,11 @@ Registered independent UI package 4 artifacts:
 Package UI-4 is independent of pending ERiC developer-account review and requires no
 real data, persistence, authentication, external connectivity, or transmission.
 
+Package UI-4 is implemented and verified. Verification: UI targeted `19 passed`;
+full regression `524 passed, 1 skipped`; Python compile and loopback visual
+inspection passed. The previously recorded upstream TestClient deprecation warning
+remains unchanged.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

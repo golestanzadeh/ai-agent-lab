@@ -775,3 +775,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Effect:** Developer-account review is now pending. This is not account approval, manufacturer-ID authority, protected-material verification, credential authority for the agent, production readiness, or transmission authority.
 
 **Continuation:** Await ELSTER's access email. Authentication remains a Human-only action; credentials must never be supplied through chat or stored in the repository. Once the Human is logged in, the already authorized protected ERiC documentation/package download may proceed, followed by independent hash/version/content verification.
+
+
+## D-064 — Parallel synthetic UI workflow and diagnostics
+
+**Status:** implemented and verified while ERiC developer access is pending
+
+**Decision:** Model the user journey as ten exact ordered stages bound to one already validated synthetic case/run. Permit exactly one current active/blocked boundary, completed predecessors, and locked successors. Render the workflow and a privacy-safe diagnostic panel inside the existing local prototype.
+
+**Safety:** Diagnostic values come only from a closed allowlist. Private content, credentials, arbitrary error text, real data, operational controls, external calls, and submission remain rejected by construction.
+
+**Verification:** UI targeted `19 passed`; full regression `524 passed, 1 skipped`; Python compile and loopback visual inspection passed. The unchanged upstream Starlette TestClient deprecation warning remains recorded.

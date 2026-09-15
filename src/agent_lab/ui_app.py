@@ -27,6 +27,7 @@ from agent_lab.ui_state_contract import (
     UIWorkspaceState,
     select_synthetic_workspace,
 )
+from agent_lab.ui_workflow_contract import build_synthetic_ui_workflow
 
 
 UI_ROOT = Path(__file__).resolve().parent
@@ -108,7 +109,7 @@ def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
         return TEMPLATES.TemplateResponse(
             request=request,
             name="index.html",
-            context={"cases": cases, "workspace": selected},
+            context={"cases": cases, "workspace": selected, "workflow": build_synthetic_ui_workflow(selected)},
         )
 
     @app.get("/workspace", response_class=HTMLResponse)
@@ -124,7 +125,7 @@ def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
         return TEMPLATES.TemplateResponse(
             request=request,
             name="_workspace.html",
-            context={"workspace": selected},
+            context={"workspace": selected, "workflow": build_synthetic_ui_workflow(selected)},
         )
 
     @app.get("/health", include_in_schema=False)
