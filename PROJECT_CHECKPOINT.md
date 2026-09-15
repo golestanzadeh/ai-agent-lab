@@ -532,6 +532,15 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: select and register the next architecture-compatible local synthetic UI package; protected ERiC work still waits for Human-owned authentication after the access email.
 
 
+## UI package 7 autonomous registration — 2026-09-15
+
+- Under the confirmed agent-led continuation authority, selected a local synthetic display-only Human Decision Queue as the next prerequisite-ready UI package.
+- Registered artifacts: `src/agent_lab/ui_decision_contract.py`, `src/agent_lab/ui_templates/_decision_queue.html`, `tests/unit/test_ui_decision_contract.py`, and `docs/ui-synthetic-decision-queue.md`, plus bounded UI integration/tests.
+- Exact boundary: bind one queue item to the selected synthetic case/run and existing immutable Human Gate; show status/action/destination/expiry without enabling approval, rejection, persistence, authentication, networking, receipt, production, or transmission.
+- Status: **UI_PACKAGE_7_REGISTERED_AND_AUTHORIZED / IMPLEMENTATION_READY**.
+- Exact next action: implement, test, visually inspect, document, commit, and push UI package 7 on the active development branch.
+
+
 ## Local Agent Runtime Activation Layer authorization — 2026-09-15
 
 - The Project Owner explicitly authorized a local, non-production, low-risk activation layer for the existing `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` roles.

@@ -832,3 +832,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** No private/free-form content, authentication, persistence, networking, official receipt, production action, or transmission capability is introduced.
 
 **Verification:** Targeted UI-6/app tests returned `19 passed`; full regression returned `548 passed, 1 skipped`; compile and loopback visual/accessibility inspection passed.
+
+
+## D-069 — Synthetic display-only Human Decision Queue
+
+**Status:** registered for implementation on 2026-09-15
+
+**Decision:** Add a local presentation contract and Persian UI panel for one exact synthetic Human Gate bound to the selected case/run and immutable preview artifact. The queue communicates the boundary but cannot make or persist a decision.
+
+**Safety:** Approval, rejection, authentication, credentials, persistence, networking, protected access, production, receipts, and transmission remain absent and disabled. Implementing a real Human decision lifecycle requires separate exact authorization.

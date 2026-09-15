@@ -223,6 +223,17 @@ Package UI-6 is implemented and verified. Verification: targeted UI-6/app
 `19 passed`; full regression `548 passed, 1 skipped`; Python compile and loopback
 visual/accessibility inspection passed. The known TestClient warning is unchanged.
 
+Registered independent UI package 7 artifacts:
+
+- `src/agent_lab/ui_decision_contract.py` — immutable synthetic Human Decision Queue presentation bound to the selected case/run and exact existing gate artifact.
+- `src/agent_lab/ui_templates/_decision_queue.html` — accessible Persian decision-boundary panel with visibly disabled decision actions.
+- `tests/unit/test_ui_decision_contract.py` and UI route-test extensions — scope, expiry, identity, stale-state, action-denial, and rendering tests.
+- `docs/ui-synthetic-decision-queue.md` — package boundary, verification, and real-decision gate.
+
+Package UI-7 is display-only and architecture-compatible. It creates no approval,
+decision persistence, authentication, credential, network, protected access,
+production, receipt, or transmission capability.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
