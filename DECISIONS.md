@@ -714,3 +714,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **UI boundary:** Begin with a local, synthetic, non-production interaction-and-safety foundation derived from the already stable case, identity, state, approval, audit, and synthetic ELSTER contracts. Package UI-1 chooses no framework and creates no external connection, real-data path, deployment, or submission capability. Any architecture choice remains a separate Human Gate.
 
 **Parallel continuation:** The registration step retains first priority. Because it currently waits only for Human-owned form values and CAPTCHA, the separately authorized local UI foundation may proceed without treating that wait as a project-wide stop.
+
+**UI-1 result:** `docs/ui-phase-foundation.md` now defines the ordered workflow, seven required screen/state groups, cross-screen case-isolation and Human-Gate invariants, and seven synthetic acceptance scenarios. Targeted safety-contract regression completed with `63 passed`. The next interactive prototype stops at the pre-existing architecture/framework Human Gate.

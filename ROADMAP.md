@@ -137,16 +137,16 @@ Exit criteria:
 
 ## Track 3 — User interface
 
-Status: **started — package UI-1 foundation registered**
+Status: **package UI-1 foundation complete; implementation architecture Human Gate reached**
 
 Registered UI package 1 artifact:
 
 - `docs/ui-phase-foundation.md` — non-production interaction and safety foundation for the ordinary cross-device workflow, derived from the stable case, identity, state, approval, audit, and synthetic ELSTER contracts; no framework selection, external connection, real data, or submission capability.
 
-Package UI-1 may proceed locally with synthetic examples while protected ERiC
-registration waits for Human-entered form values. Any framework choice, production
-architecture, real-data use, external deployment, or submission capability remains
-a separate Human Gate.
+Package UI-1 is implemented at `docs/ui-phase-foundation.md`. Targeted safety-contract
+regression: `63 passed`. The next interactive prototype requires an explicit UI
+architecture/framework choice. Production architecture, real-data use, external
+deployment, and submission capability remain separate Human Gates.
 
 Goals:
 

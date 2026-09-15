@@ -286,6 +286,6 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - On 2026-09-15, the Project Owner explicitly authorized, in priority order, developer registration and protected retrieval of official ERiC documentation/package, followed by starting the user-interface phase.
 - The official ELSTER developer-registration form was opened. It requires Human-owned personal/organizational contact values and a CAPTCHA; no value was entered and no submission occurred.
 - Final registration submission remains an action-time Human confirmation. Manufacturer-ID work, tax-transmission credentials/certificates, real taxpayer data, acceptance-server connectivity, ELSTER/Finanzamt transmission or contact, production activation, architecture/governing-rule change, and action on `main` remain outside this authority.
-- UI package 1 is registered as a local, synthetic, non-production interaction-and-safety foundation. It selects no framework and enables no external or submission capability.
-- Status: `ERIC_REGISTRATION_READY_FOR_HUMAN_INPUT / UI_PHASE_STARTED`.
-- Exact continuation: the Human completes the visible registration fields and CAPTCHA without pressing submit; meanwhile implement and verify `docs/ui-phase-foundation.md` under the existing stable backend/identity/state/approval/audit contracts.
+- UI package 1 is implemented as a local, synthetic, non-production interaction-and-safety foundation. It selects no framework and enables no external or submission capability. Targeted safety-contract regression: `63 passed`.
+- Status: `ERIC_REGISTRATION_READY_FOR_HUMAN_INPUT / UI_PACKAGE_1_COMPLETE -> HUMAN_REQUIRED`.
+- Exact continuation: the Human completes the visible registration fields and CAPTCHA without pressing submit and chooses or authorizes the UI implementation architecture/framework before an interactive prototype begins.
