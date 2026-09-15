@@ -440,3 +440,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: UI-2/UI-3 targeted `13 passed`; full regression `518 passed, 1 skipped`; Python compile check passed; loopback visual inspection passed. One upstream Starlette TestClient deprecation warning is recorded and did not affect results.
 - Status: **UI_PACKAGE_3_COMPLETE / LOCAL_SYNTHETIC_PROTOTYPE_RUNNING**.
 - Exact continuation: keep ERiC registration paused until 09:00 Europe/Berlin. Further local synthetic UI refinement may continue only when it does not introduce persistence, authentication, external access, real data, deployment, production, or transmission; otherwise stop for the applicable Human Gate.
+
+
+## Parallel delivery target — 2026-09-15
+
+- The Project Owner set a project-wide operational target: complete design and full implementation in less than 20 days, establishing a deadline boundary before 2026-10-05 Europe/Berlin.
+- Execution policy: unrelated tracks and packages that are not prerequisites for one another should proceed concurrently or be interleaved; a wait or Human Gate in one track must not stop independent authorized work.
+- Dependency policy: preserve sequential execution only where the later work genuinely depends on an earlier foundation, stable contract, or organized structure.
+- This instruction does not bypass Human Gates or authorize architecture, real data, external connectivity, credentials, production, transmission, protected-main action, merge, release, or any other otherwise-gated action.
+- Status: **PARALLEL_DELIVERY_RULE_ACTIVE / TARGET_BEFORE_2026-10-05**.
+- Scheduling priority: continuously select the highest-value exact registered action that is already authorized, prerequisite-ready, and independent of currently blocked tracks; retain the plan-limit stop/resume controls.

@@ -236,6 +236,14 @@ Exit criteria:
 
 ELSTER and UI work may overlap only after their shared backend, identity, state, approval, and audit contracts are stable.
 
+## Execution scheduling and delivery target
+
+- Operational target: complete project design and full implementation in less than 20 days from the Project Owner instruction of 2026-09-15; therefore the target boundary is **before 2026-10-05 Europe/Berlin**.
+- The numbered dependency order describes real technical prerequisites, not a blanket requirement to finish every phase serially.
+- Tracks and packages with no shared prerequisite or coupling should proceed in parallel or be interleaved to avoid idle time.
+- A blocked track does not stop independent authorized work in another track.
+- Parallel execution may not bypass a Human Gate, invent authority, weaken case isolation or verification, consume unregistered future files, or start work whose prerequisite contract is unstable.
+
 ## Future-file rule
 
 A planned artifact must be registered here before creation. Registration must state its purpose and dependency. A file is not implemented merely because it is planned.

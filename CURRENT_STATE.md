@@ -309,3 +309,11 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - Verification: UI-2/UI-3 targeted `13 passed`; full regression `518 passed, 1 skipped`; Python compile check passed. One upstream Starlette deprecation warning reports future migration from `httpx` to `httpx2`; it did not affect test behavior and remains explicit.
 - Status: `UI_PACKAGE_3_COMPLETE / LOCAL_SYNTHETIC_PROTOTYPE_RUNNING`.
 - ERiC registration remains paused until 09:00 Europe/Berlin under the latest Human instruction.
+
+
+## Twenty-day parallel-delivery operating rule
+
+- On 2026-09-15, the Project Owner set an operational target to complete the project's design and full implementation in less than 20 days, establishing a target boundary before 2026-10-05 Europe/Berlin.
+- Independent tracks are not exclusive serial phases. Work that has no unresolved prerequisite or shared unstable contract should proceed in parallel or be interleaved; a blocked track must not cause unrelated authorized work to idle.
+- Real dependency order remains mandatory where a later package needs an earlier foundation or organized structure. Human Gates, authority boundaries, case isolation, testing, auditability, token controls, and protected-main rules remain unchanged.
+- Status: `PARALLEL_DELIVERY_RULE_ACTIVE / TARGET_BEFORE_2026-10-05`.

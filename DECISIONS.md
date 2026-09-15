@@ -742,3 +742,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Dependencies:** Pin verified package versions in `requirements.txt`; use the official FastAPI template/TestClient pattern and HTMX `2.0.10` local distribution.
 
 **Implementation result:** The local app is implemented with exact case/year partial rendering, Persian responsive templates, local static assets, and no submission endpoint. The HTMX asset matches the official SHA-384 integrity value. UI-2/UI-3 targeted verification returned `13 passed`; full regression returned `518 passed, 1 skipped`, with one recorded upstream TestClient deprecation warning. Loopback visual inspection passed.
+
+
+## D-061 — Less-than-20-day parallel delivery policy
+
+**Status:** active by explicit Project Owner instruction on 2026-09-15
+
+**Target:** Complete project design and full implementation in less than 20 days from this instruction, meaning before 2026-10-05 Europe/Berlin.
+
+**Decision:** Treat project tracks as parallelizable whenever they are unrelated and neither is a prerequisite of the other. Prefer concurrent or interleaved completion of independently authorized work so an external wait or Human Gate in one track does not create idle time in another.
+
+**Dependency rule:** Preserve strict ordering only where a later activity demonstrably requires the foundation, stable contract, identity/state model, or organized structure of an earlier activity. Record the dependency rather than assuming phase-wide exclusivity.
+
+**Safety:** Schedule pressure creates no new authority and does not weaken Human Gates, architecture approvals, production/external restrictions, case isolation, required tests, audit evidence, token-limit controls, protected-main rules, or the future-file registration rule.
