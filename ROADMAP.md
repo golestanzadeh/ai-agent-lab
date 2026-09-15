@@ -219,6 +219,10 @@ Package UI-6 reuses accepted UI/P1 synthetic contracts and changes no architectu
 It excludes real/free-form private content, persistence, authentication, protected
 ERiC access, external connectivity, official validation, production, and transmission.
 
+Package UI-6 is implemented and verified. Verification: targeted UI-6/app
+`19 passed`; full regression `548 passed, 1 skipped`; Python compile and loopback
+visual/accessibility inspection passed. The known TestClient warning is unchanged.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

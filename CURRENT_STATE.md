@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-The local synthetic Agent Runtime Activation Layer is technically complete. Resume the already registered UI package 6. Any provider-backed Agent execution, broader tools, real data, external connectivity, production authority, or protected-main action remains gated.
+UI package 6 and the local synthetic Agent Runtime Activation Layer are technically complete. Select and register the next architecture-compatible local synthetic UI package. Provider-backed Agents, broader tools, real data, protected ERiC access before Human login, external connectivity, production authority, and protected-main action remain gated.
 
 ## Non-negotiable constraints
 

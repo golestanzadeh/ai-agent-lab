@@ -73,3 +73,12 @@ def test_synthetic_document_inventory_renders_without_private_content_or_upload(
     assert "SYNTHETIC_METADATA_ONLY" in response.text
     assert "Gehaltsabrechnung" not in response.text
     assert "type=\"file\"" not in response.text
+
+
+def test_synthetic_review_and_preview_render_with_no_operational_capability() -> None:
+    response = _client().get("/")
+    assert "نتیجه و پیش‌نمایش فرم" in response.text
+    assert "SYNTH_INCOME_REVIEWED" in response.text
+    assert "EUR_SYNTHETIC" in response.text
+    assert "نگاشت رسمی: NOT_RECOVERED" in response.text
+    assert "official receipt" not in response.text.lower()

@@ -522,6 +522,16 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement, test, visually inspect, document, commit, and push UI package 6. No Human Gate applies inside this exact scope.
 
 
+## UI package 6 completion — 2026-09-15
+
+- Implemented the immutable case/run-bound synthetic findings, evidence-gap, calculation-summary, and form-preview contract and integrated it into the local Persian UI.
+- Official ERiC mapping remains exactly `NOT_RECOVERED`; preview identity equals the workspace preview reference; findings and gaps use closed allowlists; numeric values are nonnegative and explicitly synthetic.
+- Authentication, persistence, networking, real/private/free-form content, official receipt, production, and transmission remain denied.
+- Verification: targeted UI-6/app `19 passed`; full regression `548 passed, 1 skipped`; Python compile passed; loopback visual/accessibility inspection passed. The known TestClient deprecation warning is unchanged.
+- Status: **UI_PACKAGE_6_COMPLETE / ERIC_ACCESS_EMAIL_PENDING / PARALLEL_DELIVERY_ACTIVE**.
+- Exact next action: select and register the next architecture-compatible local synthetic UI package; protected ERiC work still waits for Human-owned authentication after the access email.
+
+
 ## Local Agent Runtime Activation Layer authorization — 2026-09-15
 
 - The Project Owner explicitly authorized a local, non-production, low-risk activation layer for the existing `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` roles.

@@ -821,3 +821,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Later gate:** Connecting this runtime to an external model/provider, granting additional tools or permissions, processing real case data, or activating production requires a separate exact Human authorization.
 
 **Implementation result:** The fixed D-067 synthetic proof now dispatches the four accepted roles through temporary Kernel-bound instances, performs separate QA and evidence-based independent acceptance, survives the exact planned pause/recovery boundary, and halts safely. Verification returned `8` targeted, `39` relevant, and `537 passed, 1 skipped` full-regression results. Mid-resume crash continuation is deliberately not claimed; it fails closed and remains future work.
+
+
+## D-068 — Synthetic review and form-preview UI
+
+**Status:** implemented and verified on 2026-09-15
+
+**Decision:** Render only closed, case/run-bound synthetic findings and evidence gaps, a nonnegative explicitly synthetic calculation summary, and the existing immutable preview reference. Preserve the official ERiC mapping state as `NOT_RECOVERED`.
+
+**Safety:** No private/free-form content, authentication, persistence, networking, official receipt, production action, or transmission capability is introduced.
+
+**Verification:** Targeted UI-6/app tests returned `19 passed`; full regression returned `548 passed, 1 skipped`; compile and loopback visual/accessibility inspection passed.
