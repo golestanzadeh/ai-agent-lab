@@ -306,6 +306,24 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 Phases O2, O3, O4, and O5 are complete and Human-accepted. Agent activation beyond the bounded O4 pilot remains gated behind later phases.
 
+The Project Owner explicitly authorized a local, non-production, low-risk Agent
+Runtime Activation Layer on 2026-09-15. The package connects only the existing
+`PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`,
+`QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` roles to the
+accepted Kernel. It may not use real data, credentials, external connectivity,
+production authority, protected `main`, or alter the ratified organization.
+
+Registered Agent Runtime Activation Layer artifacts:
+
+- `src/agent_lab/agent_runtime.py` — fail-closed local dispatcher, bounded in-process worker boundary, four-role sequencing, evidence binding, and Kernel lifecycle integration.
+- `scripts/run_agent_runtime.py` — local synthetic demonstration/inspection entry point with explicit state paths and no external provider.
+- `tests/unit/test_agent_runtime.py` — role allowlisting, dependency order, separation of duties, scope, budget, stop, recovery, and acceptance tests.
+- `docs/agent-runtime-activation-layer.md` — exact runtime boundary, execution flow, verification evidence, and later production/provider gate.
+
+This package depends on the accepted O2 contracts and O3 Kernel. It activates no
+model provider, network connector, credential, private-data source, production
+service, or autonomous operating-system command capability.
+
 ## Registered Phase O2 artifacts
 
 The following Phase O2 artifacts were implemented at `382a140e42496ad9edd92dc2016cfde51d091575` and explicitly accepted by the Project Owner / Human:

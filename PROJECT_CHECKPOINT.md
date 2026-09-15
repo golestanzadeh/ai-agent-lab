@@ -520,3 +520,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact acceptance: one validated synthetic case/run; ordered allowlisted findings/gaps; nonnegative explicitly synthetic numeric summary; preview reference equality; official mapping `NOT_RECOVERED`; case-switch stale-state denial; no private/free-form content, credentials, networking, persistence, authentication, receipt, or transmission.
 - Status: **UI_PACKAGE_6_REGISTERED_AND_AUTHORIZED / AGENT_LED_CONTINUATION_ACTIVE**.
 - Exact next action: implement, test, visually inspect, document, commit, and push UI package 6. No Human Gate applies inside this exact scope.
+
+
+## Local Agent Runtime Activation Layer authorization — 2026-09-15
+
+- The Project Owner explicitly authorized a local, non-production, low-risk activation layer for the existing `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` roles.
+- The package must reuse the accepted O2 contracts and O3 Kernel and may not change the ratified organization.
+- Real data, credentials, external connectivity, production authority, protected `main`, external transfer, and model-provider activation remain excluded.
+- Planned artifacts were registered in `ROADMAP.md` before creation.
+- Status: **AGENT_RUNTIME_ACTIVATION_LAYER_AUTHORIZED_AND_REGISTERED / IMPLEMENTATION_READY**.
+- Exact next action: implement the registered local dispatcher and four-role synthetic execution loop, verify fail-closed controls and independent acceptance, document, commit, and push on the active development branch.

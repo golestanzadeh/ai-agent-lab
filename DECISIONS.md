@@ -808,3 +808,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Reporting:** Keep routine progress durable in Git and the canonical checkpoint. Interrupt the Project Owner only for a genuine Human Gate, required personal information, consequential decision, material failure/conflict, limit pause, or risk the Project Owner genuinely needs to know. Routine successful packages do not require a full conversational report.
 
 **Authority boundary:** This operating rule changes scheduling and reporting only. It does not authorize real data, credentials, authentication on behalf of the Human, protected downloads before Human login, external connectivity, production, tax transmission, Finanzamt contact, protected-main action, merge, release, destructive action, or bypass of any existing gate.
+
+
+## D-067 — Local Agent Runtime Activation Layer
+
+**Status:** explicitly authorized by the Project Owner on 2026-09-15
+
+**Decision:** Implement a local, non-production, low-risk runtime layer that connects the existing Planning, Implementation, Quality Engineering, and Independent Acceptance roles to the accepted deterministic Orchestrator Kernel. Preserve exact task/manifest lineage, dependency order, bounded budgets, separate actor identities, evidence binding, independent acceptance, checkpoint/recovery, and the global kill switch.
+
+**Boundary:** Use only local synthetic inputs and in-process allowlisted workers. Do not activate a model provider, network connector, credential, private-data source, production service, protected-main action, external transfer, or arbitrary operating-system command. Do not change the ratified role catalog or organizational rules.
+
+**Later gate:** Connecting this runtime to an external model/provider, granting additional tools or permissions, processing real case data, or activating production requires a separate exact Human authorization.

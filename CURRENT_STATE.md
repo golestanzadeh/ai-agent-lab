@@ -79,7 +79,7 @@ All processing remains case/year-scoped, evidence-first, structured, and fail-cl
 
 ## Exact next action
 
-Package 7 synthetic submission-readiness dossier is complete. The Project Owner has now authorized protected developer registration/material retrieval and the separate UI phase. The registration form awaits Human-owned data and CAPTCHA; UI package 1 has started as a local synthetic design foundation.
+Implement the registered local, non-production Agent Runtime Activation Layer for Planning, Implementation, Quality Engineering, and Independent Acceptance. Reuse the accepted O2/O3 contracts and preserve every external, credential, production, protected-main, real-data, and governance boundary.
 
 ## Non-negotiable constraints
 
