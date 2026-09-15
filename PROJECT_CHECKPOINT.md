@@ -450,3 +450,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - This instruction does not bypass Human Gates or authorize architecture, real data, external connectivity, credentials, production, transmission, protected-main action, merge, release, or any other otherwise-gated action.
 - Status: **PARALLEL_DELIVERY_RULE_ACTIVE / TARGET_BEFORE_2026-10-05**.
 - Scheduling priority: continuously select the highest-value exact registered action that is already authorized, prerequisite-ready, and independent of currently blocked tracks; retain the plan-limit stop/resume controls.
+
+
+## ERiC registration resumed — 2026-09-15 09:15 Europe/Berlin
+
+- The Project Owner explicitly resumed the registration stage after the temporary pause ended at 09:00.
+- The official ELSTER developer-registration form is open and empty. Mandatory: salutation, first name, last name, company/project designation, email, website, application reason, and CAPTCHA. Phone is optional.
+- No personal data was entered and no submission occurred. The Human must fill the exact personal fields and CAPTCHA; the agent must obtain action-time confirmation immediately before clicking `Absenden`.
+- Truthful project representation remains available: `Privatprojekt AI Agent Lab (keine eingetragene Firma)` and the existing public repository URL, subject to the Project Owner's choice.
+- Status: **ERIC_REGISTRATION_RESUMED / HUMAN_FORM_ENTRY_REQUIRED**.

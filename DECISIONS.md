@@ -755,3 +755,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Dependency rule:** Preserve strict ordering only where a later activity demonstrably requires the foundation, stable contract, identity/state model, or organized structure of an earlier activity. Record the dependency rather than assuming phase-wide exclusivity.
 
 **Safety:** Schedule pressure creates no new authority and does not weaken Human Gates, architecture approvals, production/external restrictions, case isolation, required tests, audit evidence, token-limit controls, protected-main rules, or the future-file registration rule.
+
+
+## D-062 — ERiC registration resumes after temporal pause
+
+**Status:** resumed by explicit Project Owner instruction at 09:15 Europe/Berlin on 2026-09-15
+
+**Decision:** Close the temporary registration pause that ended at 09:00 and reopen the official ELSTER developer-registration form. Preserve the approved personal-project representation and do not fabricate a registered company or independent website.
+
+**Current Human Gate:** The form is empty. The Project Owner must enter the exact personal contact fields and CAPTCHA. Final `Absenden` remains a separate action-time confirmation because it creates the developer-account application and communicates externally.

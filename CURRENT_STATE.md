@@ -317,3 +317,11 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - Independent tracks are not exclusive serial phases. Work that has no unresolved prerequisite or shared unstable contract should proceed in parallel or be interleaved; a blocked track must not cause unrelated authorized work to idle.
 - Real dependency order remains mandatory where a later package needs an earlier foundation or organized structure. Human Gates, authority boundaries, case isolation, testing, auditability, token controls, and protected-main rules remain unchanged.
 - Status: `PARALLEL_DELIVERY_RULE_ACTIVE / TARGET_BEFORE_2026-10-05`.
+
+
+## ERiC registration temporal-pause release
+
+- At 09:15 Europe/Berlin on 2026-09-15, the Project Owner instructed resumption of ERiC registration; the temporary no-action period ending at 09:00 is closed.
+- The official ELSTER developer-registration form was reopened and verified empty. Mandatory fields are salutation, first name, last name, company/project designation, email, website, application reason, and CAPTCHA; phone is optional.
+- No personal value was entered and no form was submitted. Human entry of exact personal contact values and CAPTCHA remains required, followed by separate action-time confirmation before `Absenden`.
+- Status: `ERIC_REGISTRATION_RESUMED / HUMAN_FORM_ENTRY_REQUIRED`.
