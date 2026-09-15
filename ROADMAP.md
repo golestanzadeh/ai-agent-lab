@@ -154,6 +154,12 @@ Registered architecture-neutral UI package 2 artifacts:
 - `tests/unit/test_ui_state_contract.py` — case isolation, stale-state clearing, exact gate binding, synthetic privacy, and denied-submission tests.
 - `docs/ui-state-contract.md` — state fields, invariants, verification evidence, and framework Human Gate.
 
+Package UI-2 is implemented and verified. Verification: targeted `7 passed`;
+relevant safety-contract regression `70 passed`; full regression `512 passed, 1 skipped`;
+Python compile check passed. No further architecture-neutral UI
+implementation package is registered; the interactive layer requires an explicit
+framework/architecture choice.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

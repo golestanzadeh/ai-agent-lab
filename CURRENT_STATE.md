@@ -289,3 +289,13 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - UI package 1 is implemented as a local, synthetic, non-production interaction-and-safety foundation. It selects no framework and enables no external or submission capability. Targeted safety-contract regression: `63 passed`.
 - Status: `ERIC_REGISTRATION_READY_FOR_HUMAN_INPUT / UI_PACKAGE_1_COMPLETE -> HUMAN_REQUIRED`.
 - Exact continuation: the Human completes the visible registration fields and CAPTCHA without pressing submit and chooses or authorizes the UI implementation architecture/framework before an interactive prototype begins.
+
+
+## UI package 2 architecture-neutral state checkpoint
+
+- Implemented `src/agent_lab/ui_state_contract.py`, `tests/unit/test_ui_state_contract.py`, and `docs/ui-state-contract.md` under the authorized local synthetic UI phase.
+- Exact Case Registry resolution and tax-year matching are mandatory before state exists; case-scoped content rejects mismatched identities, and selecting another case starts with all derived state cleared.
+- Human Gates expose exact action, immutable artifact reference, destination, and expiry. Submission, official receipts, real data, and network calls are non-forgeably denied.
+- Verification: targeted `7 passed`; relevant case/UI/P1 safety suite `70 passed`; full regression `512 passed, 1 skipped`; Python compile check passed.
+- Status: `UI_PACKAGE_2_COMPLETE -> FRAMEWORK_ARCHITECTURE_HUMAN_REQUIRED`.
+- Registration remains paused until 09:00 Europe/Berlin on 2026-09-15 by Human instruction. No form entry, submission, or ELSTER contact occurred.

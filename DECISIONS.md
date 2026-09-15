@@ -716,3 +716,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Parallel continuation:** The registration step retains first priority. Because it currently waits only for Human-owned form values and CAPTCHA, the separately authorized local UI foundation may proceed without treating that wait as a project-wide stop.
 
 **UI-1 result:** `docs/ui-phase-foundation.md` now defines the ordered workflow, seven required screen/state groups, cross-screen case-isolation and Human-Gate invariants, and seven synthetic acceptance scenarios. Targeted safety-contract regression completed with `63 passed`. The next interactive prototype stops at the pre-existing architecture/framework Human Gate.
+
+
+## D-059 — Architecture-neutral synthetic UI state
+
+**Status:** implemented and verified under authorized UI phase
+
+**Decision:** Before selecting a renderer or server framework, provide one immutable presentation-state boundary that resolves exact synthetic case/year scope through the Case Registry, clears all derived state on case selection, binds case content and visible Human Gates exactly, and rejects real data or external capability.
+
+**Safety:** Submission remains permanently disabled, official receipts cannot be represented, private document/finding contents are replaced by immutable references, and network calls are absent. This package grants no framework, hosting, authentication, protected-material, production, or transmission authority.
+
+**Verification:** Targeted `7 passed`; relevant case/UI/P1 safety suite `70 passed`; full regression `512 passed, 1 skipped`; Python compile check passed.
+
+**Next gate:** No further architecture-neutral UI implementation package is registered. An interactive prototype requires the Project Owner's explicit framework/architecture choice. The separately authorized ERiC registration remains temporarily paused until 09:00 Europe/Berlin on 2026-09-15.
