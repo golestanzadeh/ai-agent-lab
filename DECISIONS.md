@@ -699,3 +699,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Targeted `19 passed`; relevant Phase P1 `123 passed`; full regression `505 passed, 1 skipped`; Python compile check passed.
 
 **Gate:** D-051 local synthetic authority has been fully exercised through the registered package sequence. Further P1 work requires exact authority for developer registration/manufacturer-ID/protected material retrieval. The separate user-interface phase also requires exact phase authorization. No such step is inferred.
+
+**Automation state:** Pause `plan-limit-continuation-guard` at this Human Gate so hourly non-actionable checks do not consume plan capacity. Preserve its configuration and task attachment for reactivation after the Project Owner supplies an exact authorized continuation point.

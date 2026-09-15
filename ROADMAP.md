@@ -18,7 +18,7 @@ Registered cross-phase cost-control artifact:
 
 - `docs/plan-limit-continuation-controller.md` — design for live Codex plan-limit inspection, conservative stop thresholds, durable `TOKEN_PAUSED` checkpoints, and guarded same-thread scheduled continuation after the actual account reset.
 
-Implementation status: **active** through hourly same-task heartbeat `plan-limit-continuation-guard`. Each run may perform at most one exact, previously authorized local synthetic package and cannot cross a Human Gate.
+Implementation status: **paused at the package-7 Human Gate**. Hourly same-task heartbeat `plan-limit-continuation-guard` remains configured but does not consume non-actionable runs. It may be reactivated after an exact authorized continuation point is durably recorded.
 
 Goals:
 

@@ -1,6 +1,6 @@
 # Plan-Limit Continuation Controller
 
-Status: **ACTIVE / SCHEDULED GUARD VERIFIED**
+Status: **PAUSED AT HUMAN GATE / CONFIGURATION PRESERVED**
 
 ## Purpose
 
@@ -68,7 +68,7 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The active same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and runs hourly. It was updated on 2026-09-15 after the first guarded recovery completed. Its first action on every run is a fresh account-limit read; schedule timing never substitutes for the service-provided reset state.
+The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate, preventing non-actionable hourly token use. Its configuration is preserved and may be reactivated after the Human supplies an exact authorized continuation point.
 
 ## Host and scheduler limitation
 

@@ -305,7 +305,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Live service evidence at design time: five-hour 99% remaining (`usedPercent: 1`; UI rounded to 100%), weekly 62% remaining (`usedPercent: 38`), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
 - The accepted operational thresholds are: caution at five-hour 25% or weekly 20%; hard token pause at five-hour 15% or weekly 10%; guarded resume only at five-hour at least 80% and weekly above 10%.
 - Design: `docs/plan-limit-continuation-controller.md`.
-- Active same-task heartbeat: `Plan Limit Continuation Guard`, automation id `plan-limit-continuation-guard`, hourly cadence. After guarded recovery on 2026-09-15 it was tightened to perform at most one exact, clearly authorized local synthetic package per run, while preserving every limit and Human-Gate stop condition.
+- Same-task heartbeat: `Plan Limit Continuation Guard`, automation id `plan-limit-continuation-guard`, hourly cadence while active. It is now `PAUSED` at the package-7 Human Gate to prevent non-actionable token use; configuration is preserved for reactivation after an exact authorized continuation point is recorded.
 - Status: **PLAN_LIMIT_CONTROLLER_ACTIVE**.
 - Exact next action: obtain or identify explicit authority for the next project phase before starting it. The controller may resume only an exact action already authorized and durably recorded as `TOKEN_PAUSED`; it cannot create authority.
 
