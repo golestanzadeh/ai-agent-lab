@@ -459,3 +459,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - No personal data was entered and no submission occurred. The Human must fill the exact personal fields and CAPTCHA; the agent must obtain action-time confirmation immediately before clicking `Absenden`.
 - Truthful project representation remains available: `Privatprojekt AI Agent Lab (keine eingetragene Firma)` and the existing public repository URL, subject to the Project Owner's choice.
 - Status: **ERIC_REGISTRATION_RESUMED / HUMAN_FORM_ENTRY_REQUIRED**.
+
+
+## ERiC developer registration submitted — 2026-09-15 09:20:28 Europe/Berlin
+
+- The Project Owner completed the official fields and CAPTCHA, then separately confirmed the final `Absenden` action at action time.
+- The official ELSTER `Versandbestätigung` page confirmed successful transmission and displayed a transmission identifier.
+- Privacy rule: do not record the Human's contact fields or the transmission identifier in Git, project documents, logs, or chat summaries beyond noting that official evidence was visibly confirmed.
+- Status: **ERIC_DEVELOPER_REGISTRATION_SUBMITTED / ACCESS_EMAIL_PENDING**.
+- Exact continuation: wait for the ELSTER access email. The Human must authenticate directly and privately; no agent may request, read, store, transmit, or commit the username/password. Once authenticated access is available, continue with the already authorized protected ERiC documentation/package download and the registered independent verification process.
+- Manufacturer-ID work, tax-transmission credentials/certificates, real taxpayer data, acceptance-server connectivity, submission, Finanzamt contact, production activation, and protected-main action remain separate Human Gates.

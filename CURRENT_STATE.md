@@ -325,3 +325,12 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - The official ELSTER developer-registration form was reopened and verified empty. Mandatory fields are salutation, first name, last name, company/project designation, email, website, application reason, and CAPTCHA; phone is optional.
 - No personal value was entered and no form was submitted. Human entry of exact personal contact values and CAPTCHA remains required, followed by separate action-time confirmation before `Absenden`.
 - Status: `ERIC_REGISTRATION_RESUMED / HUMAN_FORM_ENTRY_REQUIRED`.
+
+
+## ERiC developer-registration submission checkpoint
+
+- After a separate action-time Human confirmation, the completed official ELSTER developer-registration form was submitted successfully on 2026-09-15 at 09:20:28 Europe/Berlin.
+- The official `Versandbestätigung` page displayed a transmission identifier. Personal contact data and the identifier are intentionally not stored in the repository.
+- This establishes only an application for developer access; it does not prove account approval or grant access to protected ERiC materials.
+- Exact continuation: wait for the ELSTER access email. The Human performs any authentication privately; do not request, store, transmit, or commit the username/password. After Human login, protected official-material download and governed verification may resume under the existing authority.
+- Status: `ERIC_DEVELOPER_REGISTRATION_SUBMITTED / ACCESS_EMAIL_PENDING`.

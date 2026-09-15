@@ -764,3 +764,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Close the temporary registration pause that ended at 09:00 and reopen the official ELSTER developer-registration form. Preserve the approved personal-project representation and do not fabricate a registered company or independent website.
 
 **Current Human Gate:** The form is empty. The Project Owner must enter the exact personal contact fields and CAPTCHA. Final `Absenden` remains a separate action-time confirmation because it creates the developer-account application and communicates externally.
+
+
+## D-063 — ERiC developer-registration application submitted
+
+**Status:** submitted with separate action-time Human confirmation on 2026-09-15
+
+**Evidence:** The official ELSTER `Versandbestätigung` page confirmed transmission at 09:20:28 Europe/Berlin and displayed a transmission identifier. The identifier and personal contact fields are deliberately excluded from repository history.
+
+**Effect:** Developer-account review is now pending. This is not account approval, manufacturer-ID authority, protected-material verification, credential authority for the agent, production readiness, or transmission authority.
+
+**Continuation:** Await ELSTER's access email. Authentication remains a Human-only action; credentials must never be supplied through chat or stored in the repository. Once the Human is logged in, the already authorized protected ERiC documentation/package download may proceed, followed by independent hash/version/content verification.
