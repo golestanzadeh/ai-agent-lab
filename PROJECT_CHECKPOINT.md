@@ -494,3 +494,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact scope: generic synthetic document labels, immutable references, processing/category status, and one case/run binding. No contents, real names, upload, Drive access, persistence, authentication, external connectivity, or transmission.
 - Status: **ERIC_ACCESS_EMAIL_PENDING / UI_PACKAGE_5_REGISTERED_AND_AUTHORIZED**.
 - Exact next action: implement, verify, visually inspect, commit, and push UI package 5 on the active development branch.
+
+
+## UI package 5 completion — 2026-09-15
+
+- Implemented the registered metadata-only synthetic document/provenance contract and local UI inventory.
+- Exact case/run binding, generic labels, immutable references, and allowlisted metadata are enforced; private names/content, cross-case records, upload, persistence, source access, real data, and networking are denied.
+- Verification: UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The known upstream TestClient warning remains explicit.
+- Status: **UI_PACKAGE_5_COMPLETE / ERIC_ACCESS_EMAIL_PENDING / PARALLEL_DELIVERY_ACTIVE**.

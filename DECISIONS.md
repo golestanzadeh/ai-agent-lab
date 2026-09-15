@@ -786,3 +786,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Diagnostic values come only from a closed allowlist. Private content, credentials, arbitrary error text, real data, operational controls, external calls, and submission remain rejected by construction.
 
 **Verification:** UI targeted `19 passed`; full regression `524 passed, 1 skipped`; Python compile and loopback visual inspection passed. The unchanged upstream Starlette TestClient deprecation warning remains recorded.
+
+
+## D-065 — Synthetic metadata-only document intake UI
+
+**Status:** implemented and verified while ERiC developer access is pending
+
+**Decision:** Present documents in the local UI only through case/run-bound synthetic metadata: immutable document and provenance references, generic labels, allowlisted category/type, and processing status. Render no document content or real filename.
+
+**Safety:** Reject cross-case scope, private labels, malformed/duplicate references, raw source access, real-data classification, upload, persistence, and networking. This package creates no Drive or external capability.
+
+**Verification:** UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The existing upstream TestClient warning is unchanged.

@@ -204,6 +204,10 @@ Registered independent UI package 5 artifacts:
 Package UI-5 uses no document contents, file upload, Drive lookup, persistence, real
 identifier, authentication, external connection, or transmission.
 
+Package UI-5 is implemented and verified. Verification: UI targeted `24 passed`;
+full regression `529 passed, 1 skipped`; Python compile and loopback visual
+inspection passed. The known upstream TestClient deprecation warning is unchanged.
+
 Goals:
 
 - create/select person, entity, case, and tax year;

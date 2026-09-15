@@ -343,3 +343,11 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - A closed diagnostic allowlist prevents private content or arbitrary errors from reaching the UI. Real data, operational controls, submission, and network calls remain non-forgeably disabled.
 - Verification: UI targeted `19 passed`; full regression `524 passed, 1 skipped`; Python compile check and loopback visual inspection passed. The known upstream TestClient deprecation warning remains explicit.
 - Status: `UI_PACKAGE_4_COMPLETE / ERIC_ACCESS_EMAIL_PENDING`.
+
+
+## UI package 5 synthetic document-intake checkpoint
+
+- Implemented a metadata-only synthetic document and provenance contract plus a case-scoped inventory table in the local UI while ELSTER access remains pending.
+- Each item binds to the selected synthetic case/run and carries only immutable document/provenance references, a generic synthetic label, allowlisted category/type, and status. Private filenames, contents, raw source identifiers, cross-case items, upload, persistence, and network access fail closed.
+- Verification: UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The known upstream TestClient deprecation warning is unchanged.
+- Status: `UI_PACKAGE_5_COMPLETE / ERIC_ACCESS_EMAIL_PENDING`.

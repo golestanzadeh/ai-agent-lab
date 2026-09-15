@@ -64,3 +64,12 @@ def test_workflow_diagnostics_are_privacy_safe_and_controls_stay_disabled() -> N
     assert "PRODUCTION_SUBMISSION_PATH_NOT_AUTHORIZED" in response.text
     assert "private document" not in response.text
     assert response.text.count("disabled") >= 4
+
+
+def test_synthetic_document_inventory_renders_without_private_content_or_upload() -> None:
+    response = _client().get("/")
+    assert "فهرست متادیتای مصنوعی" in response.text
+    assert "مدرک مصنوعی 1" in response.text
+    assert "SYNTHETIC_METADATA_ONLY" in response.text
+    assert "Gehaltsabrechnung" not in response.text
+    assert "type=\"file\"" not in response.text
