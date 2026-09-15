@@ -351,3 +351,12 @@ Package 7 synthetic submission-readiness dossier is complete. The Project Owner 
 - Each item binds to the selected synthetic case/run and carries only immutable document/provenance references, a generic synthetic label, allowlisted category/type, and status. Private filenames, contents, raw source identifiers, cross-case items, upload, persistence, and network access fail closed.
 - Verification: UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The known upstream TestClient deprecation warning is unchanged.
 - Status: `UI_PACKAGE_5_COMPLETE / ERIC_ACCESS_EMAIL_PENDING`.
+
+
+## Agent-led continuous-execution operating state
+
+- The Project Owner instructed continuous autonomous progress with bounded Agent-led execution across independent, authorized, prerequisite-ready work.
+- Routine package completion is recorded in Git/checkpoint without requiring repeated Human acceptance or full conversational reports.
+- Human interruption is reserved for genuine approval/information gates, material failure/conflict, token pause, or consequential risk.
+- Existing authority and safety boundaries remain unchanged.
+- Status: `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / EXCEPTION_ONLY_REPORTING`.

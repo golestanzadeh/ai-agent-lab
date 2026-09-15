@@ -797,3 +797,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Reject cross-case scope, private labels, malformed/duplicate references, raw source access, real-data classification, upload, persistence, and networking. This package creates no Drive or external capability.
 
 **Verification:** UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The existing upstream TestClient warning is unchanged.
+
+
+## D-066 — Agent-led continuous execution and exception-only reporting
+
+**Status:** active by explicit Project Owner instruction on 2026-09-15
+
+**Decision:** Continue the project autonomously across all prerequisite-ready, already authorized work. Use bounded Agent delegation where useful, independently review and test results, and do not impose package-by-package Human acceptance or routine reporting when no governing Human Gate applies.
+
+**Reporting:** Keep routine progress durable in Git and the canonical checkpoint. Interrupt the Project Owner only for a genuine Human Gate, required personal information, consequential decision, material failure/conflict, limit pause, or risk the Project Owner genuinely needs to know. Routine successful packages do not require a full conversational report.
+
+**Authority boundary:** This operating rule changes scheduling and reporting only. It does not authorize real data, credentials, authentication on behalf of the Human, protected downloads before Human login, external connectivity, production, tax transmission, Finanzamt contact, protected-main action, merge, release, destructive action, or bypass of any existing gate.

@@ -502,3 +502,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact case/run binding, generic labels, immutable references, and allowlisted metadata are enforced; private names/content, cross-case records, upload, persistence, source access, real data, and networking are denied.
 - Verification: UI targeted `24 passed`; full regression `529 passed, 1 skipped`; Python compile and loopback visual inspection passed. The known upstream TestClient warning remains explicit.
 - Status: **UI_PACKAGE_5_COMPLETE / ERIC_ACCESS_EMAIL_PENDING / PARALLEL_DELIVERY_ACTIVE**.
+
+
+## Agent-led continuous execution — 2026-09-15
+
+- The Project Owner explicitly instructed the Agents to continue all independent, authorized, prerequisite-ready work without unnecessary stops or package-by-package confirmation.
+- Agents may design, delegate, implement, review, test, document, commit, and push bounded work inside existing authority. Keep durable progress in this checkpoint and Git.
+- Conversational reporting is exception-only: interrupt the Human for an actual approval/information gate, material failure/conflict, token-controller pause, or consequential risk; routine successful packages need no full report.
+- This instruction does not expand authority across real data, credentials, Human authentication, protected access before login, external connectivity, production, submission, Finanzamt contact, protected-main action, merge, release, destructive action, or existing Human Gates.
+- Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / EXCEPTION_ONLY_REPORTING / ERIC_ACCESS_EMAIL_PENDING**.
