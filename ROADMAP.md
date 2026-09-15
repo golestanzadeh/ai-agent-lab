@@ -304,7 +304,10 @@ Project Constitution v2 is ratified and active at `CONSTITUTION.md`.
 
 - `docs/agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the Agent chart, 20 permanent roles, three inactive domain templates, hierarchy, access tiers, authority boundaries, communication routes, Agent lifecycle, deterministic kernel boundary, separation of duties, and O0–P4 execution path.
 
-Phases O2, O3, O4, and O5 are complete and Human-accepted. Agent activation beyond the bounded O4 pilot remains gated behind later phases.
+Phases O2, O3, O4, and O5 are complete and Human-accepted. The former blanket
+gate on activation beyond O4 was superseded on 2026-09-15 only for the exact
+local D-067 runtime proof below; provider-backed, real-data, external, and
+production activation remain gated.
 
 The Project Owner explicitly authorized a local, non-production, low-risk Agent
 Runtime Activation Layer on 2026-09-15. The package connects only the existing
@@ -323,6 +326,14 @@ Registered Agent Runtime Activation Layer artifacts:
 This package depends on the accepted O2 contracts and O3 Kernel. It activates no
 model provider, network connector, credential, private-data source, production
 service, or autonomous operating-system command capability.
+
+Implementation status: **complete and technically verified**. Targeted runtime
+suite: `8 passed`; relevant runtime/Kernel/pilot suite: `39 passed`; full
+regression: `537 passed, 1 skipped`; compile check passed. A two-invocation local
+demonstration completed with six temporary manifests across four roles, two
+dependencies, three independent acceptances, two checkpoints, audit `PASS`, and
+final kill switch `HALTED`. General mid-resume crash continuation and any
+provider-backed execution remain future gated work.
 
 ## Registered Phase O2 artifacts
 

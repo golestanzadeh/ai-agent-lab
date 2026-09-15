@@ -530,3 +530,15 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Planned artifacts were registered in `ROADMAP.md` before creation.
 - Status: **AGENT_RUNTIME_ACTIVATION_LAYER_AUTHORIZED_AND_REGISTERED / IMPLEMENTATION_READY**.
 - Exact next action: implement the registered local dispatcher and four-role synthetic execution loop, verify fail-closed controls and independent acceptance, document, commit, and push on the active development branch.
+
+
+## Local Agent Runtime Activation Layer completion — 2026-09-15
+
+- Implemented the registered fixed local synthetic dispatcher for `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` without modifying the accepted O2 contract set or ratified organization.
+- The runtime creates temporary task-bound instances, validates manifests and capabilities through the existing Kernel, binds exact outputs and evidence, consumes bounded local budgets, independently re-verifies artifacts/QA, pauses and recovers from an exact checkpoint, records independent acceptance, and halts on completion.
+- Fail-closed controls cover non-synthetic inputs, caller-defined objectives, role/capability expansion, scope escape, output mismatch, evidence/plan tampering, changed resume scope, post-checkpoint mutation, replay, and missing/failed QA binding.
+- Verification: targeted runtime `8 passed`; relevant runtime/Kernel/pilot `39 passed`; full regression `537 passed, 1 skipped`; Python compile passed. The pre-existing Starlette TestClient deprecation warning is unchanged.
+- Local demonstration: `COMPLETED`; 6 tasks/manifests, 4 exact roles, 2 dependencies, 3 independent acceptances, 2 checkpoints, 46 audit events, audit `PASS`, final kill switch `HALTED`.
+- Deliberate limitation: recovery is proven only at the `PLANNED/PAUSED` boundary. A crash after the resume transaction begins fails closed and is not silently replayed. No model/provider, network, subprocess, credential, real data, protected-main, production, or external capability exists.
+- Status: **AGENT_RUNTIME_ACTIVATION_LAYER_TECHNICALLY_COMPLETE / LOCAL SYNTHETIC ONLY**.
+- Exact next action: return to the already registered and authorized UI package 6, unless the Project Owner requests amendments to this runtime result. Provider-backed or broader runtime activation requires separate exact authorization.

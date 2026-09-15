@@ -819,3 +819,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** Use only local synthetic inputs and in-process allowlisted workers. Do not activate a model provider, network connector, credential, private-data source, production service, protected-main action, external transfer, or arbitrary operating-system command. Do not change the ratified role catalog or organizational rules.
 
 **Later gate:** Connecting this runtime to an external model/provider, granting additional tools or permissions, processing real case data, or activating production requires a separate exact Human authorization.
+
+**Implementation result:** The fixed D-067 synthetic proof now dispatches the four accepted roles through temporary Kernel-bound instances, performs separate QA and evidence-based independent acceptance, survives the exact planned pause/recovery boundary, and halts safely. Verification returned `8` targeted, `39` relevant, and `537 passed, 1 skipped` full-regression results. Mid-resume crash continuation is deliberately not claimed; it fails closed and remains future work.
