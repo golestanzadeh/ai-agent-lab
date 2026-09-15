@@ -469,3 +469,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **ERIC_DEVELOPER_REGISTRATION_SUBMITTED / ACCESS_EMAIL_PENDING**.
 - Exact continuation: wait for the ELSTER access email. The Human must authenticate directly and privately; no agent may request, read, store, transmit, or commit the username/password. Once authenticated access is available, continue with the already authorized protected ERiC documentation/package download and the registered independent verification process.
 - Manufacturer-ID work, tax-transmission credentials/certificates, real taxpayer data, acceptance-server connectivity, submission, Finanzamt contact, production activation, and protected-main action remain separate Human Gates.
+
+
+## Parallel continuation while ERiC access is pending
+
+- The Project Owner explicitly instructed that the project must not wait for the ELSTER access email and may continue through independent phases.
+- Registered UI package 4: an immutable synthetic workflow/progress and privacy-safe operational recovery view integrated into the existing local FastAPI/Jinja/HTMX prototype.
+- Exact next action: implement, test, document, commit, and push UI package 4. It may not introduce real data, persistence, authentication, external connectivity, deployment, production, or transmission.
+- Status: **ERIC_ACCESS_EMAIL_PENDING / UI_PACKAGE_4_AUTHORIZED_AND_REGISTERED**.

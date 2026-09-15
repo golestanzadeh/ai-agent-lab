@@ -179,6 +179,16 @@ confirmed the Persian RTL shell and disabled submission control. The next packag
 may improve synthetic interactions but must not cross into real data,
 authentication, persistence, external access, deployment, or transmission.
 
+Registered independent UI package 4 artifacts:
+
+- `src/agent_lab/ui_workflow_contract.py` — immutable synthetic workflow-stage and privacy-safe recovery/diagnostic view bound to one package-2 workspace state.
+- `src/agent_lab/ui_templates/_workflow.html` — accessible progress timeline and local operational-status panel embedded in the existing prototype.
+- `tests/unit/test_ui_workflow_contract.py` and extensions to `tests/unit/test_ui_app.py` — exact ordering, scope binding, privacy, fail-closed status, and rendering tests.
+- `docs/ui-synthetic-workflow.md` — contract, verification, and remaining gates.
+
+Package UI-4 is independent of pending ERiC developer-account review and requires no
+real data, persistence, authentication, external connectivity, or transmission.
+
 Goals:
 
 - create/select person, entity, case, and tax year;
