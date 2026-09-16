@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-15**
+Last reconciled: **2026-09-16**
 
 ## Authoritative status
 
@@ -20,9 +20,10 @@ Last reconciled: **2026-09-15**
 
 ## Live external status
 
-- The official ELSTER developer-registration form was submitted on 2026-09-15 after action-time Human approval.
-- Developer access email is pending. Registration does not prove approval or protected-material access.
-- The Human must authenticate privately. Credentials and protected material must never be requested in chat or committed.
+- The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
+- After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
+- Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The existing synthetic 41.2 contract therefore cannot become an operational adapter without a separately approved version migration.
 
 ## Active boundaries
 
@@ -34,15 +35,15 @@ Last reconciled: **2026-09-15**
 
 ## Remaining product work
 
-1. After the access email and private Human login, retrieve and independently verify protected official ERiC materials.
-2. Map and validate the official interface/schema and plausibility rules with fail-closed controls.
+1. Decide and govern migration of the synthetic adapter baseline from obsolete ERiC 41.2 to official ERiC 44.3.6.0 or another supported version.
+2. Independently inspect the retrieved E10/2024 interface, schema, annual field documentation, and plausibility material, then map and validate them with fail-closed controls.
 3. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
 4. Harden restart/recovery and provider-backed Agent operation before production activation.
 5. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Perform only a small architecture-compatible local synthetic maintenance or implementation package while capacity remains above the token-controller threshold; otherwise record `TOKEN_PAUSED`. Protected ERiC work waits for the access email and private Human authentication.
+Request exact Human approval before changing the adapter/version architecture from ERiC 41.2 to 44.3.6.0. Until then, only read-only verification and architecture-neutral local synthetic maintenance may proceed while the token guard permits.
 
 ## Non-negotiable constraints
 

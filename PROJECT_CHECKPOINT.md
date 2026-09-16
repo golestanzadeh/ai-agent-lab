@@ -39,14 +39,15 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-### Authoritative current snapshot — 2026-09-15
+### Authoritative current snapshot — 2026-09-16
 
-- ELSTER developer registration was submitted after action-time Human approval; the access email and private Human authentication are pending.
+- ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
+- Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. The official page says ERiC 41/42 transmission is disabled; migration from the synthetic 41.2 baseline is an architecture/version Human Gate.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
-- **Exact next action:** only a small architecture-compatible local synthetic maintenance or implementation package may proceed while the token guard permits. Protected ERiC work waits for the access email and private Human login.
+- **Exact next action:** obtain exact Human approval before changing the adapter/version architecture from ERiC 41.2 to 44.3.6.0. Until then, only read-only material verification and architecture-neutral local synthetic maintenance may proceed while the token guard permits.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -612,3 +613,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Machine-local caches, generated artifacts, the excluded official PDF, `.venv`, and old remote branches were not deleted. The PDF and case/artifact material require retention judgment; remote-branch deletion remains a destructive Human-authority boundary.
 - No architecture, organizational rule, case data, source code, test, security control, or production capability changed.
 - Exact next action remains the authoritative current snapshot at the top of this section.
+
+### Protected ERiC retrieval checkpoint — 2026-09-16
+
+- The developer-access email arrived and the Human completed authentication privately; no credential was stored or committed.
+- The Project Owner explicitly accepted the ERiC Release 44 software-manufacturer license, and the protected download page became available.
+- Retrieved locally outside Git: `ERiC-44.3.6.0-Dokumentation.zip` (`123,217,775` bytes; SHA-256 `BAD21C27ECCE56D04FC04BCCFD2DFA17B9FF2455AA878758100FC73A28492AD5`) and `ERiC-44.3.6.0-Schemadokumentation.zip` (`35,503,440` bytes; SHA-256 `A77CCA9E5A0DDB4EAE9E2548F57FC3A064432C1B71C1FF1E53CA9085A8BE779E`).
+- Archive inventories confirm API/developer documentation and E10/2024 examples, annual documentation, XSDs, and schema documentation. No protected content was added to Git.
+- The official page records ERiC 43 as the current minimum after 2026-04-27 and offers Release `44.3.6.0`; ERiC 41 and 42 can no longer transmit.
+- Existing ERiC 41.2 synthetic contracts remain valid only as historical synthetic evidence. Changing the accepted adapter/version architecture is not inferred from retrieval and requires exact Human approval.
+- No ERiC executable package, 980 MB forms archive, manufacturer ID, credential, real data, network transmitter, or submission capability was obtained or activated.

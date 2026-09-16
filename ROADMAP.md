@@ -2,12 +2,12 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-09-15**
+Last reconciled: **2026-09-16**
 
 ## Current position
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-8 are complete.
-- ELSTER developer registration was submitted; the access email and private Human authentication are pending.
+- ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 
 ## Track 1 — Autonomous project control
@@ -23,15 +23,16 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **developer registration submitted; access email pending**
+Status: **official 44.3.6.0 documentation/schema retrieved; version migration requires exact Human approval**
 
 Dependency path:
 
-`Access email -> private Human login -> protected material retrieval -> provenance/version verification -> adapter/schema mapping -> plausibility tests -> exact preview -> Article 1 approval 1 -> Article 1 approval 2 -> authorized transmission -> receipt/recovery`
+`Version-migration approval -> detailed material verification -> adapter/schema mapping -> plausibility tests -> exact preview -> Article 1 approval 1 -> Article 1 approval 2 -> authorized transmission -> receipt/recovery`
 
 Remaining goals:
 
-- verify official source, version, completeness, integrity, and compatibility;
+- reconcile the obsolete synthetic ERiC 41.2 baseline with supported ERiC 44.3.6.0 under an explicit architecture/version decision;
+- verify official source, completeness, integrity, compatibility, and E10/2024 coverage;
 - implement official interface/schema mapping and plausibility validation;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.

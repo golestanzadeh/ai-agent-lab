@@ -854,3 +854,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The view has no approval control, authentication, credential, transmitter, retry, receipt, networking, production, or submission capability. Displaying the stages grants no authority.
 
 **Implementation result:** The exact synthetic boundary is integrated and verified with `19` targeted tests and `564 passed, 1 skipped` full regression; loopback visual/accessibility inspection passed.
+
+
+## D-071 — Protected ERiC material retrieval and version incompatibility
+
+**Status:** retrieval complete; architecture/version migration Human Gate reached on 2026-09-16
+
+**Decision:** After private Human authentication and explicit Human acceptance of the ERiC Release 44 software-manufacturer license, retrieve the official `44.3.6.0` documentation and schema-documentation packages locally. Record only non-secret provenance, version, size, and SHA-256 evidence in durable project state; keep protected package contents and credentials outside Git.
+
+**Evidence:** Official release date `2026-09-14`; documentation ZIP size `123,217,775` bytes with SHA-256 `BAD21C27ECCE56D04FC04BCCFD2DFA17B9FF2455AA878758100FC73A28492AD5`; schema-documentation ZIP size `35,503,440` bytes with SHA-256 `A77CCA9E5A0DDB4EAE9E2548F57FC3A064432C1B71C1FF1E53CA9085A8BE779E`. ZIP inventories expose the ERiC API reference, developer handbook/release material, E10/2024 examples, annual documentation, XSDs, and schema documentation.
+
+**Compatibility finding:** The official developer page states that ERiC 41 and 42 have been unable to transmit since the 2026-04-27 minimum-version increase. Existing synthetic 41.2 contracts remain historical test artifacts and must not be promoted operationally.
+
+**Gate:** Updating adapter identity, supported version, schema bindings, or architecture to ERiC 44.3.6.0 requires separate exact Project Owner approval. No software package, forms archive, credential, manufacturer ID, real data, connection, or transmission capability was added.
