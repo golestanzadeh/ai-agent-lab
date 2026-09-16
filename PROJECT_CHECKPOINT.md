@@ -42,12 +42,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 ### Authoritative current snapshot — 2026-09-16
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
-- Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. The official page says ERiC 41/42 transmission is disabled; migration from the synthetic 41.2 baseline is an architecture/version Human Gate.
+- Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
-- **Exact next action:** obtain exact Human approval before changing the adapter/version architecture from ERiC 41.2 to 44.3.6.0. Until then, only read-only material verification and architecture-neutral local synthetic maintenance may proceed while the token guard permits.
+- **Exact next action:** preserve the completed `44.3.6.0` contract migration. When the token guard permits, independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -623,3 +623,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The official page records ERiC 43 as the current minimum after 2026-04-27 and offers Release `44.3.6.0`; ERiC 41 and 42 can no longer transmit.
 - Existing ERiC 41.2 synthetic contracts remain valid only as historical synthetic evidence. Changing the accepted adapter/version architecture is not inferred from retrieval and requires exact Human approval.
 - No ERiC executable package, 980 MB forms archive, manufacturer ID, credential, real data, network transmitter, or submission capability was obtained or activated.
+
+### ERiC 44.3.6.0 contract migration checkpoint — 2026-09-16
+
+- The Project Owner explicitly authorized migration of the local non-production ERiC architecture and versioned contract from historical synthetic `41.2` to official `44.3.6.0`, including review of the recovered E10/2024 material, implementation, and testing, while excluding real data, Manufacturer-ID, credentials, connectivity, and transmission.
+- Adapter contract version `2` now binds ERiC `44.3.6.0`, `UFA10`, tax year `2024`, envelope schema `1`, and the recovered official material categories. The material state is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`.
+- Detailed official field mapping and executable plausibility validation remain two explicit fail-closed blockers. Signing, credentials, Manufacturer-ID, networking, real data, production, and transmission remain denied.
+- Verification: the migration-targeted suite returned `123 passed`. Full regression returned `561 passed, 1 skipped, 3 failed`; the three failures are confined to the historical O4 pilot validator's stale requirement for the removed ROADMAP heading `## Registered Phase O4 pilot artifacts` and are not caused by the ERiC version migration.
+- Status: **ERIC_44_3_6_0_CONTRACT_MIGRATION_TECHNICALLY_COMPLETE / LOCAL NON-PRODUCTION ONLY**.
+- Exact next action is the authoritative current snapshot above; do not start the detailed mapping package while the weekly token guard remains in its caution zone.

@@ -42,7 +42,7 @@ def context(case_suffix="AUDIT", *, retry=True):
         run_id=f"SYNTH-RUN-{case_suffix}",
         tax_year=2024,
         procedure_code="UFA10",
-        eric_version="41.2",
+        eric_version="44.3.6.0",
         purpose="private synthetic purpose excluded from audit",
         data_classification="SYNTHETIC",
         payload=SyntheticTaxSummary(54321, 8765, 2345),

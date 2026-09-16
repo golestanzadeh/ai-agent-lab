@@ -152,7 +152,9 @@ class EricMaterialProcessDecision:
     material_references: tuple[str, ...]
     review_references: tuple[str, ...]
     blockers: tuple[str, ...]
-    official_status: OfficialMaterialStatus = OfficialMaterialStatus.NOT_RECOVERED
+    official_status: OfficialMaterialStatus = (
+        OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED
+    )
     official_status_advancement_permitted: bool = False
     protected_material_retrieval_permitted: bool = False
     credential_access: bool = False
@@ -164,8 +166,10 @@ class EricMaterialProcessDecision:
             _artifact_reference("material_reference", reference)
         for reference in self.review_references:
             _artifact_reference("review_reference", reference)
-        if self.official_status is not OfficialMaterialStatus.NOT_RECOVERED:
-            raise EricMaterialProcessError("official material status must remain NOT_RECOVERED")
+        if self.official_status is not OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED:
+            raise EricMaterialProcessError(
+                "official material status must match governed local recovery"
+            )
         flags = (
             self.official_status_advancement_permitted,
             self.protected_material_retrieval_permitted,

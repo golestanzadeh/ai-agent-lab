@@ -28,7 +28,7 @@ def envelope() -> SyntheticSubmissionEnvelope:
         run_id="SYNTH-RUN-PREVIEW",
         tax_year=2024,
         procedure_code="UFA10",
-        eric_version="41.2",
+        eric_version="44.3.6.0",
         purpose="synthetic preview\nline-injection check",
         data_classification="SYNTHETIC",
         payload=SyntheticTaxSummary(50000, 8000, 2500),
@@ -77,11 +77,11 @@ def test_preview_is_deterministic_complete_and_hash_bound():
         "SYNTHETIC ELSTER PREVIEW",
         "SYNTH-CASE-PREVIEW",
         "SYNTH-RUN-PREVIEW",
-        "ERiC 41.2 / UFA10 / tax year 2024",
+        "ERiC 44.3.6.0 / UFA10 / tax year 2024",
         "Gross wages (EUR): 50000",
         "Withheld wage tax (EUR): 8000",
         "Deductible expenses (EUR): 2500",
-        "Official material status: NOT_RECOVERED",
+        "Official material status: RECOVERED_LOCAL_MAPPING_UNVERIFIED",
         PREVIEW_DISCLAIMER,
     ):
         assert expected in item.rendered_text
@@ -136,7 +136,7 @@ def test_incomplete_material_process_blocks_preview():
         ("credential_access", True, "external capability"),
         ("network_calls", ("https://example.invalid",), "network calls"),
         ("disclaimer", "safe", "cannot be weakened"),
-        ("official_material_status", "VERIFIED", "NOT_RECOVERED"),
+        ("official_material_status", "VERIFIED", "mapping-unverified"),
     ],
 )
 def test_preview_cannot_be_forged_or_weakened(field, value, message):

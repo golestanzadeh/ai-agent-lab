@@ -101,8 +101,13 @@ class SyntheticElsterPreview:
         ):
             if not isinstance(value, int) or isinstance(value, bool) or value < 0:
                 raise ElsterPreviewError(f"{name} must be a non-negative integer")
-        if self.official_material_status is not OfficialMaterialStatus.NOT_RECOVERED:
-            raise ElsterPreviewError("official material status must remain NOT_RECOVERED")
+        if (
+            self.official_material_status
+            is not OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED
+        ):
+            raise ElsterPreviewError(
+                "official material status must remain recovered but mapping-unverified"
+            )
         if self.outcome is not PreviewOutcome.SYNTHETIC_PREVIEW_READY_OFFICIAL_MAPPING_BLOCKED:
             raise ElsterPreviewError("unsupported preview outcome")
         if self.preview_version != PREVIEW_VERSION:

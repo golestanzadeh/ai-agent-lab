@@ -23,7 +23,7 @@ Last reconciled: **2026-09-16**
 - The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
 - After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
 - Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
-- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The existing synthetic 41.2 contract therefore cannot become an operational adapter without a separately approved version migration.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. Mapping and executable plausibility validation remain fail-closed.
 
 ## Active boundaries
 
@@ -35,15 +35,15 @@ Last reconciled: **2026-09-16**
 
 ## Remaining product work
 
-1. Decide and govern migration of the synthetic adapter baseline from obsolete ERiC 41.2 to official ERiC 44.3.6.0 or another supported version.
-2. Independently inspect the retrieved E10/2024 interface, schema, annual field documentation, and plausibility material, then map and validate them with fail-closed controls.
+1. Independently map the recovered official E10/2024 interface, XSD, annual field documentation, and plausibility material into a separately reviewed fail-closed implementation.
+2. Validate that mapping against official examples and negative fixtures without enabling credentials, networking, signing, or transmission.
 3. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
 4. Harden restart/recovery and provider-backed Agent operation before production activation.
 5. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Request exact Human approval before changing the adapter/version architecture from ERiC 41.2 to 44.3.6.0. Until then, only read-only verification and architecture-neutral local synthetic maintenance may proceed while the token guard permits.
+Close and preserve the ERiC `44.3.6.0` contract-version migration. The next technical package is detailed E10/2024 field mapping and executable local plausibility validation; do not start it while the weekly token guard is in its caution zone, and never enable credentials, Manufacturer-ID, real data, networking, signing, or transmission without the applicable exact Human Gate.
 
 ## Non-negotiable constraints
 

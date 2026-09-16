@@ -12,7 +12,7 @@ ELSTER's official developer page identifies ERiC as the integration route for th
 
 - <https://www.elster.de/eportal/infoseite/entwickler?locale=en_US>
 
-The official ELSTER availability schedule dated 2026-07-10 records unlimited income tax (`UFA 10`) for tax year 2024 as available in ERiC version `41.2`:
+The historical ELSTER availability schedule dated 2026-07-10 recorded unlimited income tax (`UFA 10`) for tax year 2024 as available in ERiC version `41.2`. The protected developer page observed on 2026-09-16 states ERiC 41 and 42 can no longer transmit and publishes ERiC `44.3.6.0`; the governed local baseline is therefore migrated to `44.3.6.0`:
 
 - <https://e4k-portal.een.elster.de/eportal/attachments/bereitstellungstermine/Historie_Bereitstellungstermine.pdf>
 
@@ -26,7 +26,7 @@ Therefore package 1 records the route identity but deliberately implements no gu
 
 `src/agent_lab/elster_dry_run.py` contains only deterministic local values and pure evaluation:
 
-1. `SyntheticSubmissionEnvelope` accepts only `SYNTH-` case/run identities, the `SYNTHETIC` classification, tax year 2024, procedure `UFA10`, and ERiC `41.2`.
+1. `SyntheticSubmissionEnvelope` accepts only `SYNTH-` case/run identities, the `SYNTHETIC` classification, tax year 2024, procedure `UFA10`, and ERiC `44.3.6.0`.
 2. The envelope receives a canonical SHA-256 artifact identity. Any payload or binding change produces a different identity.
 3. `ContentReleaseApproval` models Constitution Article 1 Stage One and binds exact artifact, version, case/run, classification, purpose, issuance, expiry, status, and synthetic Human identity.
 4. `DestinationTransmissionApproval` is a separate later event. It additionally binds Stage One, exact synthetic destination/channel, retry policy, issuance, and expiry.

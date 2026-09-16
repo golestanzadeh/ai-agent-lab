@@ -23,15 +23,14 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 documentation/schema retrieved; version migration requires exact Human approval**
+Status: **official 44.3.6.0 documentation/schema retrieved; local non-production contract migration implemented**
 
 Dependency path:
 
-`Version-migration approval -> detailed material verification -> adapter/schema mapping -> plausibility tests -> exact preview -> Article 1 approval 1 -> Article 1 approval 2 -> authorized transmission -> receipt/recovery`
+`Detailed material verification -> adapter/schema mapping -> plausibility tests -> exact preview -> Article 1 approval 1 -> Article 1 approval 2 -> authorized transmission -> receipt/recovery`
 
 Remaining goals:
 
-- reconcile the obsolete synthetic ERiC 41.2 baseline with supported ERiC 44.3.6.0 under an explicit architecture/version decision;
 - verify official source, completeness, integrity, compatibility, and E10/2024 coverage;
 - implement official interface/schema mapping and plausibility validation;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;

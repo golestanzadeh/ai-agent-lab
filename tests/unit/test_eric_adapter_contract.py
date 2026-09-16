@@ -21,7 +21,7 @@ def envelope() -> SyntheticSubmissionEnvelope:
         run_id="SYNTH-RUN-0002",
         tax_year=2024,
         procedure_code="UFA10",
-        eric_version="41.2",
+        eric_version="44.3.6.0",
         purpose="synthetic adapter contract validation",
         data_classification="SYNTHETIC",
         payload=SyntheticTaxSummary(50000, 8000, 2500),
@@ -30,7 +30,7 @@ def envelope() -> SyntheticSubmissionEnvelope:
 
 def test_contract_has_stable_versioned_identity():
     contract = EricAdapterContract()
-    assert contract.contract_version == "1"
+    assert contract.contract_version == "2"
     assert contract.artifact_identity == contract.artifact_identity
     assert contract.artifact_identity.reference.startswith("sha256:")
 
@@ -38,7 +38,7 @@ def test_contract_has_stable_versioned_identity():
 @pytest.mark.parametrize(
     ("field", "value", "message"),
     [
-        ("contract_version", "2", "contract_version"),
+        ("contract_version", "1", "contract_version"),
         ("environment", "PRODUCTION", "NON_PRODUCTION_DESIGN"),
         ("eric_version", "43.2", "ERiC version"),
         ("procedure_code", "UFA12", "procedure_code"),
@@ -51,8 +51,8 @@ def test_contract_fails_closed_outside_exact_versioned_route(field, value, messa
         replace(EricAdapterContract(), **{field: value})
 
 
-def test_official_material_status_cannot_be_advanced_by_the_design_package():
-    with pytest.raises(EricAdapterContractError, match="governed review"):
+def test_official_material_status_cannot_be_forged_by_the_design_package():
+    with pytest.raises(EricAdapterContractError, match="governed local recovery"):
         replace(EricAdapterContract(), material_status="VERIFIED")
 
 
@@ -76,9 +76,12 @@ def test_contract_policy_cannot_drift_without_a_version_change(field, value, mes
         replace(EricAdapterContract(), **{field: value})
 
 
-def test_contract_names_every_missing_official_material_without_guessing_content():
+def test_contract_names_recovered_materials_without_claiming_mapping():
     contract = EricAdapterContract()
-    assert contract.material_status is OfficialMaterialStatus.NOT_RECOVERED
+    assert (
+        contract.material_status
+        is OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED
+    )
     assert contract.required_official_materials == (
         OfficialMaterialKind.INTERFACE_SPECIFICATION,
         OfficialMaterialKind.XML_SCHEMA,
@@ -93,8 +96,8 @@ def test_design_plan_binds_contract_and_synthetic_envelope_identity():
     assert plan.outcome is AdapterDesignOutcome.BOUNDARY_READY_MAPPING_BLOCKED
     assert plan.contract_reference == contract.artifact_identity.reference
     assert plan.envelope_reference == item.artifact_identity.reference
-    assert plan.contract_version == "1"
-    assert len(plan.blockers) == 3
+    assert plan.contract_version == "2"
+    assert len(plan.blockers) == 2
 
 
 def test_boundary_ready_never_means_mapping_or_execution_ready():

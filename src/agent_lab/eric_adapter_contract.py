@@ -14,7 +14,7 @@ from agent_lab.elster_dry_run import (
 )
 
 
-ADAPTER_CONTRACT_VERSION = "1"
+ADAPTER_CONTRACT_VERSION = "2"
 ADAPTER_ENVIRONMENT = "NON_PRODUCTION_DESIGN"
 SUPPORTED_ENVELOPE_SCHEMA_VERSION = 1
 
@@ -29,6 +29,7 @@ class AdapterDesignOutcome(str, Enum):
 
 class OfficialMaterialStatus(str, Enum):
     NOT_RECOVERED = "NOT_RECOVERED"
+    RECOVERED_LOCAL_MAPPING_UNVERIFIED = "RECOVERED_LOCAL_MAPPING_UNVERIFIED"
 
 
 class OfficialMaterialKind(str, Enum):
@@ -51,10 +52,9 @@ DENIED_CAPABILITIES = (
     "NETWORK",
     "TRANSMISSION",
 )
-MISSING_MATERIAL_BLOCKERS = (
-    "OFFICIAL_ERIC_INTERFACE_SPECIFICATION_NOT_RECOVERED",
-    "OFFICIAL_UFA10_2024_XML_SCHEMA_NOT_RECOVERED",
-    "OFFICIAL_UFA10_2024_PLAUSIBILITY_RULES_NOT_RECOVERED",
+MAPPING_BLOCKERS = (
+    "OFFICIAL_E10_2024_MAPPING_NOT_IMPLEMENTED",
+    "OFFICIAL_E10_2024_PLAUSIBILITY_VALIDATION_NOT_IMPLEMENTED",
 )
 
 
@@ -81,7 +81,9 @@ class EricAdapterContract:
     procedure_code: str = SUPPORTED_PROCEDURE_CODE
     tax_year: int = SUPPORTED_TAX_YEAR
     envelope_schema_version: int = SUPPORTED_ENVELOPE_SCHEMA_VERSION
-    material_status: OfficialMaterialStatus = OfficialMaterialStatus.NOT_RECOVERED
+    material_status: OfficialMaterialStatus = (
+        OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED
+    )
     required_official_materials: tuple[OfficialMaterialKind, ...] = (
         REQUIRED_OFFICIAL_MATERIALS
     )
@@ -101,9 +103,9 @@ class EricAdapterContract:
             raise EricAdapterContractError("unsupported tax_year")
         if self.envelope_schema_version != SUPPORTED_ENVELOPE_SCHEMA_VERSION:
             raise EricAdapterContractError("unsupported envelope schema_version")
-        if self.material_status is not OfficialMaterialStatus.NOT_RECOVERED:
+        if self.material_status is not OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED:
             raise EricAdapterContractError(
-                "official material status cannot advance without a governed review"
+                "official material status must match the governed local recovery state"
             )
         if self.required_official_materials != REQUIRED_OFFICIAL_MATERIALS:
             raise EricAdapterContractError(
@@ -149,9 +151,9 @@ class EricAdapterDesignPlan:
             raise EricAdapterContractError("plan contract_version mismatch")
         if self.required_official_materials != REQUIRED_OFFICIAL_MATERIALS:
             raise EricAdapterContractError("plan official-material policy mismatch")
-        if self.material_status is not OfficialMaterialStatus.NOT_RECOVERED:
+        if self.material_status is not OfficialMaterialStatus.RECOVERED_LOCAL_MAPPING_UNVERIFIED:
             raise EricAdapterContractError("plan official-material status mismatch")
-        if self.blockers != MISSING_MATERIAL_BLOCKERS:
+        if self.blockers != MAPPING_BLOCKERS:
             raise EricAdapterContractError("plan blockers must remain fail-closed")
         if self.denied_capabilities != DENIED_CAPABILITIES:
             raise EricAdapterContractError("plan capability policy mismatch")
@@ -198,6 +200,6 @@ def design_eric_adapter(
         envelope_reference=envelope.artifact_identity.reference,
         required_official_materials=active_contract.required_official_materials,
         material_status=active_contract.material_status,
-        blockers=MISSING_MATERIAL_BLOCKERS,
+        blockers=MAPPING_BLOCKERS,
         denied_capabilities=active_contract.denied_capabilities,
     )

@@ -9,10 +9,10 @@ Package 3 designs and implements only a synthetic, local process for registering
 ## Process
 
 1. Create one immutable synthetic record for each required material category: ERiC interface specification, UFA10 2024 XML schema, and UFA10 2024 plausibility rules.
-2. Bind each record to the exact ERiC 41.2 / UFA10 / tax-year 2024 route, a canonical SHA-256 reference, a `synthetic://` locator, and a synthetic registrant.
+2. Bind each record to the exact ERiC 44.3.6.0 / UFA10 / tax-year 2024 route, a canonical SHA-256 reference, a `synthetic://` locator, and a synthetic registrant.
 3. Require one later, independently identified synthetic reviewer to approve each exact record identity.
 4. Fail closed on missing, duplicate, rejected, reordered, self-reviewed, mismatched, or mutated evidence.
-5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. The official-material status remains `NOT_RECOVERED` and cannot be advanced by this package.
+5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. Following governed retrieval, the status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; this still grants no mapping or execution capability.
 
 ## Acceptance criteria
 

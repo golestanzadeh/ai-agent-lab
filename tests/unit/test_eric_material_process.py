@@ -59,7 +59,7 @@ def test_complete_synthetic_process_keeps_official_status_blocked():
         is MaterialProcessOutcome.SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED
     )
     assert decision.blockers == ()
-    assert decision.official_status.value == "NOT_RECOVERED"
+    assert decision.official_status.value == "RECOVERED_LOCAL_MAPPING_UNVERIFIED"
     assert decision.official_status_advancement_permitted is False
     assert decision.protected_material_retrieval_permitted is False
     assert decision.credential_access is False

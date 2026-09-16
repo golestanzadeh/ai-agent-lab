@@ -24,7 +24,7 @@ def envelope() -> SyntheticSubmissionEnvelope:
         run_id="SYNTH-RUN-0001",
         tax_year=2024,
         procedure_code="UFA10",
-        eric_version="41.2",
+        eric_version="44.3.6.0",
         purpose="synthetic Phase P1 control validation",
         data_classification="SYNTHETIC",
         payload=SyntheticTaxSummary(

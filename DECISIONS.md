@@ -867,3 +867,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Compatibility finding:** The official developer page states that ERiC 41 and 42 have been unable to transmit since the 2026-04-27 minimum-version increase. Existing synthetic 41.2 contracts remain historical test artifacts and must not be promoted operationally.
 
 **Gate:** Updating adapter identity, supported version, schema bindings, or architecture to ERiC 44.3.6.0 requires separate exact Project Owner approval. No software package, forms archive, credential, manufacturer ID, real data, connection, or transmission capability was added.
+
+
+## D-072 — Local ERiC 44.3.6.0 contract migration
+
+**Status:** authorized, implemented, and verified on 2026-09-16
+
+**Decision:** Supersede the active synthetic ERiC `41.2` baseline with adapter contract version `2`, bound to official ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, envelope schema `1`, and the recovered E10/2024 interface/schema/plausibility material categories. Preserve `41.2` only as historical evidence.
+
+**Fail-closed boundary:** Local recovery and hash verification of protected documentation changes material state to `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; it does not establish a correct field mapping or executable plausibility implementation. Those two missing capabilities remain explicit blockers. Credentials, Manufacturer-ID, signing, networking, real data, transmission, and production remain denied.
+
+**Evidence:** Official Release 44 package metadata and hashes are recorded in D-071. Archive inspection identified the E10/2024 example, annual field documentation, `E10-2024-Nutzdaten.xsd`, `E10-2024.xsd`, `elster11_E10_2024_extern.xsd`, schema documentation, and plausibility-related material. The version-migration targeted suite returned `123 passed`.
