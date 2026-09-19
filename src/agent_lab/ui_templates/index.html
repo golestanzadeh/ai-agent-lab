@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}نمونهٔ رابط کاربری · AI Agent Lab{% endblock %}
+{% block content %}
+<section class="intro" aria-labelledby="intro-title">
+  <div>
+    <p class="eyebrow">نمای کلی امن</p>
+    <h2 id="intro-title">پرونده را انتخاب کنید</h2>
+    <p>این صفحه فقط داده‌های مصنوعی نشان می‌دهد و امکان ارسال واقعی ندارد.</p>
+  </div>
+  <label class="case-picker">
+    <span>پرونده و سال مالیاتی</span>
+    <select name="case_selector" aria-label="انتخاب پرونده"
+      hx-get="/workspace" hx-target="#workspace" hx-swap="outerHTML"
+      hx-vals='js:{case_id: event.target.value.split("|")[0], tax_year: event.target.value.split("|")[1]}'>
+      {% for case in cases %}
+      <option value="{{ case.case_id }}|{{ case.tax_period.year }}">
+        {{ case.case_id }} · {{ case.tax_period.year }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+</section>
+{% include "_workspace.html" %}
+{% endblock %}
