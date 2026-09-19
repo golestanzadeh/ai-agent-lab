@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-16**
+Last reconciled: **2026-09-19**
 
 ## Authoritative status
 
@@ -32,6 +32,7 @@ Last reconciled: **2026-09-16**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
+- Execution status is `TOKEN_PAUSED`: weekly remaining reached exactly `10%` on 2026-09-19. The weekly window resets at `2026-09-20 13:48:09 Europe/Berlin`; resume only after a fresh limit check confirms five-hour remaining at least `80%` and weekly remaining above `10%`.
 
 ## Remaining product work
 
@@ -43,7 +44,7 @@ Last reconciled: **2026-09-16**
 
 ## Exact next action
 
-Close and preserve the ERiC `44.3.6.0` contract-version migration. The next technical package is detailed E10/2024 field mapping and executable local plausibility validation; do not start it while the weekly token guard is in its caution zone, and never enable credentials, Manufacturer-ID, real data, networking, signing, or transmission without the applicable exact Human Gate.
+Remain `TOKEN_PAUSED` until the reset conditions are verified. Then independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 ## Non-negotiable constraints
 

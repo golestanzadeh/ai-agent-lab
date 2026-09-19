@@ -39,7 +39,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-### Authoritative current snapshot — 2026-09-16
+### Authoritative current snapshot — 2026-09-19
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
@@ -47,7 +47,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
-- **Exact next action:** preserve the completed `44.3.6.0` contract migration. When the token guard permits, independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
+- Execution is `TOKEN_PAUSED`: on 2026-09-19 the five-hour window had `99%` remaining and the weekly window had exactly `10%` remaining. The weekly reset is `2026-09-20 13:48:09 Europe/Berlin`.
+- **Exact next action:** make no project change until a fresh limit check confirms five-hour remaining at least `80%` and weekly remaining above `10%`. Then independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -632,3 +633,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: the migration-targeted suite returned `123 passed`. Full regression returned `561 passed, 1 skipped, 3 failed`; the three failures are confined to the historical O4 pilot validator's stale requirement for the removed ROADMAP heading `## Registered Phase O4 pilot artifacts` and are not caused by the ERiC version migration.
 - Status: **ERIC_44_3_6_0_CONTRACT_MIGRATION_TECHNICALLY_COMPLETE / LOCAL NON-PRODUCTION ONLY**.
 - Exact next action is the authoritative current snapshot above; do not start the detailed mapping package while the weekly token guard remains in its caution zone.
+
+### Governed token pause — 2026-09-19
+
+- Live plan-limit inspection reported five-hour usage `1%` and weekly usage `90%`, leaving `99%` and exactly `10%` respectively.
+- The hard weekly threshold therefore applies. No new implementation package was started.
+- Weekly reset time: `2026-09-20 13:48:09 Europe/Berlin`.
+- Status: **TOKEN_PAUSED / REPOSITORY CLEAN_AND_SYNCHRONIZED_BEFORE_PAUSE**.
+- Exact continuation: after the reset, resume only when a fresh check confirms five-hour remaining at least `80%`, weekly remaining above `10%`, and safe repository recovery. The next bounded package is the already authorized local non-production E10/2024 detailed mapping and plausibility-validation work under the exclusions in the authoritative snapshot.
