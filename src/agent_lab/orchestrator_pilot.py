@@ -30,7 +30,7 @@ DOCUMENT_RULES = {
     "PROJECT_CHECKPOINT.md": ("# Project Checkpoint", "## Mandatory startup protocol"),
     "AGENTS.md": ("# AGENTS.md", "## Mandatory cross-session startup"),
     "CURRENT_STATE.md": ("# Current State", "## Exact next action"),
-    "ROADMAP.md": ("# Roadmap", "## Registered Phase O4 pilot artifacts"),
+    "ROADMAP.md": ("# Roadmap", "## Current position"),
 }
 
 

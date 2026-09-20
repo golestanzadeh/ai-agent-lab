@@ -35,7 +35,7 @@ The required-material list and complete denied-capability policy are fields insi
 - Full repository regression after amendment: `427 passed, 1 skipped`.
 - Python compile check: passed.
 - Version-2 migration targeted suite: `123 passed`.
-- Full repository regression: `561 passed, 1 skipped, 3 failed`; all three failures are the pre-existing O4 pilot validator's stale requirement for the removed `ROADMAP.md` heading `## Registered Phase O4 pilot artifacts`, not an ERiC migration failure.
+- Initial full repository regression: `561 passed, 1 skipped, 3 failed`; all three failures were the pre-existing O4 pilot validator's stale requirement for the removed `ROADMAP.md` heading `## Registered Phase O4 pilot artifacts`, not an ERiC migration failure. D-073 reconciled that marker; the subsequent full regression returned `564 passed, 1 skipped`.
 - The first targeted invocation omitted the repository `src` import path and stopped during test collection with two import errors. The command was corrected to use the documented `PYTHONPATH=src` environment and passed; no test failure was hidden.
 
 ## Next Human Gate

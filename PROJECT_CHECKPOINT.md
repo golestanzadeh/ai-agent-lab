@@ -39,7 +39,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-### Authoritative current snapshot — 2026-09-19
+### Authoritative current snapshot — 2026-09-20
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
@@ -47,8 +47,9 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
-- Execution is `TOKEN_PAUSED`: on 2026-09-19 the five-hour window had `99%` remaining and the weekly window had exactly `10%` remaining. The weekly reset is `2026-09-20 13:48:09 Europe/Berlin`.
-- **Exact next action:** make no project change until a fresh limit check confirms five-hour remaining at least `80%` and weekly remaining above `10%`. Then independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
+- Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
+- The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
+- **Exact next action:** independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -641,3 +642,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Weekly reset time: `2026-09-20 13:48:09 Europe/Berlin`.
 - Status: **TOKEN_PAUSED / REPOSITORY CLEAN_AND_SYNCHRONIZED_BEFORE_PAUSE**.
 - Exact continuation: after the reset, resume only when a fresh check confirms five-hour remaining at least `80%`, weekly remaining above `10%`, and safe repository recovery. The next bounded package is the already authorized local non-production E10/2024 detailed mapping and plausibility-validation work under the exclusions in the authoritative snapshot.
+
+### Post-reset continuation and CI repair — 2026-09-20
+
+- Fresh service readings reported `100%` remaining in both the five-hour and weekly windows; the active branch was clean and synchronized at `fad38f75cb3220a01874b2238dc6f725e9fe2e63`, satisfying the recorded resume conditions.
+- Reconciled the historical O4 governance validator with the compact canonical ROADMAP by replacing its removed `## Registered Phase O4 pilot artifacts` marker with `## Current position`. No obsolete roadmap content was restored and no authority or runtime capability changed.
+- Verification: O4 targeted `5 passed`; full regression `564 passed, 1 skipped`. The first targeted invocation hit the known Windows pytest cleanup error after all cases passed. The first full run had one order-sensitive Google Drive provisioning failure, which passed in isolation; the fresh full rerun passed.
+- Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / CI_REGRESSION_REPAIRED**.
+- Exact next action remains the authoritative snapshot above: begin the already authorized local non-production E10/2024 detailed mapping and plausibility-validation package.

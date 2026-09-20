@@ -878,3 +878,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Fail-closed boundary:** Local recovery and hash verification of protected documentation changes material state to `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; it does not establish a correct field mapping or executable plausibility implementation. Those two missing capabilities remain explicit blockers. Credentials, Manufacturer-ID, signing, networking, real data, transmission, and production remain denied.
 
 **Evidence:** Official Release 44 package metadata and hashes are recorded in D-071. Archive inspection identified the E10/2024 example, annual field documentation, `E10-2024-Nutzdaten.xsd`, `E10-2024.xsd`, `elster11_E10_2024_extern.xsd`, schema documentation, and plausibility-related material. The version-migration targeted suite returned `123 passed`.
+
+
+## D-073 — Post-reset continuation and stable O4 governance marker
+
+**Status:** implemented and verified on 2026-09-20
+
+**Decision:** Resume agent-led continuous execution after a fresh limit check reported full five-hour and weekly capacity and the repository was clean and synchronized. Update the historical O4 governance-document validator to require the canonical compact ROADMAP heading `## Current position` instead of the removed package-registration heading.
+
+**Rationale and boundary:** The former marker became stale when completed artifacts were correctly removed from the remaining-work roadmap. The replacement preserves deterministic validation of the current canonical document without restoring obsolete planning content or changing O4 authority, architecture, permissions, or runtime capability.
+
+**Verification:** O4 targeted tests returned `5 passed`; the first invocation also encountered the known Windows pytest temporary-symlink cleanup error after all five cases passed, and the isolated-base rerun exited successfully. The first full-suite run had one order-sensitive Google Drive provisioning failure that passed immediately in isolation; a fresh full-suite rerun returned `564 passed, 1 skipped` with only the existing upstream TestClient deprecation warning.

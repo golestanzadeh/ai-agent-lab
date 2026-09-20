@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-19**
+Last reconciled: **2026-09-20**
 
 ## Authoritative status
 
@@ -32,7 +32,7 @@ Last reconciled: **2026-09-19**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `TOKEN_PAUSED`: weekly remaining reached exactly `10%` on 2026-09-19. The weekly window resets at `2026-09-20 13:48:09 Europe/Berlin`; resume only after a fresh limit check confirms five-hour remaining at least `80%` and weekly remaining above `10%`.
+- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh check after the weekly reset reported `100%` remaining in both the five-hour and weekly windows. The stale O4 ROADMAP marker that caused CI run `35444612576` to fail has been reconciled with the canonical compact ROADMAP structure.
 
 ## Remaining product work
 
@@ -44,7 +44,7 @@ Last reconciled: **2026-09-19**
 
 ## Exact next action
 
-Remain `TOKEN_PAUSED` until the reset conditions are verified. Then independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
+Independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 ## Non-negotiable constraints
 
