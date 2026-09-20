@@ -46,6 +46,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - A bounded local E10/2024 Anlage N subset mapping profile is implemented from reviewed official material. The complete synthetic E10 declaration payload is now assembled and validated locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
 - A source-evidenced local plausibility subset now evaluates official rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`. Rules `100200112`/`121355` drove explicit paired `E0205405`/`E0205406` expense itemization; the corrected declaration passes both the official XSD and this bounded local subset.
 - Each bounded plausibility result is cryptographically bound to the exact reviewed `Jahresdokumentation_E10_2024.ods` filename and SHA-256; the protected source remains outside Git.
+- A current-state readiness artifact binds exact mapping, official-XSD declaration, and passing local-plausibility identities while preserving all external blockers and historical package records.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
@@ -53,7 +54,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- **Exact next action:** select and register the next bounded source-evidenced E10/2024 coverage increment, or stop for exact authority before any official ERiC-engine execution.
+- **Exact next action:** select the next bounded local synthetic package outside the completed E10 lineage, or stop for exact authority before official ERiC-engine execution, real workflow activation, or another Human Gate.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -696,4 +697,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Filename, digest, rule-set, findings, blocker, or capability-policy mutation fails closed; the protected source remains outside Git.
 - Verification: plausibility targeted `18 passed`; relevant E10 suite `59 passed`; full regression `623 passed, 1 skipped`.
 - Status: **E10_2024_LOCAL_PLAUSIBILITY_PROVENANCE_BOUND / OFFICIAL_ERIC_ENGINE_BLOCKED**.
+- Exact next action is the authoritative snapshot above.
+
+### Current local E10 readiness integration — 2026-09-20
+
+- Added an immutable current-state assessment binding the exact mapping, official-XSD declaration, and source-provenance-bound passing local-plausibility artifacts.
+- Cross-lineage substitution, failed local stages, blocker removal, or external-capability enablement fails closed.
+- Historical package contracts remain unchanged; live residual blockers are explicit and no external readiness is claimed.
+- Verification: targeted/relevant `75 passed`; full regression `639 passed, 1 skipped`.
+- Status: **E10_2024_LOCAL_LINEAGE_COMPLETE / EXTERNAL_EXECUTION_BLOCKED**.
 - Exact next action is the authoritative snapshot above.

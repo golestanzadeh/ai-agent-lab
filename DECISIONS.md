@@ -954,3 +954,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** The protected ODS remains outside Git. Provenance binding does not expand the six implemented rules and does not represent official ERiC-engine execution or authorize any protected/external capability.
 
 **Verification:** Plausibility targeted `18 passed`; E10 mapping/declaration/plausibility relevant suite `59 passed`; full regression `623 passed, 1 skipped`.
+
+
+## D-079 — Current local E10 readiness integration
+
+**Status:** implemented and technically verified on 2026-09-20
+
+**Decision:** Add a new current-state artifact that binds the exact mapping identity, official-XSD declaration identity, and source-provenance-bound passing local plausibility identity. Preserve earlier package contracts as historical evidence instead of mutating their original outcomes.
+
+**Residual boundary:** Local lineage completion does not imply external readiness. Official ERiC plausibility execution, real payload authority, both Article 1 approvals, and a transmitter remain blockers. ERiC FFI, real data, credentials/certificates, Manufacturer-ID, signing, networking, and transmission remain denied.
+
+**Verification:** E10 integrated targeted/relevant suite `75 passed`; full regression `639 passed, 1 skipped`.
