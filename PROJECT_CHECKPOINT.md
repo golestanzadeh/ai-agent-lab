@@ -49,12 +49,13 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - A current-state readiness artifact binds exact mapping, official-XSD declaration, and passing local-plausibility identities while preserving all external blockers and historical package records.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
+- A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- **Exact next action:** select the next bounded local synthetic package outside the completed E10 lineage, or stop for exact authority before official ERiC-engine execution, real workflow activation, or another Human Gate.
+- **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -706,4 +707,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Historical package contracts remain unchanged; live residual blockers are explicit and no external readiness is claimed.
 - Verification: targeted/relevant `75 passed`; full regression `639 passed, 1 skipped`.
 - Status: **E10_2024_LOCAL_LINEAGE_COMPLETE / EXTERNAL_EXECUTION_BLOCKED**.
+- Exact next action is the authoritative snapshot above.
+
+### Agent Runtime recovery-inspection completion — 2026-09-21
+
+- Added read-only classification of intact planned, completed, and interrupted mid-resume runtime state.
+- The inspector verifies immutable plan/state artifacts, Kernel audit integrity, checkpoint identity/hash, kill-switch state, and durable completed-task evidence without mutating runtime state.
+- Interrupted work is `INTERRUPTED_FAIL_CLOSED`; automatic replay remains forbidden and a future repair policy requires exact authorization.
+- Verification: runtime/recovery targeted `15 passed`; relevant runtime/Kernel/pilot `46 passed`; full regression `646 passed, 1 skipped`.
+- Status: **LOCAL_RUNTIME_RECOVERY_DIAGNOSTICS_COMPLETE / AUTOMATIC_REPLAY_GATED**.
 - Exact next action is the authoritative snapshot above.

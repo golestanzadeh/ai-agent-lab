@@ -20,6 +20,7 @@ Last reconciled: **2026-09-20**
 - Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`; every result is bound to the exact reviewed annual-documentation filename and SHA-256, and the mapping includes paired `E0205405`/`E0205406` expense itemization required by the reviewed rules.
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
+- Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 
 ## Live external status
@@ -43,12 +44,12 @@ Last reconciled: **2026-09-20**
 
 1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics.
 2. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
-3. Harden restart/recovery and provider-backed Agent operation before production activation.
+3. Define an explicitly authorized repair/replay policy for interrupted runtime stages and keep provider-backed operation gated before production activation.
 4. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Select the next bounded local synthetic package outside completed E10 lineage, or stop for exact authority before official ERiC-engine execution, real workflow activation, or another Human Gate.
+Select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 ## Non-negotiable constraints
 

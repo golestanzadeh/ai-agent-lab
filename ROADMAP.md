@@ -16,7 +16,7 @@ Status: **local synthetic runtime verified; provider/production activation gated
 
 Remaining goals:
 
-- harden restart/recovery, including safe mid-resume recovery;
+- implement an explicitly authorized repair/replay policy on top of the completed read-only mid-resume recovery classifier;
 - connect provider workers only after exact authority and security acceptance;
 - retain independent QA/acceptance, deterministic lineage, budgets, retry limits, kill switch, and checkpoint recovery;
 - demonstrate multi-session operation without chat memory.

@@ -965,3 +965,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Residual boundary:** Local lineage completion does not imply external readiness. Official ERiC plausibility execution, real payload authority, both Article 1 approvals, and a transmitter remain blockers. ERiC FFI, real data, credentials/certificates, Manufacturer-ID, signing, networking, and transmission remain denied.
 
 **Verification:** E10 integrated targeted/relevant suite `75 passed`; full regression `639 passed, 1 skipped`.
+
+
+## D-080 — Read-only Agent Runtime recovery classification
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Add a deterministic read-only recovery inspector that validates the immutable package artifacts, Kernel audit chain, latest checkpoint, kill switch, and durable response lineage before classifying `PLANNED_RESUMABLE`, `COMPLETED`, or `INTERRUPTED_FAIL_CLOSED`.
+
+**Safety:** The inspector performs no resume, retry, rewrite, deletion, repair, or replay. An interrupted mid-resume state exposes exact completed task IDs and requires governed repair, because automatic replay after an uncertain crash could duplicate effects. Provider activation and every external/production capability remain excluded.
+
+**Verification:** Recovery/runtime targeted suite `15 passed`; relevant runtime/Kernel/pilot suite `46 passed`; full regression `646 passed, 1 skipped`.
