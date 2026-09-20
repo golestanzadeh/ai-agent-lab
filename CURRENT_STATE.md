@@ -16,6 +16,7 @@ Last reconciled: **2026-09-20**
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile for the bounded Anlage N employment subset; exact official field identifiers, lexical forms, semantic classification, deterministic XML fragment, and fail-closed capability policy are verified.
+- Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 
@@ -37,15 +38,14 @@ Last reconciled: **2026-09-20**
 
 ## Remaining product work
 
-1. Assemble a complete synthetic E10/2024 declaration around the verified bounded Anlage N mapping profile.
-2. Validate the complete synthetic declaration locally against the recovered official XSD set and negative fixtures without enabling credentials, networking, signing, or transmission.
-3. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
-4. Harden restart/recovery and provider-backed Agent operation before production activation.
-5. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
+1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence.
+2. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
+3. Harden restart/recovery and provider-backed Agent operation before production activation.
+4. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Register and implement the next bounded package for complete synthetic E10/2024 declaration assembly and local official-XSD validation, preserving all existing capability blocks.
+Select and register the next bounded, source-evidenced local E10/2024 mapping or plausibility package; do not execute ERiC or cross any protected capability gate.
 
 ## Non-negotiable constraints
 

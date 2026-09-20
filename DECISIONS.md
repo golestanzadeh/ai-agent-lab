@@ -902,3 +902,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** The result is an E10/2024 Anlage N subset fragment, not a complete declaration and not proof of official ERiC plausibility acceptance. Full declaration construction and the official ERiC plausibility engine remain explicit blockers. ERiC FFI, Manufacturer-ID, credentials/certificates, signing, networking, real data, and transmission remain denied.
 
 **Verification:** Mapping/relevant targeted suite `70 passed`; all non-Drive full-regression tests `574 passed, 1 skipped`; Google Drive provisioning tests `15 passed` under Python 3.11. Two Python 3.14 Windows full-suite attempts exposed unrelated, order-varying journal-replace failures in that existing Drive test file; they are preserved as environment-specific evidence rather than attributed to the mapping package.
+
+
+## D-075 — Complete synthetic E10/2024 declaration and official-XSD validation
+
+**Status:** implemented and technically verified on 2026-09-20
+
+**Decision:** Treat the E10 root containing the verified Anlage N subset as the complete synthetic declaration payload defined by the official schema. Validate it locally through `xmlschema` against an explicitly supplied `E10-2024.xsd`, after exact filename and SHA-256 verification. Do not invent optional identity, address, tax-number, transfer-header, or Manufacturer-ID data.
+
+**Official evidence:** The protected, hash-verified ERiC `44.3.6.0` schema confirms the E10 root namespace, fixed `version="2024"`, optional form components, and Anlage N position. The exact official schema digest is `86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272`; protected schema content remains outside Git.
+
+**Boundary:** Successful XSD validation establishes structural conformance only. It does not execute the official ERiC plausibility engine, sign, authenticate, access credentials or Manufacturer-ID, connect externally, or authorize transmission. Those capabilities remain denied and official ERiC plausibility execution remains the blocker.
+
+**Verification:** Declaration/mapping targeted suite `40 passed`; local acceptance validation against the exact recovered official schema returned `OFFICIAL_XSD_VALIDATED_EXTERNAL_EXECUTION_BLOCKED`; full regression returned `604 passed, 1 skipped`.

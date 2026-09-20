@@ -23,7 +23,7 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 material retrieved; contract migration and bounded E10/2024 Anlage N subset mapping implemented**
+Status: **official 44.3.6.0 material retrieved; contract migration, bounded Anlage N mapping, and local official-XSD declaration validation implemented**
 
 Dependency path:
 
@@ -31,8 +31,6 @@ Dependency path:
 
 Remaining goals:
 
-- assemble a complete synthetic E10/2024 declaration around the verified Anlage N subset;
-- validate the complete synthetic declaration locally against the recovered official XSD set;
 - expand official field mapping and local plausibility coverage only from reviewed source evidence;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
