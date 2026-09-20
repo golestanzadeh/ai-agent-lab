@@ -943,3 +943,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Rule-set completion correction:** The same evidence review identified official rule `121355`, requiring `E0205405` and `E0205406` together. The bounded local subset now covers all six directly implicated presence rules. Targeted and full verification are recorded in the current checkpoint.
 
 **Verification:** Updated targeted suite `57 passed`; full regression `621 passed, 1 skipped`.
+
+
+## D-078 — Plausibility-rule source provenance binding
+
+**Status:** implemented and technically verified on 2026-09-20
+
+**Decision:** Bind every bounded local E10/2024 plausibility result to the exact reviewed protected annual-documentation artifact: `Jahresdokumentation_E10_2024.ods`, SHA-256 `6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5`. Filename or digest mutation fails closed and changes the result identity.
+
+**Boundary:** The protected ODS remains outside Git. Provenance binding does not expand the six implemented rules and does not represent official ERiC-engine execution or authorize any protected/external capability.
+
+**Verification:** Plausibility targeted `18 passed`; E10 mapping/declaration/plausibility relevant suite `59 passed`; full regression `623 passed, 1 skipped`.

@@ -45,6 +45,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
 - A bounded local E10/2024 Anlage N subset mapping profile is implemented from reviewed official material. The complete synthetic E10 declaration payload is now assembled and validated locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
 - A source-evidenced local plausibility subset now evaluates official rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`. Rules `100200112`/`121355` drove explicit paired `E0205405`/`E0205406` expense itemization; the corrected declaration passes both the official XSD and this bounded local subset.
+- Each bounded plausibility result is cryptographically bound to the exact reviewed `Jahresdokumentation_E10_2024.ods` filename and SHA-256; the protected source remains outside Git.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
@@ -687,4 +688,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Initial five-rule verification: targeted `56 passed`; full regression `620 passed, 1 skipped`. After adding directly implicated paired-field rule `121355`: targeted `57 passed`; full regression `621 passed, 1 skipped`.
 - No official ERiC engine, real data, Manufacturer-ID, credential/certificate, signing, networking, or transmission was used or enabled.
 - Status: **E10_2024_LOCAL_PLAUSIBILITY_SUBSET_COMPLETE / OFFICIAL_ERIC_ENGINE_BLOCKED**.
+- Exact next action is the authoritative snapshot above.
+
+### E10/2024 plausibility provenance hardening — 2026-09-20
+
+- Bound each bounded local plausibility result and artifact identity to the exact reviewed protected annual-documentation filename and SHA-256.
+- Filename, digest, rule-set, findings, blocker, or capability-policy mutation fails closed; the protected source remains outside Git.
+- Verification: plausibility targeted `18 passed`; relevant E10 suite `59 passed`; full regression `623 passed, 1 skipped`.
+- Status: **E10_2024_LOCAL_PLAUSIBILITY_PROVENANCE_BOUND / OFFICIAL_ERIC_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.

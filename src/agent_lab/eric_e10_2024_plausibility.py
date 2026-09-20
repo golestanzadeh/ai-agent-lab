@@ -12,6 +12,8 @@ from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
 PLAUSIBILITY_PROFILE_VERSION = "1"
+OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
+OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
     "241",
     "310010",
@@ -62,6 +64,8 @@ class E10PlausibilityResult:
     declaration_reference: str
     profile_version: str
     evaluated_rule_codes: tuple[str, ...]
+    rule_source_filename: str
+    rule_source_sha256: str
     findings: tuple[PlausibilityFinding, ...]
     blockers: tuple[str, ...]
     denied_capabilities: tuple[str, ...]
@@ -76,6 +80,10 @@ class E10PlausibilityResult:
             raise E10PlausibilityError("plausibility profile mismatch")
         if self.evaluated_rule_codes != SUPPORTED_OFFICIAL_RULES:
             raise E10PlausibilityError("evaluated rule set cannot be changed")
+        if self.rule_source_filename != OFFICIAL_RULE_SOURCE_FILENAME:
+            raise E10PlausibilityError("official rule-source filename mismatch")
+        if self.rule_source_sha256 != OFFICIAL_RULE_SOURCE_SHA256:
+            raise E10PlausibilityError("official rule-source digest mismatch")
         if not isinstance(self.findings, tuple) or any(
             not isinstance(item, PlausibilityFinding) for item in self.findings
         ):
@@ -160,6 +168,8 @@ def evaluate_local_e10_2024_plausibility(
         declaration_reference=declaration.artifact_identity.reference,
         profile_version=PLAUSIBILITY_PROFILE_VERSION,
         evaluated_rule_codes=SUPPORTED_OFFICIAL_RULES,
+        rule_source_filename=OFFICIAL_RULE_SOURCE_FILENAME,
+        rule_source_sha256=OFFICIAL_RULE_SOURCE_SHA256,
         findings=frozen_findings,
         blockers=REMAINING_BLOCKERS,
         denied_capabilities=DENIED_CAPABILITIES,

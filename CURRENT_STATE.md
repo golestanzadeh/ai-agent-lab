@@ -17,7 +17,7 @@ Last reconciled: **2026-09-20**
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile for the bounded Anlage N employment subset; exact official field identifiers, lexical forms, semantic classification, deterministic XML fragment, and fail-closed capability policy are verified.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
-- Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`; the mapping includes paired `E0205405`/`E0205406` expense itemization required by the reviewed rules.
+- Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`; every result is bound to the exact reviewed annual-documentation filename and SHA-256, and the mapping includes paired `E0205405`/`E0205406` expense itemization required by the reviewed rules.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 

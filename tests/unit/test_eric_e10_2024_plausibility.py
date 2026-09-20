@@ -7,6 +7,8 @@ from agent_lab.eric_e10_2024_declaration import DeclarationOutcome, E10Declarati
 from agent_lab.eric_e10_2024_plausibility import (
     DENIED_CAPABILITIES,
     REMAINING_BLOCKERS,
+    OFFICIAL_RULE_SOURCE_FILENAME,
+    OFFICIAL_RULE_SOURCE_SHA256,
     SUPPORTED_OFFICIAL_RULES,
     E10PlausibilityError,
     PlausibilityOutcome,
@@ -49,6 +51,8 @@ def test_mapped_declaration_passes_reviewed_local_rule_subset():
     result = evaluate_local_e10_2024_plausibility(declaration())
     assert result.outcome is PlausibilityOutcome.LOCAL_SUBSET_PASS_OFFICIAL_ENGINE_BLOCKED
     assert result.evaluated_rule_codes == SUPPORTED_OFFICIAL_RULES
+    assert result.rule_source_filename == OFFICIAL_RULE_SOURCE_FILENAME
+    assert result.rule_source_sha256 == OFFICIAL_RULE_SOURCE_SHA256
     assert result.findings == ()
     assert result.blockers == REMAINING_BLOCKERS
     assert result.denied_capabilities == DENIED_CAPABILITIES
@@ -93,6 +97,8 @@ def test_reports_tax_class_six_withholding_rule():
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),
+        ("rule_source_filename", "other.ods", "filename"),
+        ("rule_source_sha256", "0" * 64, "digest"),
         ("blockers", (), "blockers"),
         ("denied_capabilities", (), "capability"),
         ("synthetic_only", False, "non-synthetic"),
