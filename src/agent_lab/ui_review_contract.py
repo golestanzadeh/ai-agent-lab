@@ -6,9 +6,12 @@ from dataclasses import dataclass
 
 from agent_lab.ui_state_contract import UIWorkspaceState
 
-REVIEW_VIEW_VERSION = "1"
+REVIEW_VIEW_VERSION = "2"
 ALLOWED_FINDING_CODES = ("SYNTH_INCOME_REVIEWED", "SYNTH_EXPENSE_REVIEWED")
-ALLOWED_GAP_CODES = ("OFFICIAL_ERIC_MAPPING_NOT_RECOVERED",)
+ALLOWED_GAP_CODES = (
+    "OFFICIAL_ERIC_ENGINE_NOT_EXECUTED",
+    "REAL_PAYLOAD_NOT_AUTHORIZED",
+)
 
 
 class UIReviewError(ValueError):
@@ -30,7 +33,8 @@ class SyntheticReviewView:
     calculation_total: int
     currency: str
     preview_reference: str
-    official_mapping_status: str = "NOT_RECOVERED"
+    official_mapping_status: str = "LOCAL_E10_2024_XSD_VALIDATED"
+    local_plausibility_status: str = "LOCAL_SIX_RULE_SUBSET_PASS"
     version: str = REVIEW_VIEW_VERSION
     data_classification: str = "SYNTHETIC_SUMMARY_ONLY"
     authentication_enabled: bool = False
@@ -51,8 +55,10 @@ class SyntheticReviewView:
         if self.currency != "EUR_SYNTHETIC":
             raise UIReviewError("currency must remain explicitly synthetic")
         _ref(self.preview_reference)
-        if self.official_mapping_status != "NOT_RECOVERED":
-            raise UIReviewError("official mapping cannot be claimed")
+        if self.official_mapping_status != "LOCAL_E10_2024_XSD_VALIDATED":
+            raise UIReviewError("local mapping status cannot change")
+        if self.local_plausibility_status != "LOCAL_SIX_RULE_SUBSET_PASS":
+            raise UIReviewError("local plausibility status cannot change")
         if self.version != REVIEW_VIEW_VERSION or self.data_classification != "SYNTHETIC_SUMMARY_ONLY":
             raise UIReviewError("review contract identity cannot change")
         if self.authentication_enabled or self.persistence_enabled or self.network_calls != ():

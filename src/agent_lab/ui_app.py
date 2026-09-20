@@ -83,7 +83,10 @@ def _populate_synthetic_state(state: UIWorkspaceState) -> UIWorkspaceState:
         run_id=f"SYNTH-RUN-{suffix}",
         document_references=(_reference("a"), _reference("b")),
         finding_references=(_reference("c"),),
-        evidence_gap_codes=("OFFICIAL_ERIC_MAPPING_NOT_RECOVERED",),
+        evidence_gap_codes=(
+            "OFFICIAL_ERIC_ENGINE_NOT_EXECUTED",
+            "REAL_PAYLOAD_NOT_AUTHORIZED",
+        ),
         preview_reference=gate.artifact_reference,
         human_gate=gate,
     )

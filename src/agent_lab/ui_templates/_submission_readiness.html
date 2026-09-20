@@ -2,6 +2,8 @@
  <p class="eyebrow">آمادگی ارسال · فقط نمایش مصنوعی</p><h3 id="readiness-title">مرز ارسال</h3>
  <div class="grid"><article class="card"><h4>مرحلهٔ یک · مجوز محتوا</h4><strong>{{ readiness.content_release_status }}</strong></article>
  <article class="card"><h4>مرحلهٔ دو · مجوز مقصد</h4><strong>{{ readiness.destination_transmission_status }}</strong><p>این مرحله جدا و وابسته به مرحلهٔ یک است.</p></article></div>
+ <div class="grid"><article class="card"><h4>خط محلی E10</h4><strong>{{ readiness.local_e10_status }}</strong></article>
+ <article class="card warning-card"><h4>موتور رسمی ERiC</h4><strong>{{ readiness.official_engine_status }}</strong></article></div>
  <h4>موانع قطعی</h4><ul>{% for blocker in readiness.blockers %}<li>{{ blocker }}</li>{% endfor %}</ul>
  <p class="mono">{{ readiness.artifact_reference }}</p><p>هیچ تأیید، ارسال یا رسیدی در این نما ایجاد نمی‌شود.</p>
 </section>

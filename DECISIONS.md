@@ -976,3 +976,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The inspector performs no resume, retry, rewrite, deletion, repair, or replay. An interrupted mid-resume state exposes exact completed task IDs and requires governed repair, because automatic replay after an uncertain crash could duplicate effects. Provider activation and every external/production capability remain excluded.
 
 **Verification:** Recovery/runtime targeted suite `15 passed`; relevant runtime/Kernel/pilot suite `46 passed`; full regression `646 passed, 1 skipped`.
+
+
+## D-081 — UI-9 current local E10 readiness reconciliation
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Replace obsolete UI claims that official mapping/material were unrecovered with the current bounded truth: local E10/2024 mapping and official-XSD validation are complete, and the six-rule local plausibility subset passes. Display the official ERiC engine as `NOT_EXECUTED` and preserve separate Article 1 approval and transmitter blockers.
+
+**Safety:** The change is display-only and synthetic. It adds no approval control, authentication, persistence, real data, credential/Manufacturer-ID access, ERiC invocation, networking, receipt, or transmission capability.
+
+**Verification:** Targeted UI state/review/readiness/app/workflow suite `44 passed`; full regression `649 passed, 1 skipped`.

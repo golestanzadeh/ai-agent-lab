@@ -18,7 +18,8 @@ def test_review_is_exactly_case_run_bound_and_preview_bound():
     assert review.preview_reference == workspace.preview_reference
     assert review.findings == ALLOWED_FINDING_CODES
     assert review.evidence_gaps == ALLOWED_GAP_CODES
-    assert review.official_mapping_status == "NOT_RECOVERED"
+    assert review.official_mapping_status == "LOCAL_E10_2024_XSD_VALIDATED"
+    assert review.local_plausibility_status == "LOCAL_SIX_RULE_SUBSET_PASS"
 
 
 def test_case_switch_builds_fresh_scoped_summary():
@@ -28,7 +29,7 @@ def test_case_switch_builds_fresh_scoped_summary():
     assert first.calculation_total != second.calculation_total
 
 
-@pytest.mark.parametrize("field,value", [("calculation_total", -1), ("currency", "EUR"), ("official_mapping_status", "READY"), ("authentication_enabled", True), ("persistence_enabled", True), ("network_calls", ("https://example.invalid",))])
+@pytest.mark.parametrize("field,value", [("calculation_total", -1), ("currency", "EUR"), ("official_mapping_status", "READY"), ("local_plausibility_status", "OFFICIAL_PASS"), ("authentication_enabled", True), ("persistence_enabled", True), ("network_calls", ("https://example.invalid",))])
 def test_review_denies_boundary_weakening(field, value):
     with pytest.raises(UIReviewError):
         replace(build_synthetic_review(_workspace()), **{field: value})

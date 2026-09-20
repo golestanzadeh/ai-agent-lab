@@ -60,7 +60,7 @@ def test_runtime_api_documentation_is_disabled() -> None:
 def test_workflow_diagnostics_are_privacy_safe_and_controls_stay_disabled() -> None:
     response = _client().get("/")
     assert "مسیر پرونده" in response.text
-    assert "OFFICIAL_ERIC_MAPPING_NOT_RECOVERED" in response.text
+    assert "OFFICIAL_ERIC_ENGINE_NOT_EXECUTED" in response.text
     assert "PRODUCTION_SUBMISSION_PATH_NOT_AUTHORIZED" in response.text
     assert "private document" not in response.text
     assert response.text.count("disabled") >= 4
@@ -80,7 +80,8 @@ def test_synthetic_review_and_preview_render_with_no_operational_capability() ->
     assert "نتیجه و پیش‌نمایش فرم" in response.text
     assert "SYNTH_INCOME_REVIEWED" in response.text
     assert "EUR_SYNTHETIC" in response.text
-    assert "نگاشت رسمی: NOT_RECOVERED" in response.text
+    assert "LOCAL_E10_2024_XSD_VALIDATED" in response.text
+    assert "LOCAL_SIX_RULE_SUBSET_PASS" in response.text
     assert "official receipt" not in response.text.lower()
 
 def test_decision_queue_is_display_only():
@@ -91,4 +92,6 @@ def test_decision_queue_is_display_only():
 def test_submission_readiness_keeps_both_approvals_separate_and_unapproved():
     text=_client().get("/").text
     assert "مرحلهٔ یک · مجوز محتوا" in text and "مرحلهٔ دو · مجوز مقصد" in text
-    assert text.count("NOT_APPROVED") >= 2 and "REAL_TRANSMISSION_NOT_AUTHORIZED" in text
+    assert text.count("NOT_APPROVED") >= 2 and "TRANSMITTER_NOT_IMPLEMENTED" in text
+    assert "LOCAL_MAPPING_XSD_AND_RULE_SUBSET_PASS" in text
+    assert "موتور رسمی ERiC" in text and "NOT_EXECUTED" in text

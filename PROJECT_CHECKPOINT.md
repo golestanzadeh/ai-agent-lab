@@ -50,7 +50,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-9. It accurately displays local E10 mapping/XSD/six-rule completion while keeping official-engine execution, real payload, both Article 1 approvals, and transmitter availability blocked.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
@@ -716,4 +716,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Interrupted work is `INTERRUPTED_FAIL_CLOSED`; automatic replay remains forbidden and a future repair policy requires exact authorization.
 - Verification: runtime/recovery targeted `15 passed`; relevant runtime/Kernel/pilot `46 passed`; full regression `646 passed, 1 skipped`.
 - Status: **LOCAL_RUNTIME_RECOVERY_DIAGNOSTICS_COMPLETE / AUTOMATIC_REPLAY_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-9 current E10 readiness reconciliation — 2026-09-21
+
+- Removed obsolete display claims that official mapping/material were unrecovered.
+- The synthetic Persian UI now shows local E10/2024 mapping, official-XSD validation, and six-rule subset completion while clearly showing that the official ERiC engine has not executed.
+- Both Article 1 stages remain separately `NOT_APPROVED`; real payload and transmitter blockers remain visible; no operational action was added.
+- Verification: targeted UI `44 passed`; full regression `649 passed, 1 skipped`.
+- Status: **UI_9_LOCAL_E10_READINESS_DISPLAY_COMPLETE / REAL_OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.

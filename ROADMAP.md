@@ -37,7 +37,7 @@ Remaining goals:
 
 ## Track 3 — User interface
 
-Status: **local synthetic display prototype complete through UI-8; real operations gated**
+Status: **local synthetic display prototype complete through UI-9 with current E10 readiness; real operations gated**
 
 Remaining goals:
 
