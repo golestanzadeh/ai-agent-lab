@@ -23,7 +23,7 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 material retrieved; contract migration, bounded Anlage N mapping, and local official-XSD declaration validation implemented**
+Status: **official 44.3.6.0 material retrieved; bounded mapping, official-XSD validation, and source-evidenced local plausibility subset implemented**
 
 Dependency path:
 
@@ -31,7 +31,7 @@ Dependency path:
 
 Remaining goals:
 
-- expand official field mapping and local plausibility coverage only from reviewed source evidence;
+- expand official field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
 

@@ -915,3 +915,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** Successful XSD validation establishes structural conformance only. It does not execute the official ERiC plausibility engine, sign, authenticate, access credentials or Manufacturer-ID, connect externally, or authorize transmission. Those capabilities remain denied and official ERiC plausibility execution remains the blocker.
 
 **Verification:** Declaration/mapping targeted suite `40 passed`; local acceptance validation against the exact recovered official schema returned `OFFICIAL_XSD_VALIDATED_EXTERNAL_EXECUTION_BLOCKED`; full regression returned `604 passed, 1 skipped`.
+
+
+## D-076 — Source-evidenced local Anlage N plausibility subset
+
+**Status:** implemented and technically verified on 2026-09-20
+
+**Decision:** Implement only the five official presence rules directly implicated by the bounded mapping: `241`, `310010`, `310070`, `100200001`, and `100200112`. Preserve exact rule codes in immutable local findings and fail closed outside the declared subset.
+
+**Mapping correction:** Official rule `100200112` proves that an `E0204803` other-expense aggregate requires itemization. Require an explicit supported official category and emit `E0205405`/`E0205406` before the matching aggregate. The current bounded synthetic category is `Schreibmaterial`; no generic expense description is inferred.
+
+**Boundary:** A local subset pass is not official ERiC plausibility acceptance. Unimplemented official rules, ERiC FFI, the official engine, credentials/certificates, Manufacturer-ID, signing, networking, real data, and transmission remain outside this result and denied.
+
+**Verification:** Mapping/declaration/plausibility targeted suite `56 passed`; the corrected declaration passed the exact recovered official XSD and the five-rule local subset with no findings; full regression returned `620 passed, 1 skipped`.

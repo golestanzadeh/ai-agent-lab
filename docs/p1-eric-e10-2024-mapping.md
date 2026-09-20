@@ -12,9 +12,9 @@ The Project Owner authorized this package on 2026-09-20. The implementation was 
 
 - tax classes 1–5: `E0200002`, `E0200201`, and `E0200301` under `N/ArbL/LStB_1_5_Sum`;
 - tax class 6: `E0200203` and `E0200303` under `N/ArbL/LStB_6_Sum`;
-- explicitly classified other employment expenses: `E0204803` under `N/Wk/Weitere_Wk/Sum`.
+- explicitly classified other employment expenses: one `E0205405`/`E0205406` item under `N/Wk/Weitere_Wk/Sonst` and the matching `E0204803` aggregate under `N/Wk/Weitere_Wk/Sum`.
 
-The mapper preserves the official E10 namespace and version, whole-euro lexical form for gross wages and the expense sum, comma-decimal two-cent form for wage tax, the twelve-digit amount boundary, and separate Person A/Person B identity. Tax class and expense semantics are mandatory because the older synthetic summary did not carry enough meaning to choose official fields safely.
+The mapper preserves the official E10 namespace and version, whole-euro lexical form for gross wages and expense amounts, comma-decimal two-cent form for wage tax, the twelve-digit amount boundary, and separate Person A/Person B identity. Tax class, expense semantics, and an exact supported official expense category are mandatory because the older synthetic summary did not carry enough meaning to choose official fields safely. The current bounded category is `Schreibmaterial`.
 
 ## Fail-closed boundary
 
@@ -31,6 +31,6 @@ The package tests cover tax classes 1–5 and 6, exact field identifiers and pat
 - Google Drive provisioning file under Python 3.11: `15 passed`.
 - Two Python 3.14 Windows full-suite attempts produced order-varying failures only in the pre-existing Google Drive journal-replace tests; the mapping tests remained green.
 
-## Next boundary
+## Later refinement
 
-The next package may assemble a complete synthetic E10/2024 declaration and validate it locally against the recovered official XSD only after registering its artifact design. Invoking the official ERiC plausibility engine, using a Manufacturer-ID or credential, processing real data, connecting externally, signing, or transmitting remains separately gated.
+The declaration/XSD package subsequently resolved the mapper's standalone full-declaration blocker. Review of the official `N - Regeln` table then showed that rule `100200112` requires itemization when `E0204803` is present, which produced the source-evidenced `E0205405`/`E0205406` refinement above. Invoking the official ERiC plausibility engine, using a Manufacturer-ID or credential, processing real data, connecting externally, signing, or transmitting remains separately gated.

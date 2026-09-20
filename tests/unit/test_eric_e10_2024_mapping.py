@@ -13,6 +13,7 @@ from agent_lab.eric_e10_2024_mapping import (
     E10MappingRequest,
     E10Person,
     MappingOutcome,
+    OtherExpenseCategory,
     map_synthetic_summary_to_e10_2024,
 )
 
@@ -44,6 +45,7 @@ def request(*, tax_class: int = 1, **payload_overrides: int) -> E10MappingReques
         deductible_expense_semantics=(
             DeductibleExpenseSemantics.OTHER_EMPLOYMENT_EXPENSES
         ),
+        other_expense_category=OtherExpenseCategory.WRITING_MATERIALS,
     )
 
 
@@ -58,6 +60,8 @@ def test_maps_tax_classes_one_to_five_to_official_sum_fields():
         ("E0200002", "3"),
         ("E0200201", "67554"),
         ("E0200301", "17653,00"),
+        ("E0205405", "Schreibmaterial"),
+        ("E0205406", "1234"),
         ("E0204803", "1234"),
     ]
     root = ET.fromstring(result.fragment_xml)
@@ -71,6 +75,8 @@ def test_maps_tax_classes_one_to_five_to_official_sum_fields():
         "E0200002",
         "E0200201",
         "E0200301",
+        "E0205405",
+        "E0205406",
         "E0204803",
     ]
 
@@ -80,6 +86,8 @@ def test_maps_tax_class_six_to_separate_official_sum_fields():
     assert [(item.field_id, item.lexical_value) for item in result.field_bindings] == [
         ("E0200203", "67554"),
         ("E0200303", "17653,00"),
+        ("E0205405", "Schreibmaterial"),
+        ("E0205406", "1234"),
         ("E0204803", "1234"),
     ]
     assert "LStB_6_Sum" in result.fragment_xml
@@ -95,6 +103,8 @@ def test_zero_values_preserve_official_lexical_shapes():
         "E0200002": "1",
         "E0200201": "0",
         "E0200301": "0,00",
+        "E0205405": "Schreibmaterial",
+        "E0205406": "0",
         "E0204803": "0",
     }
 
@@ -112,6 +122,20 @@ def test_rejects_ambiguous_deductible_expense_semantics():
             person=E10Person.PERSON_A,
             tax_class=1,
             deductible_expense_semantics="OTHER",
+            other_expense_category=OtherExpenseCategory.WRITING_MATERIALS,
+        )
+
+
+def test_rejects_ambiguous_other_expense_category():
+    with pytest.raises(E10MappingError, match="official category"):
+        E10MappingRequest(
+            envelope=envelope(),
+            person=E10Person.PERSON_A,
+            tax_class=1,
+            deductible_expense_semantics=(
+                DeductibleExpenseSemantics.OTHER_EMPLOYMENT_EXPENSES
+            ),
+            other_expense_category="miscellaneous",
         )
 
 

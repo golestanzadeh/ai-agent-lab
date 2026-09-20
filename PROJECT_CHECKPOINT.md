@@ -44,13 +44,14 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
 - A bounded local E10/2024 Anlage N subset mapping profile is implemented from reviewed official material. The complete synthetic E10 declaration payload is now assembled and validated locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
+- A source-evidenced local plausibility subset now evaluates official rules `241`, `310010`, `310070`, `100200001`, and `100200112`. Rule `100200112` drove explicit `E0205405`/`E0205406` expense itemization; the corrected declaration passes both the official XSD and this bounded local subset.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- **Exact next action:** select and register the next bounded, source-evidenced local E10/2024 mapping or plausibility package; do not execute ERiC or cross any protected capability gate.
+- **Exact next action:** select and register the next bounded source-evidenced E10/2024 coverage increment, or stop for exact authority before any official ERiC-engine execution.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -675,4 +676,14 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact official-schema acceptance returned `OFFICIAL_XSD_VALIDATED_EXTERNAL_EXECUTION_BLOCKED`; declaration/mapping targeted tests returned `40 passed`, and full regression returned `604 passed, 1 skipped`.
 - No real data, optional identity fields, Manufacturer-ID, credentials/certificates, ERiC FFI, official plausibility execution, signing, networking, or transmission was used or enabled.
 - Status: **E10_2024_DECLARATION_OFFICIAL_XSD_VALIDATED / OFFICIAL_ERIC_PLAUSIBILITY_BLOCKED**.
+- Exact next action is the authoritative snapshot above.
+
+### E10/2024 local plausibility-subset completion — 2026-09-20
+
+- Reviewed the protected annual `N - Regeln` evidence outside Git and implemented only the five presence rules directly implicated by the mapped fields.
+- Corrected the other-employment-expense mapping to require explicit `Schreibmaterial` semantics and emit item fields `E0205405`/`E0205406` before aggregate `E0204803`, as required by official rule `100200112`.
+- The corrected declaration passed the exact recovered official XSD and the bounded local plausibility subset with no findings.
+- Verification: targeted `56 passed`; full regression `620 passed, 1 skipped`.
+- No official ERiC engine, real data, Manufacturer-ID, credential/certificate, signing, networking, or transmission was used or enabled.
+- Status: **E10_2024_LOCAL_PLAUSIBILITY_SUBSET_COMPLETE / OFFICIAL_ERIC_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.

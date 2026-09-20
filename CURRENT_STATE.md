@@ -17,6 +17,7 @@ Last reconciled: **2026-09-20**
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile for the bounded Anlage N employment subset; exact official field identifiers, lexical forms, semantic classification, deterministic XML fragment, and fail-closed capability policy are verified.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
+- Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, and `100200112`; the mapping now includes explicit `E0205405`/`E0205406` expense itemization required by rule `100200112`.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 
@@ -38,14 +39,14 @@ Last reconciled: **2026-09-20**
 
 ## Remaining product work
 
-1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence.
+1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics.
 2. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
 3. Harden restart/recovery and provider-backed Agent operation before production activation.
 4. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Select and register the next bounded, source-evidenced local E10/2024 mapping or plausibility package; do not execute ERiC or cross any protected capability gate.
+Select and register the next bounded source-evidenced E10/2024 coverage increment, or stop for exact authority before any official ERiC-engine execution.
 
 ## Non-negotiable constraints
 

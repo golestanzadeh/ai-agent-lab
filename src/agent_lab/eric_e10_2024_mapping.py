@@ -43,6 +43,10 @@ class DeductibleExpenseSemantics(str, Enum):
     OTHER_EMPLOYMENT_EXPENSES = "N_OTHER_EMPLOYMENT_EXPENSES"
 
 
+class OtherExpenseCategory(str, Enum):
+    WRITING_MATERIALS = "Schreibmaterial"
+
+
 class MappingOutcome(str, Enum):
     LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED = (
         "LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED"
@@ -63,6 +67,7 @@ class E10MappingRequest:
     person: E10Person
     tax_class: int
     deductible_expense_semantics: DeductibleExpenseSemantics
+    other_expense_category: OtherExpenseCategory
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -77,6 +82,10 @@ class E10MappingRequest:
         if not isinstance(self.deductible_expense_semantics, DeductibleExpenseSemantics):
             raise E10MappingError(
                 "deductible expenses require an explicit supported semantic classification"
+            )
+        if not isinstance(self.other_expense_category, OtherExpenseCategory):
+            raise E10MappingError(
+                "other employment expenses require an explicit supported official category"
             )
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
@@ -202,6 +211,20 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             ),
         ),
         E10FieldBinding(
+            source_field="other_expense_category",
+            official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
+            field_id="E0205405",
+            lexical_value=request.other_expense_category.value,
+        ),
+        E10FieldBinding(
+            source_field="deductible_expenses_eur",
+            official_path="/N/Wk/Weitere_Wk/Sonst/E0205406",
+            field_id="E0205406",
+            lexical_value=_whole_euros(
+                "deductible_expenses_eur", payload.deductible_expenses_eur
+            ),
+        ),
+        E10FieldBinding(
             source_field="deductible_expenses_eur",
             official_path="/N/Wk/Weitere_Wk/Sum/E0204803",
             field_id="E0204803",
@@ -229,6 +252,9 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         ET.SubElement(wage_group, _qname(field_id)).text = values[field_id]
     expenses = ET.SubElement(n, _qname("Wk"))
     other_expenses = ET.SubElement(expenses, _qname("Weitere_Wk"))
+    other_expense_item = ET.SubElement(other_expenses, _qname("Sonst"))
+    ET.SubElement(other_expense_item, _qname("E0205405")).text = values["E0205405"]
+    ET.SubElement(other_expense_item, _qname("E0205406")).text = values["E0205406"]
     expense_sum = ET.SubElement(other_expenses, _qname("Sum"))
     ET.SubElement(expense_sum, _qname("E0204803")).text = values["E0204803"]
     ET.register_namespace("", E10_NAMESPACE)

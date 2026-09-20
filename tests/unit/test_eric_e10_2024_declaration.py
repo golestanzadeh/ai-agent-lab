@@ -19,6 +19,7 @@ from agent_lab.eric_e10_2024_mapping import (
     DeductibleExpenseSemantics,
     E10MappingRequest,
     E10Person,
+    OtherExpenseCategory,
     map_synthetic_summary_to_e10_2024,
 )
 
@@ -44,6 +45,7 @@ def mapping():
             person=E10Person.PERSON_A,
             tax_class=1,
             deductible_expense_semantics=DeductibleExpenseSemantics.OTHER_EMPLOYMENT_EXPENSES,
+            other_expense_category=OtherExpenseCategory.WRITING_MATERIALS,
         )
     )
 
