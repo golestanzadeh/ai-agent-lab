@@ -927,4 +927,19 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Boundary:** A local subset pass is not official ERiC plausibility acceptance. Unimplemented official rules, ERiC FFI, the official engine, credentials/certificates, Manufacturer-ID, signing, networking, real data, and transmission remain outside this result and denied.
 
-**Verification:** Mapping/declaration/plausibility targeted suite `56 passed`; the corrected declaration passed the exact recovered official XSD and the five-rule local subset with no findings; full regression returned `620 passed, 1 skipped`.
+**Verification:** Mapping/declaration/plausibility targeted suite `56 passed`; the corrected declaration passed the exact recovered official XSD and the initially bounded five-rule local subset with no findings; the directly implicated paired-field rule `121355` was added in D-077.
+
+
+## D-077 — Continuous exception-only execution reaffirmed
+
+**Status:** active on 2026-09-20
+
+**Decision:** The Project Owner instructed the project to continue without repeated “continue” prompts wherever no genuine Human Gate applies, with continuous plan-limit monitoring and no routine progress reports. The existing hourly same-task guard was updated to reflect completed developer access, Human login, license acceptance, and protected-material retrieval.
+
+**Operational boundary:** Each heartbeat may perform at most one authorized, prerequisite-ready, local, synthetic, non-production package on the active development branch. At five-hour remaining `25%` or weekly remaining `20%`, no large package starts. At five-hour remaining `15%` or weekly remaining `10%`, no new work starts and a durable `TOKEN_PAUSED` checkpoint is required. Resume requires five-hour remaining at least `80%`, weekly remaining above `10%`, and safe repository recovery.
+
+**Human Gates unchanged:** Real data, Manufacturer-ID, credentials/certificates, authentication actions, official ERiC-engine execution, external connectivity, signing, transmission, production, ELSTER/Finanzamt contact, protected-main action, merge, release, destructive action, and governance/architecture changes remain excluded unless separately and exactly authorized.
+
+**Rule-set completion correction:** The same evidence review identified official rule `121355`, requiring `E0205405` and `E0205406` together. The bounded local subset now covers all six directly implicated presence rules. Targeted and full verification are recorded in the current checkpoint.
+
+**Verification:** Updated targeted suite `57 passed`; full regression `621 passed, 1 skipped`.

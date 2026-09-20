@@ -17,7 +17,7 @@ Last reconciled: **2026-09-20**
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile for the bounded Anlage N employment subset; exact official field identifiers, lexical forms, semantic classification, deterministic XML fragment, and fail-closed capability policy are verified.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
-- Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, and `100200112`; the mapping now includes explicit `E0205405`/`E0205406` expense itemization required by rule `100200112`.
+- Source-evidenced local evaluation of official Anlage N presence rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`; the mapping includes paired `E0205405`/`E0205406` expense itemization required by the reviewed rules.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 
@@ -36,6 +36,7 @@ Last reconciled: **2026-09-20**
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
 - Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh check after the weekly reset reported `100%` remaining in both the five-hour and weekly windows. The stale O4 ROADMAP marker that caused CI run `35444612576` to fail has been reconciled with the canonical compact ROADMAP structure.
+- The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The hourly plan-limit guard now reflects completed developer access and may execute one authorized bounded package per heartbeat, while retaining all token thresholds and Human Gates.
 
 ## Remaining product work
 

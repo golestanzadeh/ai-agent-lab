@@ -69,6 +69,7 @@ def test_result_is_deterministic_and_hash_bound():
         ("E0200301", "310010"),
         ("E0204803", "100200001"),
         ("E0205406", "100200112"),
+        ("E0205405", "121355"),
     ],
 )
 def test_reports_reviewed_official_presence_rules(removed, rule_code):

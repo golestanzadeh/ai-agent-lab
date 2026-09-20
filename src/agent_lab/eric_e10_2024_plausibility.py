@@ -18,6 +18,7 @@ SUPPORTED_OFFICIAL_RULES = (
     "310070",
     "100200001",
     "100200112",
+    "121355",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -132,6 +133,8 @@ def evaluate_local_e10_2024_plausibility(
     gross_6 = _present(root, "E0200203")
     wage_tax_6 = _present(root, "E0200303")
     expense_item = _present(root, "E0205406") or _present(root, "E0204802")
+    other_expense_label = _present(root, "E0205405")
+    other_expense_amount = _present(root, "E0205406")
     expense_sum = _present(root, "E0204803")
 
     if gross_1_5 and not tax_class:
@@ -144,6 +147,8 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("100200001", ("E0205406", "E0204802", "E0204803"), "other-expense itemization requires its sum"))
     if expense_sum and not expense_item:
         findings.append(PlausibilityFinding("100200112", ("E0204803", "E0205406", "E0204802"), "other-expense sum requires itemization"))
+    if other_expense_label is not other_expense_amount:
+        findings.append(PlausibilityFinding("121355", ("E0205405", "E0205406"), "other-expense label and amount must be provided together"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(
