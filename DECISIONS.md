@@ -889,3 +889,16 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Rationale and boundary:** The former marker became stale when completed artifacts were correctly removed from the remaining-work roadmap. The replacement preserves deterministic validation of the current canonical document without restoring obsolete planning content or changing O4 authority, architecture, permissions, or runtime capability.
 
 **Verification:** O4 targeted tests returned `5 passed`; the first invocation also encountered the known Windows pytest temporary-symlink cleanup error after all five cases passed, and the isolated-base rerun exited successfully. The first full-suite run had one order-sensitive Google Drive provisioning failure that passed immediately in isolation; a fresh full-suite rerun returned `564 passed, 1 skipped` with only the existing upstream TestClient deprecation warning.
+
+
+## D-074 — Bounded E10/2024 Anlage N mapping profile
+
+**Status:** implemented and technically verified on 2026-09-20
+
+**Decision:** Implement a deterministic local mapping profile for the three-field synthetic employment summary. Require explicit Person A/B, tax class, and `N_OTHER_EMPLOYMENT_EXPENSES` semantics before selecting official fields. Map tax classes 1–5 to `E0200002`, `E0200201`, and `E0200301`; tax class 6 to `E0200203` and `E0200303`; and the explicitly classified expense amount to `E0204803`.
+
+**Official evidence:** Local inspection of the protected, hash-verified ERiC `44.3.6.0` annual documentation, example, and `E10-2024.xsd` confirmed the exact paths, field identifiers, data types, lexical forms, and separate tax-class groups. Protected source content remains outside Git.
+
+**Boundary:** The result is an E10/2024 Anlage N subset fragment, not a complete declaration and not proof of official ERiC plausibility acceptance. Full declaration construction and the official ERiC plausibility engine remain explicit blockers. ERiC FFI, Manufacturer-ID, credentials/certificates, signing, networking, real data, and transmission remain denied.
+
+**Verification:** Mapping/relevant targeted suite `70 passed`; all non-Drive full-regression tests `574 passed, 1 skipped`; Google Drive provisioning tests `15 passed` under Python 3.11. Two Python 3.14 Windows full-suite attempts exposed unrelated, order-varying journal-replace failures in that existing Drive test file; they are preserved as environment-specific evidence rather than attributed to the mapping package.

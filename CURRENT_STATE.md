@@ -15,6 +15,7 @@ Last reconciled: **2026-09-20**
 - Controlled CASE-001 migration, document processing, six-role tax runtime, and Chief review.
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Phase P1 local synthetic ERiC boundary through package 7.
+- Local E10/2024 mapping profile for the bounded Anlage N employment subset; exact official field identifiers, lexical forms, semantic classification, deterministic XML fragment, and fail-closed capability policy are verified.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-8 at `c153014`; verification: `564 passed, 1 skipped` plus loopback visual/accessibility inspection.
 
@@ -36,15 +37,15 @@ Last reconciled: **2026-09-20**
 
 ## Remaining product work
 
-1. Independently map the recovered official E10/2024 interface, XSD, annual field documentation, and plausibility material into a separately reviewed fail-closed implementation.
-2. Validate that mapping against official examples and negative fixtures without enabling credentials, networking, signing, or transmission.
+1. Assemble a complete synthetic E10/2024 declaration around the verified bounded Anlage N mapping profile.
+2. Validate the complete synthetic declaration locally against the recovered official XSD set and negative fixtures without enabling credentials, networking, signing, or transmission.
 3. Extend the UI from synthetic display boundaries to governed real workflows only after each required authority.
 4. Harden restart/recovery and provider-backed Agent operation before production activation.
 5. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
+Register and implement the next bounded package for complete synthetic E10/2024 declaration assembly and local official-XSD validation, preserving all existing capability blocks.
 
 ## Non-negotiable constraints
 

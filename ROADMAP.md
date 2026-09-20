@@ -2,7 +2,7 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-09-16**
+Last reconciled: **2026-09-20**
 
 ## Current position
 
@@ -23,7 +23,7 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 documentation/schema retrieved; local non-production contract migration implemented**
+Status: **official 44.3.6.0 material retrieved; contract migration and bounded E10/2024 Anlage N subset mapping implemented**
 
 Dependency path:
 
@@ -31,8 +31,9 @@ Dependency path:
 
 Remaining goals:
 
-- verify official source, completeness, integrity, compatibility, and E10/2024 coverage;
-- implement official interface/schema mapping and plausibility validation;
+- assemble a complete synthetic E10/2024 declaration around the verified Anlage N subset;
+- validate the complete synthetic declaration locally against the recovered official XSD set;
+- expand official field mapping and local plausibility coverage only from reviewed source evidence;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
 

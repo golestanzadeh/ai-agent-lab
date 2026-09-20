@@ -43,13 +43,14 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
+- A bounded local E10/2024 Anlage N subset mapping profile is implemented from reviewed official material. It maps only the explicitly classified synthetic employment summary and retains full-declaration and official-ERiC-plausibility blockers.
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-8 at `c153014`; latest full verification is `564 passed, 1 skipped`.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- **Exact next action:** independently implement and review the detailed E10/2024 mapping and local plausibility-validation package without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
+- **Exact next action:** register and implement complete synthetic E10/2024 declaration assembly and local official-XSD validation around the verified subset, without credentials, Manufacturer-ID, real data, networking, signing, or transmission.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
@@ -650,3 +651,19 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: O4 targeted `5 passed`; full regression `564 passed, 1 skipped`. The first targeted invocation hit the known Windows pytest cleanup error after all cases passed. The first full run had one order-sensitive Google Drive provisioning failure, which passed in isolation; the fresh full rerun passed.
 - Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / CI_REGRESSION_REPAIRED**.
 - Exact next action remains the authoritative snapshot above: begin the already authorized local non-production E10/2024 detailed mapping and plausibility-validation package.
+
+### E10/2024 local mapping package authorization — 2026-09-20
+
+- The Project Owner explicitly authorized the next local E10/2024 package and requested exception-only reporting with only the final result.
+- Registered the bounded implementation, test, and documentation artifacts in `ROADMAP.md` before creation.
+- Boundary: official ERiC `44.3.6.0`, E10/2024, local synthetic non-production mapping and validation only. Real data, Manufacturer-ID, credentials, certificates, external connectivity, signing, full ERiC execution, and transmission remain excluded.
+- Status: **AUTHORIZED_AND_REGISTERED / IMPLEMENTATION_READY**.
+
+### E10/2024 bounded mapping completion — 2026-09-20
+
+- Implemented the registered local mapping profile for the synthetic employment summary with exact E10/2024 namespace/version, separate tax-class 1–5 and tax-class 6 field groups, explicit Person binding, and explicit other-employment-expense semantics.
+- Official source review confirmed the mapped identifiers in the annual documentation and exactly one declaration for each mapped identifier in `E10-2024.xsd`, including the official whole-euro and comma-decimal types.
+- The immutable output is deterministic and rejects ambiguous semantics, invalid tax classes, out-of-range amounts, XML/binding mutation, blocker removal, or any attempt to enable protected/external capability.
+- Verification: mapping/relevant targeted `70 passed`; non-Drive regression `574 passed, 1 skipped`; Google Drive provisioning `15 passed` on Python 3.11. Python 3.14 Windows full-suite attempts showed unrelated order-varying atomic-journal replacement failures in the pre-existing Drive tests.
+- Status: **E10_2024_BOUNDED_MAPPING_TECHNICALLY_COMPLETE / FULL_DECLARATION_AND_OFFICIAL_ERIC_PLAUSIBILITY_BLOCKED**.
+- Exact next action is the authoritative snapshot above.
