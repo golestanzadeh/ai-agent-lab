@@ -1419,3 +1419,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Mapping profile version `9` adds one explicit synthetic ferry-or-flight expense using `E0204801` and `E0204802`, derives `E0204803` from that amount plus the existing `Sonst` item, and fails closed on unpaired, blank, overlong, negative, or out-of-range input. Plausibility profile version `10` adds reviewed rule `121361`, requiring description and amount together. The generated declaration passes the exact hash-pinned official E10/2024 XSD. The focused E10/UI/documentation suite passes with `218 passed, 1 warning`, and the complete local unit regression passes with `804 passed, 1 warning`. No real-case meaning is inferred and all external capabilities remain denied.
+
+
+## D-132 — Combined other-expense boundary hardening
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Add explicit regression coverage proving that the derived `E0204803` aggregate fails closed when individually valid `Sonst` and ferry-or-flight amounts exceed the official twelve-digit boundary together. Also prove that official rule `100200002` evaluates the combined `E0205406` plus `E0204802` total, accepting an absolute difference of five and rejecting a difference above five. Focused verification passes with `155 passed`, and the complete local unit regression passes with `807 passed, 1 warning`. This changes no mapping or plausibility profile, authority, or external capability.

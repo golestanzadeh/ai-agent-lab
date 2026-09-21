@@ -122,6 +122,23 @@ def test_ferry_or_flight_description_and_amount_must_be_provided_together(remove
     assert "121361" in {item.official_rule_code for item in result.findings}
 
 
+@pytest.mark.parametrize(
+    ("declared_sum", "fails"),
+    [(1560, False), (1561, True)],
+)
+def test_other_expense_tolerance_uses_combined_sonst_and_ferry_or_flight_total(
+    declared_sum, fails
+):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Sonst>",
+        "<Flug><E0204801>Synthetic ferry ticket</E0204801><E0204802>321</E0204802></Flug><Sonst>",
+    ).replace("<E0204803>1234</E0204803>", f"<E0204803>{declared_sum}</E0204803>")
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("100200002" in codes) is fails
+
+
 def test_reports_tax_class_six_withholding_rule():
     source = declaration()
     xml = source.declaration_xml.replace("LStB_1_5_Sum", "LStB_6_Sum")

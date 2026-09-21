@@ -242,6 +242,17 @@ def test_rejects_invalid_ferry_or_flight_semantics(changes):
         replace(request(), **changes)
 
 
+def test_rejects_combined_other_expense_sum_above_official_boundary():
+    with pytest.raises(E10MappingError, match="combined_other_expenses_eur"):
+        map_synthetic_summary_to_e10_2024(
+            replace(
+                request(deductible_expenses_eur=999_999_999_999),
+                ferry_or_flight_description="Synthetic ferry ticket",
+                ferry_or_flight_eur=1,
+            )
+        )
+
+
 @pytest.mark.parametrize(
     "changes",
     [
