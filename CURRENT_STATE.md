@@ -26,6 +26,7 @@ Last reconciled: **2026-09-21**
 - The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. Every permitted remaining-stage boundary is covered; completed stages are not replayed, and partial/extra traces fail closed. Targeted runtime verification: `34 passed`.
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
+- The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status

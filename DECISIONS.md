@@ -1340,3 +1340,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-21
 
 **Decision:** Mapping and plausibility profile version `4` implements the bounded D-119 subset. Paired explicit input produces one item and an identical derived sum, invalid semantics fail closed, the five reviewed official rules are evaluated locally, the targeted E10 suite passes with `114 passed`, and the exact official XSD accepts the generated declaration. All external capabilities remain denied.
+
+
+## D-121 — Profile-v4 integration regression
+
+**Status:** verified on 2026-09-21
+
+**Result:** The complete local unit suite passes with `733 passed, 1 skipped, 1 warning` after the professional-association mapping and five-rule plausibility expansion. This changes no external authority or capability.
