@@ -1053,3 +1053,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** This is documentation and quality enforcement only. It changes no runtime, architecture, authority, external access, or production capability.
 
 **Verification:** Index guard `3 passed`; relevant index/orchestrator-document suite `8 passed`. Full regression not required because no runtime code changed.
+
+
+## D-088 — Canonical-state drift guard
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Extend deterministic documentation checks so `PROJECT_CHECKPOINT.md`, `CURRENT_STATE.md`, and `ROADMAP.md` cannot silently disagree on the latest completed UI package. Also require the authoritative checkpoint snapshot and current state to retain the same active branch and continuous-execution marker.
+
+**Boundary:** This guard validates durable project memory only. It changes no runtime, architecture, authority, external access, or production capability.
+
+**Verification:** Canonical documentation guard `5 passed`. Full regression not required because no runtime code changed.

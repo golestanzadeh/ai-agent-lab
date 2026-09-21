@@ -58,6 +58,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The compact ROADMAP current-position summary is reconciled through UI-12 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
+- Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
@@ -780,4 +781,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Added a deterministic guard requiring exact equality between focused Markdown files and indexed filenames while preserving `PROJECT_CHECKPOINT.md` as the canonical status entry point.
 - Verification: index guard `3 passed`; relevant index/orchestrator-document suite `8 passed`. No runtime behavior changed, so a full regression was not required.
 - Status: **DOCUMENTATION_INDEX_COMPLETE / DRIFT_GUARD_ACTIVE**.
+- Exact next action is the authoritative snapshot above.
+
+### Canonical-state drift guard — 2026-09-21
+
+- Extended the documentation quality guard to compare the authoritative checkpoint snapshot, current state, and roadmap rather than validating the index alone.
+- The records must agree on the latest completed UI package; the checkpoint and current state must both retain the active development branch and `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` marker.
+- Verification: canonical documentation guard `5 passed`; no runtime behavior changed, so a full regression was not required.
+- Status: **CANONICAL_STATE_DRIFT_GUARD_ACTIVE**.
 - Exact next action is the authoritative snapshot above.

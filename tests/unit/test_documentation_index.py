@@ -32,3 +32,26 @@ def test_index_preserves_the_canonical_status_entry_point() -> None:
     text = INDEX.read_text(encoding="utf-8")
     assert "Start with the repository-root `PROJECT_CHECKPOINT.md`" in text
     assert "Current CASE status must be taken only from `PROJECT_CHECKPOINT.md`" in text
+
+
+def test_canonical_current_records_agree_on_latest_ui_package() -> None:
+    checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    roadmap = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
+    snapshot = checkpoint.split("All later dated checkpoint sections", 1)[0]
+
+    checkpoint_versions = set(re.findall(r"through UI-(\d+)", snapshot))
+    current_versions = set(re.findall(r"through UI-(\d+)", current))
+    roadmap_versions = set(re.findall(r"through UI-(\d+)", roadmap))
+    assert len(checkpoint_versions) == len(current_versions) == len(roadmap_versions) == 1
+    assert checkpoint_versions == current_versions == roadmap_versions
+
+
+def test_canonical_current_records_agree_on_branch_and_execution_state() -> None:
+    checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    snapshot = checkpoint.split("All later dated checkpoint sections", 1)[0]
+
+    for text in (snapshot, current):
+        assert "d021-agent-case-provisioning" in text
+        assert "AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE" in text
