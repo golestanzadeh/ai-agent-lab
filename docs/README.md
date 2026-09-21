@@ -60,6 +60,7 @@ These contracts remain reusable even though the CASE-001 migration stage complet
 - `d027-tax-agent-runtime.md` — six-role specialist runtime.
 - `d028-chief-tax-auditor.md` — Chief supervision and historical first-run verification.
 - `d023-tax-category-organization.md` — retained evidence of real category organization.
+- `agent-runtime-repair-policy.md` — bounded local synthetic repair/replay eligibility, idempotency, and duplicate-prevention policy.
 
 Historical D-024/D-025 progress snapshots were removed after their durable rules were consolidated. Current CASE status must be taken only from `PROJECT_CHECKPOINT.md`.
 

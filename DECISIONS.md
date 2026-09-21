@@ -1256,3 +1256,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** active on 2026-09-21
 
 **Decision:** After reconciling current E10 lineage, the five-minute recovery contract, and a complete `693 passed` unit regression, no further authorized, prerequisite-ready, independent bounded package is identified. Track 1 requires an exact repair/replay policy; Track 2 requires explicit synthetic semantics before adding fields or rules; Track 3 real workflows require accepted authority and persistence design. The execution therefore stops under terminal condition 3 (and the associated Human Gates), not because of `TOKEN_PAUSED`, routine success, repository state, or healthy limits.
+
+
+## D-109 — Local synthetic repair/replay policy
+
+**Status:** designed on 2026-09-21 under explicit Project Owner authority
+
+**Decision:** Permit only continuation from the first demonstrably unstarted stage after a verified planned checkpoint and exact completed-stage prefix. Never replay a completed or ambiguous stage. Bind a write-once repair decision and at most one attempt to the package, package digest, planned checkpoint ID/hash, completed prefix, and policy version. Completed state is an idempotent no-op; partial or contradictory evidence requires Human review. Implement the non-mutating evaluator before any mutating continuation executor. All external, real-data, production, provider, credential, network, subprocess, protected-main, and governance boundaries remain unchanged.

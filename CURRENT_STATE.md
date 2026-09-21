@@ -23,6 +23,7 @@ Last reconciled: **2026-09-21**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
+- The Human-authorized local synthetic repair/replay policy is designed: exact-prefix recovery, one write-once attempt per planned checkpoint, idempotent completed-state handling, duplicate prevention, and fail-closed ambiguity rules are specified. No mutating repair executor exists yet.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -55,7 +56,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-No further authorized, prerequisite-ready, independent bounded package is currently identified. Continue only after one exact boundary is supplied: an approved interrupted-stage repair/replay policy; explicit synthetic semantics for additional official E10 fields/rules; or the authority/persistence design for a real UI workflow. This is a scope/Human-Gate stop, not `TOKEN_PAUSED`.
+Implement the versioned, non-mutating repair-policy evaluator and negative tests described in `docs/agent-runtime-repair-policy.md`; do not connect it to runtime mutation until that bounded evaluator is verified.
 
 ## Non-negotiable constraints
 
