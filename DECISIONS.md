@@ -1235,3 +1235,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** active on 2026-09-21 by explicit Project Owner instruction
 
 **Decision:** The existing `plan-limit-continuation-guard` remains the only continuation automation and runs every five minutes. Each new execution must recover from the clean synchronized pushed checkpoint without overlapping ownership or duplicate package execution. A hard execution-window boundary is not itself a Human Gate. `TOKEN_PAUSED`, limit thresholds, exception-only reporting, and all existing safety and Human Gates remain unchanged.
+
+
+## D-106 — Complete post-expansion unit regression
+
+**Status:** verified on 2026-09-21
+
+**Result:** The full local unit suite passed with `693 passed, 1 warning`, including the Google Drive provisioning tests previously excluded because of an intermittent Windows file-replacement failure. The earlier behavior was not reproduced in this run, so this result records current verification without claiming that an environment-dependent issue was permanently repaired.
