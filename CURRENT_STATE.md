@@ -67,7 +67,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-After pushing ferry-or-flight omission and identity hardening, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
+The post-package observation is five-hour `20%` and weekly `26%` remaining. No further source-evidenced, prerequisite-ready independent small package remains, while the existing caution rule forbids starting a large package. On the next execution, recover from the pushed HEAD and begin the next source-evidenced E10 package only if the existing thresholds permit its actual size.
 
 ## Non-negotiable constraints
 
