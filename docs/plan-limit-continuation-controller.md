@@ -1,6 +1,6 @@
 # Plan-Limit Continuation Controller
 
-Status: **PAUSED AT HUMAN GATE / CONFIGURATION PRESERVED**
+Status: **ACTIVE / AGENT-LED CONTINUOUS EXECUTION / EXCEPTION-ONLY REPORTING**
 
 ## Purpose
 
@@ -68,7 +68,7 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate, preventing non-actionable hourly token use. Its configuration is preserved and may be reactivated after the Human supplies an exact authorized continuation point.
+The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and performs at most one bounded package per heartbeat while the repository, limits, prerequisites, and Human Gates remain safe.
 
 ## Host and scheduler limitation
 
@@ -78,7 +78,7 @@ Scheduled local-project work requires the computer to remain on, the Codex deskt
 
 On 2026-09-14, the account service reported five-hour `usedPercent: 1` (99% remaining; the UI may display 100%), weekly `usedPercent: 38` (62% remaining), five-hour reset at `2026-09-14 23:47:38 +02:00`, and weekly reset at `2026-09-20 13:48:09 +02:00`.
 
-The initial state is `RUN`. This design itself does not authorize Phase P1; project phase authority remains in `PROJECT_CHECKPOINT.md` and `DECISIONS.md`.
+That observation established the initial `RUN` state. Live percentages are intentionally not copied forward as current facts: every heartbeat must reread the account service. Project authority remains in `PROJECT_CHECKPOINT.md` and `DECISIONS.md`; this controller never creates authority.
 
 ## Official product basis
 

@@ -998,3 +998,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Diagnostics remain a closed privacy-safe allowlist. The change adds no control, approval, authentication, persistence, real data, ERiC invocation, networking, or transmission capability.
 
 **Verification:** Targeted UI state/review/readiness/app/workflow suite `44 passed`; full regression `649 passed, 1 skipped`.
+
+
+## D-083 — Active plan-limit guard documentation reconciliation
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Reconcile the plan-limit controller document with the later Project Owner authorization that reactivated hourly agent-led continuous execution and exception-only reporting. Preserve the earlier package-7 pause as historical context, not current state, and require every heartbeat to obtain fresh account-service values.
+
+**Boundary:** No thresholds, resume criteria, runtime permission, Human Gate, automation cadence, or project authority changed. The controller remains a cost and continuation guard and cannot create authority.
+
+**Verification:** Canonical checkpoint/current-state/controller consistency inspection and documentation diff check passed; no runtime code changed.

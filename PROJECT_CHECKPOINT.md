@@ -56,6 +56,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
 - The compact ROADMAP current-position summary is reconciled through UI-9 as of 2026-09-21.
+- The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
@@ -735,4 +736,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - No operational control, external call, real data, authentication, persistence, ERiC execution, or transmission capability was added.
 - Verification: targeted UI `44 passed`; full regression `649 passed, 1 skipped`.
 - Status: **UI_9_DIAGNOSTICS_CONSISTENT / REAL_OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### Plan-limit controller state reconciliation — 2026-09-21
+
+- Replaced the obsolete current status `PAUSED AT HUMAN GATE` with the durably authorized active agent-led, exception-only state.
+- Preserved the 2026-09-15 package-7 pause as history and made clear that every heartbeat must read fresh account-service percentages rather than treating an old observation as current.
+- Thresholds, resume criteria, one-package limit, repository-safety checks, and all Human Gates are unchanged.
+- Verification: canonical-state consistency inspection and documentation diff check passed; no runtime behavior changed.
+- Status: **PLAN_LIMIT_GUARD_ACTIVE / DOCUMENTATION_RECONCILED**.
 - Exact next action is the authoritative snapshot above.
