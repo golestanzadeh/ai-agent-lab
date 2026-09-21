@@ -1326,3 +1326,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** technically verified on 2026-09-21
 
 **Decision:** Explicit spouse/life-partner church-tax fields `E0200601` and `E0200603` participate in the reviewed gross-wage rules `310030` and `310090`, but must not be treated as employee church-tax fields for rules `310060` and `310120`. Negative tests protect this fail-closed distinction in both wage groups.
+
+
+## D-119 — Next E10 professional-association subset
+
+**Status:** source-reviewed and implementation-ready on 2026-09-21
+
+**Decision:** Bound the next package to one explicit synthetic professional-association contribution using `E0204001` (description), `E0204003` (item amount), and `E0204002` (matching sum). Implement only official rules `100200099`, `100200109`, `201010`, `330121`, and `100200108` from the reviewed protected source. Require paired semantics, derive the sum, enforce the official string/five-digit boundaries, and fail closed without inferring multi-item or real-case content.

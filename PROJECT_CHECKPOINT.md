@@ -70,7 +70,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=99`; `weekly_remaining_percent=53`; `five_hour_resets_at=1790029431`; `weekly_resets_at=1790525245`; recovered continuation base `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0` plus governed pause/resume records.
-- **Exact next action:** under the Project Owner's 2026-09-21 authorization, select the next independently source-evidenced local synthetic E10/2024 field/rule subset; stop if explicit semantics cannot be represented without inference. Provider workers, real UI workflows, official ERiC execution, and every external capability remain at their existing Human Gates.
+- **Exact next action:** implement the reviewed single-item synthetic professional-association subset (`E0204001`, `E0204003`, `E0204002`) with official rules `100200099`, `100200109`, `201010`, `330121`, and `100200108`; validate against the exact official XSD and remain fail-closed. Provider workers, real UI workflows, official ERiC execution, and every external capability remain at their existing Human Gates.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

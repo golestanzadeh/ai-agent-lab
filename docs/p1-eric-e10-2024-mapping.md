@@ -40,3 +40,7 @@ Mapping profile version 2 adds the optional wage-tax fields above from the revie
 Both supported wage groups with explicit optional solidarity surcharge and church tax also passed local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema files remained outside Git.
 
 Mapping profile version 3 adds only the source-evidenced optional spouse/life-partner church-tax fields `E0200601` and `E0200603`. Both wage groups, including all three optional wage-tax amounts, pass the exact official XSD locally. No relationship status, denomination, or amount is inferred; the field is emitted only from an explicit synthetic input.
+
+## Next bounded source-evidenced subset
+
+The next implementation candidate is one explicitly synthetic professional-association contribution under `N/Wk/Berufsverb`: description `E0204001`, whole-euro item amount `E0204003`, and matching whole-euro sum `E0204002`. The reviewed official field table limits the description to 1–999 characters and both amounts to five digits. The implementation must require description and amount together, derive the single-item sum exactly, reject negative or out-of-range synthetic input, and omit the entire context when no contribution is supplied.

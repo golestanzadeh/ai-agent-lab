@@ -58,7 +58,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The first bounded expansion (spouse/life-partner church tax in both wage groups) is complete; select the next independently source-evidenced field/rule subset only after confirming its semantics can remain explicit and fail-closed.
+The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The next reviewed subset is a single professional-association contribution (`E0204001`, `E0204003`, `E0204002`) and its five directly applicable official rules; implementation must remain explicit, single-item, synthetic, and fail-closed.
 
 ## Non-negotiable constraints
 

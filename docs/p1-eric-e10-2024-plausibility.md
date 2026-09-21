@@ -9,3 +9,5 @@ The local evaluator implements only those twelve reviewed conditions. In additio
 Rule `100200112` exposed a concrete gap in the earlier mapping: `E0204803` cannot stand alone. The mapping now requires an explicit supported official expense category and emits `E0205405`/`E0205406` itemization before the matching `E0204803` sum. The currently supported synthetic category is `Schreibmaterial`; no broader semantic inference is made.
 
 A local subset pass is not equivalent to official ERiC plausibility acceptance. All unimplemented official rules remain outside this evaluator, and ERiC FFI, the official engine, credentials/certificates, Manufacturer-ID, signing, networking, and transmission remain denied.
+
+The next bounded reviewed subset for professional-association contributions comprises official rules `100200099` (negative item sum forbidden), `100200109` (sum requires itemization), `201010` (sum must equal the non-negative item total), `330121` (itemization requires sum), and `100200108` (description and amount must occur together). Implementation must remain single-item and synthetic; broader aggregation semantics are not inferred.
