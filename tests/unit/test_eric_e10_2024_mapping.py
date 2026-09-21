@@ -253,6 +253,23 @@ def test_rejects_combined_other_expense_sum_above_official_boundary():
         )
 
 
+def test_ferry_or_flight_omission_and_explicit_zero_are_distinct():
+    omitted = map_synthetic_summary_to_e10_2024(request())
+    explicit_zero = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            ferry_or_flight_description="Synthetic ferry ticket",
+            ferry_or_flight_eur=0,
+        )
+    )
+    values = {item.field_id: item.lexical_value for item in explicit_zero.field_bindings}
+    assert values["E0204802"] == "0"
+    assert values["E0204803"] == "1234"
+    assert "E0204801" not in omitted.fragment_xml
+    assert "E0204802" not in omitted.fragment_xml
+    assert explicit_zero.artifact_identity != omitted.artifact_identity
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -419,6 +436,11 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
         baseline,
         training_expense_type=TrainingExpenseType.COURSE_FEES,
         training_expense_eur=1,
+    ).artifact_identity != baseline.artifact_identity
+    assert replace(
+        baseline,
+        ferry_or_flight_description="Synthetic ferry ticket",
+        ferry_or_flight_eur=1,
     ).artifact_identity != baseline.artifact_identity
     assert replace(
         baseline,

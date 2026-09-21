@@ -34,6 +34,7 @@ Last reconciled: **2026-09-22**
 - Plausibility profile v9 adds the two reviewed other-expense completeness rules without changing mapping profile v8. Its focused E10/UI/documentation suite passes (`209 passed, 1 warning`), and the complete local unit regression passes (`795 passed, 1 warning`).
 - Mapping profile v9 and plausibility profile v10 add one paired synthetic ferry-or-flight item and reviewed rule `121361`. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`218 passed, 1 warning`), and the complete local unit regression passes (`804 passed, 1 warning`).
 - Combined other-expense boundary hardening proves that the derived aggregate rejects twelve-digit overflow and that rule `100200002` uses the combined `Sonst` plus ferry-or-flight total at the exact tolerance boundary. Focused verification passes (`155 passed`), and the complete local unit regression passes (`807 passed, 1 warning`).
+- Ferry-or-flight omission and identity hardening proves explicit zero is distinct from omission, preserves the derived aggregate, and changes the cryptographic lineage. Focused mapping verification passes (`86 passed`), and the documentation guard passes (`8 passed`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -66,7 +67,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-After pushing combined other-expense aggregate boundary hardening, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
+After pushing ferry-or-flight omission and identity hardening, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
 
 ## Non-negotiable constraints
 

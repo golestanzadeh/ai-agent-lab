@@ -1426,3 +1426,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Add explicit regression coverage proving that the derived `E0204803` aggregate fails closed when individually valid `Sonst` and ferry-or-flight amounts exceed the official twelve-digit boundary together. Also prove that official rule `100200002` evaluates the combined `E0205406` plus `E0204802` total, accepting an absolute difference of five and rejecting a difference above five. Focused verification passes with `155 passed`, and the complete local unit regression passes with `807 passed, 1 warning`. This changes no mapping or plausibility profile, authority, or external capability.
+
+
+## D-133 — Ferry-or-flight omission and identity hardening
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Add explicit regression coverage proving that omission of the optional ferry-or-flight context remains distinct from an explicit zero amount, that zero preserves the derived other-expense aggregate, and that adding the paired context changes the cryptographic request and result identities. Focused mapping verification passes with `86 passed`, and the documentation guard passes with `8 passed`. This changes no mapping or plausibility profile, authority, or external capability.
