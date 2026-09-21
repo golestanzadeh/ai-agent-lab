@@ -16,7 +16,6 @@ Status: **local synthetic runtime verified; provider/production activation gated
 
 Remaining goals:
 
-- run the full local regression after the completed repair boundary matrix and reconcile any cross-component failure without weakening the repair policy;
 - connect provider workers only after exact authority and security acceptance;
 - retain independent QA/acceptance, deterministic lineage, budgets, retry limits, kill switch, and checkpoint recovery;
 - demonstrate multi-session operation without chat memory.

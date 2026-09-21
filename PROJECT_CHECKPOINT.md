@@ -67,8 +67,9 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v2, exact official-XSD validation, or the twelve-rule local plausibility result.
 - The package-3 material-process record is likewise explicit that its immutable recovery status is historical upstream evidence, not the canonical current E10 readiness claim.
 - The Project Owner authorized local synthetic non-production repair/replay policy design and implementation. The policy, versioned evaluator, and bounded continuation executor now enforce exact-prefix recovery across every permitted remaining-stage boundary, one write-once attempt per planned checkpoint, completed-stage non-replay, idempotent completed-state handling, independent acceptance, and fail-closed partial/extra-stage ambiguity. Targeted runtime verification passes with `34 passed`.
+- The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=99`; `weekly_remaining_percent=53`; `five_hour_resets_at=1790029431`; `weekly_resets_at=1790525245`; recovered continuation base `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0` plus governed pause/resume records.
-- **Exact next action:** run the full local unit regression for the completed repair boundary and reconcile only failures caused by this package without weakening its policy.
+- **Exact next action:** no further authorized, prerequisite-ready, independent bounded package is currently identified. Provider workers, real UI workflows, additional E10 semantics, and every external capability remain at their existing Human Gates.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
