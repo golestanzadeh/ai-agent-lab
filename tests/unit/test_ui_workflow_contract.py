@@ -30,7 +30,11 @@ def test_processing_case_exposes_processing_as_only_boundary() -> None:
 
 def test_only_allowlisted_privacy_safe_diagnostics_are_exposed() -> None:
     workflow = _workflow()
-    assert set(workflow.diagnostic_codes) == set(SAFE_DIAGNOSTIC_CODES)
+    assert workflow.version == "2"
+    assert workflow.diagnostic_codes == SAFE_DIAGNOSTIC_CODES
+    assert "LOCAL_E10_2024_XSD_AND_RULE_SUBSET_PASS" in workflow.diagnostic_codes
+    assert "OFFICIAL_ERIC_ENGINE_NOT_EXECUTED" in workflow.diagnostic_codes
+    assert "OFFICIAL_ERIC_MAPPING_NOT_RECOVERED" not in workflow.diagnostic_codes
     with pytest.raises(UIWorkflowError, match="allowlisted"):
         replace(workflow, diagnostic_codes=("private document text",))
 

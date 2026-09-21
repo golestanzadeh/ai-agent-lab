@@ -50,7 +50,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-9. It accurately displays local E10 mapping/XSD/six-rule completion while keeping official-engine execution, real payload, both Article 1 approvals, and transmitter availability blocked.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-9. Its review, readiness, and workflow diagnostics accurately display local E10 mapping/XSD/six-rule completion while keeping official-engine execution, real payload, both Article 1 approvals, and transmitter availability blocked.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
@@ -726,4 +726,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Both Article 1 stages remain separately `NOT_APPROVED`; real payload and transmitter blockers remain visible; no operational action was added.
 - Verification: targeted UI `44 passed`; full regression `649 passed, 1 skipped`.
 - Status: **UI_9_LOCAL_E10_READINESS_DISPLAY_COMPLETE / REAL_OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### UI workflow diagnostic consistency — 2026-09-21
+
+- Advanced the synthetic workflow contract to version `2` and removed its final obsolete mapping-not-recovered diagnostic.
+- The closed diagnostic allowlist now reports the verified local E10/2024 XSD-and-six-rule result, explicitly reports the official ERiC engine as not executed, and keeps production submission unauthorized.
+- No operational control, external call, real data, authentication, persistence, ERiC execution, or transmission capability was added.
+- Verification: targeted UI `44 passed`; full regression `649 passed, 1 skipped`.
+- Status: **UI_9_DIAGNOSTICS_CONSISTENT / REAL_OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.

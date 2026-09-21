@@ -987,3 +987,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The change is display-only and synthetic. It adds no approval control, authentication, persistence, real data, credential/Manufacturer-ID access, ERiC invocation, networking, receipt, or transmission capability.
 
 **Verification:** Targeted UI state/review/readiness/app/workflow suite `44 passed`; full regression `649 passed, 1 skipped`.
+
+
+## D-082 — UI workflow diagnostic consistency
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Advance the synthetic workflow contract to version `2` and replace its obsolete `OFFICIAL_ERIC_MAPPING_NOT_RECOVERED` diagnostic with the verified bounded local E10/2024 XSD-and-six-rule result plus an explicit `OFFICIAL_ERIC_ENGINE_NOT_EXECUTED` boundary. Keep the production submission path unauthorized.
+
+**Safety:** Diagnostics remain a closed privacy-safe allowlist. The change adds no control, approval, authentication, persistence, real data, ERiC invocation, networking, or transmission capability.
+
+**Verification:** Targeted UI state/review/readiness/app/workflow suite `44 passed`; full regression `649 passed, 1 skipped`.

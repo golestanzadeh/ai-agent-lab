@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-20**
+Last reconciled: **2026-09-21**
 
 ## Authoritative status
 
@@ -21,7 +21,7 @@ Last reconciled: **2026-09-20**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
-- Local FastAPI + Jinja/HTMX Persian UI through UI-9; the display now reflects local E10 mapping/XSD/six-rule completion while keeping official-engine, real-payload, approval, and transmitter blockers explicit.
+- Local FastAPI + Jinja/HTMX Persian UI through UI-9; all review, readiness, and workflow diagnostics now reflect local E10 mapping/XSD/six-rule completion while keeping official-engine, real-payload, approval, and transmitter blockers explicit.
 
 ## Live external status
 

@@ -1,8 +1,10 @@
-# UI package 4 — synthetic workflow and operational status
+# Synthetic workflow and operational status
 
-Package 4 continues the local UI while ELSTER reviews the developer-account
-application. It adds an immutable workflow contract and responsive rendering without
-accessing the pending account or any external source.
+The immutable workflow contract and responsive rendering remain local, synthetic,
+and non-operational. Workflow contract version 2 reconciles its privacy-safe
+diagnostics with the verified UI-9 state: the bounded E10/2024 declaration passes
+the hash-pinned official XSD and six-rule local subset, while the official ERiC
+engine has not been executed and the production submission path is unauthorized.
 
 The exact ordered stages cover case scope, document intake, processing, specialist
 and Chief review, calculation, form preview, Human approval, submission, and receipt.
@@ -18,9 +20,11 @@ The Persian RTL workspace includes a responsive timeline and collapsible local
 technical/recovery panel. Case switching replaces the whole scoped fragment so no
 prior-case stage remains visible.
 
-Persistence, authentication, real documents, Drive, protected ERiC access, external
+Persistence, real documents, Drive, official ERiC-engine execution, external
 connectivity, production deployment, and submission remain separate gates.
 
-Verification completed with UI targeted `19 passed`, full regression
+The original package-4 verification was UI targeted `19 passed`, full regression
 `524 passed, 1 skipped`, Python compile success, and loopback visual inspection.
-The existing upstream Starlette TestClient deprecation warning remains recorded.
+The current workflow diagnostic reconciliation is recorded in the canonical
+checkpoint and decisions log. The upstream Starlette TestClient deprecation warning
+remains recorded.
