@@ -211,6 +211,37 @@ def test_maps_single_training_item_and_matching_sum():
     assert "<Fortb>" in result.fragment_xml
 
 
+def test_maps_single_ferry_or_flight_item_into_combined_other_expense_sum():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            ferry_or_flight_description="Synthetic ferry ticket",
+            ferry_or_flight_eur=321,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204801", "Synthetic ferry ticket") in observed
+    assert ("E0204802", "321") in observed
+    assert ("E0204803", "1555") in observed
+    assert "<Flug>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"ferry_or_flight_description": "Synthetic ferry ticket"},
+        {"ferry_or_flight_eur": 1},
+        {"ferry_or_flight_description": "", "ferry_or_flight_eur": 1},
+        {"ferry_or_flight_description": "x" * 1000, "ferry_or_flight_eur": 1},
+        {"ferry_or_flight_description": "Synthetic ferry ticket", "ferry_or_flight_eur": -1},
+        {"ferry_or_flight_description": "Synthetic ferry ticket", "ferry_or_flight_eur": 1_000_000_000_000},
+    ],
+)
+def test_rejects_invalid_ferry_or_flight_semantics(changes):
+    with pytest.raises(E10MappingError, match="ferry/flight|ferry_or_flight"):
+        replace(request(), **changes)
+
+
 @pytest.mark.parametrize(
     "changes",
     [

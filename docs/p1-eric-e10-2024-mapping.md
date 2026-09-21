@@ -60,3 +60,7 @@ Mapping profile version 7 implements one explicitly synthetic training expense u
 ## Home-office day categories
 
 Mapping profile version 8 adds explicit positive day counts for both official home-office categories: `E0204507` when another workplace is available and `E0206206` when no other workplace is permanently available. Each optional count is limited to `1..366`; omission remains omission. The combined profile-v8 declaration passes the exact hash-pinned official E10/2024 XSD locally.
+
+## Ferry and flight expense
+
+Mapping profile version 9 adds one explicit synthetic ferry-or-flight expense under `N/Wk/Weitere_Wk/Flug`: free-text description `E0204801` and whole-euro amount `E0204802`. Description and amount are required together, the description is limited to the official `1..999` boundary, and the amount is non-negative and limited to twelve digits. The mapper derives `E0204803` from both the existing explicit `Sonst` amount and this optional amount. The combined profile-v9 declaration passes the exact hash-pinned official E10/2024 XSD locally.

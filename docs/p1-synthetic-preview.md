@@ -17,7 +17,7 @@ The rendered text uses a fixed field order. Free-text purpose content is JSON-qu
 - Every synthetic identity, route value, summary value, and upstream artifact reference is visible.
 - Rendering is deterministic and purpose text cannot inject preview structure.
 - The preview cannot be created from an incomplete or differently bound material-process decision.
-- The immutable preview preserves upstream status `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; current local mapping profile v8, exact official-XSD validation, and the thirty-five-rule local plausibility subset are recorded separately and do not retroactively alter this artifact.
+- The immutable preview preserves upstream status `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; current local mapping profile v9, exact official-XSD validation, and the thirty-six-rule local plausibility subset are recorded separately and do not retroactively alter this artifact.
 - Direct construction or replacement cannot weaken the disclaimer or enable credentials, networking, or transmission.
 - No real data, protected material, credential, connection, or external transfer is used.
 

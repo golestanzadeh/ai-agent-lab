@@ -110,6 +110,18 @@ def test_other_expense_official_tolerance_boundary_is_absolute_and_exclusive(
     assert ("100200002" in codes) is fails
 
 
+@pytest.mark.parametrize("removed", ["E0204801", "E0204802"])
+def test_ferry_or_flight_description_and_amount_must_be_provided_together(removed):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Sonst>",
+        "<Flug><E0204801>Synthetic ferry ticket</E0204801><E0204802>321</E0204802></Flug><Sonst>",
+    )
+    changed = replace(source, declaration_xml=without(xml, removed))
+    result = evaluate_local_e10_2024_plausibility(changed)
+    assert "121361" in {item.official_rule_code for item in result.findings}
+
+
 def test_reports_tax_class_six_withholding_rule():
     source = declaration()
     xml = source.declaration_xml.replace("LStB_1_5_Sum", "LStB_6_Sum")

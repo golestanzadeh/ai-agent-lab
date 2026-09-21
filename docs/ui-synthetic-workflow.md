@@ -3,7 +3,7 @@
 The immutable workflow contract and responsive rendering remain local, synthetic,
 and non-operational. Workflow contract version 2 reconciles its privacy-safe
 diagnostics with the verified UI-9 state: the bounded E10/2024 declaration passes
-the hash-pinned official XSD and thirty-five-rule local subset, while the official ERiC
+the hash-pinned official XSD and thirty-six-rule local subset, while the official ERiC
 engine has not been executed and the production submission path is unauthorized.
 
 The exact ordered stages cover case scope, document intake, processing, specialist

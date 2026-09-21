@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "8"
+MAPPING_PROFILE_VERSION = "9"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -91,6 +91,8 @@ class E10MappingRequest:
     home_office_expense_eur: int | None = None
     training_expense_type: TrainingExpenseType | None = None
     training_expense_eur: int | None = None
+    ferry_or_flight_description: str | None = None
+    ferry_or_flight_eur: int | None = None
     home_office_days_with_other_workplace: int | None = None
     home_office_days_without_other_workplace: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
@@ -149,6 +151,16 @@ class E10MappingRequest:
             if not isinstance(self.training_expense_type, TrainingExpenseType):
                 raise E10MappingError("training expense requires an explicit supported official type")
             _whole_euros("training_expense_eur", self.training_expense_eur)
+        if (self.ferry_or_flight_description is None) is not (
+            self.ferry_or_flight_eur is None
+        ):
+            raise E10MappingError("ferry/flight description and amount must be provided together")
+        if self.ferry_or_flight_description is not None:
+            if not isinstance(self.ferry_or_flight_description, str) or not self.ferry_or_flight_description.strip():
+                raise E10MappingError("ferry/flight description must be non-empty")
+            if len(self.ferry_or_flight_description) > 999:
+                raise E10MappingError("ferry/flight description exceeds the official boundary")
+            _whole_euros("ferry_or_flight_eur", self.ferry_or_flight_eur)
         for name, value in (
             ("home_office_days_with_other_workplace", self.home_office_days_with_other_workplace),
             ("home_office_days_without_other_workplace", self.home_office_days_without_other_workplace),
@@ -355,7 +367,16 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
         home_office_day_bindings += (E10FieldBinding("home_office_days_with_other_workplace", "/N/Wk/Homeoffice/E0204507", "E0204507", str(request.home_office_days_with_other_workplace)),)
     if request.home_office_days_without_other_workplace is not None:
         home_office_day_bindings += (E10FieldBinding("home_office_days_without_other_workplace", "/N/Wk/Homeoffice/E0206206", "E0206206", str(request.home_office_days_without_other_workplace)),)
-    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + (
+    ferry_or_flight_bindings = ()
+    ferry_or_flight_amount = 0
+    if request.ferry_or_flight_description is not None:
+        ferry_or_flight_amount = request.ferry_or_flight_eur
+        ferry_or_flight_bindings = (
+            E10FieldBinding("ferry_or_flight_description", "/N/Wk/Weitere_Wk/Flug/E0204801", "E0204801", request.ferry_or_flight_description),
+            E10FieldBinding("ferry_or_flight_eur", "/N/Wk/Weitere_Wk/Flug/E0204802", "E0204802", _whole_euros("ferry_or_flight_eur", ferry_or_flight_amount)),
+        )
+    combined_other_expenses = payload.deductible_expenses_eur + ferry_or_flight_amount
+    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + ferry_or_flight_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -371,11 +392,11 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             ),
         ),
         E10FieldBinding(
-            source_field="deductible_expenses_eur",
+            source_field="combined_other_expenses_eur",
             official_path="/N/Wk/Weitere_Wk/Sum/E0204803",
             field_id="E0204803",
             lexical_value=_whole_euros(
-                "deductible_expenses_eur", payload.deductible_expenses_eur
+                "combined_other_expenses_eur", combined_other_expenses
             ),
         ),
     )
@@ -446,6 +467,10 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         training_sum = ET.SubElement(training, _qname("Sum"))
         ET.SubElement(training_sum, _qname("E0204812")).text = values["E0204812"]
     other_expenses = ET.SubElement(expenses, _qname("Weitere_Wk"))
+    if request.ferry_or_flight_description is not None:
+        ferry_or_flight = ET.SubElement(other_expenses, _qname("Flug"))
+        ET.SubElement(ferry_or_flight, _qname("E0204801")).text = values["E0204801"]
+        ET.SubElement(ferry_or_flight, _qname("E0204802")).text = values["E0204802"]
     other_expense_item = ET.SubElement(other_expenses, _qname("Sonst"))
     ET.SubElement(other_expense_item, _qname("E0205405")).text = values["E0205405"]
     ET.SubElement(other_expense_item, _qname("E0205406")).text = values["E0205406"]

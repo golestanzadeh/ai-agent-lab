@@ -1412,3 +1412,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Plausibility profile version `9` completes the reviewed rules already implicated by the bounded other-expense mapping. Rule `100200103` rejects a negative combined `E0205406`/`E0204802` item total, and rule `100200002` compares `E0204803` with that total using the authoritative `abs(sum - item_total) > 5` predicate. Exact boundary tests cover `-6`, `-5`, `5`, and `6`. Mapping profile version `8` and its explicit synthetic `Schreibmaterial` semantics remain unchanged; no broader category or real-case content is inferred. The focused E10/UI/documentation suite passes with `209 passed, 1 warning`, and the complete local unit regression passes with `795 passed, 1 warning`. All external capabilities remain denied.
+
+
+## D-131 — Ferry-or-flight E10 subset
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Mapping profile version `9` adds one explicit synthetic ferry-or-flight expense using `E0204801` and `E0204802`, derives `E0204803` from that amount plus the existing `Sonst` item, and fails closed on unpaired, blank, overlong, negative, or out-of-range input. Plausibility profile version `10` adds reviewed rule `121361`, requiring description and amount together. The generated declaration passes the exact hash-pinned official E10/2024 XSD. The focused E10/UI/documentation suite passes with `218 passed, 1 warning`, and the complete local unit regression passes with `804 passed, 1 warning`. No real-case meaning is inferred and all external capabilities remain denied.

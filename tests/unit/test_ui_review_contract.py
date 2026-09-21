@@ -19,7 +19,7 @@ def test_review_is_exactly_case_run_bound_and_preview_bound():
     assert review.findings == ALLOWED_FINDING_CODES
     assert review.evidence_gaps == ALLOWED_GAP_CODES
     assert review.official_mapping_status == "LOCAL_E10_2024_XSD_VALIDATED"
-    assert review.local_plausibility_status == "LOCAL_THIRTY_FIVE_RULE_SUBSET_PASS"
+    assert review.local_plausibility_status == "LOCAL_THIRTY_SIX_RULE_SUBSET_PASS"
 
 
 def test_case_switch_builds_fresh_scoped_summary():

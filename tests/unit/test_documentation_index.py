@@ -91,7 +91,8 @@ def test_active_e10_and_ui_records_use_current_rule_profile() -> None:
     )
     for path in active_files:
         text = path.read_text(encoding="utf-8")
-        assert "six-rule" not in text
+        assert " six-rule local plausibility" not in text
+        assert " six-rule-subset" not in text
         assert "LOCAL_SIX_RULE_SUBSET_PASS" not in text
 
 
@@ -102,8 +103,8 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 
     for text in (adapter, material, preview):
         assert "historical" in text
-        assert "mapping profile v8" in text
-        assert "thirty-five-rule local plausibility subset" in text
+        assert "mapping profile v9" in text
+        assert "thirty-six-rule local plausibility subset" in text
         assert "ERiC-engine execution" in text
 
     current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
