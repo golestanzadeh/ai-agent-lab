@@ -85,3 +85,14 @@ def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
         text = path.read_text(encoding="utf-8")
         assert "six-rule" not in text
         assert "LOCAL_SIX_RULE_SUBSET_PASS" not in text
+
+
+def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> None:
+    adapter = (DOCS / "p1-eric-adapter-contract.md").read_text(encoding="utf-8")
+    preview = (DOCS / "p1-synthetic-preview.md").read_text(encoding="utf-8")
+
+    for text in (adapter, preview):
+        assert "historical" in text
+        assert "mapping profile v2" in text
+        assert "twelve-rule local plausibility subset" in text
+        assert "ERiC-engine execution" in text

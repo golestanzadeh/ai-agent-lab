@@ -4,7 +4,7 @@ Status: **COMPLETE / VERIFIED UNDER CONTINUOUS NON-PRODUCTION AUTHORITY**
 
 ## Boundary
 
-The preview is local, immutable, synthetic, and incapable of credential access, networking, signing, or transmission. It is not an official tax form and does not claim that official ERiC mapping or plausibility validation has occurred.
+The preview is local, immutable, synthetic, and incapable of credential access, networking, signing, or transmission. It is not an official tax form. Its embedded material status is a historical upstream package-2 value and is not the canonical current E10 readiness result.
 
 ## Design
 
@@ -17,7 +17,7 @@ The rendered text uses a fixed field order. Free-text purpose content is JSON-qu
 - Every synthetic identity, route value, summary value, and upstream artifact reference is visible.
 - Rendering is deterministic and purpose text cannot inject preview structure.
 - The preview cannot be created from an incomplete or differently bound material-process decision.
-- Official-material status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; official mapping remains blocked.
+- The immutable preview preserves upstream status `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; current local mapping profile v2, exact official-XSD validation, and the twelve-rule local plausibility subset are recorded separately and do not retroactively alter this artifact.
 - Direct construction or replacement cannot weaken the disclaimer or enable credentials, networking, or transmission.
 - No real data, protected material, credential, connection, or external transfer is used.
 
@@ -28,3 +28,7 @@ The rendered text uses a fixed field order. Free-text purpose content is JSON-qu
 - Full repository regression: `459 passed, 1 skipped`.
 - Python compile check: passed.
 - No package-level Human Gate applies under the active revocable continuous authority.
+
+## Current relationship to the E10 readiness artifact
+
+This preview predates the separately versioned local E10 pipeline. Consumers must use the current readiness artifact for mapping/XSD/plausibility claims and must not infer current readiness from the preview's historical status field. Official ERiC-engine execution, credentials, networking, signing, and transmission remain blocked.

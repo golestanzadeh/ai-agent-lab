@@ -1221,3 +1221,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** verified on 2026-09-21
 
 **Result:** The complete unit suite excluding only the previously documented Windows-sensitive Google Drive provisioning file passed with `677 passed`. This verifies the E10 mapping/plausibility/UI expansions against the remaining local regression surface; it does not change any authority or external capability.
+
+
+## D-104 — Historical P1 status records defer to current E10 readiness
+
+**Status:** implemented on 2026-09-21
+
+**Decision:** Preserve the immutable package-2 adapter and synthetic-preview status names for artifact compatibility, but label them explicitly as historical upstream state. Current mapping, official-XSD, and local-plausibility claims must come from the separately versioned E10 readiness pipeline. This documentation reconciliation changes no runtime contract, capability, Human Gate, or external-execution restriction.

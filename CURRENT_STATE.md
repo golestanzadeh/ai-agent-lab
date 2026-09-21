@@ -19,6 +19,7 @@ Last reconciled: **2026-09-21**
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
 - Source-evidenced local plausibility profile version 2 evaluates twelve official Anlage N presence rules, adding gross-wage and wage-tax dependencies for the optional solidarity surcharge and church-tax fields across both wage groups.
 - Post-expansion regression excluding the known Windows-sensitive Google Drive provisioning file passes: `677 passed`.
+- Historical package-2 adapter and synthetic-preview documentation now explicitly defer current mapping/XSD/plausibility claims to the separately versioned E10 readiness pipeline; immutable upstream status names are no longer presented as current blockers.
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.

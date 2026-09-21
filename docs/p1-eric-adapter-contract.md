@@ -10,9 +10,9 @@ The Project Owner authorized package 2 only to design and implement a non-produc
 
 `src/agent_lab/eric_adapter_contract.py` defines adapter contract version `2`, bound exactly to the package-1 synthetic envelope schema, ERiC `44.3.6.0`, procedure `UFA10`, and tax year `2024`.
 
-The contract records the three required official categories: ERiC interface specification, E10/UFA10 2024 XML schema, and E10/UFA10 2024 plausibility rules. Their packages were recovered locally and hash-verified, but mapping and executable plausibility validation remain unimplemented and blocked.
+The contract records the three required official categories: ERiC interface specification, E10/UFA10 2024 XML schema, and E10/UFA10 2024 plausibility rules. Their packages were recovered locally and hash-verified. This package-2 contract deliberately preserves its historical `RECOVERED_LOCAL_MAPPING_UNVERIFIED` state and exposes no mapping or validation capability; later bounded components now provide mapping profile v2, exact official-XSD validation, and a twelve-rule local plausibility subset without changing this inert adapter boundary.
 
-`design_eric_adapter` produces an immutable local plan that binds the contract identity to the synthetic envelope identity. `BOUNDARY_READY_MAPPING_BLOCKED` means only that the inert software boundary is well-formed while official mapping remains blocked. The plan lists unimplemented E10/2024 mapping and plausibility validation as blockers and keeps mapping, validation, signing, credential access, networking, and transmission disabled.
+`design_eric_adapter` produces an immutable local plan that binds the contract identity to the synthetic envelope identity. `BOUNDARY_READY_MAPPING_BLOCKED` means only that this package-2 adapter object is well-formed and cannot itself map or validate. Its historical blocker names remain part of the version-2 artifact identity. Current local mapping/XSD/plausibility evidence is represented by the separately versioned E10 pipeline and readiness artifact; official ERiC-engine execution remains blocked. The adapter plan keeps mapping, validation, signing, credential access, networking, and transmission disabled.
 
 The required-material list and complete denied-capability policy are fields inside the hash-bound contract. Neither policy may change under contract version `2`. The design-plan constructor independently rejects any attempt to enable an execution flag, add a network call, remove a blocker, or weaken the denied-capability policy.
 
@@ -38,8 +38,12 @@ The required-material list and complete denied-capability policy are fields insi
 - Initial full repository regression: `561 passed, 1 skipped, 3 failed`; all three failures were the pre-existing O4 pilot validator's stale requirement for the removed `ROADMAP.md` heading `## Registered Phase O4 pilot artifacts`, not an ERiC migration failure. D-073 reconciled that marker; the subsequent full regression returned `564 passed, 1 skipped`.
 - The first targeted invocation omitted the repository `src` import path and stopped during test collection with two import errors. The command was corrected to use the documented `PYTHONPATH=src` environment and passed; no test failure was hidden.
 
-## Next Human Gate
+## Current relationship to later E10 work
+
+The package-2 artifact is historical, immutable input to later local work; its status text is not the canonical current readiness claim. See `p1-eric-e10-2024-mapping.md`, `p1-eric-e10-2024-plausibility.md`, and `p1-eric-e10-2024-readiness.md` for the current bounded evidence. No official ERiC engine, credential, network, or transmission capability is enabled.
+
+## Historical Human Gate
 
 On 2026-09-14, the Project Owner explicitly accepted amended package 2 and exact implementation commit `3fd1e4d586cc97411acaa563e6d5712e31c5dacd`.
 
-Any further Phase P1 package, developer access, official protected-material retrieval, verified material digest registration, ERiC FFI/XML mapping, credential/certificate use, live connection, or transmission requires separate exact authority.
+At this checkpoint, further Phase P1 work required separate exact authority. Later decisions supplied bounded local synthetic authority and protected-material review authority; credential/certificate use, live connection, official ERiC-engine execution, and transmission remain separate Human Gates.
