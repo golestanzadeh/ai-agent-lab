@@ -55,7 +55,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-Select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
+No further authorized, prerequisite-ready, independent bounded package is currently identified. Continue only after one exact boundary is supplied: an approved interrupted-stage repair/replay policy; explicit synthetic semantics for additional official E10 fields/rules; or the authority/persistence design for a real UI workflow. This is a scope/Human-Gate stop, not `TOKEN_PAUSED`.
 
 ## Non-negotiable constraints
 

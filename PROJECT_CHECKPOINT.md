@@ -66,7 +66,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. The earlier intermittent environment behavior was not reproduced; no unsupported permanent-fix claim is made.
 - Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v2, exact official-XSD validation, or the twelve-rule local plausibility result.
 - The package-3 material-process record is likewise explicit that its immutable recovery status is historical upstream evidence, not the canonical current E10 readiness claim.
-- **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
+- **Exact next action:** no further authorized, prerequisite-ready, independent bounded package is currently identified. Continue only after one exact boundary is supplied: an approved interrupted-stage repair/replay policy; explicit synthetic semantics for additional official E10 fields/rules; or the authority/persistence design for a real UI workflow. This is a scope/Human-Gate stop, not `TOKEN_PAUSED`.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

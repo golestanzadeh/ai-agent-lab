@@ -1249,3 +1249,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented on 2026-09-21
 
 **Decision:** Treat the immutable package-3 `RECOVERED_LOCAL_MAPPING_UNVERIFIED` value as historical upstream evidence, not as the canonical current readiness state. Current mapping/XSD/plausibility claims come from the separately versioned E10 readiness pipeline; official ERiC-engine execution and every external capability remain blocked.
+
+
+## D-108 — Autonomous queue exhausted at governed boundaries
+
+**Status:** active on 2026-09-21
+
+**Decision:** After reconciling current E10 lineage, the five-minute recovery contract, and a complete `693 passed` unit regression, no further authorized, prerequisite-ready, independent bounded package is identified. Track 1 requires an exact repair/replay policy; Track 2 requires explicit synthetic semantics before adding fields or rules; Track 3 real workflows require accepted authority and persistence design. The execution therefore stops under terminal condition 3 (and the associated Human Gates), not because of `TOKEN_PAUSED`, routine success, repository state, or healthy limits.
