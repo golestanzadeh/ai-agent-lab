@@ -1119,3 +1119,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Keep one fresh check at the start of every heartbeat so no work begins from a stale prior-run observation. Existing caution, pause, resume, repository-recovery, authority, and Human-Gate rules are unchanged.
 
 **Operational update:** Automation `plan-limit-continuation-guard` was updated in place and remains active on its hourly cadence with exception-only reporting.
+
+
+## D-094 — UI-17 semantic and mixed-direction accessibility
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Add semantic table caption/header scopes, explicit decision-expiry labelling, decorative timeline-index suppression for screen readers, and left-to-right direction for technical identifiers inside the Persian RTL interface.
+
+**Safety:** Presentation semantics change no workflow behavior, document access, decision authority, control, persistence, networking, ERiC execution, or transmission capability.
+
+**Verification:** Targeted responsive/UI suite `17 passed`. Broader regression was not required because runtime behavior did not change.

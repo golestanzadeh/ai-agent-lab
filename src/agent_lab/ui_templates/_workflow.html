@@ -6,7 +6,7 @@
   <ol class="timeline">
     {% for stage in workflow.stages %}
     <li class="stage stage-{{ stage.status.value|lower }}">
-      <span class="stage-index">{{ loop.index }}</span><span class="stage-name">{{ stage.code|status_label }} <code>{{ stage.code }}</code></span><span class="stage-status">{{ stage.status.value|status_label }} · {{ stage.status.value }}</span>
+      <span class="stage-index" aria-hidden="true">{{ loop.index }}</span><span class="stage-name">{{ stage.code|status_label }} <code dir="ltr">{{ stage.code }}</code></span><span class="stage-status">{{ stage.status.value|status_label }} · <code dir="ltr">{{ stage.status.value }}</code></span>
     </li>
     {% endfor %}
   </ol>

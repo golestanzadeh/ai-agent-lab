@@ -39,3 +39,13 @@ def test_long_codes_touch_targets_and_keyboard_focus_remain_legible() -> None:
     assert "button{border:0;border-radius:11px;padding:.8rem 1.1rem;font:inherit;font-weight:700;min-height:44px}" in CSS
     assert ".case-picker select" in CSS and "min-height:44px" in CSS
     assert ".diagnostics summary" in CSS and "min-height:44px" in CSS
+
+
+def test_document_table_and_mixed_direction_values_are_semantic() -> None:
+    text = TestClient(create_app()).get("/").text
+    assert "<caption>مدارک مصنوعیِ همین پرونده و اجرای انتخاب‌شده</caption>" in text
+    assert text.count('scope="col"') == 5
+    assert text.count('scope="row"') == 2
+    assert 'class="mono" dir="ltr"' in text
+    assert '<time dir="ltr" datetime=' in text
+    assert 'class="stage-index" aria-hidden="true"' in text

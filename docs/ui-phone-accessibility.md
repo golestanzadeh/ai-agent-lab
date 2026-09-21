@@ -17,3 +17,8 @@ Windows-sensitive Google Drive provisioning file `644 passed, 1 skipped`. Two fu
 Windows runs each reached `658 passed, 1 skipped` before one order-varying
 pre-existing provisioning journal-replace failure; the first isolated failed case
 passed immediately. Hands-on phone validation remains a separate step.
+
+UI-17 adds semantic table captions and row/column headers, labels the decision expiry,
+marks decorative timeline numbers for assistive technology, and renders technical
+codes, hashes, and timestamps left-to-right inside the Persian RTL layout. Its
+targeted responsive/UI suite passed (`17 passed`).
