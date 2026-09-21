@@ -1172,3 +1172,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Evidence and safety:** Field identities, grouping, order, and decimal lexical form come from the already retrieved, hash-verified official E10/2024 example and annual documentation. Protected source content remains outside Git. ERiC execution, credentials, Manufacturer-ID, networking, real data, and transmission remain denied.
 
 **Verification:** Targeted mapping, declaration, and local-plausibility suite `67 passed`.
+
+**Contract hardening:** Mapping-request identity is proven to change when either optional wage-tax amount changes, and obsolete profile-version `1` requests fail closed after the version-2 expansion.

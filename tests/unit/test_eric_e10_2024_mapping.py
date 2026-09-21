@@ -182,6 +182,13 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     assert replace(baseline, person=E10Person.PERSON_B).artifact_identity != baseline.artifact_identity
     assert replace(baseline, tax_class=2).artifact_identity != baseline.artifact_identity
     assert request(gross_wages_eur=67_555).artifact_identity != baseline.artifact_identity
+    assert replace(baseline, solidarity_surcharge_eur=1).artifact_identity != baseline.artifact_identity
+    assert replace(baseline, church_tax_eur=1).artifact_identity != baseline.artifact_identity
+
+
+def test_profile_v1_request_is_rejected_after_v2_expansion():
+    with pytest.raises(E10MappingError, match="profile version"):
+        replace(request(), profile_version="1")
 
 
 def test_result_is_deterministic_and_hash_bound():

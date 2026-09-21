@@ -860,6 +860,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 - Added explicit optional solidarity surcharge and church-tax mappings for tax classes 1–5 and 6 from the reviewed official E10/2024 material.
 - Omitted amounts remain absent; no value is inferred. All external and protected capabilities remain denied.
+- Request identity binds both optional amounts, and obsolete mapping profile version 1 now has an explicit fail-closed regression check.
 - Verification: targeted mapping, declaration, and local-plausibility suite `67 passed`.
 - Status: **E10_MAPPING_PROFILE_V2_COMPLETE / OFFICIAL_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
