@@ -6,7 +6,7 @@ Last reconciled: **2026-09-21**
 
 ## Current position
 
-- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-14 are complete.
+- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-15 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 
@@ -37,7 +37,7 @@ Remaining goals:
 
 ## Track 3 — User interface
 
-Status: **local synthetic prototype complete through UI-14 with Persian safety labels, loopback launch, accessibility, and browser hardening; real operations gated**
+Status: **local synthetic prototype complete through UI-15 with fully labelled Persian workflow states, loopback launch, accessibility, and browser hardening; real operations gated**
 
 Remaining goals:
 

@@ -1086,3 +1086,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The label layer creates no free-form diagnostic channel and adds no private content, control, approval, authentication, persistence, external connectivity, ERiC execution, or transmission capability.
 
 **Verification:** Targeted label/UI/documentation suite `20 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `652 passed, 1 skipped`.
+
+
+## D-091 — UI-15 Persian workflow-stage and state labels
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Extend the closed status-label catalog to all workflow stages, stage states, and recovery states. Show concise Persian text first and retain exact technical codes for audit and support.
+
+**Safety:** Unknown values fail closed. The display refinement changes no workflow transition, control, approval, persistence, networking, ERiC execution, or transmission capability.
+
+**Verification:** Targeted label/workflow/UI suite `21 passed`. Broader regression was not required because contract behavior did not change.

@@ -1,6 +1,22 @@
 """Closed Persian labels for privacy-safe synthetic UI status codes."""
 
 STATUS_LABELS = {
+    "CASE_SCOPE": "محدودهٔ پرونده",
+    "DOCUMENT_INTAKE": "دریافت مدارک",
+    "PROCESSING": "پردازش",
+    "SPECIALIST_REVIEW": "بازبینی تخصصی",
+    "CHIEF_REVIEW": "بازبینی نهایی",
+    "CALCULATION": "محاسبه",
+    "FORM_PREVIEW": "پیش‌نمایش فرم",
+    "HUMAN_APPROVAL": "تأیید انسانی",
+    "SUBMISSION": "ارسال",
+    "RECEIPT": "رسید",
+    "COMPLETE": "تکمیل‌شده",
+    "ACTIVE": "فعال",
+    "BLOCKED": "متوقف در مرز ایمنی",
+    "LOCKED": "قفل‌شده",
+    "READY": "آماده",
+    "NOT_REQUIRED": "در حال حاضر لازم نیست",
     "LOCAL_SYNTHETIC_RUNTIME_READY": "اجرای محلی مصنوعی آماده است",
     "LOCAL_E10_2024_XSD_AND_RULE_SUBSET_PASS": "اعتبارسنجی محلی E10 و قواعد منتخب موفق است",
     "OFFICIAL_ERIC_ENGINE_NOT_EXECUTED": "موتور رسمی ERiC اجرا نشده است",

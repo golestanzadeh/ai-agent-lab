@@ -50,12 +50,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-14. Critical safety states have closed Persian labels while retaining exact technical codes; loopback startup, accessibility safeguards, and browser hardening remain intact.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-15. Critical safety values and every workflow stage/state/recovery value have closed Persian labels while retaining exact technical codes.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- The compact ROADMAP current-position summary is reconciled through UI-14 as of 2026-09-21.
+- The compact ROADMAP current-position summary is reconciled through UI-15 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
@@ -805,4 +805,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Unknown or arbitrary text fails closed at the label boundary; no private/free-form diagnostic channel or operational capability was added.
 - Verification: targeted label/UI/documentation `20 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `652 passed, 1 skipped`.
 - Status: **UI_14_PERSIAN_SAFETY_LABELS_COMPLETE / OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-15 Persian workflow-stage and state labels — 2026-09-21
+
+- Extended the closed Persian catalog to every workflow stage, stage state, and recovery state while preserving exact technical codes beside the labels.
+- The workflow timeline is now understandable without interpreting English enum values; unknown values still fail closed.
+- Verification: targeted label/workflow/UI `21 passed`. No contract behavior or external capability changed, so broader regression was not required.
+- Status: **UI_15_PERSIAN_WORKFLOW_LABELS_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.

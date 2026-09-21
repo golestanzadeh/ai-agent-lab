@@ -4,6 +4,7 @@ from agent_lab.ui_status_labels import STATUS_LABELS, UIStatusLabelError, persia
 from agent_lab.ui_submission_readiness_contract import BLOCKERS
 from agent_lab.ui_support_contract import SAFE_SUPPORT_CODES
 from agent_lab.ui_workflow_contract import SAFE_DIAGNOSTIC_CODES
+from agent_lab.ui_workflow_contract import RecoveryStatus, STAGE_CODES, StageStatus
 
 
 def test_critical_contract_codes_have_exact_nonempty_persian_labels() -> None:
@@ -17,3 +18,11 @@ def test_unknown_or_arbitrary_text_fails_closed() -> None:
     for value in ("UNKNOWN", "private document text", "", None):
         with pytest.raises(UIStatusLabelError, match="unknown"):
             persian_status_label(value)
+
+
+def test_every_workflow_stage_and_state_has_a_closed_persian_label() -> None:
+    required = set(STAGE_CODES)
+    required |= {status.value for status in StageStatus}
+    required |= {status.value for status in RecoveryStatus}
+    assert required <= STATUS_LABELS.keys()
+    assert all(persian_status_label(code).strip() for code in required)

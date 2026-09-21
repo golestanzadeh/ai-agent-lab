@@ -64,6 +64,9 @@ def test_workflow_diagnostics_are_privacy_safe_and_controls_stay_disabled() -> N
     assert "PRODUCTION_SUBMISSION_PATH_NOT_AUTHORIZED" in response.text
     assert "private document" not in response.text
     assert response.text.count("disabled") >= 4
+    assert "محدودهٔ پرونده" in response.text
+    assert "بازبینی تخصصی" in response.text
+    assert "در حال حاضر لازم نیست" in response.text
 
 
 def test_synthetic_document_inventory_renders_without_private_content_or_upload() -> None:
