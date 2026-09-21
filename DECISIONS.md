@@ -1108,3 +1108,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Unknown values fail closed. The presentation refinement changes no case transition, decision authority, document access, control, persistence, networking, ERiC execution, or transmission capability.
 
 **Verification:** Targeted label/UI/document/decision suite `27 passed`. Broader regression was not required because contract behavior did not change.
+
+
+## D-093 — End-of-package limit checks and immediate continuation
+
+**Status:** active on 2026-09-21
+
+**Decision:** After every completed, verified, committed, and pushed package, read live five-hour and weekly usage. Treat that observation as the authorization check for the next package and begin the next highest-value bounded authorized package immediately when limits, repository safety, prerequisites, and Human Gates permit. A heartbeat may therefore complete multiple sequential packages.
+
+**Safety:** Keep one fresh check at the start of every heartbeat so no work begins from a stale prior-run observation. Existing caution, pause, resume, repository-recovery, authority, and Human-Gate rules are unchanged.
+
+**Operational update:** Automation `plan-limit-continuation-guard` was updated in place and remains active on its hourly cadence with exception-only reporting.

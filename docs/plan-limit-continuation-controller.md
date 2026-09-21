@@ -32,10 +32,11 @@ The lower weekly threshold avoids permanently stranding the acceptance/checkpoin
 Read limits:
 
 1. at the start of every project turn;
-2. before starting each bounded work package;
-3. before a broad test suite or other expensive operation;
-4. before commit/push and immediately after a material checkpoint;
-5. whenever the app warns that a limit is nearly exhausted.
+2. immediately after completing, verifying, committing, and pushing each bounded work package;
+3. treat that end-of-package observation as the authorization check before starting the next package;
+4. before a broad test suite or other expensive operation when the last observation may no longer provide a safe buffer;
+5. before commit/push when the package consumed enough capacity that the safety buffer may have changed;
+6. whenever the app warns that a limit is nearly exhausted.
 
 An individual tool call cannot be interrupted midway. Therefore work packages must remain small enough that the next observation occurs before the safety buffer is consumed.
 
@@ -62,9 +63,10 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 2. remain quiet if another turn is active, the repository is not safely recoverable, or no exact next action is already authorized;
 3. remain quiet and make no project changes while either resume threshold is unmet;
 4. resume from a durable `TOKEN_PAUSED` checkpoint only when five-hour remaining is at least 80% and weekly remaining is above 10%;
-5. while continuous authority is active, reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform exactly one recorded local synthetic non-production package that certainly requires no Human Gate;
-6. reapply this controller before every subsequent package and stop at any Human Gate;
-7. notify the Project Owner only on a meaningful pause, resume, completion, failure, conflict, or required Human action.
+5. while continuous authority is active, reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform a recorded local synthetic non-production package that certainly requires no Human Gate;
+6. after each completed and pushed package, reread live limits and use that observation as the precondition for the next package; continue package by package in the same heartbeat while limits, repository safety, prerequisites, and Human Gates allow;
+7. stop before the next package when a threshold, unsafe repository state, unclear ownership, missing prerequisite, or Human Gate is reached;
+8. notify the Project Owner only on a meaningful pause, resume, completion, failure, conflict, or required Human action.
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 

@@ -57,6 +57,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
 - The compact ROADMAP current-position summary is reconciled through UI-16 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
+- The Project Owner directed end-of-package limit checks with immediate same-heartbeat continuation while safe; the initial heartbeat observation remains mandatory to prevent work from starting on stale usage data.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
@@ -821,4 +822,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Workspace, document inventory, and decision queue now present Persian meaning first while retaining exact technical values for audit/support; unknown values fail closed.
 - Verification: targeted label/UI/document/decision suite `27 passed`. No contract behavior or external capability changed, so broader regression was not required.
 - Status: **UI_16_PERSIAN_CASE_DOCUMENT_DECISION_LABELS_COMPLETE / OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### Continuous package-chain limit policy — 2026-09-21
+
+- The Project Owner directed that limits be checked at the end of every task/package and that the next bounded authorized package begin immediately when capacity permits.
+- The hourly guard was updated to continue package by package within one heartbeat instead of stopping routinely after one package.
+- A single initial heartbeat check remains mandatory because an end-of-package observation from a prior run may be stale; all caution, pause, resume, repository-safety, and Human-Gate thresholds remain unchanged.
+- Status: **CONTINUOUS_PACKAGE_CHAIN_ACTIVE / END_OF_PACKAGE_LIMIT_CHECKS**.
 - Exact next action is the authoritative snapshot above.
