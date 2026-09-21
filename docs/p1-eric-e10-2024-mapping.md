@@ -44,3 +44,5 @@ Mapping profile version 3 adds only the source-evidenced optional spouse/life-pa
 ## Professional-association subset
 
 Mapping profile version 4 implements one explicitly synthetic professional-association contribution under `N/Wk/Berufsverb`: description `E0204001`, whole-euro item amount `E0204003`, and matching whole-euro sum `E0204002`. It requires description and amount together, derives the single-item sum exactly, rejects negative or out-of-range synthetic input, and omits the entire context when no contribution is supplied.
+
+The next reviewed candidate is one explicit synthetic work-equipment expense under `N/Wk/Arbeitsmittel`: type `E0204401`, whole-euro item amount `E0204402`, and derived sum `E0204403`. The official source permits a 1–999 character type and a twelve-digit amount. Implementation must remain single-item, non-negative, paired, and omitted as a complete context when absent.

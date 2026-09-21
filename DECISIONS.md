@@ -1347,3 +1347,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** verified on 2026-09-21
 
 **Result:** The complete local unit suite passes with `733 passed, 1 skipped, 1 warning` after the professional-association mapping and five-rule plausibility expansion. This changes no external authority or capability.
+
+
+## D-122 — Next E10 work-equipment subset
+
+**Status:** source-reviewed and implementation-ready on 2026-09-21
+
+**Decision:** Bound the next package to one explicit synthetic work-equipment expense using `E0204401`, `E0204402`, and derived sum `E0204403`. Implement only reviewed rules `330122`, `100200100`, `100200110`, `122050`, and `121410`. Preserve the exact official tolerance comparison, require paired type/amount semantics, and infer neither multiple items nor real-case content.

@@ -59,7 +59,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The single professional-association contribution (`E0204001`, `E0204003`, `E0204002`) and its five directly applicable official rules are implemented explicitly, single-item, synthetic, and fail-closed.
+The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The next reviewed candidate is a single explicit synthetic work-equipment expense (`E0204401`, `E0204402`, `E0204403`) and its five directly applicable rules, including the exact official sum-tolerance condition.
 
 ## Non-negotiable constraints
 

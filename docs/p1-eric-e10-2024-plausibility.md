@@ -11,3 +11,5 @@ Rule `100200112` exposed a concrete gap in the earlier mapping: `E0204803` canno
 A local subset pass is not equivalent to official ERiC plausibility acceptance. All unimplemented official rules remain outside this evaluator, and ERiC FFI, the official engine, credentials/certificates, Manufacturer-ID, signing, networking, and transmission remain denied.
 
 The implemented professional-association subset comprises official rules `100200099` (negative item sum forbidden), `100200109` (sum requires itemization), `201010` (sum must equal the non-negative item total), `330121` (itemization requires sum), and `100200108` (description and amount must occur together). It remains single-item and synthetic.
+
+The next reviewed work-equipment subset comprises `330122` (item requires sum), `100200100` (negative item total forbidden), `100200110` (sum requires item), `122050` (sum comparison with the official tolerance semantics), and `121410` (type and amount together). The tolerance rule must be implemented from its exact official meaning, not approximated.
