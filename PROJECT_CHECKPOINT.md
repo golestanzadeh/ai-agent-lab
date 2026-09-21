@@ -65,6 +65,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Synthetic profile-v2 declarations for both wage groups, including optional solidarity surcharge and church tax, pass the exact hash-pinned official E10/2024 XSD locally.
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. The earlier intermittent environment behavior was not reproduced; no unsupported permanent-fix claim is made.
 - Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v2, exact official-XSD validation, or the twelve-rule local plausibility result.
+- The package-3 material-process record is likewise explicit that its immutable recovery status is historical upstream evidence, not the canonical current E10 readiness claim.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.

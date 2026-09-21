@@ -12,7 +12,7 @@ Package 3 designs and implements only a synthetic, local process for registering
 2. Bind each record to the exact ERiC 44.3.6.0 / UFA10 / tax-year 2024 route, a canonical SHA-256 reference, a `synthetic://` locator, and a synthetic registrant.
 3. Require one later, independently identified synthetic reviewer to approve each exact record identity.
 4. Fail closed on missing, duplicate, rejected, reordered, self-reviewed, mismatched, or mutated evidence.
-5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. Following governed retrieval, the status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; this still grants no mapping or execution capability.
+5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. Following governed retrieval, the immutable package-3 status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; this process artifact itself grants no mapping or execution capability. Later mapping profile v2, official-XSD validation, and the twelve-rule local plausibility subset are separate downstream artifacts and do not rewrite this historical identity.
 
 ## Acceptance criteria
 
@@ -26,6 +26,8 @@ Package 3 designs and implements only a synthetic, local process for registering
 ## Next boundary
 
 On 2026-09-14, the Project Owner explicitly accepted package 3 and implementation commit `2d6efd25e85ba9874ccbdad695b5b24c0c205887`, and activated revocable continuous authority for remaining local synthetic/non-production Phase P1 work. This authority cannot include registration, protected retrieval, credentials, real data, external connectivity, architecture/governance change, production, `main`, or transmission.
+
+The canonical current mapping/XSD/plausibility state is recorded by the separately versioned E10 readiness pipeline. Official ERiC-engine execution, credentials, networking, signing, and transmission remain blocked.
 
 ## Verification evidence
 

@@ -92,10 +92,14 @@ def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
 
 def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> None:
     adapter = (DOCS / "p1-eric-adapter-contract.md").read_text(encoding="utf-8")
+    material = (DOCS / "p1-eric-material-process.md").read_text(encoding="utf-8")
     preview = (DOCS / "p1-synthetic-preview.md").read_text(encoding="utf-8")
 
-    for text in (adapter, preview):
+    for text in (adapter, material, preview):
         assert "historical" in text
         assert "mapping profile v2" in text
         assert "twelve-rule local plausibility subset" in text
         assert "ERiC-engine execution" in text
+
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    assert "Mapping and executable plausibility validation remain fail-closed" not in current

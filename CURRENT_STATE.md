@@ -30,7 +30,7 @@ Last reconciled: **2026-09-21**
 - The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
 - After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
 - Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
-- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. Mapping and executable plausibility validation remain fail-closed.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v2, exact official-XSD validation, and a twelve-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
 
 ## Active boundaries
 

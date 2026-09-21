@@ -1242,3 +1242,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** verified on 2026-09-21
 
 **Result:** The full local unit suite passed with `693 passed, 1 warning`, including the Google Drive provisioning tests previously excluded because of an intermittent Windows file-replacement failure. The earlier behavior was not reproduced in this run, so this result records current verification without claiming that an environment-dependent issue was permanently repaired.
+
+
+## D-107 — Material-process status is historical upstream evidence
+
+**Status:** implemented on 2026-09-21
+
+**Decision:** Treat the immutable package-3 `RECOVERED_LOCAL_MAPPING_UNVERIFIED` value as historical upstream evidence, not as the canonical current readiness state. Current mapping/XSD/plausibility claims come from the separately versioned E10 readiness pipeline; official ERiC-engine execution and every external capability remain blocked.
