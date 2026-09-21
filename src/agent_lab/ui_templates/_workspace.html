@@ -2,7 +2,7 @@
   <div class="scope-strip">
     <div><span>پرونده</span><strong>{{ workspace.case_id }}</strong></div>
     <div><span>سال</span><strong>{{ workspace.tax_year }}</strong></div>
-    <div><span>وضعیت</span><strong>{{ workspace.lifecycle_status.value }}</strong></div>
+    <div><span>وضعیت</span><strong>{{ workspace.lifecycle_status.value|status_label }}</strong><code>{{ workspace.lifecycle_status.value }}</code></div>
     <div><span>اجرای فعال</span><strong>{{ workspace.run_id }}</strong></div>
   </div>
 
@@ -40,7 +40,8 @@
   <article class="gate" aria-labelledby="gate-title">
     <div>
       <p class="eyebrow">Human Gate</p><h3 id="gate-title">بازبینی پیش‌نمایش لازم است</h3>
-      <p>اقدام: {{ workspace.human_gate.action }} · مقصد: {{ workspace.human_gate.destination }}</p>
+      <p>اقدام: {{ workspace.human_gate.action|status_label }} · مقصد: {{ workspace.human_gate.destination|status_label }}</p>
+      <p><code>{{ workspace.human_gate.action }}</code> · <code>{{ workspace.human_gate.destination }}</code></p>
     </div>
     <button type="button" disabled aria-describedby="submit-help">ارسال به ELSTER</button>
     <p id="submit-help" class="disabled-reason">ارسال تولیدی مجاز و پیاده‌سازی نشده است.</p>

@@ -90,6 +90,7 @@ def test_synthetic_review_and_preview_render_with_no_operational_capability() ->
 def test_decision_queue_is_display_only():
     response=_client().get("/")
     assert "صف تصمیم انسانی" in response.text and "SYNTH-GATE-" in response.text
+    assert "نیازمند تصمیم انسانی" in response.text and "بازبینی پیش‌نمایش مصنوعی" in response.text
     assert "<form" not in response.text and "تأیید تصمیم" not in response.text
 
 def test_submission_readiness_keeps_both_approvals_separate_and_unapproved():

@@ -1097,3 +1097,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Unknown values fail closed. The display refinement changes no workflow transition, control, approval, persistence, networking, ERiC execution, or transmission capability.
 
 **Verification:** Targeted label/workflow/UI suite `21 passed`. Broader regression was not required because contract behavior did not change.
+
+
+## D-092 — UI-16 Persian case, document, and decision labels
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Extend the closed Persian label catalog to case lifecycle, document category/status, Human Gate status, and the allowlisted decision action/destination. Retain exact technical codes beside user-facing labels.
+
+**Safety:** Unknown values fail closed. The presentation refinement changes no case transition, decision authority, document access, control, persistence, networking, ERiC execution, or transmission capability.
+
+**Verification:** Targeted label/UI/document/decision suite `27 passed`. Broader regression was not required because contract behavior did not change.
