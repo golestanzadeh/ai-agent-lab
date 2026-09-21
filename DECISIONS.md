@@ -1207,3 +1207,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** technically verified on 2026-09-21
 
 **Decision:** Keep an explicitly supplied zero solidarity surcharge or church-tax amount as `0,00` in the official field, while an omitted value produces no field. The two requests and results retain different artifact identities; absence is never silently converted into a tax assertion.
+
+
+## D-102 — Optional wage taxes preserve complete local lineage
+
+**Status:** technically verified on 2026-09-21
+
+**Decision:** Verify both supported wage groups with explicit optional solidarity surcharge and church tax through mapping identity, declaration identity, twelve-rule local plausibility, and readiness binding. Both remain externally blocked and produce no operational capability.

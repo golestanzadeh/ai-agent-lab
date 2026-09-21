@@ -11,7 +11,9 @@ from agent_lab.eric_e10_2024_readiness import (
     assess_local_e10_2024_readiness,
 )
 from tests.unit.test_eric_e10_2024_declaration import mapping
+from tests.unit.test_eric_e10_2024_mapping import request_with_wage_taxes
 from tests.unit.test_eric_e10_2024_plausibility import declaration, without
+from agent_lab.eric_e10_2024_mapping import map_synthetic_summary_to_e10_2024
 
 
 def pipeline():
@@ -40,6 +42,23 @@ def test_assessment_is_deterministic_and_hash_bound():
     second = assess_local_e10_2024_readiness(*pipeline())
     assert first == second
     assert first.artifact_identity == second.artifact_identity
+
+
+@pytest.mark.parametrize("tax_class", [1, 6])
+def test_optional_wage_tax_mapping_preserves_complete_local_lineage(tax_class):
+    mapped = map_synthetic_summary_to_e10_2024(
+        request_with_wage_taxes(tax_class=tax_class)
+    )
+    declared = replace(
+        declaration(),
+        mapping_reference=mapped.artifact_identity.reference,
+        declaration_xml=mapped.fragment_xml,
+    )
+    plausible = evaluate_local_e10_2024_plausibility(declared)
+    result = assess_local_e10_2024_readiness(mapped, declared, plausible)
+    assert plausible.findings == ()
+    assert result.mapping_reference == mapped.artifact_identity.reference
+    assert result.external_readiness is False
 
 
 def test_rejects_cross_lineage_mapping_or_declaration():
