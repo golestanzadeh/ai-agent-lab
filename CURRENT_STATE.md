@@ -21,7 +21,7 @@ Last reconciled: **2026-09-21**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
-- Local FastAPI + Jinja/HTMX Persian UI through UI-18; closed Persian labels are joined by semantic document-table headers/caption, labelled decision expiry, explicit left-to-right handling for technical identifiers, and concise assistive announcements after dynamic case changes.
+- Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
 
@@ -41,7 +41,7 @@ Last reconciled: **2026-09-21**
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The hourly plan-limit guard now reflects completed developer access and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard now checks limits after every completed/pushed package and, when safe, immediately starts the next bounded authorized package in the same heartbeat; the initial heartbeat check remains as stale-state protection.
-- The focused documentation index now includes the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI records through UI-18; a deterministic test prevents future silent index drift.
+- The focused documentation index now includes the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI records through UI-19; a deterministic test prevents future silent index drift.
 - Canonical-state tests also require the checkpoint, current state, and roadmap to agree on the latest UI package, active branch, and continuous-execution state.
 
 ## Remaining product work

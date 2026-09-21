@@ -1,6 +1,9 @@
 from fastapi.testclient import TestClient
 
 from agent_lab.ui_app import create_app
+from agent_lab.case_registry import CaseRegistry
+from agent_lab.ui_state_contract import UIStateError
+import pytest
 
 
 def _client() -> TestClient:
@@ -55,6 +58,11 @@ def test_runtime_api_documentation_is_disabled() -> None:
     client = _client()
     assert client.get("/docs").status_code == 404
     assert client.get("/openapi.json").status_code == 404
+
+
+def test_empty_registry_fails_closed_before_serving_ui() -> None:
+    with pytest.raises(UIStateError, match="at least one registered case"):
+        create_app(registry=CaseRegistry())
 
 
 def test_workflow_diagnostics_are_privacy_safe_and_controls_stay_disabled() -> None:

@@ -109,6 +109,8 @@ def _populate_synthetic_state(state: UIWorkspaceState) -> UIWorkspaceState:
 
 def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
     case_registry = registry or build_synthetic_registry()
+    if not case_registry.all_records():
+        raise UIStateError("synthetic UI requires at least one registered case")
     app = FastAPI(
         title="AI Agent Lab — Synthetic UI Prototype",
         docs_url=None,

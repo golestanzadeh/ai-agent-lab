@@ -1150,3 +1150,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Reconcile the current-state record and operational controller with D-093. A heartbeat may chain sequential bounded packages only after each completed package is verified, committed, pushed, and followed by fresh limit and repository-safety checks.
 
 **Historical record:** Older decisions that accurately record the former one-package-per-run policy remain unchanged as chronology; D-093 and this reconciliation supersede that operational limit.
+
+
+## D-097 — Fail closed when the local UI has no scoped case
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Refuse to construct the synthetic local UI when its injected Case Registry is empty. This replaces a later unstructured index failure with an explicit fail-closed state before any page can be served.
+
+**Safety:** No case creation, persistence, external access, or operational capability is introduced.
+
+**Verification:** Targeted UI and canonical-documentation suite `20 passed`.

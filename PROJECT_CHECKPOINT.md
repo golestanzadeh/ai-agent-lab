@@ -50,12 +50,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-18. Persian labels, semantic table structure, labelled decision expiry, mixed-direction technical identifiers, and concise dynamic case announcements improve non-technical and assistive use without enabling operations.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-19. Persian accessibility refinements are joined by fail-closed startup when no scoped synthetic case is registered.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- The compact ROADMAP current-position summary is reconciled through UI-18 as of 2026-09-21.
+- The compact ROADMAP current-position summary is reconciled through UI-19 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - The Project Owner directed end-of-package limit checks with immediate same-heartbeat continuation while safe; the initial heartbeat observation remains mandatory to prevent work from starting on stale usage data.
 - Stale current-state and controller wording that still limited a heartbeat to one package has been removed; an automated documentation check now protects the active sequential-package policy while historical decisions remain intact.
@@ -847,4 +847,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Dynamic HTMX replacement no longer asks assistive technology to reread every workspace panel.
 - Verification: targeted responsive/UI/documentation suite `23 passed`. No behavior or external capability changed, so broader regression was not required.
 - Status: **UI_18_CONCISE_DYNAMIC_ANNOUNCEMENT_COMPLETE / OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-19 fail-closed empty-registry startup — 2026-09-21
+
+- The local synthetic UI now refuses startup when no case exists in its injected Case Registry.
+- Verification: targeted UI and canonical-documentation suite `20 passed`. No operational capability changed.
+- Status: **UI_19_EMPTY_REGISTRY_FAIL_CLOSED / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
