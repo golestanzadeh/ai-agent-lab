@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "8"
+PLAUSIBILITY_PROFILE_VERSION = "9"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -48,6 +48,8 @@ SUPPORTED_OFFICIAL_RULES = (
     "100200007",
     "121352",
     "100200127",
+    "100200103",
+    "100200002",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -187,6 +189,8 @@ def evaluate_local_e10_2024_plausibility(
     other_expense_label = _present(root, "E0205405")
     other_expense_amount = _present(root, "E0205406")
     expense_sum = _present(root, "E0204803")
+    other_expense_amounts = _integer_values(root, "E0205406") + _integer_values(root, "E0204802")
+    other_expense_sums = _integer_values(root, "E0204803")
     association_label = _present(root, "E0204001")
     association_amounts = _integer_values(root, "E0204003")
     association_sums = _integer_values(root, "E0204002")
@@ -226,6 +230,10 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("100200112", ("E0204803", "E0205406", "E0204802"), "other-expense sum requires itemization"))
     if other_expense_label is not other_expense_amount:
         findings.append(PlausibilityFinding("121355", ("E0205405", "E0205406"), "other-expense label and amount must be provided together"))
+    if other_expense_amounts and sum(other_expense_amounts) < 0:
+        findings.append(PlausibilityFinding("100200103", ("E0205406", "E0204802"), "other-expense item total cannot be negative"))
+    if other_expense_sums and other_expense_amounts and sum(other_expense_amounts) >= 0 and abs(other_expense_sums[0] - sum(other_expense_amounts)) > 5:
+        findings.append(PlausibilityFinding("100200002", ("E0205406", "E0204802", "E0204803"), "other-expense sum differs from item total beyond the official tolerance of five"))
     if association_amounts and sum(association_amounts) < 0:
         findings.append(PlausibilityFinding("100200099", ("E0204003",), "professional-association item total cannot be negative"))
     if association_sums and not association_amounts:

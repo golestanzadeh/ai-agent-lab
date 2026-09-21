@@ -84,6 +84,32 @@ def test_reports_reviewed_official_presence_rules(removed, rule_code):
     assert rule_code in {finding.official_rule_code for finding in result.findings}
 
 
+def test_other_expense_negative_item_total_is_rejected():
+    source = declaration()
+    xml = source.declaration_xml.replace("<E0205406>1234</E0205406>", "<E0205406>-1</E0205406>")
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert "100200103" in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
+    ("difference", "fails"),
+    [(5, False), (-5, False), (6, True), (-6, True)],
+)
+def test_other_expense_official_tolerance_boundary_is_absolute_and_exclusive(
+    difference, fails
+):
+    source = declaration()
+    item_amount = 1_234
+    declared_sum = item_amount + difference
+    xml = source.declaration_xml.replace(
+        f"<E0204803>{item_amount}</E0204803>",
+        f"<E0204803>{declared_sum}</E0204803>",
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("100200002" in codes) is fails
+
+
 def test_reports_tax_class_six_withholding_rule():
     source = declaration()
     xml = source.declaration_xml.replace("LStB_1_5_Sum", "LStB_6_Sum")
