@@ -1277,3 +1277,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** active on 2026-09-21
 
 **Decision:** Live usage reported five-hour `10%` remaining with reset `2026-09-21T17:19:45Z` and weekly `54%` remaining with reset `2026-09-27T16:07:25Z`. The five-hour window is the sole limiting window. Enter `TOKEN_PAUSED`, set `resume_not_before` to `2026-09-21T17:21:45Z` using the governed two-minute buffer, pin continuation to commit `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0`, and perform no new project work until the existing resume conditions are verified.
+
+
+## D-112 — Reset-aware execution resumed
+
+**Status:** active on 2026-09-21
+
+**Decision:** The first reset-aligned wake reported five-hour `99%` and weekly `53%` remaining. End `TOKEN_PAUSED`, restore the normal five-minute cadence, execute the repository recovery gate, and continue the already authorized local synthetic runtime repair package from its exact recorded continuation point. All thresholds and Human Gates remain unchanged.

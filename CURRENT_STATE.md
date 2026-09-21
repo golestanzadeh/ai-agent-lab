@@ -40,7 +40,7 @@ Last reconciled: **2026-09-21**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `TOKEN_PAUSED`: five-hour remaining is `10%`, weekly remaining is `54%`, and the five-hour window is limiting. The effective five-hour reset is `2026-09-21T17:19:45Z`; reset-aware resume may be evaluated no earlier than `2026-09-21T17:21:45Z`. Continuation is pinned to `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0`.
+- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aware wake reported five-hour `99%` and weekly `53%` remaining, satisfying the existing resume conditions. Continuation recovers from base `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0` plus the governed pause/resume records.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The active plan-limit guard uses a five-minute cadence, reflects completed developer access, and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
@@ -56,7 +56,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-At or after `2026-09-21T17:21:45Z`, verify live limits; resume only when five-hour remaining is at least 80% and weekly remaining is above 10%, then connect an eligible repair decision to a bounded remaining-stage continuation executor, preserving write-once attempt consumption, exact-prefix recovery, existing acceptance/budget/kill-switch controls, and all external capability denials.
+After repository recovery, connect an eligible repair decision to a bounded remaining-stage continuation executor, preserving write-once attempt consumption, exact-prefix recovery, existing acceptance/budget/kill-switch controls, and all external capability denials.
 
 ## Non-negotiable constraints
 
