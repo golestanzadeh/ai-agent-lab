@@ -18,6 +18,7 @@ Last reconciled: **2026-09-21**
 - Local E10/2024 mapping profile version 2 for the bounded Anlage N employment subset; explicit optional solidarity surcharge and church-tax amounts map to official tax-class-specific sum fields without inferring omitted values.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
 - Source-evidenced local plausibility profile version 2 evaluates twelve official Anlage N presence rules, adding gross-wage and wage-tax dependencies for the optional solidarity surcharge and church-tax fields across both wage groups.
+- Post-expansion regression excluding the known Windows-sensitive Google Drive provisioning file passes: `677 passed`.
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.

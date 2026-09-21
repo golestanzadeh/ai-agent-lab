@@ -1214,3 +1214,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** technically verified on 2026-09-21
 
 **Decision:** Verify both supported wage groups with explicit optional solidarity surcharge and church tax through mapping identity, declaration identity, twelve-rule local plausibility, and readiness binding. Both remain externally blocked and produce no operational capability.
+
+
+## D-103 — Post-expansion unit regression
+
+**Status:** verified on 2026-09-21
+
+**Result:** The complete unit suite excluding only the previously documented Windows-sensitive Google Drive provisioning file passed with `677 passed`. This verifies the E10 mapping/plausibility/UI expansions against the remaining local regression surface; it does not change any authority or external capability.

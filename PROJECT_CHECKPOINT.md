@@ -63,6 +63,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
 - The readiness and UI presentation contracts are reconciled with the twelve-rule local plausibility profile; no stale six-rule success claim remains in active product records.
 - Synthetic profile-v2 declarations for both wage groups, including optional solidarity surcharge and church tax, pass the exact hash-pinned official E10/2024 XSD locally.
+- Post-expansion unit regression excluding the known Windows-sensitive Google Drive provisioning file passes: `677 passed`.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
