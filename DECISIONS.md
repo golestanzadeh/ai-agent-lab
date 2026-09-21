@@ -1330,7 +1330,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 ## D-119 — Next E10 professional-association subset
 
-**Status:** source-reviewed and implementation-ready on 2026-09-21
+**Status:** source-reviewed but blocked on exact tolerance semantics on 2026-09-21
 
 **Decision:** Bound the next package to one explicit synthetic professional-association contribution using `E0204001` (description), `E0204003` (item amount), and `E0204002` (matching sum). Implement only official rules `100200099`, `100200109`, `201010`, `330121`, and `100200108` from the reviewed protected source. Require paired semantics, derive the sum, enforce the official string/five-digit boundaries, and fail closed without inferring multi-item or real-case content.
 
@@ -1354,3 +1354,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** source-reviewed and implementation-ready on 2026-09-21
 
 **Decision:** Bound the next package to one explicit synthetic work-equipment expense using `E0204401`, `E0204402`, and derived sum `E0204403`. Implement only reviewed rules `330122`, `100200100`, `100200110`, `122050`, and `121410`. Preserve the exact official tolerance comparison, require paired type/amount semantics, and infer neither multiple items nor real-case content.
+
+**Blocking evidence:** The reviewed rule expresses `122050` with `UngleichMitToleranz5`, but the exact operator definition was not found in the recovered field/rule material. Fail-closed governance prohibits guessing whether the tolerance is absolute, directional, inclusive, or otherwise defined. Keep this subset unimplemented until authoritative semantics are recovered; continue an independent subset instead.

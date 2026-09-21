@@ -71,7 +71,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=99`; `weekly_remaining_percent=53`; `five_hour_resets_at=1790029431`; `weekly_resets_at=1790525245`; recovered continuation base `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0` plus governed pause/resume records.
-- **Exact next action:** implement the reviewed single-item synthetic work-equipment subset (`E0204401`, `E0204402`, `E0204403`) and rules `330122`, `100200100`, `100200110`, `122050`, and `121410`, preserving the exact official tolerance semantics and fail-closed boundaries.
+- **Exact next action:** do not implement work-equipment rule `122050` until the exact official meaning of `UngleichMitToleranz5` is recovered from authoritative local material. Select another independent source-evidenced E10 subset meanwhile; never approximate the tolerance.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

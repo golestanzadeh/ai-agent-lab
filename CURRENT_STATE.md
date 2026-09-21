@@ -59,7 +59,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The next reviewed candidate is a single explicit synthetic work-equipment expense (`E0204401`, `E0204402`, `E0204403`) and its five directly applicable rules, including the exact official sum-tolerance condition.
+The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The work-equipment candidate is blocked because the field/rule table names `UngleichMitToleranz5` but the exact authoritative comparison semantics have not yet been recovered; implementation must not approximate it.
 
 ## Non-negotiable constraints
 
