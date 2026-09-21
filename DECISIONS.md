@@ -1391,3 +1391,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Mapping and plausibility profile version `6` implements one explicit synthetic home-office workroom expense using `E0204503`, `E0204505`, and derived sum `E0204504`. It evaluates official rules `100200101`, `100200111`, `122056`, `330123`, and `121432`; rule `122056` uses the already recovered exact `abs(sum - item_total) > 5` predicate. The supported type is closed to the official value `Ausstattung (ohne Büromöbel und Computer)`. The combined declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `181 passed, 1 warning`; the complete local regression passes with `763 passed, 1 skipped, 1 warning`. All external capabilities remain denied.
+
+
+## D-128 — Training-expense E10 subset implemented
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Mapping and plausibility profile version `7` implements one explicit synthetic training expense using `E0204804`, `E0204808`, and derived sum `E0204812`. It evaluates official rules `100200003`, `100200009`, `100200102`, `100200007`, and `121352`; rule `100200007` uses the exact `abs(sum - item_total) > 5` predicate. The supported type is closed to the official value `Kursgebühren`. The combined declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `196 passed, 1 warning`; the complete local regression passes with `778 passed, 1 skipped, 1 warning`. All external capabilities remain denied.

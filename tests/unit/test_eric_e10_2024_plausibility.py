@@ -285,6 +285,46 @@ def test_home_office_official_tolerance_boundary_is_absolute_and_exclusive(
 
 
 @pytest.mark.parametrize(
+    ("payload", "rule_code"),
+    [
+        ("<E0204808>10</E0204808>", "100200003"),
+        ("<E0204812>10</E0204812>", "100200009"),
+        ("<E0204808>-1</E0204808><E0204812>0</E0204812>", "100200102"),
+        ("<E0204804>Kursgebühren</E0204804>", "121352"),
+    ],
+)
+def test_training_presence_and_nonnegative_rules(payload, rule_code):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Fortb><Einz>{payload}</Einz></Fortb></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
+    ("difference", "fails"),
+    [(5, False), (-5, False), (6, True), (-6, True)],
+)
+def test_training_official_tolerance_boundary_is_absolute_and_exclusive(
+    difference, fails
+):
+    source = declaration()
+    item_amount = 100
+    declared_sum = item_amount + difference
+    payload = (
+        f"<E0204804>Kursgebühren</E0204804><E0204808>{item_amount}</E0204808>"
+        f"<E0204812>{declared_sum}</E0204812>"
+    )
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Fortb><Einz>{payload}</Einz></Fortb></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("100200007" in codes) is fails
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

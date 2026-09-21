@@ -15,6 +15,7 @@ from agent_lab.eric_e10_2024_mapping import (
     HomeOfficeExpenseType,
     MappingOutcome,
     OtherExpenseCategory,
+    TrainingExpenseType,
     WorkEquipmentType,
     map_synthetic_summary_to_e10_2024,
 )
@@ -195,6 +196,36 @@ def test_rejects_invalid_home_office_semantics(changes):
         replace(request(), **changes)
 
 
+def test_maps_single_training_item_and_matching_sum():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            training_expense_type=TrainingExpenseType.COURSE_FEES,
+            training_expense_eur=456,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204804", "Kursgebühren") in observed
+    assert ("E0204808", "456") in observed
+    assert ("E0204812", "456") in observed
+    assert "<Fortb>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"training_expense_type": TrainingExpenseType.COURSE_FEES},
+        {"training_expense_eur": 1},
+        {"training_expense_type": "Kursgebühren", "training_expense_eur": 1},
+        {"training_expense_type": TrainingExpenseType.COURSE_FEES, "training_expense_eur": -1},
+        {"training_expense_type": TrainingExpenseType.COURSE_FEES, "training_expense_eur": 1_000_000_000_000},
+    ],
+)
+def test_rejects_invalid_training_semantics(changes):
+    with pytest.raises(E10MappingError, match="training expense|training_expense"):
+        replace(request(), **changes)
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -310,6 +341,11 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     ).artifact_identity != baseline.artifact_identity
     assert replace(
         baseline,
+        training_expense_type=TrainingExpenseType.COURSE_FEES,
+        training_expense_eur=1,
+    ).artifact_identity != baseline.artifact_identity
+    assert replace(
+        baseline,
         home_office_expense_type=(
             HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER
         ),
@@ -317,8 +353,8 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     ).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5"])
-def test_older_profile_request_is_rejected_after_v6_expansion(profile_version):
+@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5", "6"])
+def test_older_profile_request_is_rejected_after_v7_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

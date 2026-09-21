@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "6"
+PLAUSIBILITY_PROFILE_VERSION = "7"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -42,6 +42,11 @@ SUPPORTED_OFFICIAL_RULES = (
     "122056",
     "330123",
     "121432",
+    "100200003",
+    "100200009",
+    "100200102",
+    "100200007",
+    "121352",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -190,6 +195,9 @@ def evaluate_local_e10_2024_plausibility(
     home_office_type = _present(root, "E0204503")
     home_office_amounts = _integer_values(root, "E0204505")
     home_office_sums = _integer_values(root, "E0204504")
+    training_type = _present(root, "E0204804")
+    training_amounts = _integer_values(root, "E0204808")
+    training_sums = _integer_values(root, "E0204812")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -245,6 +253,16 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("330123", ("E0204505", "E0204504"), "home-office itemization requires its sum"))
     if home_office_type is not bool(home_office_amounts):
         findings.append(PlausibilityFinding("121432", ("E0204503", "E0204505"), "home-office expense type and amount must be provided together"))
+    if (training_type or training_amounts) and not training_sums:
+        findings.append(PlausibilityFinding("100200003", ("E0204804", "E0204808", "E0204812"), "training itemization requires its sum"))
+    if training_sums and not training_amounts:
+        findings.append(PlausibilityFinding("100200009", ("E0204808", "E0204812"), "training sum requires itemization"))
+    if training_amounts and sum(training_amounts) < 0:
+        findings.append(PlausibilityFinding("100200102", ("E0204808",), "training item total cannot be negative"))
+    if training_sums and training_amounts and abs(training_sums[0] - sum(training_amounts)) > 5:
+        findings.append(PlausibilityFinding("100200007", ("E0204808", "E0204812"), "training sum differs from item total beyond the official tolerance of five"))
+    if training_type is not bool(training_amounts):
+        findings.append(PlausibilityFinding("121352", ("E0204804", "E0204808"), "training expense type and amount must be provided together"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(
