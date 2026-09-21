@@ -23,7 +23,7 @@ Last reconciled: **2026-09-21**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
-- The Human-authorized local synthetic repair/replay policy and its versioned read-only evaluator are implemented. The evaluator derives a hash-bound exact-prefix decision, represents the one-attempt ceiling, handles completed state idempotently, detects consumed/foreign decision records, and fails closed on ambiguous durable evidence. Targeted runtime verification: `26 passed`. No mutating repair executor exists yet.
+- The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. The executor writes the exact decision once, consumes the sole attempt, rechecks checkpoint/kill-switch state, executes only the unstarted suffix, preserves independent acceptance, and treats completed state as an idempotent no-op. Targeted runtime verification: `29 passed`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -56,7 +56,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-After repository recovery, connect an eligible repair decision to a bounded remaining-stage continuation executor, preserving write-once attempt consumption, exact-prefix recovery, existing acceptance/budget/kill-switch controls, and all external capability denials.
+Complete deterministic repair tests for the remaining valid QA/acceptance/checkpoint boundaries and ambiguous partial-stage traces; do not expand the executor's capability boundary.
 
 ## Non-negotiable constraints
 

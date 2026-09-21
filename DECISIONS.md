@@ -1284,3 +1284,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** active on 2026-09-21
 
 **Decision:** The first reset-aligned wake reported five-hour `99%` and weekly `53%` remaining. End `TOKEN_PAUSED`, restore the normal five-minute cadence, execute the repository recovery gate, and continue the already authorized local synthetic runtime repair package from its exact recorded continuation point. All thresholds and Human Gates remain unchanged.
+
+
+## D-113 — Bounded remaining-stage repair executor
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Connect only an eligible version-1 repair decision to the existing fixed local workers. Write the decision once before mutation, consume one attempt, recheck the exact checkpoint and kill switch, execute only the first unstarted stage and remaining suffix, never overwrite a completed artifact, preserve QA and independent acceptance, then halt and verify the completed checkpoint and audit chain. Completed packages are idempotent no-ops. Targeted repair/recovery/runtime tests pass with `29 passed`; all external capabilities remain denied.

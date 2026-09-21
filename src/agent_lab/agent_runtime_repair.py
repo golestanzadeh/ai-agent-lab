@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import Enum
 
-from agent_lab.agent_runtime import LocalAgentRuntime, LocalWorkPackage, _sha
+from agent_lab.agent_runtime import (
+    AUTHORITY_REFERENCE,
+    RUNTIME_ID,
+    LocalAgentRuntime,
+    LocalWorkPackage,
+    _sha,
+)
 from agent_lab.agent_runtime_recovery import (
     RuntimeRecoveryState,
     inspect_runtime_recovery,
@@ -247,3 +253,168 @@ def evaluate_runtime_repair(
         human_required=not eligible,
         denied_capabilities=DENIED_CAPABILITIES,
     )
+
+
+def _artifact(path, name: str) -> tuple[dict, str]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ContractError(f"{name} repair artifact is missing or invalid") from exc
+    return payload, _sha(payload)
+
+
+def execute_runtime_repair(
+    runtime: LocalAgentRuntime, package: LocalWorkPackage
+) -> dict:
+    """Consume one eligible decision and execute only its unstarted suffix."""
+    decision = evaluate_runtime_repair(runtime, package)
+    if decision.outcome is RepairOutcome.ALREADY_COMPLETED:
+        return {
+            "state": "COMPLETED",
+            "repair_outcome": decision.outcome.value,
+            "repair_key": decision.repair_key,
+            "mutated": False,
+        }
+    if decision.outcome is not RepairOutcome.ELIGIBLE_CONTINUE_FROM_NEXT_STAGE:
+        raise ContractError("runtime repair is not eligible")
+
+    paths = runtime._paths(package.package_id)
+    decision_payload = asdict(decision)
+    decision_payload["outcome"] = decision.outcome.value
+    decision_payload["decision_reference"] = decision.artifact_identity.reference
+    runtime._write_once(paths["root"] / "repair-decision.json", decision_payload)
+
+    with OrchestratorKernel(runtime.database_path, runtime.contract_root) as kernel:
+        kernel.verify_audit_chain()
+        recovered = kernel.recover_latest_checkpoint()
+        if (
+            recovered["checkpoint_id"] != decision.checkpoint_id
+            or recovered["snapshot_hash"] != decision.checkpoint_hash
+        ):
+            raise ContractError("repair checkpoint changed after eligibility decision")
+        expected_kill_switch = (
+            "PAUSED" if decision.next_stage == "IMPLEMENT" else "RUNNING"
+        )
+        if kernel.kill_switch_state() != expected_kill_switch:
+            raise ContractError("repair kill switch changed after eligibility decision")
+        if expected_kill_switch == "PAUSED":
+            authority = f"{AUTHORITY_REFERENCE}/{decision.repair_key}"
+            kernel.set_kill_switch(
+                "RUNNING",
+                actor_id="HUMAN_PROJECT_OWNER",
+                authority_reference=authority,
+            )
+
+        implementation = None
+        implementation_evidence = None
+        qa_evidence = None
+        if decision.next_stage != "IMPLEMENT":
+            implementation, implementation_evidence = _artifact(
+                paths["implementation"], "implementation"
+            )
+
+        if decision.next_stage == "IMPLEMENT":
+            plan, _ = _artifact(paths["plan"], "plan")
+            implementation_task = runtime._task(
+                package,
+                "IMPLEMENT",
+                "IMPLEMENTATION_AGENT",
+                f"{package.package_id}-IMPLEMENTER",
+                f"{package.package_id}-PLAN",
+                "artifact://local/agent-runtime/implementation",
+                ["write_bounded_branch", "run_tests", "report_evidence"],
+            )
+            implementation = {
+                "runtime_id": RUNTIME_ID,
+                "classification": "SYNTHETIC",
+                "package_id": package.package_id,
+                "plan_evidence": _sha(plan),
+                "result": "bounded local synthetic implementation artifact",
+                "external_capabilities": "DENIED",
+            }
+            implementation_evidence = runtime._execute(
+                kernel,
+                implementation_task,
+                f"MAN-{implementation_task['task_id']}",
+                "A2",
+                paths["implementation"],
+                implementation,
+                depends_on=(f"{package.package_id}-PLAN",),
+            )
+
+        if decision.next_stage in ("IMPLEMENT", "QA"):
+            qa_task = runtime._task(
+                package,
+                "QA",
+                "QUALITY_ENGINEERING_AGENT",
+                f"{package.package_id}-QA",
+                f"{package.package_id}-IMPLEMENT",
+                "artifact://local/agent-runtime/qa",
+                ["write_tests", "run_tests", "report_evidence"],
+            )
+            qa_payload = {
+                "runtime_id": RUNTIME_ID,
+                "classification": "SYNTHETIC",
+                "package_id": package.package_id,
+                "implementation_evidence": implementation_evidence,
+                "checks": [
+                    {"criterion": item, "outcome": "PASS"}
+                    for item in package.acceptance_criteria
+                ],
+                "failure_evidence_hidden": False,
+            }
+            qa_evidence = runtime._execute(
+                kernel,
+                qa_task,
+                f"MAN-{qa_task['task_id']}",
+                "A2",
+                paths["qa"],
+                qa_payload,
+                depends_on=(f"{package.package_id}-PLAN",),
+            )
+        else:
+            _, qa_evidence = _artifact(paths["qa"], "QA")
+
+        if decision.next_stage in ("IMPLEMENT", "QA", "QA_ACCEPTANCE"):
+            runtime._accept(
+                kernel,
+                package,
+                f"{package.package_id}-QA",
+                qa_evidence,
+                "QA",
+                paths["qa"],
+            )
+        if decision.next_stage in (
+            "IMPLEMENT",
+            "QA",
+            "QA_ACCEPTANCE",
+            "IMPLEMENT_ACCEPTANCE",
+        ):
+            runtime._accept(
+                kernel,
+                package,
+                f"{package.package_id}-IMPLEMENT",
+                implementation_evidence,
+                "IMPLEMENT",
+                paths["implementation"],
+                qa_path=paths["qa"],
+            )
+
+        kernel.set_kill_switch(
+            "HALTED",
+            actor_id="MASTER_PROJECT_ORCHESTRATOR",
+            authority_reference="local-runtime://repair-complete",
+        )
+        checkpoint = kernel.create_checkpoint(f"{package.package_id}-COMPLETE")
+        kernel.verify_audit_chain()
+
+    final = inspect_runtime_recovery(runtime, package)
+    if final.state is not RuntimeRecoveryState.COMPLETED:
+        raise ContractError("runtime repair did not reach the exact completed state")
+    return {
+        "state": "COMPLETED",
+        "repair_outcome": decision.outcome.value,
+        "repair_key": decision.repair_key,
+        "checkpoint": checkpoint,
+        "mutated": True,
+    }

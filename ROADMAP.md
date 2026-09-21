@@ -16,7 +16,7 @@ Status: **local synthetic runtime verified; provider/production activation gated
 
 Remaining goals:
 
-- connect the verified non-mutating repair-policy evaluator to a bounded remaining-stage continuation executor without weakening its one-attempt, exact-prefix, idempotency, or fail-closed rules;
+- complete the repair boundary matrix and ambiguity regression coverage for every permitted remaining-stage continuation point;
 - connect provider workers only after exact authority and security acceptance;
 - retain independent QA/acceptance, deterministic lineage, budgets, retry limits, kill switch, and checkpoint recovery;
 - demonstrate multi-session operation without chat memory.

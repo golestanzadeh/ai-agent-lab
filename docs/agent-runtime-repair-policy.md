@@ -1,6 +1,6 @@
 # Local Agent Runtime repair/replay policy
 
-Status: **READ-ONLY EVALUATOR IMPLEMENTED / LOCAL SYNTHETIC NON-PRODUCTION ONLY**
+Status: **BOUNDED EXECUTOR IMPLEMENTED / LOCAL SYNTHETIC NON-PRODUCTION ONLY**
 
 ## Purpose and authority
 
@@ -89,6 +89,6 @@ An eligible continuation:
 
 ## Next implementation boundary
 
-The versioned deterministic policy evaluator is implemented and verified. It classifies durable evidence, produces a hash-bound decision, detects a consumed or foreign decision record, and never mutates runtime state. The next bounded package may connect an eligible decision to continuation of the remaining local stages while preserving the exact one-attempt and fail-closed rules.
+The versioned deterministic policy evaluator and bounded continuation executor are implemented. The evaluator classifies durable evidence and produces a hash-bound decision. The executor writes that exact decision once before mutation, consumes the sole attempt, rechecks checkpoint and kill-switch state, executes only the unstarted suffix, preserves independent acceptance, and verifies the completed checkpoint and audit chain. Completed state is an idempotent no-op.
 
-Verification: the targeted runtime repair/recovery/runtime suite passes with `26 passed`.
+Verification: the targeted runtime repair/recovery/runtime suite passes with `29 passed`, including planned-boundary completion, completed-state no-op, completed-implementation non-replay, and consumed-attempt rejection.
