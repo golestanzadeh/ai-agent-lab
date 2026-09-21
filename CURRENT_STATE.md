@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-21**
+Last reconciled: **2026-09-22**
 
 ## Authoritative status
 
@@ -43,7 +43,7 @@ Last reconciled: **2026-09-21**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `TOKEN_PAUSED`: five-hour remaining is `12%` and weekly remaining is `40%`. The five-hour window limits continuation; the single reset-aligned wake is no earlier than `2026-09-21T22:25:51Z`, with continuation pinned to `00703e784c6395495e7cf615f1907379221bcfd5`.
+- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aligned wake reported five-hour `100%` and weekly `39%` remaining. Continuation recovers from pushed commit `43b53bab41d94922706a8398396f46874669d219` before the work-equipment package.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The active plan-limit guard uses a five-minute cadence, reflects completed developer access, and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
@@ -59,7 +59,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-At the reset-aligned wake, verify the existing resume thresholds and repository recovery gate. Then implement the already authorized local synthetic work-equipment subset: official ERiC 44.3.6.0 defines `UngleichMitToleranz5` as `abs(v1 - v2) > 5`, so a difference of exactly `5` remains accepted.
+Implement the already authorized local synthetic work-equipment subset after the repository recovery gate: official ERiC 44.3.6.0 defines `UngleichMitToleranz5` as `abs(v1 - v2) > 5`, so a difference of exactly `5` remains accepted.
 
 ## Non-negotiable constraints
 

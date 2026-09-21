@@ -52,7 +52,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
 - The local FastAPI + Jinja/HTMX UI is complete through UI-19. Persian accessibility refinements are joined by fail-closed startup when no scoped synthetic case is registered.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
-- Execution is `TOKEN_PAUSED`: the live safety-fallback observation reported five-hour `12%` and weekly `40%` remaining, so the five-hour hard stop applies. The reset-aligned wake is scheduled no earlier than `2026-09-21T22:25:51Z` (two minutes after the authoritative five-hour reset).
+- Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aligned wake reported five-hour `100%` and weekly `39%` remaining, satisfying the existing resume conditions. Repository recovery remains required before project work.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The active five-minute plan-limit guard is updated to current external state and retains all caution, pause, resume, recovery, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
 - The compact ROADMAP current-position summary is reconciled through UI-19 as of 2026-09-21.
@@ -70,8 +70,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
-- **Reset-aware pause:** `state=TOKEN_PAUSED`; `limiting_window=five_hour`; `five_hour_remaining_percent=12`; `weekly_remaining_percent=40`; `five_hour_resets_at=1790029431`; `weekly_resets_at=1790525245`; `resume_not_before=2026-09-21T22:25:51Z`; `continuation_commit=00703e784c6395495e7cf615f1907379221bcfd5`.
-- **Exact next action:** at or after `resume_not_before`, read live limits only; if five-hour remaining is at least `80%` and weekly remaining is above `10%`, restore the five-minute cadence, pass the repository recovery gate, and implement the already authorized local synthetic work-equipment subset. Official ERiC 44.3.6.0 documentation defines `UngleichMitToleranz5` exactly as `abs(v1 - v2) > 5`; difference `5` is not a violation.
+- **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=100`; `weekly_remaining_percent=39`; `five_hour_resets_at=1790047586`; `weekly_resets_at=1790525245`; recovered continuation commit `43b53bab41d94922706a8398396f46874669d219`.
+- **Exact next action:** restore the five-minute cadence, pass the repository recovery gate, and implement the already authorized local synthetic work-equipment subset. Official ERiC 44.3.6.0 documentation defines `UngleichMitToleranz5` exactly as `abs(v1 - v2) > 5`; difference `5` is not a violation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

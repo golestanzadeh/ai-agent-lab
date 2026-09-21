@@ -22,7 +22,7 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 material retrieved; local mapping profile v4/XSD/seventeen-rule plausibility lineage integrated; work-equipment subset source-ready and token-paused**
+Status: **official 44.3.6.0 material retrieved; local mapping profile v4/XSD/seventeen-rule plausibility lineage integrated; work-equipment subset source-ready after reset-aware resume**
 
 Dependency path:
 
@@ -30,7 +30,7 @@ Dependency path:
 
 Remaining goals:
 
-- after reset-aware resume, implement the authorized single-item work-equipment subset with official rule `122050` using the recovered exact predicate `abs(v1 - v2) > 5`;
+- implement the authorized single-item work-equipment subset with official rule `122050` using the recovered exact predicate `abs(v1 - v2) > 5`;
 - expand later official field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics;
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
