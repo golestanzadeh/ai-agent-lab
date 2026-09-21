@@ -1270,3 +1270,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-21
 
 **Decision:** Implement policy version `1` as a read-only evaluator over the verified recovery assessment, Kernel records, immutable artifacts, and optional write-once decision record. The evaluator emits a hash-bound decision, never mutates runtime state, permits only an exact next stage, treats completed state as an idempotent no-op, detects consumed/foreign repair records, and fails closed on missing or contradictory evidence. Targeted repair/recovery/runtime tests pass with `26 passed`.
+
+
+## D-111 — Reset-aware five-hour TOKEN_PAUSED checkpoint
+
+**Status:** active on 2026-09-21
+
+**Decision:** Live usage reported five-hour `10%` remaining with reset `2026-09-21T17:19:45Z` and weekly `54%` remaining with reset `2026-09-27T16:07:25Z`. The five-hour window is the sole limiting window. Enter `TOKEN_PAUSED`, set `resume_not_before` to `2026-09-21T17:21:45Z` using the governed two-minute buffer, pin continuation to commit `8e42ac6cf3cbe8aed515a23c109ffb79ea6499e0`, and perform no new project work until the existing resume conditions are verified.
