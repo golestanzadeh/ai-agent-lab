@@ -1189,3 +1189,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Regression hardening:** Both gross-wage dependency rules (`310030`, `310090`) and all four optional-tax-to-wage-tax dependency rules have explicit negative tests for their respective wage groups.
 
 **Documentation guard:** Active E10/readiness/UI records now have a deterministic check preventing reintroduction of the superseded six-rule status; historical checkpoint text remains preserved.
+
+**Official-XSD verification:** Both tax-class 1–5 and tax-class 6 synthetic declarations containing the new optional solidarity surcharge and church-tax fields passed local validation against the exact hash-pinned official `E10-2024.xsd`. Protected schema files remained outside Git.
