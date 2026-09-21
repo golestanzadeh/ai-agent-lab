@@ -9,6 +9,7 @@ Last reconciled: **2026-09-21**
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
+- Autonomous execution is `TOKEN_PAUSED` until the reset-aligned limit check at or after `2026-09-22T03:28:26Z`; this changes no project scope or Human Gate.
 
 ## Track 1 — Autonomous project control
 

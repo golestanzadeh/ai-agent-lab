@@ -1433,3 +1433,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Add explicit regression coverage proving that omission of the optional ferry-or-flight context remains distinct from an explicit zero amount, that zero preserves the derived other-expense aggregate, and that adding the paired context changes the cryptographic request and result identities. Focused mapping verification passes with `86 passed`, and the documentation guard passes with `8 passed`. This changes no mapping or plausibility profile, authority, or external capability.
+
+
+## D-134 — Reset-aware five-hour TOKEN_PAUSED checkpoint after E10 hardening
+
+**Status:** active on 2026-09-22
+
+**Decision:** Live usage reported five-hour `15%` remaining with reset `2026-09-22T03:26:26Z` and weekly `26%` remaining with reset `2026-09-27T16:07:25Z`. The five-hour window is the sole limiting window. Enter `TOKEN_PAUSED`, set `resume_not_before` to `2026-09-22T03:28:26Z` using the governed two-minute buffer, pin continuation to commit `25c6ad1285fda3b043d896c7daa8c44d0e86e9ba`, and perform no new project work until the existing resume conditions are verified.

@@ -51,7 +51,7 @@ Last reconciled: **2026-09-22**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aligned wake reported five-hour `100%` and weekly `39%` remaining. Continuation recovers from pushed commit `43b53bab41d94922706a8398396f46874669d219` before the work-equipment package.
+- Execution status is `TOKEN_PAUSED`: live usage reported five-hour `15%` and weekly `26%` remaining. The five-hour window resets at `2026-09-22T03:26:26Z`; the governed reset-aligned wake is `2026-09-22T03:28:26Z`. Continuation remains pinned to pushed commit `25c6ad1285fda3b043d896c7daa8c44d0e86e9ba`.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The active plan-limit guard uses a five-minute cadence, reflects completed developer access, and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
@@ -67,7 +67,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-The post-package observation is five-hour `20%` and weekly `26%` remaining. No further source-evidenced, prerequisite-ready independent small package remains, while the existing caution rule forbids starting a large package. On the next execution, recover from the pushed HEAD and begin the next source-evidenced E10 package only if the existing thresholds permit its actual size.
+At or after `2026-09-22T03:28:26Z`, read both live limits first. Resume only if five-hour remaining is at least `80%`, weekly remaining is above `10%`, and repository recovery from commit `25c6ad1285fda3b043d896c7daa8c44d0e86e9ba` is safe; then assess the next source-evidenced E10 package against its actual size.
 
 ## Non-negotiable constraints
 
