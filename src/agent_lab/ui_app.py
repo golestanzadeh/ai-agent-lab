@@ -37,6 +37,18 @@ from agent_lab.ui_support_contract import build_synthetic_ui_support
 
 UI_ROOT = Path(__file__).resolve().parent
 TEMPLATES = Jinja2Templates(directory=str(UI_ROOT / "ui_templates"))
+LOCAL_SECURITY_HEADERS = {
+    "Cache-Control": "no-store",
+    "Content-Security-Policy": (
+        "default-src 'self'; script-src 'self'; style-src 'self'; "
+        "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; "
+        "form-action 'none'; base-uri 'none'"
+    ),
+    "Permissions-Policy": "camera=(), geolocation=(), microphone=()",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+}
 
 
 def _reference(character: str) -> str:
@@ -103,6 +115,13 @@ def create_app(*, registry: CaseRegistry | None = None) -> FastAPI:
     )
     app.state.case_registry = case_registry
     app.mount("/static", StaticFiles(directory=str(UI_ROOT / "ui_static")), name="static")
+
+    @app.middleware("http")
+    async def local_security_headers(request: Request, call_next):
+        response = await call_next(request)
+        for name, value in LOCAL_SECURITY_HEADERS.items():
+            response.headers[name] = value
+        return response
 
     @app.get("/", response_class=HTMLResponse)
     async def index(request: Request) -> HTMLResponse:

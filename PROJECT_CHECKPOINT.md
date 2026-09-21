@@ -50,12 +50,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-12. Its diagnostics remain safe, one-click Windows startup is loopback-only, and deterministic phone-width/keyboard safeguards preserve visible safety boundaries.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-13. Its diagnostics remain safe, one-click startup is loopback-only, phone/keyboard safeguards preserve visible boundaries, and all responses carry fail-closed browser security headers.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- The compact ROADMAP current-position summary is reconciled through UI-12 as of 2026-09-21.
+- The compact ROADMAP current-position summary is reconciled through UI-13 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
@@ -789,4 +789,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The records must agree on the latest completed UI package; the checkpoint and current state must both retain the active development branch and `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` marker.
 - Verification: canonical documentation guard `5 passed`; no runtime behavior changed, so a full regression was not required.
 - Status: **CANONICAL_STATE_DRIFT_GUARD_ACTIVE**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-13 loopback browser security headers — 2026-09-21
+
+- Added uniform no-store, no-referrer, MIME-sniffing, frame-denial, restricted-permissions, and self-only content-security headers to full-page, partial, health, and error responses.
+- The policy denies form actions and external script/style/connect sources; it enables no control, authentication, deployment, real data, ERiC invocation, or transmission.
+- Verification: targeted UI/security/documentation `24 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `650 passed, 1 skipped`. The full run reached `663 passed, 1 skipped`; after correcting the newly registered documentation index entry, its only remaining failure was the pre-existing order-varying provisioning journal-replace issue.
+- Status: **UI_13_LOOPBACK_BROWSER_HARDENING_COMPLETE / DEPLOYMENT_GATED**.
 - Exact next action is the authoritative snapshot above.

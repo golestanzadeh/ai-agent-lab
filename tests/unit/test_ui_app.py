@@ -104,3 +104,25 @@ def test_support_and_recovery_diagnostics_are_display_only_and_current():
     assert "RECEIPT_NOT_AVAILABLE_NO_TRANSMISSION" in text
     assert "نگاشت رسمی هنوز بازیابی نشده" not in text
     assert "نگاشت محلی E10/2024 و اعتبارسنجی XSD تکمیل شده" in text
+
+
+def test_all_local_responses_apply_fail_closed_browser_security_headers():
+    client = _client()
+    responses = (
+        client.get("/"),
+        client.get("/workspace", params={"case_id": "SYNTH-CASE-002", "tax_year": 2025}),
+        client.get("/health"),
+        client.get("/missing"),
+    )
+    for response in responses:
+        assert response.headers["cache-control"] == "no-store"
+        assert response.headers["referrer-policy"] == "no-referrer"
+        assert response.headers["x-content-type-options"] == "nosniff"
+        assert response.headers["x-frame-options"] == "DENY"
+        assert response.headers["permissions-policy"] == "camera=(), geolocation=(), microphone=()"
+        policy = response.headers["content-security-policy"]
+        assert "default-src 'self'" in policy
+        assert "connect-src 'self'" in policy
+        assert "frame-ancestors 'none'" in policy
+        assert "form-action 'none'" in policy
+        assert "http:" not in policy and "https:" not in policy

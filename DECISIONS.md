@@ -1064,3 +1064,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** This guard validates durable project memory only. It changes no runtime, architecture, authority, external access, or production capability.
 
 **Verification:** Canonical documentation guard `5 passed`. Full regression not required because no runtime code changed.
+
+
+## D-089 — UI-13 fail-closed loopback browser policy
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Apply uniform browser hardening to every synthetic FastAPI response: no-store, no-referrer, MIME-sniffing denial, frame denial, restricted device permissions, and a self-only content-security policy that also denies form actions.
+
+**Safety:** The headers reduce accidental browser exposure but do not authorize or implement deployment, public/LAN binding, authentication, real data, persistence, external connectivity, ERiC execution, or transmission.
+
+**Verification:** Targeted UI/security/documentation suite `24 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `650 passed, 1 skipped`. The full run reached `663 passed, 1 skipped`; after the package-local index correction, the only remaining failure was the pre-existing order-varying provisioning journal-replace issue.

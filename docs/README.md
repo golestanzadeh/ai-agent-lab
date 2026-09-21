@@ -90,6 +90,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `ui-synthetic-support.md`
 - `ui-windows-launcher.md`
 - `ui-phone-accessibility.md`
+- `ui-local-security-headers.md`
 
 ## Documentation rules
 
