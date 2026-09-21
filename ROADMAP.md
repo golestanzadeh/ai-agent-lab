@@ -2,11 +2,11 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-09-20**
+Last reconciled: **2026-09-21**
 
 ## Current position
 
-- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-8 are complete.
+- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-9 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 
