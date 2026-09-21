@@ -1263,3 +1263,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** designed on 2026-09-21 under explicit Project Owner authority
 
 **Decision:** Permit only continuation from the first demonstrably unstarted stage after a verified planned checkpoint and exact completed-stage prefix. Never replay a completed or ambiguous stage. Bind a write-once repair decision and at most one attempt to the package, package digest, planned checkpoint ID/hash, completed prefix, and policy version. Completed state is an idempotent no-op; partial or contradictory evidence requires Human review. Implement the non-mutating evaluator before any mutating continuation executor. All external, real-data, production, provider, credential, network, subprocess, protected-main, and governance boundaries remain unchanged.
+
+
+## D-110 — Read-only runtime repair evaluator
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Implement policy version `1` as a read-only evaluator over the verified recovery assessment, Kernel records, immutable artifacts, and optional write-once decision record. The evaluator emits a hash-bound decision, never mutates runtime state, permits only an exact next stage, treats completed state as an idempotent no-op, detects consumed/foreign repair records, and fails closed on missing or contradictory evidence. Targeted repair/recovery/runtime tests pass with `26 passed`.

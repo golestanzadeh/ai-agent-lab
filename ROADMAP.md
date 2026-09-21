@@ -16,7 +16,7 @@ Status: **local synthetic runtime verified; provider/production activation gated
 
 Remaining goals:
 
-- implement the designed, explicitly authorized repair/replay policy on top of the completed read-only mid-resume recovery classifier, beginning with a non-mutating versioned policy evaluator;
+- connect the verified non-mutating repair-policy evaluator to a bounded remaining-stage continuation executor without weakening its one-attempt, exact-prefix, idempotency, or fail-closed rules;
 - connect provider workers only after exact authority and security acceptance;
 - retain independent QA/acceptance, deterministic lineage, budgets, retry limits, kill switch, and checkpoint recovery;
 - demonstrate multi-session operation without chat memory.
