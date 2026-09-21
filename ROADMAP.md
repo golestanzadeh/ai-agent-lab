@@ -6,7 +6,7 @@ Last reconciled: **2026-09-21**
 
 ## Current position
 
-- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-10 are complete.
+- O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-11 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 
@@ -37,7 +37,7 @@ Remaining goals:
 
 ## Track 3 — User interface
 
-Status: **local synthetic display prototype complete through UI-10 with current E10 readiness and support diagnostics; real operations gated**
+Status: **local synthetic prototype complete through UI-11 with one-click Windows launch; real operations gated**
 
 Remaining goals:
 
@@ -45,7 +45,7 @@ Remaining goals:
 - implement the real Human decision lifecycle only after its authority and persistence design are accepted;
 - add authenticated protected-access and transmission controls only after Track 2 gates;
 - expose receipt, pause/resume/stop, recovery, and support diagnostics;
-- validate ordinary phone and Windows use without GitHub or terminal knowledge.
+- validate ordinary phone use without GitHub or terminal knowledge; one-click Windows startup is implemented and deterministically constrained to loopback.
 
 ## Track 4 — Product acceptance and release
 

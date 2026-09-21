@@ -1020,3 +1020,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The contract rejects arbitrary codes, real classification, enabled controls, receipt presence, and network calls. It performs no stop, resume, repair, replay, authentication, ERiC execution, persistence, or transmission.
 
 **Verification:** Targeted UI/support suite `27 passed`; full regression `653 passed, 1 skipped`.
+
+
+## D-085 — UI-11 one-click loopback Windows launcher
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Provide a repository-relative Windows double-click launcher for the existing synthetic FastAPI UI. It sets only a process-local source path, opens only `http://127.0.0.1:8000`, binds Uvicorn exactly to loopback, and uses the visible launcher window as the understandable stop boundary.
+
+**Safety:** Deterministic tests deny public/LAN binding, external URLs, credential inputs, and submission paths. The launcher installs and persists nothing and adds no authentication, real data, deployment, ERiC invocation, or transmission.
+
+**Verification:** Targeted launcher/UI suite `15 passed`; full regression `656 passed, 1 skipped`.
