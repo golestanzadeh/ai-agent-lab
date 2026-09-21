@@ -66,3 +66,18 @@ def test_current_limit_controller_allows_safe_package_chaining() -> None:
     for text in (current, controller):
         assert "sequential" in text
         assert "at most one bounded package per heartbeat" not in text
+
+
+def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
+    active_files = (
+        ROOT / "CURRENT_STATE.md",
+        ROOT / "ROADMAP.md",
+        DOCS / "p1-eric-e10-2024-plausibility.md",
+        DOCS / "p1-eric-e10-2024-readiness.md",
+        DOCS / "ui-synthetic-review-preview.md",
+        DOCS / "ui-synthetic-workflow.md",
+    )
+    for path in active_files:
+        text = path.read_text(encoding="utf-8")
+        assert "six-rule" not in text
+        assert "LOCAL_SIX_RULE_SUBSET_PASS" not in text

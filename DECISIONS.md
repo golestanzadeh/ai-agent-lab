@@ -1187,3 +1187,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Presentation reconciliation:** UI review contract version 3 replaces the stale six-rule status with `LOCAL_TWELVE_RULE_SUBSET_PASS`; readiness and UI documentation now describe the same twelve-rule boundary.
 
 **Regression hardening:** Both gross-wage dependency rules (`310030`, `310090`) and all four optional-tax-to-wage-tax dependency rules have explicit negative tests for their respective wage groups.
+
+**Documentation guard:** Active E10/readiness/UI records now have a deterministic check preventing reintroduction of the superseded six-rule status; historical checkpoint text remains preserved.
