@@ -11,13 +11,19 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "1"
+PLAUSIBILITY_PROFILE_VERSION = "2"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
     "241",
     "310010",
+    "310030",
+    "310050",
+    "310060",
     "310070",
+    "310090",
+    "310110",
+    "310120",
     "100200001",
     "100200112",
     "121355",
@@ -126,7 +132,7 @@ def _present(root: ET.Element, field_id: str) -> bool:
 def evaluate_local_e10_2024_plausibility(
     declaration: E10DeclarationResult,
 ) -> E10PlausibilityResult:
-    """Evaluate only the five reviewed presence rules; never invoke ERiC."""
+    """Evaluate only the reviewed presence rules; never invoke ERiC."""
     if not isinstance(declaration, E10DeclarationResult):
         raise E10PlausibilityError("an E10DeclarationResult is required")
     try:
@@ -137,9 +143,13 @@ def evaluate_local_e10_2024_plausibility(
     findings: list[PlausibilityFinding] = []
     gross_1_5 = _present(root, "E0200201")
     wage_tax_1_5 = _present(root, "E0200301")
+    solidarity_1_5 = _present(root, "E0200401")
+    church_tax_1_5 = _present(root, "E0200501")
     tax_class = _present(root, "E0200002")
     gross_6 = _present(root, "E0200203")
     wage_tax_6 = _present(root, "E0200303")
+    solidarity_6 = _present(root, "E0200403")
+    church_tax_6 = _present(root, "E0200503")
     expense_item = _present(root, "E0205406") or _present(root, "E0204802")
     other_expense_label = _present(root, "E0205405")
     other_expense_amount = _present(root, "E0205406")
@@ -149,8 +159,20 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
     if gross_1_5 and not wage_tax_1_5:
         findings.append(PlausibilityFinding("310010", ("E0200201", "E0200301"), "wage tax is required when tax-class 1-5 wages are present"))
+    if (wage_tax_1_5 or solidarity_1_5 or church_tax_1_5) and not gross_1_5:
+        findings.append(PlausibilityFinding("310030", ("E0200201", "E0200301", "E0200401", "E0200501"), "tax-class 1-5 wage taxes require gross wages"))
+    if solidarity_1_5 and not wage_tax_1_5:
+        findings.append(PlausibilityFinding("310050", ("E0200301", "E0200401"), "tax-class 1-5 solidarity surcharge requires wage tax"))
+    if church_tax_1_5 and not wage_tax_1_5:
+        findings.append(PlausibilityFinding("310060", ("E0200301", "E0200501"), "tax-class 1-5 church tax requires wage tax"))
     if gross_6 and not wage_tax_6:
         findings.append(PlausibilityFinding("310070", ("E0200203", "E0200303"), "wage tax is required when tax-class 6 wages are present"))
+    if (wage_tax_6 or solidarity_6 or church_tax_6) and not gross_6:
+        findings.append(PlausibilityFinding("310090", ("E0200203", "E0200303", "E0200403", "E0200503"), "tax-class 6 wage taxes require gross wages"))
+    if solidarity_6 and not wage_tax_6:
+        findings.append(PlausibilityFinding("310110", ("E0200303", "E0200403"), "tax-class 6 solidarity surcharge requires wage tax"))
+    if church_tax_6 and not wage_tax_6:
+        findings.append(PlausibilityFinding("310120", ("E0200303", "E0200503"), "tax-class 6 church tax requires wage tax"))
     if expense_item and not expense_sum:
         findings.append(PlausibilityFinding("100200001", ("E0205406", "E0204802", "E0204803"), "other-expense itemization requires its sum"))
     if expense_sum and not expense_item:

@@ -1174,3 +1174,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Verification:** Targeted mapping, declaration, and local-plausibility suite `67 passed`.
 
 **Contract hardening:** Mapping-request identity is proven to change when either optional wage-tax amount changes, and obsolete profile-version `1` requests fail closed after the version-2 expansion.
+
+
+## D-099 — E10 local plausibility profile v2
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Add official rules `310030`, `310050`, `310060`, `310090`, `310110`, and `310120` to the source-bound local subset. These require gross wages when wage-tax fields exist and require wage tax when solidarity surcharge or church tax exists, separately for tax classes 1–5 and tax class 6.
+
+**Boundary:** This remains a local subset, not official ERiC plausibility execution. The exact protected annual-documentation source remains outside Git and all external capabilities remain denied.

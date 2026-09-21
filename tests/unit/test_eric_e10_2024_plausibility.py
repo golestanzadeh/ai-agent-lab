@@ -94,6 +94,30 @@ def test_reports_tax_class_six_withholding_rule():
 
 
 @pytest.mark.parametrize(
+    ("tax_class", "optional_field", "removed_field", "rule_code"),
+    [
+        (1, "solidarity_surcharge_eur", "E0200301", "310050"),
+        (1, "church_tax_eur", "E0200301", "310060"),
+        (6, "solidarity_surcharge_eur", "E0200303", "310110"),
+        (6, "church_tax_eur", "E0200303", "310120"),
+    ],
+)
+def test_optional_wage_taxes_require_wage_tax(tax_class, optional_field, removed_field, rule_code):
+    source_mapping = mapping()
+    # Rebuild from the fixture request through its public input is covered by mapping tests;
+    # here inject exact official fields to isolate the reviewed presence rules.
+    field_id = {("solidarity_surcharge_eur", 1): "E0200401", ("church_tax_eur", 1): "E0200501", ("solidarity_surcharge_eur", 6): "E0200403", ("church_tax_eur", 6): "E0200503"}[(optional_field, tax_class)]
+    xml = source_mapping.fragment_xml
+    if tax_class == 6:
+        xml = xml.replace("LStB_1_5_Sum", "LStB_6_Sum").replace("E0200201", "E0200203").replace("E0200301", "E0200303")
+        xml = without(xml, "E0200002")
+    xml = xml.replace(f"</{removed_field}>", f"</{removed_field}><{field_id}>1,00</{field_id}>")
+    changed = replace(declaration(), declaration_xml=without(xml, removed_field))
+    result = evaluate_local_e10_2024_plausibility(changed)
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),
