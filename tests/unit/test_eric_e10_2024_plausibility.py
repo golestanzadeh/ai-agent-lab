@@ -118,6 +118,22 @@ def test_optional_wage_taxes_require_wage_tax(tax_class, optional_field, removed
 
 
 @pytest.mark.parametrize(
+    ("tax_class", "gross_field", "rule_code"),
+    [(1, "E0200201", "310030"), (6, "E0200203", "310090")],
+)
+def test_wage_tax_group_requires_gross_wages(tax_class, gross_field, rule_code):
+    source = declaration()
+    xml = source.declaration_xml
+    if tax_class == 6:
+        xml = xml.replace("LStB_1_5_Sum", "LStB_6_Sum")
+        xml = xml.replace("E0200201", "E0200203").replace("E0200301", "E0200303")
+        xml = without(xml, "E0200002")
+    changed = replace(source, declaration_xml=without(xml, gross_field))
+    result = evaluate_local_e10_2024_plausibility(changed)
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

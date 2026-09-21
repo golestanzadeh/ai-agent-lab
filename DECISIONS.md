@@ -1185,3 +1185,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** This remains a local subset, not official ERiC plausibility execution. The exact protected annual-documentation source remains outside Git and all external capabilities remain denied.
 
 **Presentation reconciliation:** UI review contract version 3 replaces the stale six-rule status with `LOCAL_TWELVE_RULE_SUBSET_PASS`; readiness and UI documentation now describe the same twelve-rule boundary.
+
+**Regression hardening:** Both gross-wage dependency rules (`310030`, `310090`) and all four optional-tax-to-wage-tax dependency rules have explicit negative tests for their respective wage groups.
