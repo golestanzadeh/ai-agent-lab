@@ -22,3 +22,8 @@ UI-17 adds semantic table captions and row/column headers, labels the decision e
 marks decorative timeline numbers for assistive technology, and renders technical
 codes, hashes, and timestamps left-to-right inside the Persian RTL layout. Its
 targeted responsive/UI suite passed (`17 passed`).
+
+UI-18 replaces the whole-workspace live region with a dedicated atomic polite
+status message. A dynamic case change now announces only the selected synthetic
+case and tax year instead of prompting assistive technology to reread every panel.
+Targeted responsive/UI/documentation verification passed (`23 passed`).

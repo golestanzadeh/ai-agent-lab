@@ -1,4 +1,7 @@
-<section id="workspace" class="workspace" aria-live="polite" data-case-id="{{ workspace.case_id }}">
+<section id="workspace" class="workspace" data-case-id="{{ workspace.case_id }}">
+  <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+    پروندهٔ {{ workspace.case_id }} برای سال {{ workspace.tax_year }} نمایش داده شد.
+  </p>
   <div class="scope-strip">
     <div><span>پرونده</span><strong>{{ workspace.case_id }}</strong></div>
     <div><span>سال</span><strong>{{ workspace.tax_year }}</strong></div>

@@ -1130,3 +1130,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Presentation semantics change no workflow behavior, document access, decision authority, control, persistence, networking, ERiC execution, or transmission capability.
 
 **Verification:** Targeted responsive/UI suite `17 passed`. Broader regression was not required because runtime behavior did not change.
+
+
+## D-095 — Concise assistive announcement for dynamic case changes
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Announce a successful synthetic case/year workspace change through a dedicated atomic polite status node. Do not mark the complete dynamically replaced workspace as a live region, because that would cause assistive technology to reread every panel after each selection.
+
+**Safety:** Presentation-only and local. No operational control, case mutation, external access, or transmission capability is introduced.
+
+**Verification:** Targeted responsive/UI/documentation suite `23 passed`. Broader regression was not required because runtime behavior did not change.

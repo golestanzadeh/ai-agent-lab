@@ -49,3 +49,11 @@ def test_document_table_and_mixed_direction_values_are_semantic() -> None:
     assert 'class="mono" dir="ltr"' in text
     assert '<time dir="ltr" datetime=' in text
     assert 'class="stage-index" aria-hidden="true"' in text
+
+
+def test_dynamic_workspace_announces_only_a_concise_case_change() -> None:
+    text = TestClient(create_app()).get("/").text
+    assert '<section id="workspace" class="workspace" data-case-id=' in text
+    assert 'class="sr-only" role="status" aria-live="polite" aria-atomic="true"' in text
+    assert "برای سال 2024 نمایش داده شد" in text
+    assert ".sr-only{position:absolute;width:1px;height:1px" in CSS
