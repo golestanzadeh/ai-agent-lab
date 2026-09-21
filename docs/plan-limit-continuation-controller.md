@@ -31,9 +31,9 @@ The lower weekly threshold avoids permanently stranding the acceptance/checkpoin
 
 Read limits:
 
-1. at the start of every project turn;
+1. before the first package only when the current execution window has no valid and reliable live observation;
 2. immediately after completing, verifying, committing, and pushing each bounded work package;
-3. treat that end-of-package observation as the authorization check before starting the next package;
+3. treat that end-of-package observation as the authoritative authorization check before starting the next package;
 4. before a broad test suite or other expensive operation when the last observation may no longer provide a safe buffer;
 5. before commit/push when the package consumed enough capacity that the safety buffer may have changed;
 6. whenever the app warns that a limit is nearly exhausted.
@@ -67,6 +67,12 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 6. after each completed and pushed package, reread live limits and use that observation as the precondition for the next package; continue package by package in the same heartbeat while limits, repository safety, prerequisites, and Human Gates allow;
 7. stop before the next package when a threshold, unsafe repository state, unclear ownership, missing prerequisite, or Human Gate is reached;
 8. notify the Project Owner only on a meaningful pause, resume, completion, failure, conflict, or required Human action.
+
+### Mandatory continuation rule
+
+After every completed, verified, committed, and pushed package, the live limit check is mandatory. When limits remain above the applicable stop thresholds and repository safety, prerequisites, authorization, and Human Gates permit another package, the same execution must immediately begin the next highest-value authorized bounded package. Routine success, a clean synchronized repository, and healthy limits are not terminal conditions and must not return control or produce a routine report.
+
+Execution may terminate only when a token threshold requires `TOKEN_PAUSED`, a genuine Human Gate is reached, no authorized prerequisite-ready independent package remains, repository ownership or synchronization is unsafe, required live limits cannot be obtained, a material failure/conflict prevents safe continuation, or another governance rule explicitly requires stopping. The exact terminal condition must be evaluated and recorded before control is returned. No fixed package-count limit applies.
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 

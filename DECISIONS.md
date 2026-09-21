@@ -1191,3 +1191,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Documentation guard:** Active E10/readiness/UI records now have a deterministic check preventing reintroduction of the superseded six-rule status; historical checkpoint text remains preserved.
 
 **Official-XSD verification:** Both tax-class 1–5 and tax-class 6 synthetic declarations containing the new optional solidarity surcharge and church-tax fields passed local validation against the exact hash-pinned official `E10-2024.xsd`. Protected schema files remained outside Git.
+
+
+## D-100 — Mandatory continuation and fallback-only initial limit check
+
+**Status:** active on 2026-09-21 by explicit Project Owner instruction
+
+**Decision:** Routine heartbeat-start limit checks are disabled. Use a pre-first-package live check only when the current execution window has no valid reliable observation. Every completed/pushed package must be followed by a live limit check, and safe capacity plus an available authorized package requires immediate same-execution continuation.
+
+**Terminal conditions:** Return control only for `TOKEN_PAUSED`, a genuine Human Gate, exhaustion of authorized prerequisite-ready independent packages, unsafe repository ownership/synchronization, unavailable required live limits, a material failure/conflict, or another explicit governance stop. Record the exact terminal condition. Routine success, clean synchronization, and healthy limits are non-terminal. D-100 supersedes D-093 only where D-093 required an unconditional initial check; all thresholds and safety gates remain unchanged.

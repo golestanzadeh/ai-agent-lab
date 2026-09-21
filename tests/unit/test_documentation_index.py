@@ -67,6 +67,10 @@ def test_current_limit_controller_allows_safe_package_chaining() -> None:
         assert "sequential" in text
         assert "at most one bounded package per heartbeat" not in text
 
+    assert "routine heartbeat-start checks are disabled" in current
+    assert "Mandatory continuation rule" in controller
+    assert "No fixed package-count limit applies" in controller
+
 
 def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
     active_files = (
