@@ -55,3 +55,14 @@ def test_canonical_current_records_agree_on_branch_and_execution_state() -> None
     for text in (snapshot, current):
         assert "d021-agent-case-provisioning" in text
         assert "AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE" in text
+
+
+def test_current_limit_controller_allows_safe_package_chaining() -> None:
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    controller = (DOCS / "plan-limit-continuation-controller.md").read_text(
+        encoding="utf-8"
+    )
+
+    for text in (current, controller):
+        assert "sequential" in text
+        assert "at most one bounded package per heartbeat" not in text

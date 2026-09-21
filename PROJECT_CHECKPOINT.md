@@ -58,6 +58,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The compact ROADMAP current-position summary is reconciled through UI-18 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - The Project Owner directed end-of-package limit checks with immediate same-heartbeat continuation while safe; the initial heartbeat observation remains mandatory to prevent work from starting on stale usage data.
+- Stale current-state and controller wording that still limited a heartbeat to one package has been removed; an automated documentation check now protects the active sequential-package policy while historical decisions remain intact.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.

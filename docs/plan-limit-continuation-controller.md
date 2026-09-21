@@ -70,7 +70,7 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and performs at most one bounded package per heartbeat while the repository, limits, prerequisites, and Human Gates remain safe.
+The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and may perform sequential bounded packages in one heartbeat, provided every package is followed by a fresh limit and repository-safety check before the next begins.
 
 ## Host and scheduler limitation
 

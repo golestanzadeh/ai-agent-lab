@@ -1141,3 +1141,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Presentation-only and local. No operational control, case mutation, external access, or transmission capability is introduced.
 
 **Verification:** Targeted responsive/UI/documentation suite `23 passed`. Broader regression was not required because runtime behavior did not change.
+
+
+## D-096 — Remove stale single-package heartbeat wording
+
+**Status:** reconciled and technically verified on 2026-09-21
+
+**Decision:** Reconcile the current-state record and operational controller with D-093. A heartbeat may chain sequential bounded packages only after each completed package is verified, committed, pushed, and followed by fresh limit and repository-safety checks.
+
+**Historical record:** Older decisions that accurately record the former one-package-per-run policy remain unchanged as chronology; D-093 and this reconciliation supersede that operational limit.
