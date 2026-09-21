@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "5"
+MAPPING_PROFILE_VERSION = "6"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -51,6 +51,10 @@ class WorkEquipmentType(str, Enum):
     COMPUTER = "Computer"
 
 
+class HomeOfficeExpenseType(str, Enum):
+    EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER = "Ausstattung (ohne Büromöbel und Computer)"
+
+
 class MappingOutcome(str, Enum):
     LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED = (
         "LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED"
@@ -79,6 +83,8 @@ class E10MappingRequest:
     professional_association_eur: int | None = None
     work_equipment_type: WorkEquipmentType | None = None
     work_equipment_eur: int | None = None
+    home_office_expense_type: HomeOfficeExpenseType | None = None
+    home_office_expense_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -121,6 +127,14 @@ class E10MappingRequest:
             if not isinstance(self.work_equipment_type, WorkEquipmentType):
                 raise E10MappingError("work equipment requires an explicit supported official type")
             _whole_euros("work_equipment_eur", self.work_equipment_eur)
+        if (self.home_office_expense_type is None) is not (
+            self.home_office_expense_eur is None
+        ):
+            raise E10MappingError("home-office expense type and amount must be provided together")
+        if self.home_office_expense_type is not None:
+            if not isinstance(self.home_office_expense_type, HomeOfficeExpenseType):
+                raise E10MappingError("home-office expense requires an explicit supported official type")
+            _whole_euros("home_office_expense_eur", self.home_office_expense_eur)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -298,7 +312,15 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             E10FieldBinding("work_equipment_eur", "/N/Wk/Arbeitsmittel/Einz/E0204402", "E0204402", amount),
             E10FieldBinding("work_equipment_eur", "/N/Wk/Arbeitsmittel/Sum/E0204403", "E0204403", amount),
         )
-    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + (
+    home_office_bindings = ()
+    if request.home_office_expense_type is not None:
+        amount = _whole_euros("home_office_expense_eur", request.home_office_expense_eur)
+        home_office_bindings = (
+            E10FieldBinding("home_office_expense_type", "/N/Wk/Arb_Zim/Einz/E0204503", "E0204503", request.home_office_expense_type.value),
+            E10FieldBinding("home_office_expense_eur", "/N/Wk/Arb_Zim/Einz/E0204505", "E0204505", amount),
+            E10FieldBinding("home_office_expense_eur", "/N/Wk/Arb_Zim/Sum/E0204504", "E0204504", amount),
+        )
+    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -365,6 +387,13 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         ET.SubElement(item, _qname("E0204402")).text = values["E0204402"]
         equipment_sum = ET.SubElement(work_equipment, _qname("Sum"))
         ET.SubElement(equipment_sum, _qname("E0204403")).text = values["E0204403"]
+    if request.home_office_expense_type is not None:
+        home_office = ET.SubElement(expenses, _qname("Arb_Zim"))
+        item = ET.SubElement(home_office, _qname("Einz"))
+        ET.SubElement(item, _qname("E0204503")).text = values["E0204503"]
+        ET.SubElement(item, _qname("E0204505")).text = values["E0204505"]
+        home_office_sum = ET.SubElement(home_office, _qname("Sum"))
+        ET.SubElement(home_office_sum, _qname("E0204504")).text = values["E0204504"]
     other_expenses = ET.SubElement(expenses, _qname("Weitere_Wk"))
     other_expense_item = ET.SubElement(other_expenses, _qname("Sonst"))
     ET.SubElement(other_expense_item, _qname("E0205405")).text = values["E0205405"]

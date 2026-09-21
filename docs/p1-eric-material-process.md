@@ -12,7 +12,7 @@ Package 3 designs and implements only a synthetic, local process for registering
 2. Bind each record to the exact ERiC 44.3.6.0 / UFA10 / tax-year 2024 route, a canonical SHA-256 reference, a `synthetic://` locator, and a synthetic registrant.
 3. Require one later, independently identified synthetic reviewer to approve each exact record identity.
 4. Fail closed on missing, duplicate, rejected, reordered, self-reviewed, mismatched, or mutated evidence.
-5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. Following governed retrieval, the immutable package-3 status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; this process artifact itself grants no mapping or execution capability. Later mapping profile v5, official-XSD validation, and the twenty-two-rule local plausibility subset are separate downstream artifacts and do not rewrite this historical identity.
+5. Return `SYNTHETIC_PROCESS_READY_OFFICIAL_STATUS_BLOCKED` only when the synthetic workflow is complete. Following governed retrieval, the immutable package-3 status is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`; this process artifact itself grants no mapping or execution capability. Later mapping profile v6, official-XSD validation, and the twenty-seven-rule local plausibility subset are separate downstream artifacts and do not rewrite this historical identity.
 
 ## Acceptance criteria
 

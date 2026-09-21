@@ -1384,3 +1384,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Mapping and plausibility profile version `5` implements one explicit synthetic `Computer` work-equipment item in `E0204401`, its whole-euro amount in `E0204402`, and derived sum `E0204403`. It evaluates official rules `330122`, `100200100`, `100200110`, `122050`, and `121410`. Rule `122050` uses the authoritative predicate `abs(sum - item_total) > 5`; exact boundary tests prove that differences `-5` and `5` pass while `-6` and `6` fail. The generated declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `166 passed, 1 warning`; the complete local regression passes with `748 passed, 1 skipped, 1 warning`. All external capabilities remain denied.
+
+
+## D-127 — Home-office workroom E10 subset implemented
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Mapping and plausibility profile version `6` implements one explicit synthetic home-office workroom expense using `E0204503`, `E0204505`, and derived sum `E0204504`. It evaluates official rules `100200101`, `100200111`, `122056`, `330123`, and `121432`; rule `122056` uses the already recovered exact `abs(sum - item_total) > 5` predicate. The supported type is closed to the official value `Ausstattung (ohne Büromöbel und Computer)`. The combined declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `181 passed, 1 warning`; the complete local regression passes with `763 passed, 1 skipped, 1 warning`. All external capabilities remain denied.

@@ -12,6 +12,7 @@ from agent_lab.eric_e10_2024_mapping import (
     E10MappingError,
     E10MappingRequest,
     E10Person,
+    HomeOfficeExpenseType,
     MappingOutcome,
     OtherExpenseCategory,
     WorkEquipmentType,
@@ -162,6 +163,38 @@ def test_rejects_invalid_work_equipment_semantics(changes):
         replace(request(), **changes)
 
 
+def test_maps_single_home_office_item_and_matching_sum():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            home_office_expense_type=(
+                HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER
+            ),
+            home_office_expense_eur=2_345,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204503", "Ausstattung (ohne Büromöbel und Computer)") in observed
+    assert ("E0204505", "2345") in observed
+    assert ("E0204504", "2345") in observed
+    assert "<Arb_Zim>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"home_office_expense_type": HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER},
+        {"home_office_expense_eur": 1},
+        {"home_office_expense_type": "anteilige Miete", "home_office_expense_eur": 1},
+        {"home_office_expense_type": HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER, "home_office_expense_eur": -1},
+        {"home_office_expense_type": HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER, "home_office_expense_eur": 1_000_000_000_000},
+    ],
+)
+def test_rejects_invalid_home_office_semantics(changes):
+    with pytest.raises(E10MappingError, match="home-office|home_office"):
+        replace(request(), **changes)
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -275,10 +308,17 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
         work_equipment_type=WorkEquipmentType.COMPUTER,
         work_equipment_eur=1,
     ).artifact_identity != baseline.artifact_identity
+    assert replace(
+        baseline,
+        home_office_expense_type=(
+            HomeOfficeExpenseType.EQUIPMENT_EXCLUDING_FURNITURE_AND_COMPUTER
+        ),
+        home_office_expense_eur=1,
+    ).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4"])
-def test_older_profile_request_is_rejected_after_v5_expansion(profile_version):
+@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5"])
+def test_older_profile_request_is_rejected_after_v6_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

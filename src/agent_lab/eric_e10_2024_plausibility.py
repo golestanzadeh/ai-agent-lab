@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "5"
+PLAUSIBILITY_PROFILE_VERSION = "6"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -37,6 +37,11 @@ SUPPORTED_OFFICIAL_RULES = (
     "100200110",
     "122050",
     "121410",
+    "100200101",
+    "100200111",
+    "122056",
+    "330123",
+    "121432",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -182,6 +187,9 @@ def evaluate_local_e10_2024_plausibility(
     work_equipment_type = _present(root, "E0204401")
     work_equipment_amounts = _integer_values(root, "E0204402")
     work_equipment_sums = _integer_values(root, "E0204403")
+    home_office_type = _present(root, "E0204503")
+    home_office_amounts = _integer_values(root, "E0204505")
+    home_office_sums = _integer_values(root, "E0204504")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -227,6 +235,16 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("122050", ("E0204402", "E0204403"), "work-equipment sum differs from item total beyond the official tolerance of five"))
     if work_equipment_type is not bool(work_equipment_amounts):
         findings.append(PlausibilityFinding("121410", ("E0204401", "E0204402"), "work-equipment type and amount must be provided together"))
+    if home_office_amounts and sum(home_office_amounts) < 0:
+        findings.append(PlausibilityFinding("100200101", ("E0204505",), "home-office item total cannot be negative"))
+    if home_office_sums and not home_office_amounts:
+        findings.append(PlausibilityFinding("100200111", ("E0204505", "E0204504"), "home-office sum requires itemization"))
+    if home_office_sums and home_office_amounts and abs(home_office_sums[0] - sum(home_office_amounts)) > 5:
+        findings.append(PlausibilityFinding("122056", ("E0204505", "E0204504"), "home-office sum differs from item total beyond the official tolerance of five"))
+    if home_office_amounts and not home_office_sums:
+        findings.append(PlausibilityFinding("330123", ("E0204505", "E0204504"), "home-office itemization requires its sum"))
+    if home_office_type is not bool(home_office_amounts):
+        findings.append(PlausibilityFinding("121432", ("E0204503", "E0204505"), "home-office expense type and amount must be provided together"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(

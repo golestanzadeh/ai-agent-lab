@@ -245,6 +245,46 @@ def test_work_equipment_official_tolerance_boundary_is_absolute_and_exclusive(
 
 
 @pytest.mark.parametrize(
+    ("payload", "rule_code"),
+    [
+        ("<E0204505>10</E0204505>", "330123"),
+        ("<E0204505>-1</E0204505><E0204504>0</E0204504>", "100200101"),
+        ("<E0204504>10</E0204504>", "100200111"),
+        ("<E0204503>anteilige Miete</E0204503>", "121432"),
+    ],
+)
+def test_home_office_presence_and_nonnegative_rules(payload, rule_code):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Arb_Zim><Einz>{payload}</Einz></Arb_Zim></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
+    ("difference", "fails"),
+    [(5, False), (-5, False), (6, True), (-6, True)],
+)
+def test_home_office_official_tolerance_boundary_is_absolute_and_exclusive(
+    difference, fails
+):
+    source = declaration()
+    item_amount = 100
+    declared_sum = item_amount + difference
+    payload = (
+        f"<E0204503>anteilige Miete</E0204503><E0204505>{item_amount}</E0204505>"
+        f"<E0204504>{declared_sum}</E0204504>"
+    )
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Arb_Zim><Einz>{payload}</Einz></Arb_Zim></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("122056" in codes) is fails
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

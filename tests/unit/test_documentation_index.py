@@ -102,8 +102,8 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 
     for text in (adapter, material, preview):
         assert "historical" in text
-        assert "mapping profile v5" in text
-        assert "twenty-two-rule local plausibility subset" in text
+        assert "mapping profile v6" in text
+        assert "twenty-seven-rule local plausibility subset" in text
         assert "ERiC-engine execution" in text
 
     current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")

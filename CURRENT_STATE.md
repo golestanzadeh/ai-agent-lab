@@ -17,7 +17,7 @@ Last reconciled: **2026-09-22**
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile version 2 for the bounded Anlage N employment subset; explicit optional solidarity surcharge and church-tax amounts map to official tax-class-specific sum fields without inferring omitted values.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
-- Source-evidenced local plausibility profile version 5 evaluates twenty-two official Anlage N rules, including bounded single-item professional-association and work-equipment contracts.
+- Source-evidenced local plausibility profile version 6 evaluates twenty-seven official Anlage N rules, including bounded single-item professional-association, work-equipment, and home-office workroom contracts.
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. This verifies the current local unit surface; it does not prove the earlier intermittent environment behavior permanently resolved.
 - Historical package-2 adapter and synthetic-preview documentation now explicitly defer current mapping/XSD/plausibility claims to the separately versioned E10 readiness pipeline; immutable upstream status names are no longer presented as current blockers.
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
@@ -28,6 +28,7 @@ Last reconciled: **2026-09-22**
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
 - The profile-v5 work-equipment expansion passes its focused E10/UI/documentation suite (`166 passed, 1 warning`), exact official-XSD probe, and complete local regression (`748 passed, 1 skipped, 1 warning`).
+- The profile-v6 home-office workroom expansion passes its focused E10/UI/documentation suite (`181 passed, 1 warning`), exact official-XSD probe, and complete local regression (`763 passed, 1 skipped, 1 warning`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -35,7 +36,7 @@ Last reconciled: **2026-09-22**
 - The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
 - After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
 - Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
-- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v5, exact official-XSD validation, and a twenty-two-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v6, exact official-XSD validation, and a twenty-seven-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
 
 ## Active boundaries
 
@@ -60,7 +61,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-After completing and pushing the profile-v5 work-equipment package, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
+After completing and pushing the profile-v6 home-office workroom package, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
 
 ## Non-negotiable constraints
 

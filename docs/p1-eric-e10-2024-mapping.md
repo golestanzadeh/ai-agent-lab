@@ -48,3 +48,7 @@ Mapping profile version 4 implements one explicitly synthetic professional-assoc
 ## Work-equipment subset
 
 Mapping profile version 5 implements one explicitly synthetic work-equipment expense under `N/Wk/Arbeitsmittel`: closed supported type `Computer` in `E0204401`, whole-euro item amount `E0204402`, and matching derived sum `E0204403`. Type and amount are required together; the amount is non-negative and limited to the official twelve-digit boundary; omission removes the complete context. No free-form or real-case meaning is inferred. The generated declaration passes the exact hash-pinned official E10/2024 XSD locally.
+
+## Home-office workroom subset
+
+Mapping profile version 6 implements one explicitly synthetic home-office workroom expense under `N/Wk/Arb_Zim`. The closed supported official type `Ausstattung (ohne Büromöbel und Computer)` maps to `E0204503`, its whole-euro amount maps to `E0204505`, and the exact derived sum maps to `E0204504`. Type and amount are paired, non-negative, limited to the official twelve-digit boundary, and omitted as a complete context when absent. The combined profile-v6 declaration passes the exact hash-pinned official E10/2024 XSD locally.

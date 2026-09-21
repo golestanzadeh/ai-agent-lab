@@ -49,7 +49,7 @@ STATUS_LABELS = {
     "ARTICLE_1_DESTINATION_TRANSMISSION_NOT_APPROVED": "مجوز مقصد و ارسال مادهٔ ۱ صادر نشده است",
     "TRANSMITTER_NOT_IMPLEMENTED": "فرستنده پیاده‌سازی نشده است",
     "LOCAL_E10_2024_XSD_VALIDATED": "ساختار محلی E10/2024 با XSD معتبر است",
-    "LOCAL_TWENTY_TWO_RULE_SUBSET_PASS": "بیست‌ودو قاعدهٔ محلی منتخب موفق‌اند",
+    "LOCAL_TWENTY_SEVEN_RULE_SUBSET_PASS": "بیست‌وهفت قاعدهٔ محلی منتخب موفق‌اند",
     "SYNTH_INCOME_REVIEWED": "درآمد مصنوعی بازبینی شده است",
     "SYNTH_EXPENSE_REVIEWED": "هزینهٔ مصنوعی بازبینی شده است",
 }
