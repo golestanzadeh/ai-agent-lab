@@ -92,7 +92,7 @@ def test_synthetic_review_and_preview_render_with_no_operational_capability() ->
     assert "SYNTH_INCOME_REVIEWED" in response.text
     assert "EUR_SYNTHETIC" in response.text
     assert "LOCAL_E10_2024_XSD_VALIDATED" in response.text
-    assert "LOCAL_TWELVE_RULE_SUBSET_PASS" in response.text
+    assert "LOCAL_TWENTY_TWO_RULE_SUBSET_PASS" in response.text
     assert "official receipt" not in response.text.lower()
 
 def test_decision_queue_is_display_only():

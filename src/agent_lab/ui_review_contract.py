@@ -34,7 +34,7 @@ class SyntheticReviewView:
     currency: str
     preview_reference: str
     official_mapping_status: str = "LOCAL_E10_2024_XSD_VALIDATED"
-    local_plausibility_status: str = "LOCAL_TWELVE_RULE_SUBSET_PASS"
+    local_plausibility_status: str = "LOCAL_TWENTY_TWO_RULE_SUBSET_PASS"
     version: str = REVIEW_VIEW_VERSION
     data_classification: str = "SYNTHETIC_SUMMARY_ONLY"
     authentication_enabled: bool = False
@@ -57,7 +57,7 @@ class SyntheticReviewView:
         _ref(self.preview_reference)
         if self.official_mapping_status != "LOCAL_E10_2024_XSD_VALIDATED":
             raise UIReviewError("local mapping status cannot change")
-        if self.local_plausibility_status != "LOCAL_TWELVE_RULE_SUBSET_PASS":
+        if self.local_plausibility_status != "LOCAL_TWENTY_TWO_RULE_SUBSET_PASS":
             raise UIReviewError("local plausibility status cannot change")
         if self.version != REVIEW_VIEW_VERSION or self.data_classification != "SYNTHETIC_SUMMARY_ONLY":
             raise UIReviewError("review contract identity cannot change")

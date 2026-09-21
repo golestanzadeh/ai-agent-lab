@@ -205,6 +205,46 @@ def test_professional_association_rules(xml_changes, rule_code):
 
 
 @pytest.mark.parametrize(
+    ("payload", "rule_code"),
+    [
+        ("<E0204402>10</E0204402>", "330122"),
+        ("<E0204402>-1</E0204402><E0204403>0</E0204403>", "100200100"),
+        ("<E0204403>10</E0204403>", "100200110"),
+        ("<E0204401>Computer</E0204401>", "121410"),
+    ],
+)
+def test_work_equipment_presence_and_nonnegative_rules(payload, rule_code):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Arbeitsmittel><Einz>{payload}</Einz></Arbeitsmittel></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
+    ("difference", "fails"),
+    [(5, False), (-5, False), (6, True), (-6, True)],
+)
+def test_work_equipment_official_tolerance_boundary_is_absolute_and_exclusive(
+    difference, fails
+):
+    source = declaration()
+    item_amount = 100
+    equipment_sum = item_amount + difference
+    payload = (
+        f"<E0204401>Computer</E0204401><E0204402>{item_amount}</E0204402>"
+        f"<E0204403>{equipment_sum}</E0204403>"
+    )
+    xml = source.declaration_xml.replace(
+        "</Wk>", f"<Arbeitsmittel><Einz>{payload}</Einz></Arbeitsmittel></Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("122050" in codes) is fails
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

@@ -43,8 +43,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
-- Bounded local E10/2024 Anlage N mapping profile version 4 is implemented from reviewed official material, including the explicit single-item professional-association subset. Its declaration validates locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
-- Source-evidenced local plausibility profile version 4 evaluates seventeen official rules, including five professional-association integrity rules.
+- Bounded local E10/2024 Anlage N mapping profile version 5 is implemented from reviewed official material, including explicit single-item professional-association and work-equipment subsets. Its declaration validates locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
+- Source-evidenced local plausibility profile version 5 evaluates twenty-two official rules, including the five work-equipment rules and the exact official `UngleichMitToleranz5` boundary.
 - Each bounded plausibility result is cryptographically bound to the exact reviewed `Jahresdokumentation_E10_2024.ods` filename and SHA-256; the protected source remains outside Git.
 - A current-state readiness artifact binds exact mapping, official-XSD declaration, and passing local-plausibility identities while preserving all external blockers and historical package records.
 - Phase P1 local synthetic work is complete through package 7.
@@ -61,17 +61,18 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Stale current-state and controller wording that still limited a heartbeat to one package has been removed; an automated documentation check now protects the active sequential-package policy while historical decisions remain intact.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
-- The readiness and UI presentation contracts are reconciled with the twelve-rule local plausibility profile; no stale six-rule success claim remains in active product records.
+- The readiness and UI presentation contracts are reconciled with the twenty-two-rule local plausibility profile.
 - Synthetic profile-v3 declarations for both wage groups, including optional solidarity surcharge, employee church tax, and spouse/life-partner church tax, pass the exact hash-pinned official E10/2024 XSD locally.
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. The earlier intermittent environment behavior was not reproduced; no unsupported permanent-fix claim is made.
-- Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v3, exact official-XSD validation, or the twelve-rule local plausibility result.
+- Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v5, exact official-XSD validation, or the twenty-two-rule local plausibility result.
 - The package-3 material-process record is likewise explicit that its immutable recovery status is historical upstream evidence, not the canonical current E10 readiness claim.
 - The Project Owner authorized local synthetic non-production repair/replay policy design and implementation. The policy, versioned evaluator, and bounded continuation executor now enforce exact-prefix recovery across every permitted remaining-stage boundary, one write-once attempt per planned checkpoint, completed-stage non-replay, idempotent completed-state handling, independent acceptance, and fail-closed partial/extra-stage ambiguity. Targeted runtime verification passes with `34 passed`.
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
 - The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
+- The profile-v5 work-equipment expansion passes its focused E10/UI/documentation suite (`166 passed, 1 warning`), exact official-XSD probe, and complete local regression (`748 passed, 1 skipped, 1 warning`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=100`; `weekly_remaining_percent=39`; `five_hour_resets_at=1790047586`; `weekly_resets_at=1790525245`; recovered continuation commit `43b53bab41d94922706a8398396f46874669d219`.
-- **Exact next action:** restore the five-minute cadence, pass the repository recovery gate, and implement the already authorized local synthetic work-equipment subset. Official ERiC 44.3.6.0 documentation defines `UngleichMitToleranz5` exactly as `abs(v1 - v2) > 5`; difference `5` is not a violation.
+- **Exact next action:** after completing and pushing the profile-v5 work-equipment package, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

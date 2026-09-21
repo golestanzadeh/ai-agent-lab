@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "4"
+PLAUSIBILITY_PROFILE_VERSION = "5"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -32,6 +32,11 @@ SUPPORTED_OFFICIAL_RULES = (
     "201010",
     "330121",
     "100200108",
+    "330122",
+    "100200100",
+    "100200110",
+    "122050",
+    "121410",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -174,6 +179,9 @@ def evaluate_local_e10_2024_plausibility(
     association_label = _present(root, "E0204001")
     association_amounts = _integer_values(root, "E0204003")
     association_sums = _integer_values(root, "E0204002")
+    work_equipment_type = _present(root, "E0204401")
+    work_equipment_amounts = _integer_values(root, "E0204402")
+    work_equipment_sums = _integer_values(root, "E0204403")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -209,6 +217,16 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("330121", ("E0204003", "E0204002"), "professional-association itemization requires its sum"))
     if association_label is not bool(association_amounts):
         findings.append(PlausibilityFinding("100200108", ("E0204001", "E0204003"), "professional-association description and amount must be provided together"))
+    if work_equipment_amounts and not work_equipment_sums:
+        findings.append(PlausibilityFinding("330122", ("E0204402", "E0204403"), "work-equipment itemization requires its sum"))
+    if work_equipment_amounts and sum(work_equipment_amounts) < 0:
+        findings.append(PlausibilityFinding("100200100", ("E0204402",), "work-equipment item total cannot be negative"))
+    if work_equipment_sums and not work_equipment_amounts:
+        findings.append(PlausibilityFinding("100200110", ("E0204402", "E0204403"), "work-equipment sum requires itemization"))
+    if work_equipment_sums and work_equipment_amounts and abs(work_equipment_sums[0] - sum(work_equipment_amounts)) > 5:
+        findings.append(PlausibilityFinding("122050", ("E0204402", "E0204403"), "work-equipment sum differs from item total beyond the official tolerance of five"))
+    if work_equipment_type is not bool(work_equipment_amounts):
+        findings.append(PlausibilityFinding("121410", ("E0204401", "E0204402"), "work-equipment type and amount must be provided together"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(

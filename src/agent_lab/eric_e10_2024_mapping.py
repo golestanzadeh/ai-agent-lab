@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "4"
+MAPPING_PROFILE_VERSION = "5"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -47,6 +47,10 @@ class OtherExpenseCategory(str, Enum):
     WRITING_MATERIALS = "Schreibmaterial"
 
 
+class WorkEquipmentType(str, Enum):
+    COMPUTER = "Computer"
+
+
 class MappingOutcome(str, Enum):
     LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED = (
         "LOCAL_PROFILE_VALIDATED_EXTERNAL_EXECUTION_BLOCKED"
@@ -73,6 +77,8 @@ class E10MappingRequest:
     partner_church_tax_eur: int | None = None
     professional_association_name: str | None = None
     professional_association_eur: int | None = None
+    work_equipment_type: WorkEquipmentType | None = None
+    work_equipment_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -109,6 +115,12 @@ class E10MappingRequest:
             if len(self.professional_association_name) > 999:
                 raise E10MappingError("professional association name exceeds the official boundary")
             _five_digit_euros("professional_association_eur", self.professional_association_eur)
+        if (self.work_equipment_type is None) is not (self.work_equipment_eur is None):
+            raise E10MappingError("work equipment type and amount must be provided together")
+        if self.work_equipment_type is not None:
+            if not isinstance(self.work_equipment_type, WorkEquipmentType):
+                raise E10MappingError("work equipment requires an explicit supported official type")
+            _whole_euros("work_equipment_eur", self.work_equipment_eur)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -278,7 +290,15 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             E10FieldBinding("professional_association_eur", "/N/Wk/Berufsverb/Einz/E0204003", "E0204003", amount),
             E10FieldBinding("professional_association_eur", "/N/Wk/Berufsverb/Sum/E0204002", "E0204002", amount),
         )
-    return wage_bindings + tax_bindings + association_bindings + (
+    work_equipment_bindings = ()
+    if request.work_equipment_type is not None:
+        amount = _whole_euros("work_equipment_eur", request.work_equipment_eur)
+        work_equipment_bindings = (
+            E10FieldBinding("work_equipment_type", "/N/Wk/Arbeitsmittel/Einz/E0204401", "E0204401", request.work_equipment_type.value),
+            E10FieldBinding("work_equipment_eur", "/N/Wk/Arbeitsmittel/Einz/E0204402", "E0204402", amount),
+            E10FieldBinding("work_equipment_eur", "/N/Wk/Arbeitsmittel/Sum/E0204403", "E0204403", amount),
+        )
+    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -338,6 +358,13 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         ET.SubElement(item, _qname("E0204003")).text = values["E0204003"]
         association_sum = ET.SubElement(association, _qname("Sum"))
         ET.SubElement(association_sum, _qname("E0204002")).text = values["E0204002"]
+    if request.work_equipment_type is not None:
+        work_equipment = ET.SubElement(expenses, _qname("Arbeitsmittel"))
+        item = ET.SubElement(work_equipment, _qname("Einz"))
+        ET.SubElement(item, _qname("E0204401")).text = values["E0204401"]
+        ET.SubElement(item, _qname("E0204402")).text = values["E0204402"]
+        equipment_sum = ET.SubElement(work_equipment, _qname("Sum"))
+        ET.SubElement(equipment_sum, _qname("E0204403")).text = values["E0204403"]
     other_expenses = ET.SubElement(expenses, _qname("Weitere_Wk"))
     other_expense_item = ET.SubElement(other_expenses, _qname("Sonst"))
     ET.SubElement(other_expense_item, _qname("E0205405")).text = values["E0205405"]

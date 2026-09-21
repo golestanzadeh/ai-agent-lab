@@ -14,6 +14,7 @@ from agent_lab.eric_e10_2024_mapping import (
     E10Person,
     MappingOutcome,
     OtherExpenseCategory,
+    WorkEquipmentType,
     map_synthetic_summary_to_e10_2024,
 )
 
@@ -131,6 +132,36 @@ def test_maps_single_professional_association_item_and_matching_sum():
     assert ("E0204002", "321") in observed
 
 
+def test_maps_single_work_equipment_item_and_matching_sum():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            work_equipment_type=WorkEquipmentType.COMPUTER,
+            work_equipment_eur=1_234,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204401", "Computer") in observed
+    assert ("E0204402", "1234") in observed
+    assert ("E0204403", "1234") in observed
+    assert "<Arbeitsmittel>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"work_equipment_type": WorkEquipmentType.COMPUTER},
+        {"work_equipment_eur": 1},
+        {"work_equipment_type": "Computer", "work_equipment_eur": 1},
+        {"work_equipment_type": WorkEquipmentType.COMPUTER, "work_equipment_eur": -1},
+        {"work_equipment_type": WorkEquipmentType.COMPUTER, "work_equipment_eur": 1_000_000_000_000},
+    ],
+)
+def test_rejects_invalid_work_equipment_semantics(changes):
+    with pytest.raises(E10MappingError, match="work equipment|work_equipment"):
+        replace(request(), **changes)
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -239,10 +270,15 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     assert replace(baseline, solidarity_surcharge_eur=1).artifact_identity != baseline.artifact_identity
     assert replace(baseline, church_tax_eur=1).artifact_identity != baseline.artifact_identity
     assert replace(baseline, partner_church_tax_eur=1).artifact_identity != baseline.artifact_identity
+    assert replace(
+        baseline,
+        work_equipment_type=WorkEquipmentType.COMPUTER,
+        work_equipment_eur=1,
+    ).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2", "3"])
-def test_older_profile_request_is_rejected_after_v3_expansion(profile_version):
+@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4"])
+def test_older_profile_request_is_rejected_after_v5_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

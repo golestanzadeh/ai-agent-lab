@@ -1377,3 +1377,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** active on 2026-09-22
 
 **Decision:** The reset-aligned wake reported five-hour `100%` and weekly `39%` remaining. End `TOKEN_PAUSED`, restore the normal five-minute cadence, execute the repository recovery gate from pushed commit `43b53bab41d94922706a8398396f46874669d219`, and continue the already authorized local synthetic D-122 work-equipment subset. All thresholds, external blockers, and Human Gates remain unchanged.
+
+
+## D-126 — Work-equipment E10 subset implemented
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Mapping and plausibility profile version `5` implements one explicit synthetic `Computer` work-equipment item in `E0204401`, its whole-euro amount in `E0204402`, and derived sum `E0204403`. It evaluates official rules `330122`, `100200100`, `100200110`, `122050`, and `121410`. Rule `122050` uses the authoritative predicate `abs(sum - item_total) > 5`; exact boundary tests prove that differences `-5` and `5` pass while `-6` and `6` fail. The generated declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `166 passed, 1 warning`; the complete local regression passes with `748 passed, 1 skipped, 1 warning`. All external capabilities remain denied.
