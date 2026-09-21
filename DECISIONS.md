@@ -1200,3 +1200,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Routine heartbeat-start limit checks are disabled. Use a pre-first-package live check only when the current execution window has no valid reliable observation. Every completed/pushed package must be followed by a live limit check, and safe capacity plus an available authorized package requires immediate same-execution continuation.
 
 **Terminal conditions:** Return control only for `TOKEN_PAUSED`, a genuine Human Gate, exhaustion of authorized prerequisite-ready independent packages, unsafe repository ownership/synchronization, unavailable required live limits, a material failure/conflict, or another explicit governance stop. Record the exact terminal condition. Routine success, clean synchronization, and healthy limits are non-terminal. D-100 supersedes D-093 only where D-093 required an unconditional initial check; all thresholds and safety gates remain unchanged.
+
+
+## D-101 — Preserve explicit-zero versus omitted optional wage taxes
+
+**Status:** technically verified on 2026-09-21
+
+**Decision:** Keep an explicitly supplied zero solidarity surcharge or church-tax amount as `0,00` in the official field, while an omitted value produces no field. The two requests and results retain different artifact identities; absence is never silently converted into a tax assertion.

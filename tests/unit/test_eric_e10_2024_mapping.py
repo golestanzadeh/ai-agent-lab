@@ -123,6 +123,19 @@ def test_rejects_invalid_optional_wage_tax_amounts(field, value):
         replace(request(), **{field: value})
 
 
+def test_explicit_zero_optional_taxes_are_distinct_from_omission() -> None:
+    omitted = map_synthetic_summary_to_e10_2024(request())
+    explicit_zero = map_synthetic_summary_to_e10_2024(
+        replace(request(), solidarity_surcharge_eur=0, church_tax_eur=0)
+    )
+    values = {item.field_id: item.lexical_value for item in explicit_zero.field_bindings}
+    assert values["E0200401"] == "0,00"
+    assert values["E0200501"] == "0,00"
+    assert "E0200401" not in omitted.fragment_xml
+    assert "E0200501" not in omitted.fragment_xml
+    assert explicit_zero.artifact_identity != omitted.artifact_identity
+
+
 def test_zero_values_preserve_official_lexical_shapes():
     result = map_synthetic_summary_to_e10_2024(
         request(gross_wages_eur=0, withheld_wage_tax_eur=0, deductible_expenses_eur=0)
