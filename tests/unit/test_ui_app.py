@@ -95,3 +95,12 @@ def test_submission_readiness_keeps_both_approvals_separate_and_unapproved():
     assert text.count("NOT_APPROVED") >= 2 and "TRANSMITTER_NOT_IMPLEMENTED" in text
     assert "LOCAL_MAPPING_XSD_AND_RULE_SUBSET_PASS" in text
     assert "موتور رسمی ERiC" in text and "NOT_EXECUTED" in text
+
+
+def test_support_and_recovery_diagnostics_are_display_only_and_current():
+    text = _client().get("/").text
+    assert "وضعیت عملیاتی امن" in text
+    assert "READ_ONLY_RECOVERY_DIAGNOSTICS_AVAILABLE" in text
+    assert "RECEIPT_NOT_AVAILABLE_NO_TRANSMISSION" in text
+    assert "نگاشت رسمی هنوز بازیابی نشده" not in text
+    assert "نگاشت محلی E10/2024 و اعتبارسنجی XSD تکمیل شده" in text

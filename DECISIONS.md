@@ -1009,3 +1009,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Boundary:** No thresholds, resume criteria, runtime permission, Human Gate, automation cadence, or project authority changed. The controller remains a cost and continuation guard and cannot create authority.
 
 **Verification:** Canonical checkpoint/current-state/controller consistency inspection and documentation diff check passed; no runtime code changed.
+
+
+## D-084 — UI-10 synthetic support and recovery diagnostics
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Add a versioned immutable support contract and display-only panel bound to exactly one synthetic case/run. Expose only closed allowlisted status codes for read-only recovery diagnostics, unimplemented pause/resume/stop controls, and receipt absence before transmission. Correct the remaining stale Persian mapping label to the current local E10/XSD state.
+
+**Safety:** The contract rejects arbitrary codes, real classification, enabled controls, receipt presence, and network calls. It performs no stop, resume, repair, replay, authentication, ERiC execution, persistence, or transmission.
+
+**Verification:** Targeted UI/support suite `27 passed`; full regression `653 passed, 1 skipped`.

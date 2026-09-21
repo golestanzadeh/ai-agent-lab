@@ -50,12 +50,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-9. Its review, readiness, and workflow diagnostics accurately display local E10 mapping/XSD/six-rule completion while keeping official-engine execution, real payload, both Article 1 approvals, and transmitter availability blocked.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-10. Its review, readiness, workflow, and support/recovery diagnostics accurately display local E10 mapping/XSD/six-rule completion, read-only recovery availability, unavailable operational controls, and the absence of a receipt, while keeping all real-operation blockers explicit.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- The compact ROADMAP current-position summary is reconciled through UI-9 as of 2026-09-21.
+- The compact ROADMAP current-position summary is reconciled through UI-10 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
@@ -745,4 +745,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Thresholds, resume criteria, one-package limit, repository-safety checks, and all Human Gates are unchanged.
 - Verification: canonical-state consistency inspection and documentation diff check passed; no runtime behavior changed.
 - Status: **PLAN_LIMIT_GUARD_ACTIVE / DOCUMENTATION_RECONCILED**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-10 synthetic support and recovery diagnostics — 2026-09-21
+
+- Added an immutable case/run-bound support contract with a closed safe-code allowlist for read-only recovery diagnostics, unavailable pause/resume/stop controls, and the absence of a receipt before transmission.
+- Added a display-only Persian support panel and corrected the last stale Persian mapping-not-recovered label in the workspace preview.
+- Real data, arbitrary diagnostic text, operational controls, receipt injection, networking, ERiC invocation, repair/replay, and transmission fail closed or remain absent.
+- Verification: targeted UI/support `27 passed`; full regression `653 passed, 1 skipped`.
+- Status: **UI_10_SYNTHETIC_SUPPORT_COMPLETE / OPERATIONAL_CONTROLS_AND_RECEIPT_GATED**.
 - Exact next action is the authoritative snapshot above.
