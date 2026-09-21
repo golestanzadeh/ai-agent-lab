@@ -1319,3 +1319,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and verified on 2026-09-21
 
 **Decision:** Update active downstream adapter, material-process, preview, and current-state descriptions to identify mapping profile v3 while preserving their immutable historical artifact states. This is documentation-only reconciliation; it changes no runtime behavior, authority, rule count, or external capability.
+
+
+## D-118 — No inferred employee-church-tax dependency
+
+**Status:** technically verified on 2026-09-21
+
+**Decision:** Explicit spouse/life-partner church-tax fields `E0200601` and `E0200603` participate in the reviewed gross-wage rules `310030` and `310090`, but must not be treated as employee church-tax fields for rules `310060` and `310120`. Negative tests protect this fail-closed distinction in both wage groups.

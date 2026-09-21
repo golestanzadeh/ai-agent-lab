@@ -160,6 +160,33 @@ def test_partner_church_tax_requires_gross_wages(
 
 
 @pytest.mark.parametrize(
+    ("tax_class", "wage_tax_field", "partner_field", "required_rule", "excluded_rule"),
+    [
+        (1, "E0200301", "E0200601", "310010", "310060"),
+        (6, "E0200303", "E0200603", "310070", "310120"),
+    ],
+)
+def test_partner_church_tax_does_not_infer_employee_church_tax_dependency(
+    tax_class, wage_tax_field, partner_field, required_rule, excluded_rule
+):
+    source = declaration()
+    xml = source.declaration_xml
+    if tax_class == 6:
+        xml = xml.replace("LStB_1_5_Sum", "LStB_6_Sum")
+        xml = xml.replace("E0200201", "E0200203").replace("E0200301", "E0200303")
+        xml = without(xml, "E0200002")
+    xml = xml.replace(
+        f"</{wage_tax_field}>",
+        f"</{wage_tax_field}><{partner_field}>1,00</{partner_field}>",
+    )
+    changed = replace(source, declaration_xml=without(xml, wage_tax_field))
+    result = evaluate_local_e10_2024_plausibility(changed)
+    codes = {item.official_rule_code for item in result.findings}
+    assert required_rule in codes
+    assert excluded_rule not in codes
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),
