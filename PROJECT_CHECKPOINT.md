@@ -57,6 +57,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
 - The compact ROADMAP current-position summary is reconciled through UI-12 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
+- The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
@@ -771,4 +772,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Narrow layouts contain no CSS rule that hides safety information; no operational control or external dependency was introduced.
 - Verification: targeted responsive/UI `15 passed`; regression excluding the unrelated Windows-sensitive Google Drive provisioning file `644 passed, 1 skipped`. Two full Windows runs reached `658 passed, 1 skipped` with one order-varying pre-existing provisioning journal-replace failure; the first isolated failed case passed immediately.
 - Status: **UI_12_RESPONSIVE_ACCESSIBILITY_COMPLETE / HANDS_ON_PHONE_VALIDATION_REMAINS**.
+- Exact next action is the authoritative snapshot above.
+
+### Documentation-index completeness guard — 2026-09-21
+
+- Registered the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI support/Windows/phone documents in the focused documentation index.
+- Added a deterministic guard requiring exact equality between focused Markdown files and indexed filenames while preserving `PROJECT_CHECKPOINT.md` as the canonical status entry point.
+- Verification: index guard `3 passed`; relevant index/orchestrator-document suite `8 passed`. No runtime behavior changed, so a full regression was not required.
+- Status: **DOCUMENTATION_INDEX_COMPLETE / DRIFT_GUARD_ACTIVE**.
 - Exact next action is the authoritative snapshot above.

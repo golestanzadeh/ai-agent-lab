@@ -11,6 +11,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `o4-controlled-autonomous-development-pilot.md` — bounded autonomous-development pilot and recovery boundary.
 - `o5-production-control-plane-readiness.md` — deterministic production-control-plane readiness evidence and activation boundary.
 - `agent-runtime-activation-layer.md` — local synthetic Planning/Implementation/QE/Independent Acceptance runtime layer.
+- `agent-runtime-recovery-inspector.md` — read-only runtime recovery classification and automatic-replay boundary.
 - `plan-limit-continuation-controller.md` — live plan-limit inspection, pause thresholds, and guarded continuation.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
@@ -67,6 +68,10 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `p1-controlled-elster-path.md`
 - `p1-eric-adapter-contract.md`
 - `p1-eric-material-process.md`
+- `p1-eric-e10-2024-mapping.md`
+- `p1-eric-e10-2024-declaration.md`
+- `p1-eric-e10-2024-plausibility.md`
+- `p1-eric-e10-2024-readiness.md`
 - `p1-synthetic-preview.md`
 - `p1-synthetic-submission-lifecycle.md`
 - `p1-synthetic-submission-audit.md`
@@ -82,6 +87,9 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `ui-synthetic-review-preview.md`
 - `ui-synthetic-decision-queue.md`
 - `ui-synthetic-submission-readiness.md`
+- `ui-synthetic-support.md`
+- `ui-windows-launcher.md`
+- `ui-phone-accessibility.md`
 
 ## Documentation rules
 

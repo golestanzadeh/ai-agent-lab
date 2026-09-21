@@ -40,6 +40,7 @@ Last reconciled: **2026-09-21**
 - Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh check after the weekly reset reported `100%` remaining in both the five-hour and weekly windows. The stale O4 ROADMAP marker that caused CI run `35444612576` to fail has been reconciled with the canonical compact ROADMAP structure.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The hourly plan-limit guard now reflects completed developer access and may execute one authorized bounded package per heartbeat, while retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
+- The focused documentation index now includes the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI-10 through UI-12 records; a deterministic test prevents future silent index drift.
 
 ## Remaining product work
 

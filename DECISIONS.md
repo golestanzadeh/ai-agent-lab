@@ -1042,3 +1042,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Presentation changes enable no control and add no real data, authentication, persistence, networking, ERiC invocation, or transmission. Hands-on phone validation remains separate.
 
 **Verification:** Targeted responsive/UI suite `15 passed`; regression excluding the unrelated Windows-sensitive Google Drive provisioning file `644 passed, 1 skipped`. Two full Windows runs each had one order-varying pre-existing provisioning journal-replace failure after `658` passes; the first isolated failed case passed.
+
+
+## D-087 — Focused documentation-index completeness guard
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Reconcile `docs/README.md` with every current focused Markdown document and enforce exact filename-set equality in a deterministic test. Preserve `PROJECT_CHECKPOINT.md` as the only canonical current-status entry point.
+
+**Boundary:** This is documentation and quality enforcement only. It changes no runtime, architecture, authority, external access, or production capability.
+
+**Verification:** Index guard `3 passed`; relevant index/orchestrator-document suite `8 passed`. Full regression not required because no runtime code changed.
