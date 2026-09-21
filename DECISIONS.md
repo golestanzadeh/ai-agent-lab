@@ -1161,3 +1161,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** No case creation, persistence, external access, or operational capability is introduced.
 
 **Verification:** Targeted UI and canonical-documentation suite `20 passed`.
+
+
+## D-098 — Optional wage-tax expansion of E10 mapping profile v2
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Extend the bounded synthetic E10/2024 Anlage N mapping with explicitly supplied solidarity surcharge and church-tax amounts. Use `E0200401`/`E0200501` for tax classes 1–5 and `E0200403`/`E0200503` for tax class 6. Omitted values remain absent; no tax amount is inferred.
+
+**Evidence and safety:** Field identities, grouping, order, and decimal lexical form come from the already retrieved, hash-verified official E10/2024 example and annual documentation. Protected source content remains outside Git. ERiC execution, credentials, Manufacturer-ID, networking, real data, and transmission remain denied.
+
+**Verification:** Targeted mapping, declaration, and local-plausibility suite `67 passed`.

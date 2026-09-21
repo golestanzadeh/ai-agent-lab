@@ -43,7 +43,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
-- A bounded local E10/2024 Anlage N subset mapping profile is implemented from reviewed official material. The complete synthetic E10 declaration payload is now assembled and validated locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
+- Bounded local E10/2024 Anlage N mapping profile version 2 is implemented from reviewed official material, including explicit optional solidarity surcharge and church-tax fields. The complete synthetic declaration is validated locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
 - A source-evidenced local plausibility subset now evaluates official rules `241`, `310010`, `310070`, `100200001`, `100200112`, and `121355`. Rules `100200112`/`121355` drove explicit paired `E0205405`/`E0205406` expense itemization; the corrected declaration passes both the official XSD and this bounded local subset.
 - Each bounded plausibility result is cryptographically bound to the exact reviewed `Jahresdokumentation_E10_2024.ods` filename and SHA-256; the protected source remains outside Git.
 - A current-state readiness artifact binds exact mapping, official-XSD declaration, and passing local-plausibility identities while preserving all external blockers and historical package records.
@@ -854,4 +854,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The local synthetic UI now refuses startup when no case exists in its injected Case Registry.
 - Verification: targeted UI and canonical-documentation suite `20 passed`. No operational capability changed.
 - Status: **UI_19_EMPTY_REGISTRY_FAIL_CLOSED / OPERATIONS_GATED**.
+- Exact next action is the authoritative snapshot above.
+
+### E10/2024 mapping profile v2 — 2026-09-21
+
+- Added explicit optional solidarity surcharge and church-tax mappings for tax classes 1–5 and 6 from the reviewed official E10/2024 material.
+- Omitted amounts remain absent; no value is inferred. All external and protected capabilities remain denied.
+- Verification: targeted mapping, declaration, and local-plausibility suite `67 passed`.
+- Status: **E10_MAPPING_PROFILE_V2_COMPLETE / OFFICIAL_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.

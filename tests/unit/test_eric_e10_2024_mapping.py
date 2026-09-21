@@ -49,6 +49,14 @@ def request(*, tax_class: int = 1, **payload_overrides: int) -> E10MappingReques
     )
 
 
+def request_with_wage_taxes(*, tax_class: int = 1) -> E10MappingRequest:
+    return replace(
+        request(tax_class=tax_class),
+        solidarity_surcharge_eur=3543,
+        church_tax_eur=775,
+    )
+
+
 def local_name(element: ET.Element) -> str:
     return element.tag.rsplit("}", 1)[-1]
 
@@ -92,6 +100,27 @@ def test_maps_tax_class_six_to_separate_official_sum_fields():
     ]
     assert "LStB_6_Sum" in result.fragment_xml
     assert "E0200002" not in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    ("tax_class", "expected"),
+    [
+        (1, [("E0200401", "3543,00"), ("E0200501", "775,00")]),
+        (6, [("E0200403", "3543,00"), ("E0200503", "775,00")]),
+    ],
+)
+def test_maps_explicit_solidarity_and_church_tax_to_official_sum_fields(tax_class, expected):
+    result = map_synthetic_summary_to_e10_2024(request_with_wage_taxes(tax_class=tax_class))
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    for binding in expected:
+        assert binding in observed
+
+
+@pytest.mark.parametrize("field", ["solidarity_surcharge_eur", "church_tax_eur"])
+@pytest.mark.parametrize("value", [-1, True, 1_000_000_000_000])
+def test_rejects_invalid_optional_wage_tax_amounts(field, value):
+    with pytest.raises(E10MappingError, match=field):
+        replace(request(), **{field: value})
 
 
 def test_zero_values_preserve_official_lexical_shapes():

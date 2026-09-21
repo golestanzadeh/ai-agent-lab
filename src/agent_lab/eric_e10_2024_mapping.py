@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "1"
+MAPPING_PROFILE_VERSION = "2"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -68,6 +68,8 @@ class E10MappingRequest:
     tax_class: int
     deductible_expense_semantics: DeductibleExpenseSemantics
     other_expense_category: OtherExpenseCategory
+    solidarity_surcharge_eur: int | None = None
+    church_tax_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -87,6 +89,12 @@ class E10MappingRequest:
             raise E10MappingError(
                 "other employment expenses require an explicit supported official category"
             )
+        for name, value in (
+            ("solidarity_surcharge_eur", self.solidarity_surcharge_eur),
+            ("church_tax_eur", self.church_tax_eur),
+        ):
+            if value is not None:
+                _whole_euros(name, value)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -182,11 +190,15 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
         wage_group = "LStB_6_Sum"
         gross_id = "E0200203"
         tax_id = "E0200303"
+        solidarity_id = "E0200403"
+        church_tax_id = "E0200503"
         wage_bindings = ()
     else:
         wage_group = "LStB_1_5_Sum"
         gross_id = "E0200201"
         tax_id = "E0200301"
+        solidarity_id = "E0200401"
+        church_tax_id = "E0200501"
         wage_bindings = (
             E10FieldBinding(
                 source_field="tax_class",
@@ -195,7 +207,7 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
                 lexical_value=str(request.tax_class),
             ),
         )
-    return wage_bindings + (
+    tax_bindings = (
         E10FieldBinding(
             source_field="gross_wages_eur",
             official_path=f"/N/ArbL/{wage_group}/{gross_id}",
@@ -210,6 +222,22 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
                 "withheld_wage_tax_eur", payload.withheld_wage_tax_eur
             ),
         ),
+    )
+    if request.solidarity_surcharge_eur is not None:
+        tax_bindings += (E10FieldBinding(
+            source_field="solidarity_surcharge_eur",
+            official_path=f"/N/ArbL/{wage_group}/{solidarity_id}",
+            field_id=solidarity_id,
+            lexical_value=_euros_with_cents("solidarity_surcharge_eur", request.solidarity_surcharge_eur),
+        ),)
+    if request.church_tax_eur is not None:
+        tax_bindings += (E10FieldBinding(
+            source_field="church_tax_eur",
+            official_path=f"/N/ArbL/{wage_group}/{church_tax_id}",
+            field_id=church_tax_id,
+            lexical_value=_euros_with_cents("church_tax_eur", request.church_tax_eur),
+        ),)
+    return wage_bindings + tax_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -243,10 +271,13 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     employment = ET.SubElement(n, _qname("ArbL"))
     if request.tax_class == 6:
         wage_group_name = "LStB_6_Sum"
-        field_ids = ("E0200203", "E0200303")
+        field_ids = ["E0200203", "E0200303"]
+        optional_ids = (("E0200403", request.solidarity_surcharge_eur), ("E0200503", request.church_tax_eur))
     else:
         wage_group_name = "LStB_1_5_Sum"
-        field_ids = ("E0200002", "E0200201", "E0200301")
+        field_ids = ["E0200002", "E0200201", "E0200301"]
+        optional_ids = (("E0200401", request.solidarity_surcharge_eur), ("E0200501", request.church_tax_eur))
+    field_ids.extend(field_id for field_id, amount in optional_ids if amount is not None)
     wage_group = ET.SubElement(employment, _qname(wage_group_name))
     for field_id in field_ids:
         ET.SubElement(wage_group, _qname(field_id)).text = values[field_id]

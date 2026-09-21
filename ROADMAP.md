@@ -23,7 +23,7 @@ Remaining goals:
 
 ## Track 2 — Controlled ERiC/Finanzamt integration
 
-Status: **official 44.3.6.0 material retrieved; current local mapping/XSD/plausibility lineage integrated and externally blocked**
+Status: **official 44.3.6.0 material retrieved; local mapping profile v2/XSD/plausibility lineage integrated and externally blocked**
 
 Dependency path:
 
