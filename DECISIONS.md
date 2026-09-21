@@ -1356,3 +1356,17 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Bound the next package to one explicit synthetic work-equipment expense using `E0204401`, `E0204402`, and derived sum `E0204403`. Implement only reviewed rules `330122`, `100200100`, `100200110`, `122050`, and `121410`. Preserve the exact official tolerance comparison, require paired type/amount semantics, and infer neither multiple items nor real-case content.
 
 **Blocking evidence:** The reviewed rule expresses `122050` with `UngleichMitToleranz5`, but the exact operator definition was not found in the recovered field/rule material. Fail-closed governance prohibits guessing whether the tolerance is absolute, directional, inclusive, or otherwise defined. Keep this subset unimplemented until authoritative semantics are recovered; continue an independent subset instead.
+
+
+## D-123 — Official `UngleichMitToleranz5` semantics recovered
+
+**Status:** authoritative source recovered on 2026-09-21
+
+**Decision:** The official ERiC 44.3.6.0 document `Zusatzinformationen_zur_Plausibilitaetspruefung.pdf`, section 4.5, page 70, defines `UngleichMitToleranz5` as true exactly when `abs(v1 - v2) > 5`. Differences of `5` or less are accepted. This resolves the D-122 blocker without approximation; protected source content remains outside Git.
+
+
+## D-124 — Reset-aware five-hour TOKEN_PAUSED checkpoint
+
+**Status:** active on 2026-09-21
+
+**Decision:** Live usage reported five-hour `12%` remaining with reset `2026-09-21T22:23:51Z` and weekly `40%` remaining with reset `2026-09-27T16:07:25Z`. The five-hour window is the sole limiting window. Enter `TOKEN_PAUSED`, set `resume_not_before` to `2026-09-21T22:25:51Z` using the governed two-minute buffer, pin continuation to commit `00703e784c6395495e7cf615f1907379221bcfd5`, and perform no new project work until the existing resume conditions are verified. The exact next action after safe recovery is the already authorized local synthetic D-122 work-equipment subset.
