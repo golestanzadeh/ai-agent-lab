@@ -1312,3 +1312,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-21 under explicit Project Owner authority
 
 **Decision:** Mapping profile version `3` accepts an explicit synthetic `partner_church_tax_eur` and maps it to official E10/2024 field `E0200601` for tax classes 1–5 or `E0200603` for tax class 6. Omission remains omission; no relationship, denomination, or amount is inferred. Plausibility profile version `3` includes these fields only in the source-evidenced gross-wage dependencies `310030` and `310090`; it does not invent a wage-tax dependency absent from the reviewed rule subset. Both wage groups validate against the exact official XSD; the focused package suite passes with `109 passed`, and the complete local regression passes with `718 passed, 1 skipped, 1 warning`. Protected material remains outside Git and all external capabilities remain denied.
+
+
+## D-117 — Profile-v3 downstream record reconciliation
+
+**Status:** implemented and verified on 2026-09-21
+
+**Decision:** Update active downstream adapter, material-process, preview, and current-state descriptions to identify mapping profile v3 while preserving their immutable historical artifact states. This is documentation-only reconciliation; it changes no runtime behavior, authority, rule count, or external capability.
