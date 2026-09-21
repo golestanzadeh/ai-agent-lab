@@ -11,7 +11,7 @@
     {% endfor %}
   </ol>
   <details class="diagnostics"><summary>وضعیت فنی و بازیابی</summary>
-    <ul>{% for code in workflow.diagnostic_codes %}<li>{{ code }}</li>{% endfor %}</ul>
+    <ul>{% for code in workflow.diagnostic_codes %}<li>{{ code|status_label }} <code>{{ code }}</code></li>{% endfor %}</ul>
     <p>این گزارش فقط کدهای امن و فاقد محتوای خصوصی را نشان می‌دهد.</p>
   </details>
 </article>

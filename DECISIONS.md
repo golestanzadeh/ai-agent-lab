@@ -1075,3 +1075,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** The headers reduce accidental browser exposure but do not authorize or implement deployment, public/LAN binding, authentication, real data, persistence, external connectivity, ERiC execution, or transmission.
 
 **Verification:** Targeted UI/security/documentation suite `24 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `650 passed, 1 skipped`. The full run reached `663 passed, 1 skipped`; after the package-local index correction, the only remaining failure was the pre-existing order-varying provisioning journal-replace issue.
+
+
+## D-090 — UI-14 closed Persian safety-label catalog
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Present critical workflow, review, readiness, and support states with concise Persian labels from a closed catalog while retaining the exact technical codes for support and audit. Unknown or arbitrary status text fails closed.
+
+**Safety:** The label layer creates no free-form diagnostic channel and adds no private content, control, approval, authentication, persistence, external connectivity, ERiC execution, or transmission capability.
+
+**Verification:** Targeted label/UI/documentation suite `20 passed`; regression excluding the known Windows-sensitive Google Drive provisioning file `652 passed, 1 skipped`.

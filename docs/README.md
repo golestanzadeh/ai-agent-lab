@@ -91,6 +91,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `ui-windows-launcher.md`
 - `ui-phone-accessibility.md`
 - `ui-local-security-headers.md`
+- `ui-persian-status-labels.md`
 
 ## Documentation rules
 

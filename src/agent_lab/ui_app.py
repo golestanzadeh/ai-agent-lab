@@ -33,10 +33,12 @@ from agent_lab.ui_review_contract import build_synthetic_review
 from agent_lab.ui_decision_contract import build_synthetic_decision_queue
 from agent_lab.ui_submission_readiness_contract import build_synthetic_submission_readiness
 from agent_lab.ui_support_contract import build_synthetic_ui_support
+from agent_lab.ui_status_labels import persian_status_label
 
 
 UI_ROOT = Path(__file__).resolve().parent
 TEMPLATES = Jinja2Templates(directory=str(UI_ROOT / "ui_templates"))
+TEMPLATES.env.filters["status_label"] = persian_status_label
 LOCAL_SECURITY_HEADERS = {
     "Cache-Control": "no-store",
     "Content-Security-Policy": (
