@@ -1031,3 +1031,14 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Safety:** Deterministic tests deny public/LAN binding, external URLs, credential inputs, and submission paths. The launcher installs and persists nothing and adds no authentication, real data, deployment, ERiC invocation, or transmission.
 
 **Verification:** Targeted launcher/UI suite `15 passed`; full regression `656 passed, 1 skipped`.
+
+
+## D-086 — UI-12 deterministic phone and keyboard safeguards
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Enforce a deterministic presentation contract for Persian RTL phone widths and keyboard use: preserve viewport/skip-link semantics, stack scope/cards/gates/timeline without hiding safety information, wrap long identifiers, provide 44-pixel targets, and show keyboard focus.
+
+**Safety:** Presentation changes enable no control and add no real data, authentication, persistence, networking, ERiC invocation, or transmission. Hands-on phone validation remains separate.
+
+**Verification:** Targeted responsive/UI suite `15 passed`; regression excluding the unrelated Windows-sensitive Google Drive provisioning file `644 passed, 1 skipped`. Two full Windows runs each had one order-varying pre-existing provisioning journal-replace failure after `658` passes; the first isolated failed case passed.

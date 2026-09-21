@@ -21,7 +21,7 @@ Last reconciled: **2026-09-21**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
-- Local FastAPI + Jinja/HTMX Persian UI through UI-11; current readiness/support diagnostics are accurate, and a tested one-click Windows launcher starts it only on `127.0.0.1` without command entry or external connectivity.
+- Local FastAPI + Jinja/HTMX Persian UI through UI-12; current diagnostics are accurate, one-click Windows startup is loopback-only, and deterministic phone-width/keyboard safeguards preserve visible gates, wrapping, touch targets, and focus.
 
 ## Live external status
 

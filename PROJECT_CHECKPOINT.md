@@ -50,12 +50,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Phase P1 local synthetic work is complete through package 7.
 - The local four-role Agent Runtime Activation Layer is implemented at `cb41d13`.
 - A read-only recovery inspector now verifies and classifies planned, completed, and interrupted mid-resume runtime states. Interrupted work remains fail-closed with exact completed-stage evidence; automatic repair/replay is not authorized.
-- The local FastAPI + Jinja/HTMX UI is complete through UI-11. Its current diagnostics remain safe, and a tested one-click Windows launcher starts the synthetic interface without command entry while binding only to `127.0.0.1`.
+- The local FastAPI + Jinja/HTMX UI is complete through UI-12. Its diagnostics remain safe, one-click Windows startup is loopback-only, and deterministic phone-width/keyboard safeguards preserve visible safety boundaries.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
 - The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
-- The compact ROADMAP current-position summary is reconciled through UI-11 as of 2026-09-21.
+- The compact ROADMAP current-position summary is reconciled through UI-12 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
@@ -763,4 +763,12 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Deterministic tests reject public/LAN binding, external URLs, secret inputs, and submission paths. Real data, authentication, deployment, and transmission remain gated.
 - Verification: targeted launcher/UI `15 passed`; full regression `656 passed, 1 skipped`.
 - Status: **UI_11_WINDOWS_ONE_CLICK_COMPLETE / LOOPBACK_ONLY**.
+- Exact next action is the authoritative snapshot above.
+
+### UI-12 phone-width and keyboard accessibility contract — 2026-09-21
+
+- Preserved Persian RTL viewport and skip-link semantics, single-column phone layouts, visible Human Gates/diagnostics, wrap-safe long codes, 44-pixel targets, and visible keyboard focus.
+- Narrow layouts contain no CSS rule that hides safety information; no operational control or external dependency was introduced.
+- Verification: targeted responsive/UI `15 passed`; regression excluding the unrelated Windows-sensitive Google Drive provisioning file `644 passed, 1 skipped`. Two full Windows runs reached `658 passed, 1 skipped` with one order-varying pre-existing provisioning journal-replace failure; the first isolated failed case passed immediately.
+- Status: **UI_12_RESPONSIVE_ACCESSIBILITY_COMPLETE / HANDS_ON_PHONE_VALIDATION_REMAINS**.
 - Exact next action is the authoritative snapshot above.
