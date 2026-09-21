@@ -1333,3 +1333,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** source-reviewed and implementation-ready on 2026-09-21
 
 **Decision:** Bound the next package to one explicit synthetic professional-association contribution using `E0204001` (description), `E0204003` (item amount), and `E0204002` (matching sum). Implement only official rules `100200099`, `100200109`, `201010`, `330121`, and `100200108` from the reviewed protected source. Require paired semantics, derive the sum, enforce the official string/five-digit boundaries, and fail closed without inferring multi-item or real-case content.
+
+
+## D-120 — Professional-association E10 subset implemented
+
+**Status:** implemented and technically verified on 2026-09-21
+
+**Decision:** Mapping and plausibility profile version `4` implements the bounded D-119 subset. Paired explicit input produces one item and an identical derived sum, invalid semantics fail closed, the five reviewed official rules are evaluated locally, the targeted E10 suite passes with `114 passed`, and the exact official XSD accepts the generated declaration. All external capabilities remain denied.

@@ -117,6 +117,36 @@ def test_maps_explicit_optional_wage_taxes_to_official_sum_fields(tax_class, exp
         assert binding in observed
 
 
+def test_maps_single_professional_association_item_and_matching_sum():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            professional_association_name="Synthetic Engineering Association",
+            professional_association_eur=321,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204001", "Synthetic Engineering Association") in observed
+    assert ("E0204003", "321") in observed
+    assert ("E0204002", "321") in observed
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"professional_association_name": "Synthetic Association"},
+        {"professional_association_eur": 1},
+        {"professional_association_name": "", "professional_association_eur": 1},
+        {"professional_association_name": "x" * 1000, "professional_association_eur": 1},
+        {"professional_association_name": "Synthetic Association", "professional_association_eur": -1},
+        {"professional_association_name": "Synthetic Association", "professional_association_eur": 100_000},
+    ],
+)
+def test_rejects_invalid_professional_association_semantics(changes):
+    with pytest.raises(E10MappingError, match="professional association|professional_association"):
+        replace(request(), **changes)
+
+
 @pytest.mark.parametrize(
     "field",
     ["solidarity_surcharge_eur", "church_tax_eur", "partner_church_tax_eur"],
@@ -211,7 +241,7 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     assert replace(baseline, partner_church_tax_eur=1).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2"])
+@pytest.mark.parametrize("profile_version", ["1", "2", "3"])
 def test_older_profile_request_is_rejected_after_v3_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)

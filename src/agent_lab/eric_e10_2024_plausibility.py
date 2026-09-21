@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "3"
+PLAUSIBILITY_PROFILE_VERSION = "4"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -27,6 +27,11 @@ SUPPORTED_OFFICIAL_RULES = (
     "100200001",
     "100200112",
     "121355",
+    "100200099",
+    "100200109",
+    "201010",
+    "330121",
+    "100200108",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -129,6 +134,16 @@ def _present(root: ET.Element, field_id: str) -> bool:
     return root.find(f".//{{{E10_NAMESPACE}}}{field_id}") is not None
 
 
+def _integer_values(root: ET.Element, field_id: str) -> tuple[int, ...]:
+    values = []
+    for element in root.findall(f".//{{{E10_NAMESPACE}}}{field_id}"):
+        try:
+            values.append(int(element.text or ""))
+        except ValueError as exc:
+            raise E10PlausibilityError(f"{field_id} must contain an integer") from exc
+    return tuple(values)
+
+
 def evaluate_local_e10_2024_plausibility(
     declaration: E10DeclarationResult,
 ) -> E10PlausibilityResult:
@@ -156,6 +171,9 @@ def evaluate_local_e10_2024_plausibility(
     other_expense_label = _present(root, "E0205405")
     other_expense_amount = _present(root, "E0205406")
     expense_sum = _present(root, "E0204803")
+    association_label = _present(root, "E0204001")
+    association_amounts = _integer_values(root, "E0204003")
+    association_sums = _integer_values(root, "E0204002")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -181,6 +199,16 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("100200112", ("E0204803", "E0205406", "E0204802"), "other-expense sum requires itemization"))
     if other_expense_label is not other_expense_amount:
         findings.append(PlausibilityFinding("121355", ("E0205405", "E0205406"), "other-expense label and amount must be provided together"))
+    if association_amounts and sum(association_amounts) < 0:
+        findings.append(PlausibilityFinding("100200099", ("E0204003",), "professional-association item total cannot be negative"))
+    if association_sums and not association_amounts:
+        findings.append(PlausibilityFinding("100200109", ("E0204003", "E0204002"), "professional-association sum requires itemization"))
+    if association_sums and association_amounts and sum(association_amounts) >= 0 and association_sums[0] != sum(association_amounts):
+        findings.append(PlausibilityFinding("201010", ("E0204003", "E0204002"), "professional-association sum must match item total"))
+    if association_amounts and not association_sums:
+        findings.append(PlausibilityFinding("330121", ("E0204003", "E0204002"), "professional-association itemization requires its sum"))
+    if association_label is not bool(association_amounts):
+        findings.append(PlausibilityFinding("100200108", ("E0204001", "E0204003"), "professional-association description and amount must be provided together"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(

@@ -41,6 +41,6 @@ Both supported wage groups with explicit optional solidarity surcharge and churc
 
 Mapping profile version 3 adds only the source-evidenced optional spouse/life-partner church-tax fields `E0200601` and `E0200603`. Both wage groups, including all three optional wage-tax amounts, pass the exact official XSD locally. No relationship status, denomination, or amount is inferred; the field is emitted only from an explicit synthetic input.
 
-## Next bounded source-evidenced subset
+## Professional-association subset
 
-The next implementation candidate is one explicitly synthetic professional-association contribution under `N/Wk/Berufsverb`: description `E0204001`, whole-euro item amount `E0204003`, and matching whole-euro sum `E0204002`. The reviewed official field table limits the description to 1–999 characters and both amounts to five digits. The implementation must require description and amount together, derive the single-item sum exactly, reject negative or out-of-range synthetic input, and omit the entire context when no contribution is supplied.
+Mapping profile version 4 implements one explicitly synthetic professional-association contribution under `N/Wk/Berufsverb`: description `E0204001`, whole-euro item amount `E0204003`, and matching whole-euro sum `E0204002`. It requires description and amount together, derives the single-item sum exactly, rejects negative or out-of-range synthetic input, and omits the entire context when no contribution is supplied.

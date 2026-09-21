@@ -80,7 +80,7 @@ def test_current_limit_controller_allows_safe_package_chaining() -> None:
     assert "hard execution-window boundary is not itself a Human Gate" in controller
 
 
-def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
+def test_active_e10_and_ui_records_use_current_rule_profile() -> None:
     active_files = (
         ROOT / "CURRENT_STATE.md",
         ROOT / "ROADMAP.md",
@@ -102,8 +102,8 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 
     for text in (adapter, material, preview):
         assert "historical" in text
-        assert "mapping profile v3" in text
-        assert "twelve-rule local plausibility subset" in text
+        assert "mapping profile v4" in text
+        assert "seventeen-rule local plausibility subset" in text
         assert "ERiC-engine execution" in text
 
     current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")

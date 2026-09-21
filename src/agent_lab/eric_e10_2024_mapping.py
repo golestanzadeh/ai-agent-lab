@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "3"
+MAPPING_PROFILE_VERSION = "4"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -71,6 +71,8 @@ class E10MappingRequest:
     solidarity_surcharge_eur: int | None = None
     church_tax_eur: int | None = None
     partner_church_tax_eur: int | None = None
+    professional_association_name: str | None = None
+    professional_association_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -97,6 +99,16 @@ class E10MappingRequest:
         ):
             if value is not None:
                 _whole_euros(name, value)
+        if (self.professional_association_name is None) is not (
+            self.professional_association_eur is None
+        ):
+            raise E10MappingError("professional association name and amount must be provided together")
+        if self.professional_association_name is not None:
+            if not isinstance(self.professional_association_name, str) or not self.professional_association_name.strip():
+                raise E10MappingError("professional association name must be non-empty")
+            if len(self.professional_association_name) > 999:
+                raise E10MappingError("professional association name exceeds the official boundary")
+            _five_digit_euros("professional_association_eur", self.professional_association_eur)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -182,6 +194,12 @@ def _euros_with_cents(name: str, value: int) -> str:
     return f"{_whole_euros(name, value)},00"
 
 
+def _five_digit_euros(name: str, value: int) -> str:
+    if not isinstance(value, int) or isinstance(value, bool) or not 0 <= value <= 99_999:
+        raise E10MappingError(f"{name} exceeds the supported five-digit boundary")
+    return str(value)
+
+
 def _qname(local_name: str) -> str:
     return f"{{{E10_NAMESPACE}}}{local_name}"
 
@@ -250,7 +268,17 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
                 "partner_church_tax_eur", request.partner_church_tax_eur
             ),
         ),)
-    return wage_bindings + tax_bindings + (
+    association_bindings = ()
+    if request.professional_association_name is not None:
+        amount = _five_digit_euros(
+            "professional_association_eur", request.professional_association_eur
+        )
+        association_bindings = (
+            E10FieldBinding("professional_association_name", "/N/Wk/Berufsverb/Einz/E0204001", "E0204001", request.professional_association_name),
+            E10FieldBinding("professional_association_eur", "/N/Wk/Berufsverb/Einz/E0204003", "E0204003", amount),
+            E10FieldBinding("professional_association_eur", "/N/Wk/Berufsverb/Sum/E0204002", "E0204002", amount),
+        )
+    return wage_bindings + tax_bindings + association_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -303,6 +331,13 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     for field_id in field_ids:
         ET.SubElement(wage_group, _qname(field_id)).text = values[field_id]
     expenses = ET.SubElement(n, _qname("Wk"))
+    if request.professional_association_name is not None:
+        association = ET.SubElement(expenses, _qname("Berufsverb"))
+        item = ET.SubElement(association, _qname("Einz"))
+        ET.SubElement(item, _qname("E0204001")).text = values["E0204001"]
+        ET.SubElement(item, _qname("E0204003")).text = values["E0204003"]
+        association_sum = ET.SubElement(association, _qname("Sum"))
+        ET.SubElement(association_sum, _qname("E0204002")).text = values["E0204002"]
     other_expenses = ET.SubElement(expenses, _qname("Weitere_Wk"))
     other_expense_item = ET.SubElement(other_expenses, _qname("Sonst"))
     ET.SubElement(other_expense_item, _qname("E0205405")).text = values["E0205405"]

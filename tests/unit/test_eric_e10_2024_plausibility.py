@@ -187,6 +187,24 @@ def test_partner_church_tax_does_not_infer_employee_church_tax_dependency(
 
 
 @pytest.mark.parametrize(
+    ("xml_changes", "rule_code"),
+    [
+        (("<E0204002>10</E0204002>",), "100200109"),
+        (("<E0204003>10</E0204003>",), "330121"),
+        (("<E0204001>Synthetic</E0204001>",), "100200108"),
+        (("<E0204003>-1</E0204003>",), "100200099"),
+        (("<E0204001>Synthetic</E0204001><E0204003>10</E0204003><E0204002>11</E0204002>",), "201010"),
+    ],
+)
+def test_professional_association_rules(xml_changes, rule_code):
+    source = declaration()
+    payload = xml_changes[0]
+    xml = source.declaration_xml.replace("</Wk>", f"<Berufsverb><Einz>{payload}</Einz></Berufsverb></Wk>")
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert rule_code in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),
