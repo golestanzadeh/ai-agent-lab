@@ -43,8 +43,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
-- Bounded local E10/2024 Anlage N mapping profile version 7 is implemented from reviewed official material, including explicit single-item professional-association, work-equipment, home-office workroom, and training subsets. Its declaration validates locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
-- Source-evidenced local plausibility profile version 7 evaluates thirty-two official rules, including the five training rules and the exact official `UngleichMitToleranz5` boundary.
+- Bounded local E10/2024 Anlage N mapping profile version 8 is implemented from reviewed official material, including explicit single-item professional-association, work-equipment, home-office workroom, training, and home-office-day subsets. Its declaration validates locally against the exact hash-pinned official `E10-2024.xsd`; official ERiC plausibility execution remains blocked.
+- Source-evidenced local plausibility profile version 8 evaluates thirty-three official rules, including the combined home-office-day maximum rule and the exact official `UngleichMitToleranz5` boundary.
 - Each bounded plausibility result is cryptographically bound to the exact reviewed `Jahresdokumentation_E10_2024.ods` filename and SHA-256; the protected source remains outside Git.
 - A current-state readiness artifact binds exact mapping, official-XSD declaration, and passing local-plausibility identities while preserving all external blockers and historical package records.
 - Phase P1 local synthetic work is complete through package 7.
@@ -61,10 +61,10 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Stale current-state and controller wording that still limited a heartbeat to one package has been removed; an automated documentation check now protects the active sequential-package policy while historical decisions remain intact.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
-- The readiness and UI presentation contracts are reconciled with the thirty-two-rule local plausibility profile.
+- The readiness and UI presentation contracts are reconciled with the thirty-three-rule local plausibility profile.
 - Synthetic profile-v3 declarations for both wage groups, including optional solidarity surcharge, employee church tax, and spouse/life-partner church tax, pass the exact hash-pinned official E10/2024 XSD locally.
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. The earlier intermittent environment behavior was not reproduced; no unsupported permanent-fix claim is made.
-- Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v7, exact official-XSD validation, or the thirty-two-rule local plausibility result.
+- Historical package-2 adapter and synthetic-preview records are reconciled with the current E10 readiness pipeline: their immutable upstream status names remain historical and cannot override mapping profile v8, exact official-XSD validation, or the thirty-three-rule local plausibility result.
 - The package-3 material-process record is likewise explicit that its immutable recovery status is historical upstream evidence, not the canonical current E10 readiness claim.
 - The Project Owner authorized local synthetic non-production repair/replay policy design and implementation. The policy, versioned evaluator, and bounded continuation executor now enforce exact-prefix recovery across every permitted remaining-stage boundary, one write-once attempt per planned checkpoint, completed-stage non-replay, idempotent completed-state handling, independent acceptance, and fail-closed partial/extra-stage ambiguity. Targeted runtime verification passes with `34 passed`.
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
@@ -73,8 +73,9 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The profile-v5 work-equipment expansion passes its focused E10/UI/documentation suite (`166 passed, 1 warning`), exact official-XSD probe, and complete local regression (`748 passed, 1 skipped, 1 warning`).
 - The profile-v6 home-office workroom expansion passes its focused E10/UI/documentation suite (`181 passed, 1 warning`), exact official-XSD probe, and complete local regression (`763 passed, 1 skipped, 1 warning`).
 - The profile-v7 training expansion passes its focused E10/UI/documentation suite (`196 passed, 1 warning`), exact official-XSD probe, and complete local regression (`778 passed, 1 skipped, 1 warning`).
+- The profile-v8 home-office-day expansion passes its focused E10/UI/documentation suite (`208 passed, 1 warning`), exact official-XSD probe, and complete local regression (`790 passed, 1 skipped, 1 warning`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=100`; `weekly_remaining_percent=39`; `five_hour_resets_at=1790047586`; `weekly_resets_at=1790525245`; recovered continuation commit `43b53bab41d94922706a8398396f46874669d219`.
-- **Exact next action:** after completing and pushing the profile-v7 training package, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
+- **Exact next action:** after completing and pushing the profile-v8 home-office-day package, read live limits and select the next authorized, prerequisite-ready local synthetic package under the continuous-execution rules.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "7"
+MAPPING_PROFILE_VERSION = "8"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -91,6 +91,8 @@ class E10MappingRequest:
     home_office_expense_eur: int | None = None
     training_expense_type: TrainingExpenseType | None = None
     training_expense_eur: int | None = None
+    home_office_days_with_other_workplace: int | None = None
+    home_office_days_without_other_workplace: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -147,6 +149,14 @@ class E10MappingRequest:
             if not isinstance(self.training_expense_type, TrainingExpenseType):
                 raise E10MappingError("training expense requires an explicit supported official type")
             _whole_euros("training_expense_eur", self.training_expense_eur)
+        for name, value in (
+            ("home_office_days_with_other_workplace", self.home_office_days_with_other_workplace),
+            ("home_office_days_without_other_workplace", self.home_office_days_without_other_workplace),
+        ):
+            if value is not None and (
+                not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 366
+            ):
+                raise E10MappingError(f"{name} must be an integer between 1 and 366")
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -340,7 +350,12 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             E10FieldBinding("training_expense_eur", "/N/Wk/Fortb/Einz/E0204808", "E0204808", amount),
             E10FieldBinding("training_expense_eur", "/N/Wk/Fortb/Sum/E0204812", "E0204812", amount),
         )
-    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + training_bindings + (
+    home_office_day_bindings = ()
+    if request.home_office_days_with_other_workplace is not None:
+        home_office_day_bindings += (E10FieldBinding("home_office_days_with_other_workplace", "/N/Wk/Homeoffice/E0204507", "E0204507", str(request.home_office_days_with_other_workplace)),)
+    if request.home_office_days_without_other_workplace is not None:
+        home_office_day_bindings += (E10FieldBinding("home_office_days_without_other_workplace", "/N/Wk/Homeoffice/E0206206", "E0206206", str(request.home_office_days_without_other_workplace)),)
+    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -414,6 +429,15 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         ET.SubElement(item, _qname("E0204505")).text = values["E0204505"]
         home_office_sum = ET.SubElement(home_office, _qname("Sum"))
         ET.SubElement(home_office_sum, _qname("E0204504")).text = values["E0204504"]
+    if (
+        request.home_office_days_with_other_workplace is not None
+        or request.home_office_days_without_other_workplace is not None
+    ):
+        home_office_days = ET.SubElement(expenses, _qname("Homeoffice"))
+        if request.home_office_days_with_other_workplace is not None:
+            ET.SubElement(home_office_days, _qname("E0204507")).text = values["E0204507"]
+        if request.home_office_days_without_other_workplace is not None:
+            ET.SubElement(home_office_days, _qname("E0206206")).text = values["E0206206"]
     if request.training_expense_type is not None:
         training = ET.SubElement(expenses, _qname("Fortb"))
         item = ET.SubElement(training, _qname("Einz"))

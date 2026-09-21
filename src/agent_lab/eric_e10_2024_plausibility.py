@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "7"
+PLAUSIBILITY_PROFILE_VERSION = "8"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -47,6 +47,7 @@ SUPPORTED_OFFICIAL_RULES = (
     "100200102",
     "100200007",
     "121352",
+    "100200127",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -198,6 +199,8 @@ def evaluate_local_e10_2024_plausibility(
     training_type = _present(root, "E0204804")
     training_amounts = _integer_values(root, "E0204808")
     training_sums = _integer_values(root, "E0204812")
+    home_office_days_with_workplace = _integer_values(root, "E0204507")
+    home_office_days_without_workplace = _integer_values(root, "E0206206")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -263,6 +266,12 @@ def evaluate_local_e10_2024_plausibility(
         findings.append(PlausibilityFinding("100200007", ("E0204808", "E0204812"), "training sum differs from item total beyond the official tolerance of five"))
     if training_type is not bool(training_amounts):
         findings.append(PlausibilityFinding("121352", ("E0204804", "E0204808"), "training expense type and amount must be provided together"))
+    if (
+        home_office_days_with_workplace
+        and home_office_days_without_workplace
+        and home_office_days_with_workplace[0] + home_office_days_without_workplace[0] > 366
+    ):
+        findings.append(PlausibilityFinding("100200127", ("E0204507", "E0206206"), "combined home-office days cannot exceed 366"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(

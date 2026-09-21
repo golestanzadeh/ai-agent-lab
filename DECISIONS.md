@@ -1398,3 +1398,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Mapping and plausibility profile version `7` implements one explicit synthetic training expense using `E0204804`, `E0204808`, and derived sum `E0204812`. It evaluates official rules `100200003`, `100200009`, `100200102`, `100200007`, and `121352`; rule `100200007` uses the exact `abs(sum - item_total) > 5` predicate. The supported type is closed to the official value `Kursgebühren`. The combined declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `196 passed, 1 warning`; the complete local regression passes with `778 passed, 1 skipped, 1 warning`. All external capabilities remain denied.
+
+
+## D-129 — Home-office day categories implemented
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Mapping and plausibility profile version `8` adds the two explicit official home-office day categories `E0204507` and `E0206206`. Each optional field accepts only `1..366`; reviewed rule `100200127` rejects a combined total above `366` when both are present. Boundary tests cover `366` and `367`, and the combined declaration passes the exact hash-pinned official E10/2024 XSD. Focused verification passes with `208 passed, 1 warning`; the complete local regression passes with `790 passed, 1 skipped, 1 warning`. All external capabilities remain denied.

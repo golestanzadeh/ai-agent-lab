@@ -325,6 +325,21 @@ def test_training_official_tolerance_boundary_is_absolute_and_exclusive(
 
 
 @pytest.mark.parametrize(
+    ("first_days", "second_days", "fails"),
+    [(1, 365, False), (183, 183, False), (1, 366, True), (200, 167, True)],
+)
+def test_combined_home_office_days_cannot_exceed_leap_year_maximum(
+    first_days, second_days, fails
+):
+    source = declaration()
+    payload = f"<Homeoffice><E0204507>{first_days}</E0204507><E0206206>{second_days}</E0206206></Homeoffice>"
+    xml = source.declaration_xml.replace("</Wk>", f"{payload}</Wk>")
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    codes = {item.official_rule_code for item in result.findings}
+    assert ("100200127" in codes) is fails
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

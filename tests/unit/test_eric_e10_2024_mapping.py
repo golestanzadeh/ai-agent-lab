@@ -226,6 +226,36 @@ def test_rejects_invalid_training_semantics(changes):
         replace(request(), **changes)
 
 
+def test_maps_explicit_home_office_day_categories():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            home_office_days_with_other_workplace=120,
+            home_office_days_without_other_workplace=200,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0204507", "120") in observed
+    assert ("E0206206", "200") in observed
+    assert "<Homeoffice>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("home_office_days_with_other_workplace", 0),
+        ("home_office_days_with_other_workplace", 367),
+        ("home_office_days_with_other_workplace", True),
+        ("home_office_days_without_other_workplace", 0),
+        ("home_office_days_without_other_workplace", 367),
+        ("home_office_days_without_other_workplace", True),
+    ],
+)
+def test_rejects_invalid_home_office_day_counts(field, value):
+    with pytest.raises(E10MappingError, match=field):
+        replace(request(), **{field: value})
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -341,6 +371,10 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     ).artifact_identity != baseline.artifact_identity
     assert replace(
         baseline,
+        home_office_days_with_other_workplace=1,
+    ).artifact_identity != baseline.artifact_identity
+    assert replace(
+        baseline,
         training_expense_type=TrainingExpenseType.COURSE_FEES,
         training_expense_eur=1,
     ).artifact_identity != baseline.artifact_identity
@@ -353,8 +387,8 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     ).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5", "6"])
-def test_older_profile_request_is_rejected_after_v7_expansion(profile_version):
+@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5", "6", "7"])
+def test_older_profile_request_is_rejected_after_v8_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

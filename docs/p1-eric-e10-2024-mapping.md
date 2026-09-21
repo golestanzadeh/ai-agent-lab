@@ -56,3 +56,7 @@ Mapping profile version 6 implements one explicitly synthetic home-office workro
 ## Training-expense subset
 
 Mapping profile version 7 implements one explicitly synthetic training expense under `N/Wk/Fortb`. The closed supported official type `Kursgebühren` maps to `E0204804`, its whole-euro amount maps to `E0204808`, and the exact derived sum maps to `E0204812`. Type and amount are paired, non-negative, limited to the official twelve-digit boundary, and omitted as a complete context when absent. The combined profile-v7 declaration passes the exact hash-pinned official E10/2024 XSD locally.
+
+## Home-office day categories
+
+Mapping profile version 8 adds explicit positive day counts for both official home-office categories: `E0204507` when another workplace is available and `E0206206` when no other workplace is permanently available. Each optional count is limited to `1..366`; omission remains omission. The combined profile-v8 declaration passes the exact hash-pinned official E10/2024 XSD locally.
