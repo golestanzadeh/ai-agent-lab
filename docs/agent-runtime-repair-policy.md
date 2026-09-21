@@ -91,4 +91,4 @@ An eligible continuation:
 
 The versioned deterministic policy evaluator and bounded continuation executor are implemented. The evaluator classifies durable evidence and produces a hash-bound decision. The executor writes that exact decision once before mutation, consumes the sole attempt, rechecks checkpoint and kill-switch state, executes only the unstarted suffix, preserves independent acceptance, and verifies the completed checkpoint and audit chain. Completed state is an idempotent no-op.
 
-Verification: the targeted runtime repair/recovery/runtime suite passes with `29 passed`, including planned-boundary completion, completed-state no-op, completed-implementation non-replay, and consumed-attempt rejection.
+Verification: the targeted runtime repair/recovery/runtime suite passes with `34 passed`, including every permitted continuation boundary, planned-boundary completion, completed-state no-op, completed-stage non-replay, partial/extra-stage ambiguity, and consumed-attempt rejection.

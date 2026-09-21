@@ -23,7 +23,7 @@ Last reconciled: **2026-09-21**
 - A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
 - Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
-- The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. The executor writes the exact decision once, consumes the sole attempt, rechecks checkpoint/kill-switch state, executes only the unstarted suffix, preserves independent acceptance, and treats completed state as an idempotent no-op. Targeted runtime verification: `29 passed`.
+- The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. Every permitted remaining-stage boundary is covered; completed stages are not replayed, and partial/extra traces fail closed. Targeted runtime verification: `34 passed`.
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -56,7 +56,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-Complete deterministic repair tests for the remaining valid QA/acceptance/checkpoint boundaries and ambiguous partial-stage traces; do not expand the executor's capability boundary.
+Run the full local unit regression for the completed repair boundary and reconcile only failures caused by this package without weakening its policy.
 
 ## Non-negotiable constraints
 

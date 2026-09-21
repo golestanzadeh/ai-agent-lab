@@ -1291,3 +1291,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-21
 
 **Decision:** Connect only an eligible version-1 repair decision to the existing fixed local workers. Write the decision once before mutation, consume one attempt, recheck the exact checkpoint and kill switch, execute only the first unstarted stage and remaining suffix, never overwrite a completed artifact, preserve QA and independent acceptance, then halt and verify the completed checkpoint and audit chain. Completed packages are idempotent no-ops. Targeted repair/recovery/runtime tests pass with `29 passed`; all external capabilities remain denied.
+
+
+## D-114 — Complete repair-boundary matrix
+
+**Status:** technically verified on 2026-09-21
+
+**Decision:** Verify continuation from implementation, QA, QA acceptance, implementation acceptance, and complete-checkpoint boundaries. At each boundary, preserve earlier artifacts byte-for-byte and execute only the unstarted suffix. Task-only partial stages and later-stage traces without their required prefix remain ambiguous and fail closed. The targeted repair/recovery/runtime suite passes with `34 passed`.

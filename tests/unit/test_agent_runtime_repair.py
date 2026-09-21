@@ -54,6 +54,69 @@ def _interrupt_after_implementation(tmp_path):
     return subject, work
 
 
+def _advance_interrupted_runtime(tmp_path, boundary):
+    subject, work = _interrupt_after_implementation(tmp_path)
+    paths = subject._paths(work.package_id)
+    if boundary == "IMPLEMENT":
+        return subject, work
+    with OrchestratorKernel(subject.database_path, CONTRACT_ROOT) as kernel:
+        implementation = json.loads(paths["implementation"].read_text(encoding="utf-8"))
+        from agent_lab.agent_runtime import _sha
+
+        implementation_evidence = _sha(implementation)
+        qa_task = subject._task(
+            work,
+            "QA",
+            "QUALITY_ENGINEERING_AGENT",
+            "RUNTIME_TEST_001-QA",
+            "RUNTIME_TEST_001-IMPLEMENT",
+            "artifact://local/agent-runtime/qa",
+            ["write_tests", "run_tests", "report_evidence"],
+        )
+        qa_payload = {
+            "runtime_id": "LOCAL_AGENT_RUNTIME_V1",
+            "classification": "SYNTHETIC",
+            "package_id": work.package_id,
+            "implementation_evidence": implementation_evidence,
+            "checks": [
+                {"criterion": item, "outcome": "PASS"}
+                for item in work.acceptance_criteria
+            ],
+            "failure_evidence_hidden": False,
+        }
+        qa_evidence = subject._execute(
+            kernel,
+            qa_task,
+            "MAN-RUNTIME_TEST_001-QA",
+            "A2",
+            paths["qa"],
+            qa_payload,
+            depends_on=("RUNTIME_TEST_001-PLAN",),
+        )
+        if boundary == "QA":
+            return subject, work
+        subject._accept(
+            kernel,
+            work,
+            "RUNTIME_TEST_001-QA",
+            qa_evidence,
+            "QA",
+            paths["qa"],
+        )
+        if boundary == "QA_ACCEPTANCE":
+            return subject, work
+        subject._accept(
+            kernel,
+            work,
+            "RUNTIME_TEST_001-IMPLEMENT",
+            implementation_evidence,
+            "IMPLEMENT",
+            paths["implementation"],
+            qa_path=paths["qa"],
+        )
+    return subject, work
+
+
 def test_planned_checkpoint_is_eligible_only_for_implementation(tmp_path):
     subject = runtime(tmp_path)
     work = package()
@@ -110,6 +173,90 @@ def test_repair_executor_never_replays_completed_implementation(tmp_path):
             (f"{work.package_id}-IMPLEMENT",),
         ).fetchone()[0]
     assert count == 1
+
+
+@pytest.mark.parametrize(
+    ("boundary", "next_stage"),
+    [
+        ("QA", "QA_ACCEPTANCE"),
+        ("QA_ACCEPTANCE", "IMPLEMENT_ACCEPTANCE"),
+        ("IMPLEMENT_ACCEPTANCE", "COMPLETE_CHECKPOINT"),
+    ],
+)
+def test_every_later_exact_prefix_completes_only_its_suffix(tmp_path, boundary, next_stage):
+    subject, work = _advance_interrupted_runtime(tmp_path, boundary)
+    paths = subject._paths(work.package_id)
+    implementation_before = paths["implementation"].read_bytes()
+    qa_before = paths["qa"].read_bytes()
+    decision = evaluate_runtime_repair(runtime(tmp_path), work)
+    assert decision.next_stage == next_stage
+    result = execute_runtime_repair(runtime(tmp_path), work)
+    assert result["state"] == "COMPLETED"
+    assert paths["implementation"].read_bytes() == implementation_before
+    assert paths["qa"].read_bytes() == qa_before
+
+
+def test_partial_implementation_task_trace_is_ambiguous(tmp_path):
+    subject = runtime(tmp_path)
+    work = package()
+    subject.start(work)
+    with OrchestratorKernel(subject.database_path, CONTRACT_ROOT) as kernel:
+        kernel.set_kill_switch(
+            "RUNNING",
+            actor_id="HUMAN_PROJECT_OWNER",
+            authority_reference=f"{AUTHORITY_REFERENCE}/partial-stage-test",
+        )
+        task = subject._task(
+            work,
+            "IMPLEMENT",
+            "IMPLEMENTATION_AGENT",
+            "RUNTIME_TEST_001-IMPLEMENTER",
+            "RUNTIME_TEST_001-PLAN",
+            "artifact://local/agent-runtime/implementation",
+            ["write_bounded_branch", "run_tests", "report_evidence"],
+        )
+        kernel.register_task(task, gate_triggers=(), depends_on=("RUNTIME_TEST_001-PLAN",))
+    decision = evaluate_runtime_repair(runtime(tmp_path), work)
+    assert decision.outcome is RepairOutcome.AMBIGUOUS_OR_UNSAFE
+    assert decision.next_stage is None
+
+
+def test_later_stage_trace_without_required_prefix_is_ambiguous(tmp_path):
+    subject = runtime(tmp_path)
+    work = package()
+    subject.start(work)
+    with OrchestratorKernel(subject.database_path, CONTRACT_ROOT) as kernel:
+        kernel.set_kill_switch(
+            "RUNNING",
+            actor_id="HUMAN_PROJECT_OWNER",
+            authority_reference=f"{AUTHORITY_REFERENCE}/extra-stage-test",
+        )
+        implementation_task = subject._task(
+            work,
+            "IMPLEMENT",
+            "IMPLEMENTATION_AGENT",
+            "RUNTIME_TEST_001-IMPLEMENTER",
+            "RUNTIME_TEST_001-PLAN",
+            "artifact://local/agent-runtime/implementation",
+            ["write_bounded_branch", "run_tests", "report_evidence"],
+        )
+        kernel.register_task(
+            implementation_task,
+            gate_triggers=(),
+            depends_on=("RUNTIME_TEST_001-PLAN",),
+        )
+        task = subject._task(
+            work,
+            "QA",
+            "QUALITY_ENGINEERING_AGENT",
+            "RUNTIME_TEST_001-QA",
+            "RUNTIME_TEST_001-IMPLEMENT",
+            "artifact://local/agent-runtime/qa",
+            ["write_tests", "run_tests", "report_evidence"],
+        )
+        kernel.register_task(task, gate_triggers=())
+    decision = evaluate_runtime_repair(runtime(tmp_path), work)
+    assert decision.outcome is RepairOutcome.AMBIGUOUS_OR_UNSAFE
 
 
 def test_missing_completed_artifact_fails_closed(tmp_path):
