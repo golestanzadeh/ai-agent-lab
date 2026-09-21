@@ -1183,3 +1183,5 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Add official rules `310030`, `310050`, `310060`, `310090`, `310110`, and `310120` to the source-bound local subset. These require gross wages when wage-tax fields exist and require wage tax when solidarity surcharge or church tax exists, separately for tax classes 1–5 and tax class 6.
 
 **Boundary:** This remains a local subset, not official ERiC plausibility execution. The exact protected annual-documentation source remains outside Git and all external capabilities remain denied.
+
+**Presentation reconciliation:** UI review contract version 3 replaces the stale six-rule status with `LOCAL_TWELVE_RULE_SUBSET_PASS`; readiness and UI documentation now describe the same twelve-rule boundary.

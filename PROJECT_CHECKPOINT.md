@@ -61,6 +61,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Stale current-state and controller wording that still limited a heartbeat to one package has been removed; an automated documentation check now protects the active sequential-package policy while historical decisions remain intact.
 - The focused documentation index is complete through the current runtime, E10, and UI records and is protected by an automated completeness guard.
 - Automated canonical-state checks require agreement on the latest UI package, active branch, and continuous-execution state across the checkpoint, current state, and roadmap.
+- The readiness and UI presentation contracts are reconciled with the twelve-rule local plausibility profile; no stale six-rule success claim remains in active product records.
 - **Exact next action:** select another bounded local synthetic package; any automatic repair/replay of interrupted runtime stages requires an exact policy decision before implementation.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
