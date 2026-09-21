@@ -1,10 +1,10 @@
 # Local E10/2024 plausibility subset
 
-The protected ERiC `44.3.6.0` annual documentation contains the official `N - Regeln` table. Plausibility profile version 2 covers twelve deterministic presence rules directly implicated by the bounded mapping: `241`, `310010`, `310030`, `310050`, `310060`, `310070`, `310090`, `310110`, `310120`, `100200001`, `100200112`, and `121355`.
+The protected ERiC `44.3.6.0` annual documentation contains the official `N - Regeln` table. Plausibility profile version 3 covers twelve deterministic presence rules directly implicated by the bounded mapping: `241`, `310010`, `310030`, `310050`, `310060`, `310070`, `310090`, `310110`, `310120`, `100200001`, `100200112`, and `121355`.
 
 Every result binds those codes to the exact reviewed protected source filename `Jahresdokumentation_E10_2024.ods` and SHA-256 `6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5`. The protected file itself remains outside Git; changing either provenance value invalidates the result.
 
-The local evaluator implements only those twelve reviewed conditions. In addition to the earlier wage and expense checks, tax, solidarity surcharge, or church-tax fields require gross wages in the same wage group, while solidarity surcharge and church tax require an explicit wage-tax field. The rules cover tax classes 1–5 and tax class 6 separately.
+The local evaluator implements only those twelve reviewed conditions. In addition to the earlier wage and expense checks, tax, solidarity surcharge, employee church tax, or spouse/life-partner church tax requires gross wages in the same wage group. The source-evidenced `E0200601` and `E0200603` expansion is evaluated under existing official rules `310030` and `310090`; no unsupported wage-tax dependency is inferred for those fields. The rules cover tax classes 1–5 and tax class 6 separately.
 
 Rule `100200112` exposed a concrete gap in the earlier mapping: `E0204803` cannot stand alone. The mapping now requires an explicit supported official expense category and emits `E0205405`/`E0205406` itemization before the matching `E0204803` sum. The currently supported synthetic category is `Schreibmaterial`; no broader semantic inference is made.
 

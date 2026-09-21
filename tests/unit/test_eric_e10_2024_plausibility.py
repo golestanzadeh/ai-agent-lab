@@ -134,6 +134,32 @@ def test_wage_tax_group_requires_gross_wages(tax_class, gross_field, rule_code):
 
 
 @pytest.mark.parametrize(
+    ("tax_class", "gross_field", "partner_field", "rule_code"),
+    [
+        (1, "E0200201", "E0200601", "310030"),
+        (6, "E0200203", "E0200603", "310090"),
+    ],
+)
+def test_partner_church_tax_requires_gross_wages(
+    tax_class, gross_field, partner_field, rule_code
+):
+    source = declaration()
+    xml = source.declaration_xml
+    if tax_class == 6:
+        xml = xml.replace("LStB_1_5_Sum", "LStB_6_Sum")
+        xml = xml.replace("E0200201", "E0200203").replace("E0200301", "E0200303")
+        xml = without(xml, "E0200002")
+    xml = xml.replace(
+        f"</{gross_field}>",
+        f"</{gross_field}><{partner_field}>1,00</{partner_field}>",
+    )
+    changed = replace(source, declaration_xml=without(xml, gross_field))
+    result = evaluate_local_e10_2024_plausibility(changed)
+    finding = next(item for item in result.findings if item.official_rule_code == rule_code)
+    assert partner_field in finding.field_ids
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     [
         ("evaluated_rule_codes", (), "rule set"),

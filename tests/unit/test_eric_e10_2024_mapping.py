@@ -54,6 +54,7 @@ def request_with_wage_taxes(*, tax_class: int = 1) -> E10MappingRequest:
         request(tax_class=tax_class),
         solidarity_surcharge_eur=3543,
         church_tax_eur=775,
+        partner_church_tax_eur=126,
     )
 
 
@@ -105,18 +106,21 @@ def test_maps_tax_class_six_to_separate_official_sum_fields():
 @pytest.mark.parametrize(
     ("tax_class", "expected"),
     [
-        (1, [("E0200401", "3543,00"), ("E0200501", "775,00")]),
-        (6, [("E0200403", "3543,00"), ("E0200503", "775,00")]),
+        (1, [("E0200401", "3543,00"), ("E0200501", "775,00"), ("E0200601", "126,00")]),
+        (6, [("E0200403", "3543,00"), ("E0200503", "775,00"), ("E0200603", "126,00")]),
     ],
 )
-def test_maps_explicit_solidarity_and_church_tax_to_official_sum_fields(tax_class, expected):
+def test_maps_explicit_optional_wage_taxes_to_official_sum_fields(tax_class, expected):
     result = map_synthetic_summary_to_e10_2024(request_with_wage_taxes(tax_class=tax_class))
     observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
     for binding in expected:
         assert binding in observed
 
 
-@pytest.mark.parametrize("field", ["solidarity_surcharge_eur", "church_tax_eur"])
+@pytest.mark.parametrize(
+    "field",
+    ["solidarity_surcharge_eur", "church_tax_eur", "partner_church_tax_eur"],
+)
 @pytest.mark.parametrize("value", [-1, True, 1_000_000_000_000])
 def test_rejects_invalid_optional_wage_tax_amounts(field, value):
     with pytest.raises(E10MappingError, match=field):
@@ -126,13 +130,20 @@ def test_rejects_invalid_optional_wage_tax_amounts(field, value):
 def test_explicit_zero_optional_taxes_are_distinct_from_omission() -> None:
     omitted = map_synthetic_summary_to_e10_2024(request())
     explicit_zero = map_synthetic_summary_to_e10_2024(
-        replace(request(), solidarity_surcharge_eur=0, church_tax_eur=0)
+        replace(
+            request(),
+            solidarity_surcharge_eur=0,
+            church_tax_eur=0,
+            partner_church_tax_eur=0,
+        )
     )
     values = {item.field_id: item.lexical_value for item in explicit_zero.field_bindings}
     assert values["E0200401"] == "0,00"
     assert values["E0200501"] == "0,00"
+    assert values["E0200601"] == "0,00"
     assert "E0200401" not in omitted.fragment_xml
     assert "E0200501" not in omitted.fragment_xml
+    assert "E0200601" not in omitted.fragment_xml
     assert explicit_zero.artifact_identity != omitted.artifact_identity
 
 
@@ -197,11 +208,13 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     assert request(gross_wages_eur=67_555).artifact_identity != baseline.artifact_identity
     assert replace(baseline, solidarity_surcharge_eur=1).artifact_identity != baseline.artifact_identity
     assert replace(baseline, church_tax_eur=1).artifact_identity != baseline.artifact_identity
+    assert replace(baseline, partner_church_tax_eur=1).artifact_identity != baseline.artifact_identity
 
 
-def test_profile_v1_request_is_rejected_after_v2_expansion():
+@pytest.mark.parametrize("profile_version", ["1", "2"])
+def test_older_profile_request_is_rejected_after_v3_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
-        replace(request(), profile_version="1")
+        replace(request(), profile_version=profile_version)
 
 
 def test_result_is_deterministic_and_hash_bound():

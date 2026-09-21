@@ -12,7 +12,7 @@ The Project Owner authorized this package on 2026-09-20. The implementation was 
 
 - tax classes 1–5: `E0200002`, `E0200201`, and `E0200301` under `N/ArbL/LStB_1_5_Sum`;
 - tax class 6: `E0200203` and `E0200303` under `N/ArbL/LStB_6_Sum`;
-- explicitly supplied solidarity surcharge and church tax: `E0200401`/`E0200501` for tax classes 1–5, or `E0200403`/`E0200503` for tax class 6; omitted values remain absent and are never inferred;
+- explicitly supplied solidarity surcharge, employee church tax, and spouse/life-partner church tax: `E0200401`/`E0200501`/`E0200601` for tax classes 1–5, or `E0200403`/`E0200503`/`E0200603` for tax class 6; omitted values remain absent and are never inferred;
 - explicitly classified other employment expenses: one `E0205405`/`E0205406` item under `N/Wk/Weitere_Wk/Sonst` and the matching `E0204803` aggregate under `N/Wk/Weitere_Wk/Sum`.
 
 The mapper preserves the official E10 namespace and version, whole-euro lexical form for gross wages and expense amounts, comma-decimal two-cent form for wage tax, the twelve-digit amount boundary, and separate Person A/Person B identity. Tax class, expense semantics, and an exact supported official expense category are mandatory because the older synthetic summary did not carry enough meaning to choose official fields safely. The current bounded category is `Schreibmaterial`.
@@ -38,3 +38,5 @@ The declaration/XSD package subsequently resolved the mapper's standalone full-d
 
 Mapping profile version 2 adds the optional wage-tax fields above from the reviewed official E10/2024 example and annual documentation. Targeted mapping, declaration, and local-plausibility verification passed (`67 passed`).
 Both supported wage groups with explicit optional solidarity surcharge and church tax also passed local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema files remained outside Git.
+
+Mapping profile version 3 adds only the source-evidenced optional spouse/life-partner church-tax fields `E0200601` and `E0200603`. Both wage groups, including all three optional wage-tax amounts, pass the exact official XSD locally. No relationship status, denomination, or amount is inferred; the field is emitted only from an explicit synthetic input.

@@ -25,6 +25,7 @@ Last reconciled: **2026-09-21**
 - Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
 - The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. Every permitted remaining-stage boundary is covered; completed stages are not replayed, and partial/extra traces fail closed. Targeted runtime verification: `34 passed`.
 - The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
+- The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -32,7 +33,7 @@ Last reconciled: **2026-09-21**
 - The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
 - After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
 - Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
-- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v2, exact official-XSD validation, and a twelve-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v3, exact official-XSD validation, and a twelve-rule local plausibility subset while official ERiC-engine execution remains fail-closed. Profile v3 adds only explicit synthetic spouse/life-partner church-tax fields `E0200601`/`E0200603` and extends existing official gross-wage rules `310030`/`310090` without inferring unsupported dependencies.
 
 ## Active boundaries
 
@@ -57,7 +58,7 @@ Last reconciled: **2026-09-21**
 
 ## Exact next action
 
-No further authorized, prerequisite-ready, independent bounded package is currently identified. Provider workers, real UI workflows, additional E10 semantics, and every external capability remain at their existing Human Gates.
+The Project Owner authorized further local synthetic E10/2024 semantics from reviewed official material. The first bounded expansion (spouse/life-partner church tax in both wage groups) is complete; select the next independently source-evidenced field/rule subset only after confirming its semantics can remain explicit and fail-closed.
 
 ## Non-negotiable constraints
 
