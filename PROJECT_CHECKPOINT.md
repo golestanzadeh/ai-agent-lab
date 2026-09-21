@@ -53,7 +53,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - The local FastAPI + Jinja/HTMX UI is complete through UI-19. Persian accessibility refinements are joined by fail-closed startup when no scoped synthetic case is registered.
 - Development remains on `d021-agent-case-provisioning`; no real submission has occurred and `main` remains protected.
 - Execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: a fresh post-reset limit check reported `100%` remaining in both the five-hour and weekly windows. Repository recovery was clean and synchronized.
-- The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The hourly plan-limit guard is updated to current external state and retains all caution, pause, resume, and Human-Gate rules.
+- The Project Owner reaffirmed exception-only continuous execution on 2026-09-20: no repeated continuation prompt or routine report is required inside the existing authority. The active five-minute plan-limit guard is updated to current external state and retains all caution, pause, resume, recovery, and Human-Gate rules.
 - The stale O4 validator requirement for a removed historical ROADMAP heading was replaced with the canonical `## Current position` marker; this repairs the known full-suite/CI failure without restoring obsolete roadmap content.
 - The compact ROADMAP current-position summary is reconciled through UI-19 as of 2026-09-21.
 - The plan-limit controller's stale package-7 pause marker is reconciled with the active hourly guard and continuous-execution authority as of 2026-09-21.

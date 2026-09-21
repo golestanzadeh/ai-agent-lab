@@ -76,7 +76,7 @@ Execution may terminate only when a token threshold requires `TOKEN_PAUSED`, a g
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses an hourly cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and may perform sequential bounded packages in one heartbeat, provided every package is followed by a fresh limit and repository-safety check before the next begins.
+The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses a five-minute cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and may perform sequential bounded packages in one heartbeat, provided every package is followed by a fresh limit and repository-safety check before the next begins. A new execution first performs the recovery gate, resumes from the last pushed checkpoint, and does not repeat a completed package; an earlier hard execution-window boundary is not itself a Human Gate.
 
 ## Host and scheduler limitation
 

@@ -1228,3 +1228,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented on 2026-09-21
 
 **Decision:** Preserve the immutable package-2 adapter and synthetic-preview status names for artifact compatibility, but label them explicitly as historical upstream state. Current mapping, official-XSD, and local-plausibility claims must come from the separately versioned E10 readiness pipeline. This documentation reconciliation changes no runtime contract, capability, Human Gate, or external-execution restriction.
+
+
+## D-105 — Five-minute cross-execution recovery cadence
+
+**Status:** active on 2026-09-21 by explicit Project Owner instruction
+
+**Decision:** The existing `plan-limit-continuation-guard` remains the only continuation automation and runs every five minutes. Each new execution must recover from the clean synchronized pushed checkpoint without overlapping ownership or duplicate package execution. A hard execution-window boundary is not itself a Human Gate. `TOKEN_PAUSED`, limit thresholds, exception-only reporting, and all existing safety and Human Gates remain unchanged.

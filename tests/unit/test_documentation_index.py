@@ -70,6 +70,9 @@ def test_current_limit_controller_allows_safe_package_chaining() -> None:
     assert "routine heartbeat-start checks are disabled" in current
     assert "Mandatory continuation rule" in controller
     assert "No fixed package-count limit applies" in controller
+    assert "five-minute cadence" in current
+    assert "five-minute cadence" in controller
+    assert "hard execution-window boundary is not itself a Human Gate" in controller
 
 
 def test_active_e10_and_ui_records_use_twelve_rule_profile() -> None:
