@@ -139,14 +139,15 @@ def test_other_expense_tolerance_uses_combined_sonst_and_ferry_or_flight_total(
     assert ("100200002" in codes) is fails
 
 
-def test_domestic_travel_combined_day_limit_is_enforced():
+@pytest.mark.parametrize(("arrival_days", "fails"), [(166, False), (167, True)])
+def test_domestic_travel_combined_day_limit_boundary(arrival_days, fails):
     source = declaration()
     xml = source.declaration_xml.replace(
         "<Weitere_Wk>",
-        "<VMA><Inl><E0205201>200</E0205201><E0205302>167</E0205302></Inl></VMA><Weitere_Wk>",
+        f"<VMA><Inl><E0205201>200</E0205201><E0205302>{arrival_days}</E0205302></Inl></VMA><Weitere_Wk>",
     )
     result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
-    assert "100200078" in {item.official_rule_code for item in result.findings}
+    assert ("100200078" in {item.official_rule_code for item in result.findings}) is fails
 
 
 def test_domestic_meal_reduction_requires_days():
@@ -167,6 +168,17 @@ def test_domestic_meal_reduction_uses_official_daily_rate(reduction, fails):
     )
     result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
     assert ("100200091" in {item.official_rule_code for item in result.findings}) is fails
+
+
+@pytest.mark.parametrize("field_id", ["E0205201", "E0205302"])
+def test_domestic_partial_day_categories_use_fourteen_euro_rate(field_id):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Weitere_Wk>",
+        f"<VMA><Inl><{field_id}>1</{field_id}><E0205508>15</E0205508></Inl></VMA><Weitere_Wk>",
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert "100200091" in {item.official_rule_code for item in result.findings}
 
 
 def test_reports_tax_class_six_withholding_rule():

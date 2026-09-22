@@ -303,6 +303,20 @@ def test_rejects_invalid_domestic_travel_semantics(field, value):
         replace(request(), **{field: value})
 
 
+def test_domestic_travel_context_changes_request_and_result_identity():
+    baseline_request = request()
+    travel_request = replace(
+        baseline_request,
+        domestic_travel_full_days=1,
+        domestic_meal_reduction_eur=28,
+    )
+    assert travel_request.artifact_identity != baseline_request.artifact_identity
+    assert (
+        map_synthetic_summary_to_e10_2024(travel_request).artifact_identity
+        != map_synthetic_summary_to_e10_2024(baseline_request).artifact_identity
+    )
+
+
 @pytest.mark.parametrize(
     "changes",
     [

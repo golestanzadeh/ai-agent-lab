@@ -1454,3 +1454,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Mapping profile version `10` adds the three explicit domestic travel day categories `E0205201`, `E0205302`, and `E0205409`, plus optional meal-provision reduction `E0205508`. Plausibility profile version `11` implements reviewed rules `100200078`, `100200090`, and `100200091`, including the official `14/14/28` euro daily-rate ceiling. Each field remains optional and explicit; invalid boundaries fail closed. The combined declaration passes the exact hash-pinned official E10/2024 XSD. The focused E10/UI/documentation suite passes with `232 passed, 1 warning`, and the complete local unit regression passes with `818 passed, 1 warning`. No foreign travel, real-case meaning, or external capability is inferred.
+
+
+## D-137 — Domestic travel boundary and identity hardening
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Add explicit regression coverage for the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic identity changes when the optional domestic-travel context is added. Focused verification passes with `178 passed`. This changes no mapping or plausibility profile, authority, or external capability.

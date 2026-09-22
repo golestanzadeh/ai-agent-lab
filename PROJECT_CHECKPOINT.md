@@ -79,8 +79,9 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Combined other-expense boundary hardening proves that the derived aggregate rejects twelve-digit overflow and that rule `100200002` uses the combined `Sonst` plus ferry-or-flight total at the exact tolerance boundary. Focused verification passes (`155 passed`), and the complete local unit regression passes (`807 passed, 1 warning`).
 - Ferry-or-flight omission and identity hardening proves explicit zero is distinct from omission, preserves the derived aggregate, and changes the cryptographic lineage. Focused mapping verification passes (`86 passed`), and the documentation guard passes (`8 passed`).
 - Mapping profile v10 and plausibility profile v11 add the domestic travel day/reduction subset and three reviewed rules. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`232 passed, 1 warning`), and the complete local unit regression passes (`818 passed, 1 warning`).
+- Domestic-travel hardening covers the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic lineage changes. Focused verification passes (`178 passed`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=100`; `weekly_remaining_percent=24`; `five_hour_resets_at=1790065741`; `weekly_resets_at=1790525245`; recovered continuation commit `25c6ad1285fda3b043d896c7daa8c44d0e86e9ba`.
-- **Exact next action:** after pushing the mapping-v10/plausibility-v11 domestic-travel package, read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
+- **Exact next action:** after pushing domestic-travel boundary and identity hardening, read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 
