@@ -11,7 +11,7 @@ from agent_lab.eric_e10_2024_declaration import E10DeclarationResult
 from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 
 
-PLAUSIBILITY_PROFILE_VERSION = "10"
+PLAUSIBILITY_PROFILE_VERSION = "11"
 OFFICIAL_RULE_SOURCE_FILENAME = "Jahresdokumentation_E10_2024.ods"
 OFFICIAL_RULE_SOURCE_SHA256 = "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"
 SUPPORTED_OFFICIAL_RULES = (
@@ -51,6 +51,9 @@ SUPPORTED_OFFICIAL_RULES = (
     "100200103",
     "100200002",
     "121361",
+    "100200078",
+    "100200090",
+    "100200091",
 )
 DENIED_CAPABILITIES = (
     "ERIC_FFI",
@@ -208,6 +211,11 @@ def evaluate_local_e10_2024_plausibility(
     training_sums = _integer_values(root, "E0204812")
     home_office_days_with_workplace = _integer_values(root, "E0204507")
     home_office_days_without_workplace = _integer_values(root, "E0206206")
+    domestic_days_over_eight_hours = _integer_values(root, "E0205201")
+    domestic_arrival_departure_days = _integer_values(root, "E0205302")
+    domestic_full_days = _integer_values(root, "E0205409")
+    domestic_day_values = domestic_days_over_eight_hours + domestic_arrival_departure_days + domestic_full_days
+    domestic_reductions = _integer_values(root, "E0205508")
 
     if gross_1_5 and not tax_class:
         findings.append(PlausibilityFinding("241", ("E0200002", "E0200201"), "tax class is required for tax-class 1-5 wages"))
@@ -285,6 +293,14 @@ def evaluate_local_e10_2024_plausibility(
         and home_office_days_with_workplace[0] + home_office_days_without_workplace[0] > 366
     ):
         findings.append(PlausibilityFinding("100200127", ("E0204507", "E0206206"), "combined home-office days cannot exceed 366"))
+    if domestic_day_values and sum(domestic_day_values) > 366:
+        findings.append(PlausibilityFinding("100200078", ("E0205201", "E0205302", "E0205409"), "combined domestic travel days cannot exceed 366"))
+    if domestic_reductions and not domestic_day_values:
+        findings.append(PlausibilityFinding("100200090", ("E0205201", "E0205302", "E0205409", "E0205508"), "meal reduction requires domestic travel days"))
+    if domestic_reductions and domestic_day_values:
+        allowed_reduction = sum(domestic_days_over_eight_hours) * 14 + sum(domestic_arrival_departure_days) * 14 + sum(domestic_full_days) * 28
+        if domestic_reductions[0] > allowed_reduction:
+            findings.append(PlausibilityFinding("100200091", ("E0205201", "E0205302", "E0205409", "E0205508"), "meal reduction exceeds the official domestic allowance"))
 
     frozen_findings = tuple(findings)
     return E10PlausibilityResult(

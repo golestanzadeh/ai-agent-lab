@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "9"
+MAPPING_PROFILE_VERSION = "10"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -95,6 +95,10 @@ class E10MappingRequest:
     ferry_or_flight_eur: int | None = None
     home_office_days_with_other_workplace: int | None = None
     home_office_days_without_other_workplace: int | None = None
+    domestic_travel_days_over_eight_hours: int | None = None
+    domestic_travel_arrival_departure_days: int | None = None
+    domestic_travel_full_days: int | None = None
+    domestic_meal_reduction_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -164,11 +168,16 @@ class E10MappingRequest:
         for name, value in (
             ("home_office_days_with_other_workplace", self.home_office_days_with_other_workplace),
             ("home_office_days_without_other_workplace", self.home_office_days_without_other_workplace),
+            ("domestic_travel_days_over_eight_hours", self.domestic_travel_days_over_eight_hours),
+            ("domestic_travel_arrival_departure_days", self.domestic_travel_arrival_departure_days),
+            ("domestic_travel_full_days", self.domestic_travel_full_days),
         ):
             if value is not None and (
                 not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 366
             ):
                 raise E10MappingError(f"{name} must be an integer between 1 and 366")
+        if self.domestic_meal_reduction_eur is not None:
+            _whole_euros("domestic_meal_reduction_eur", self.domestic_meal_reduction_eur)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -367,6 +376,16 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
         home_office_day_bindings += (E10FieldBinding("home_office_days_with_other_workplace", "/N/Wk/Homeoffice/E0204507", "E0204507", str(request.home_office_days_with_other_workplace)),)
     if request.home_office_days_without_other_workplace is not None:
         home_office_day_bindings += (E10FieldBinding("home_office_days_without_other_workplace", "/N/Wk/Homeoffice/E0206206", "E0206206", str(request.home_office_days_without_other_workplace)),)
+    domestic_travel_bindings = ()
+    for source_field, field_id, value in (
+        ("domestic_travel_days_over_eight_hours", "E0205201", request.domestic_travel_days_over_eight_hours),
+        ("domestic_travel_arrival_departure_days", "E0205302", request.domestic_travel_arrival_departure_days),
+        ("domestic_travel_full_days", "E0205409", request.domestic_travel_full_days),
+    ):
+        if value is not None:
+            domestic_travel_bindings += (E10FieldBinding(source_field, f"/N/Wk/VMA/Inl/{field_id}", field_id, str(value)),)
+    if request.domestic_meal_reduction_eur is not None:
+        domestic_travel_bindings += (E10FieldBinding("domestic_meal_reduction_eur", "/N/Wk/VMA/Inl/E0205508", "E0205508", _whole_euros("domestic_meal_reduction_eur", request.domestic_meal_reduction_eur)),)
     ferry_or_flight_bindings = ()
     ferry_or_flight_amount = 0
     if request.ferry_or_flight_description is not None:
@@ -399,7 +418,7 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
                 "combined_other_expenses_eur", combined_other_expenses
             ),
         ),
-    )
+    ) + domestic_travel_bindings
 
 
 def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding, ...]) -> str:
@@ -476,6 +495,21 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     ET.SubElement(other_expense_item, _qname("E0205406")).text = values["E0205406"]
     expense_sum = ET.SubElement(other_expenses, _qname("Sum"))
     ET.SubElement(expense_sum, _qname("E0204803")).text = values["E0204803"]
+    if any(value is not None for value in (
+        request.domestic_travel_days_over_eight_hours,
+        request.domestic_travel_arrival_departure_days,
+        request.domestic_travel_full_days,
+        request.domestic_meal_reduction_eur,
+    )):
+        domestic = ET.SubElement(ET.SubElement(expenses, _qname("VMA")), _qname("Inl"))
+        for field_id, value in (
+            ("E0205201", request.domestic_travel_days_over_eight_hours),
+            ("E0205302", request.domestic_travel_arrival_departure_days),
+            ("E0205409", request.domestic_travel_full_days),
+            ("E0205508", request.domestic_meal_reduction_eur),
+        ):
+            if value is not None:
+                ET.SubElement(domestic, _qname(field_id)).text = values[field_id]
     ET.register_namespace("", E10_NAMESPACE)
     return ET.tostring(root, encoding="unicode", short_empty_elements=False)
 

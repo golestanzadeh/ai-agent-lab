@@ -64,3 +64,7 @@ Mapping profile version 8 adds explicit positive day counts for both official ho
 ## Ferry and flight expense
 
 Mapping profile version 9 adds one explicit synthetic ferry-or-flight expense under `N/Wk/Weitere_Wk/Flug`: free-text description `E0204801` and whole-euro amount `E0204802`. Description and amount are required together, the description is limited to the official `1..999` boundary, and the amount is non-negative and limited to twelve digits. The mapper derives `E0204803` from both the existing explicit `Sonst` amount and this optional amount. The combined profile-v9 declaration passes the exact hash-pinned official E10/2024 XSD locally.
+
+## Domestic travel meal allowance subset
+
+Mapping profile version 10 adds explicit optional domestic travel counts under `N/Wk/VMA/Inl`: days over eight hours in `E0205201`, arrival/departure days in `E0205302`, and full absence days in `E0205409`, plus an optional whole-euro meal-provision reduction in `E0205508`. Each day count is restricted to `1..366`; the reduction is non-negative and limited to twelve digits. Omission remains omission. The combined profile-v10 declaration passes the exact hash-pinned official E10/2024 XSD locally.

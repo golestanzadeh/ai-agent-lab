@@ -139,6 +139,36 @@ def test_other_expense_tolerance_uses_combined_sonst_and_ferry_or_flight_total(
     assert ("100200002" in codes) is fails
 
 
+def test_domestic_travel_combined_day_limit_is_enforced():
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Weitere_Wk>",
+        "<VMA><Inl><E0205201>200</E0205201><E0205302>167</E0205302></Inl></VMA><Weitere_Wk>",
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert "100200078" in {item.official_rule_code for item in result.findings}
+
+
+def test_domestic_meal_reduction_requires_days():
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Weitere_Wk>", "<VMA><Inl><E0205508>1</E0205508></Inl></VMA><Weitere_Wk>"
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert "100200090" in {item.official_rule_code for item in result.findings}
+
+
+@pytest.mark.parametrize(("reduction", "fails"), [(28, False), (29, True)])
+def test_domestic_meal_reduction_uses_official_daily_rate(reduction, fails):
+    source = declaration()
+    xml = source.declaration_xml.replace(
+        "<Weitere_Wk>",
+        f"<VMA><Inl><E0205409>1</E0205409><E0205508>{reduction}</E0205508></Inl></VMA><Weitere_Wk>",
+    )
+    result = evaluate_local_e10_2024_plausibility(replace(source, declaration_xml=xml))
+    assert ("100200091" in {item.official_rule_code for item in result.findings}) is fails
+
+
 def test_reports_tax_class_six_withholding_rule():
     source = declaration()
     xml = source.declaration_xml.replace("LStB_1_5_Sum", "LStB_6_Sum")

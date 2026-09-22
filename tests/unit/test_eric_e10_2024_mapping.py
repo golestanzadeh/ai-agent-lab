@@ -270,6 +270,39 @@ def test_ferry_or_flight_omission_and_explicit_zero_are_distinct():
     assert explicit_zero.artifact_identity != omitted.artifact_identity
 
 
+def test_maps_domestic_travel_days_and_meal_reduction():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            domestic_travel_days_over_eight_hours=10,
+            domestic_travel_arrival_departure_days=4,
+            domestic_travel_full_days=3,
+            domestic_meal_reduction_eur=140,
+        )
+    )
+    observed = [(item.field_id, item.lexical_value) for item in result.field_bindings]
+    assert ("E0205201", "10") in observed
+    assert ("E0205302", "4") in observed
+    assert ("E0205409", "3") in observed
+    assert ("E0205508", "140") in observed
+    assert "<VMA>" in result.fragment_xml and "<Inl>" in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("domestic_travel_days_over_eight_hours", 0),
+        ("domestic_travel_arrival_departure_days", 367),
+        ("domestic_travel_full_days", True),
+        ("domestic_meal_reduction_eur", -1),
+        ("domestic_meal_reduction_eur", 1_000_000_000_000),
+    ],
+)
+def test_rejects_invalid_domestic_travel_semantics(field, value):
+    with pytest.raises(E10MappingError, match=field):
+        replace(request(), **{field: value})
+
+
 @pytest.mark.parametrize(
     "changes",
     [
