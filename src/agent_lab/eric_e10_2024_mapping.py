@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "10"
+MAPPING_PROFILE_VERSION = "11"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -99,6 +99,7 @@ class E10MappingRequest:
     domestic_travel_arrival_departure_days: int | None = None
     domestic_travel_full_days: int | None = None
     domestic_meal_reduction_eur: int | None = None
+    employer_tax_free_travel_reimbursement_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -178,6 +179,11 @@ class E10MappingRequest:
                 raise E10MappingError(f"{name} must be an integer between 1 and 366")
         if self.domestic_meal_reduction_eur is not None:
             _whole_euros("domestic_meal_reduction_eur", self.domestic_meal_reduction_eur)
+        if self.employer_tax_free_travel_reimbursement_eur is not None:
+            _whole_euros(
+                "employer_tax_free_travel_reimbursement_eur",
+                self.employer_tax_free_travel_reimbursement_eur,
+            )
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -386,6 +392,8 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             domestic_travel_bindings += (E10FieldBinding(source_field, f"/N/Wk/VMA/Inl/{field_id}", field_id, str(value)),)
     if request.domestic_meal_reduction_eur is not None:
         domestic_travel_bindings += (E10FieldBinding("domestic_meal_reduction_eur", "/N/Wk/VMA/Inl/E0205508", "E0205508", _whole_euros("domestic_meal_reduction_eur", request.domestic_meal_reduction_eur)),)
+    if request.employer_tax_free_travel_reimbursement_eur is not None:
+        domestic_travel_bindings += (E10FieldBinding("employer_tax_free_travel_reimbursement_eur", "/N/Wk/VMA/VMA_Ersatz/E0205108", "E0205108", _whole_euros("employer_tax_free_travel_reimbursement_eur", request.employer_tax_free_travel_reimbursement_eur)),)
     ferry_or_flight_bindings = ()
     ferry_or_flight_amount = 0
     if request.ferry_or_flight_description is not None:
@@ -500,8 +508,16 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         request.domestic_travel_arrival_departure_days,
         request.domestic_travel_full_days,
         request.domestic_meal_reduction_eur,
+        request.employer_tax_free_travel_reimbursement_eur,
     )):
-        domestic = ET.SubElement(ET.SubElement(expenses, _qname("VMA")), _qname("Inl"))
+        travel = ET.SubElement(expenses, _qname("VMA"))
+        domestic_values_present = any(value is not None for value in (
+            request.domestic_travel_days_over_eight_hours,
+            request.domestic_travel_arrival_departure_days,
+            request.domestic_travel_full_days,
+            request.domestic_meal_reduction_eur,
+        ))
+        domestic = ET.SubElement(travel, _qname("Inl")) if domestic_values_present else None
         for field_id, value in (
             ("E0205201", request.domestic_travel_days_over_eight_hours),
             ("E0205302", request.domestic_travel_arrival_departure_days),
@@ -510,6 +526,9 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
         ):
             if value is not None:
                 ET.SubElement(domestic, _qname(field_id)).text = values[field_id]
+        if request.employer_tax_free_travel_reimbursement_eur is not None:
+            reimbursement = ET.SubElement(travel, _qname("VMA_Ersatz"))
+            ET.SubElement(reimbursement, _qname("E0205108")).text = values["E0205108"]
     ET.register_namespace("", E10_NAMESPACE)
     return ET.tostring(root, encoding="unicode", short_empty_elements=False)
 

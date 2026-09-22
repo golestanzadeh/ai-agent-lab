@@ -68,3 +68,7 @@ Mapping profile version 9 adds one explicit synthetic ferry-or-flight expense un
 ## Domestic travel meal allowance subset
 
 Mapping profile version 10 adds explicit optional domestic travel counts under `N/Wk/VMA/Inl`: days over eight hours in `E0205201`, arrival/departure days in `E0205302`, and full absence days in `E0205409`, plus an optional whole-euro meal-provision reduction in `E0205508`. Each day count is restricted to `1..366`; the reduction is non-negative and limited to twelve digits. Omission remains omission. The combined profile-v10 declaration passes the exact hash-pinned official E10/2024 XSD locally.
+
+## Employer tax-free travel reimbursement
+
+Mapping profile version 11 adds the explicit optional whole-euro amount `E0205108` under `N/Wk/VMA/VMA_Ersatz`, representing the official field “Vom Arbeitgeber steuerfrei ersetzt”. The value is non-negative, limited to twelve digits, and omitted when absent. It introduces no new local plausibility claim because no separately implementable reviewed rule is directly implicated by this field alone. The combined profile-v11 declaration passes the exact hash-pinned official E10/2024 XSD locally.

@@ -1461,3 +1461,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Add explicit regression coverage for the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic identity changes when the optional domestic-travel context is added. Focused verification passes with `178 passed`. This changes no mapping or plausibility profile, authority, or external capability.
+
+
+## D-138 — Employer tax-free travel reimbursement mapping
+
+**Status:** implemented and verified on 2026-09-22
+
+**Decision:** Mapping profile version `11` adds explicit optional field `E0205108` under `N/Wk/VMA/VMA_Ersatz` for the official employer tax-free travel reimbursement amount. The input is whole-euro, non-negative, twelve-digit bounded, omission-preserving, and identity-bound. No additional local plausibility rule is claimed because the reviewed annual rule set exposes no independently implementable rule for this field alone. The generated declaration passes the exact hash-pinned official E10/2024 XSD. The focused E10/UI/documentation suite passes with `240 passed, 1 warning`, and the complete local unit regression passes with `826 passed, 1 warning`; all external capabilities remain denied.

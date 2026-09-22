@@ -317,6 +317,24 @@ def test_domestic_travel_context_changes_request_and_result_identity():
     )
 
 
+def test_maps_explicit_employer_tax_free_travel_reimbursement():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(request(), employer_tax_free_travel_reimbursement_eur=456)
+    )
+    assert ("E0205108", "456") in [
+        (item.field_id, item.lexical_value) for item in result.field_bindings
+    ]
+    assert "<VMA><VMA_Ersatz><E0205108>456</E0205108></VMA_Ersatz></VMA>" in result.fragment_xml
+
+
+@pytest.mark.parametrize("value", [-1, True, 1_000_000_000_000])
+def test_rejects_invalid_employer_tax_free_travel_reimbursement(value):
+    with pytest.raises(
+        E10MappingError, match="employer_tax_free_travel_reimbursement_eur"
+    ):
+        replace(request(), employer_tax_free_travel_reimbursement_eur=value)
+
+
 @pytest.mark.parametrize(
     "changes",
     [

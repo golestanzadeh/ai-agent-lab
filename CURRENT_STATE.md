@@ -37,6 +37,7 @@ Last reconciled: **2026-09-22**
 - Ferry-or-flight omission and identity hardening proves explicit zero is distinct from omission, preserves the derived aggregate, and changes the cryptographic lineage. Focused mapping verification passes (`86 passed`), and the documentation guard passes (`8 passed`).
 - Mapping profile v10 and plausibility profile v11 add the domestic travel day/reduction subset and three reviewed rules. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`232 passed, 1 warning`), and the complete local unit regression passes (`818 passed, 1 warning`).
 - Domestic-travel hardening covers the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic lineage changes. Focused verification passes (`178 passed`).
+- Mapping profile v11 adds the official employer tax-free travel reimbursement field `E0205108` with whole-euro, non-negative, twelve-digit fail-closed validation. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`240 passed, 1 warning`), and the complete local unit regression passes (`826 passed, 1 warning`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -44,7 +45,7 @@ Last reconciled: **2026-09-22**
 - The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
 - After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
 - Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
-- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v10, exact official-XSD validation, and a thirty-nine-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v11, exact official-XSD validation, and a thirty-nine-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
 
 ## Active boundaries
 
@@ -69,7 +70,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-After pushing domestic-travel boundary and identity hardening, read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
+Push the verified mapping-v11 employer tax-free travel reimbursement package, then read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
 
 ## Non-negotiable constraints
 
