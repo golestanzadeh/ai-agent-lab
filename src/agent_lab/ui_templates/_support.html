@@ -1,0 +1,10 @@
+<article class="workflow-panel" aria-labelledby="support-title">
+  <div class="panel-heading">
+    <div><p class="eyebrow">پشتیبانی و بازیابی</p><h3 id="support-title">وضعیت عملیاتی امن</h3></div>
+    <span class="status-chip">فقط نمایش · {{ support.data_classification }}</span>
+  </div>
+  <ul>
+    {% for code in support.status_codes %}<li>{{ code|status_label }} <code>{{ code }}</code></li>{% endfor %}
+  </ul>
+  <p>رسید واقعی وجود ندارد، زیرا هیچ ارسال واقعی انجام نشده است. کنترل‌های توقف، ادامه و بازیابی در این نمونه فعال نیستند.</p>
+</article>

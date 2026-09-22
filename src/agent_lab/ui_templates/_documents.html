@@ -1,0 +1,12 @@
+<article class="document-panel" aria-labelledby="documents-title">
+  <div class="panel-heading">
+    <div><p class="eyebrow">ورودی مدارک</p><h3 id="documents-title">فهرست متادیتای مصنوعی</h3></div>
+    <span class="status-chip">{{ documents.data_classification }}</span>
+  </div>
+  <div class="table-wrap"><table>
+    <caption>مدارک مصنوعیِ همین پرونده و اجرای انتخاب‌شده</caption>
+    <thead><tr><th scope="col">عنوان</th><th scope="col">دسته</th><th scope="col">نوع</th><th scope="col">وضعیت</th><th scope="col">منشأ</th></tr></thead>
+    <tbody>{% for document in documents.documents %}<tr><th scope="row">{{ document.display_label }}</th><td>{{ document.category|status_label }} <code dir="ltr">{{ document.category }}</code></td><td>{{ document.mime_label }}</td><td>{{ document.status.value|status_label }} <code dir="ltr">{{ document.status.value }}</code></td><td class="mono" dir="ltr">{{ document.provenance_reference }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="disabled-reason">آپلود و مشاهدهٔ محتوای واقعی در این بسته غیرفعال است.</p>
+</article>

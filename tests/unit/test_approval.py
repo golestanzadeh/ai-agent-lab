@@ -12,7 +12,7 @@ from agent_lab.approval import (
     ApprovalValidationError,
     IntendedOperation,
 )
-from agent_lab.audit import AuditEventType, AuditStore
+from agent_lab.audit import ActorType, AuditEventType, AuditStore
 from agent_lab.case_registry import (
     AssessmentMode,
     CaseRecord,
@@ -109,8 +109,35 @@ def test_pending_and_grant_are_audited_and_immutable():
         AuditEventType.APPROVAL_REQUESTED,
         AuditEventType.APPROVAL_GRANTED,
     ]
+    assert [event.actor_type for event in audit.list_events(approval.case_id, approval.run_id)] == [
+        ActorType.HUMAN, ActorType.HUMAN,
+    ]
     with pytest.raises(Exception):
         approval.approval_status = ApprovalStatus.CONSUMED
+
+
+def test_agent_request_is_audited_as_agent_but_grant_remains_human():
+    _, _, audit, store = make_store()
+    approval = create_pending(store, requester_actor_type=ActorType.AGENT)
+    requested = audit.list_events(approval.case_id, approval.run_id)[0]
+    assert requested.event_type is AuditEventType.APPROVAL_REQUESTED
+    assert requested.actor_type is ActorType.AGENT
+    approved = store.grant(
+        approval.approval_id,
+        approver="human-001",
+        authorization_reference="AUTH-001",
+        timestamp=NOW,
+    )
+    granted = audit.list_events(approved.case_id, approved.run_id)[1]
+    assert granted.event_type is AuditEventType.APPROVAL_GRANTED
+    assert granted.actor_type is ActorType.HUMAN
+
+
+@pytest.mark.parametrize("requester_actor_type", [ActorType.SYSTEM, ActorType.TOOL, "agent"])
+def test_non_human_or_agent_requester_type_fails_closed(requester_actor_type):
+    _, _, _, store = make_store()
+    with pytest.raises(ApprovalError, match="requester"):
+        create_pending(store, requester_actor_type=requester_actor_type)
 
 
 @pytest.mark.parametrize(

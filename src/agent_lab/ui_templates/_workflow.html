@@ -1,0 +1,17 @@
+<article class="workflow-panel" aria-labelledby="workflow-title">
+  <div class="panel-heading">
+    <div><p class="eyebrow">گردش‌کار</p><h3 id="workflow-title">مسیر پرونده</h3></div>
+    <span class="status-chip">بازیابی: {{ workflow.recovery_status.value|status_label }} · {{ workflow.recovery_status.value }}</span>
+  </div>
+  <ol class="timeline">
+    {% for stage in workflow.stages %}
+    <li class="stage stage-{{ stage.status.value|lower }}">
+      <span class="stage-index" aria-hidden="true">{{ loop.index }}</span><span class="stage-name">{{ stage.code|status_label }} <code dir="ltr">{{ stage.code }}</code></span><span class="stage-status">{{ stage.status.value|status_label }} · <code dir="ltr">{{ stage.status.value }}</code></span>
+    </li>
+    {% endfor %}
+  </ol>
+  <details class="diagnostics"><summary>وضعیت فنی و بازیابی</summary>
+    <ul>{% for code in workflow.diagnostic_codes %}<li>{{ code|status_label }} <code>{{ code }}</code></li>{% endfor %}</ul>
+    <p>این گزارش فقط کدهای امن و فاقد محتوای خصوصی را نشان می‌دهد.</p>
+  </details>
+</article>
