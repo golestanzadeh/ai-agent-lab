@@ -1468,3 +1468,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and verified on 2026-09-22
 
 **Decision:** Mapping profile version `11` adds explicit optional field `E0205108` under `N/Wk/VMA/VMA_Ersatz` for the official employer tax-free travel reimbursement amount. The input is whole-euro, non-negative, twelve-digit bounded, omission-preserving, and identity-bound. No additional local plausibility rule is claimed because the reviewed annual rule set exposes no independently implementable rule for this field alone. The generated declaration passes the exact hash-pinned official E10/2024 XSD. The focused E10/UI/documentation suite passes with `240 passed, 1 warning`, and the complete local unit regression passes with `826 passed, 1 warning`; all external capabilities remain denied.
+
+
+## D-139 — Employer reimbursement boundary and lineage hardening
+
+**Status:** implemented and technically verified on 2026-09-22
+
+**Decision:** Add explicit regression coverage proving that employer tax-free travel reimbursement preserves an explicit zero, accepts the exact official twelve-digit maximum, changes both request and mapped-result identities, and rejects every superseded mapping profile version. Focused mapping/documentation verification passes with `110 passed`. This changes no mapping or plausibility profile, authority, or external capability.

@@ -81,8 +81,9 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Mapping profile v10 and plausibility profile v11 add the domestic travel day/reduction subset and three reviewed rules. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`232 passed, 1 warning`), and the complete local unit regression passes (`818 passed, 1 warning`).
 - Domestic-travel hardening covers the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic lineage changes. Focused verification passes (`178 passed`).
 - Mapping profile v11 adds the official employer tax-free travel reimbursement field `E0205108` with whole-euro, non-negative, twelve-digit fail-closed validation. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`240 passed, 1 warning`), and the complete local unit regression passes (`826 passed, 1 warning`).
+- Employer-reimbursement hardening proves explicit zero is distinct from omission, accepts the exact twelve-digit maximum, binds the field into request/result identity, and rejects every superseded mapping profile. Focused mapping/documentation verification passes (`110 passed`).
 - **Reset-aware resume:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; `five_hour_remaining_percent=100`; `weekly_remaining_percent=24`; `five_hour_resets_at=1790065741`; `weekly_resets_at=1790525245`; recovered continuation commit `25c6ad1285fda3b043d896c7daa8c44d0e86e9ba`.
-- **Exact next action:** push the verified mapping-v11 employer tax-free travel reimbursement package, then read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
+- **Exact next action:** push the employer-reimbursement boundary and lineage hardening package, then read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
 
 All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
 

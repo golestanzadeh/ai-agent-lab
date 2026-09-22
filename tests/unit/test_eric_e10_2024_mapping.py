@@ -327,6 +327,36 @@ def test_maps_explicit_employer_tax_free_travel_reimbursement():
     assert "<VMA><VMA_Ersatz><E0205108>456</E0205108></VMA_Ersatz></VMA>" in result.fragment_xml
 
 
+def test_employer_tax_free_travel_reimbursement_preserves_zero_and_boundary():
+    zero = map_synthetic_summary_to_e10_2024(
+        replace(request(), employer_tax_free_travel_reimbursement_eur=0)
+    )
+    maximum = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            employer_tax_free_travel_reimbursement_eur=999_999_999_999,
+        )
+    )
+    assert ("E0205108", "0") in [
+        (item.field_id, item.lexical_value) for item in zero.field_bindings
+    ]
+    assert ("E0205108", "999999999999") in [
+        (item.field_id, item.lexical_value) for item in maximum.field_bindings
+    ]
+
+
+def test_employer_tax_free_travel_reimbursement_changes_request_and_result_identity():
+    omitted = request()
+    explicit_zero = replace(
+        omitted, employer_tax_free_travel_reimbursement_eur=0
+    )
+    assert explicit_zero.artifact_identity != omitted.artifact_identity
+    assert (
+        map_synthetic_summary_to_e10_2024(explicit_zero).artifact_identity
+        != map_synthetic_summary_to_e10_2024(omitted).artifact_identity
+    )
+
+
 @pytest.mark.parametrize("value", [-1, True, 1_000_000_000_000])
 def test_rejects_invalid_employer_tax_free_travel_reimbursement(value):
     with pytest.raises(
@@ -516,8 +546,10 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
     ).artifact_identity != baseline.artifact_identity
 
 
-@pytest.mark.parametrize("profile_version", ["1", "2", "3", "4", "5", "6", "7"])
-def test_older_profile_request_is_rejected_after_v8_expansion(profile_version):
+@pytest.mark.parametrize(
+    "profile_version", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+)
+def test_older_profile_request_is_rejected_after_v11_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

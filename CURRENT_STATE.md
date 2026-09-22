@@ -38,6 +38,7 @@ Last reconciled: **2026-09-22**
 - Mapping profile v10 and plausibility profile v11 add the domestic travel day/reduction subset and three reviewed rules. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`232 passed, 1 warning`), and the complete local unit regression passes (`818 passed, 1 warning`).
 - Domestic-travel hardening covers the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic lineage changes. Focused verification passes (`178 passed`).
 - Mapping profile v11 adds the official employer tax-free travel reimbursement field `E0205108` with whole-euro, non-negative, twelve-digit fail-closed validation. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`240 passed, 1 warning`), and the complete local unit regression passes (`826 passed, 1 warning`).
+- Employer-reimbursement hardening proves explicit zero is distinct from omission, accepts the exact twelve-digit maximum, binds the field into request/result identity, and rejects every superseded mapping profile. Focused mapping/documentation verification passes (`110 passed`).
 - Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
 
 ## Live external status
@@ -70,7 +71,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-Push the verified mapping-v11 employer tax-free travel reimbursement package, then read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
+Push the employer-reimbursement boundary and lineage hardening package, then read live limits and select the next authorized package under the existing caution, safety, and Human-Gate rules.
 
 ## Non-negotiable constraints
 
