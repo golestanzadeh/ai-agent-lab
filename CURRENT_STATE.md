@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-22**
+Last reconciled: **2026-09-27**
 
 ## Authoritative status
 
@@ -15,7 +15,7 @@ Last reconciled: **2026-09-22**
 - Controlled CASE-001 migration, document processing, six-role tax runtime, and Chief review.
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Phase P1 local synthetic ERiC boundary through package 7.
-- Local E10/2024 mapping profile version 2 for the bounded Anlage N employment subset; explicit optional solidarity surcharge and church-tax amounts map to official tax-class-specific sum fields without inferring omitted values.
+- Local E10/2024 mapping profile version 11 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, employer-reimbursement, and other-expense fields; omitted optional values remain absent and are never inferred.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
 - Source-evidenced local plausibility profile version 11 evaluates thirty-nine official Anlage N rules, including bounded single-item professional-association, work-equipment, home-office workroom, training, home-office-day, ferry-or-flight, domestic-travel, and other-expense completeness contracts.
 - A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. This verifies the current local unit surface; it does not prove the earlier intermittent environment behavior permanently resolved.
@@ -55,7 +55,7 @@ Last reconciled: **2026-09-22**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the latest authoritative end-of-package observation reported five-hour `63%` and weekly `19%` remaining. The weekly window is in the existing caution zone, so no large package may start; this is not `TOKEN_PAUSED`.
+- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aligned wake on 2026-09-27 reported five-hour `99%` and weekly `100%` remaining, and the clean synchronized repository recovery gate passed at `72d922d2b8c64293fadd3203097080a8bc5aaf9c`.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The active plan-limit guard uses a five-minute cadence, reflects completed developer access, and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
@@ -71,7 +71,7 @@ Last reconciled: **2026-09-22**
 
 ## Exact next action
 
-On the next safe execution, recover from pushed HEAD and reassess whether a small authorized package is prerequisite-ready; do not start a large package while weekly remaining is at or below `20%`.
+Select and register the highest-value bounded local synthetic non-production package that is already authorized and prerequisite-ready; preserve every existing Human Gate and external-operation blocker.
 
 ## Non-negotiable constraints
 

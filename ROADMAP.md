@@ -2,14 +2,14 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-09-21**
+Last reconciled: **2026-09-27**
 
 ## Current position
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
-- Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the reset-aligned wake verified five-hour `100%` and weekly `24%` remaining; this changes no project scope or Human Gate.
+- Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
 
 ## Track 1 — Autonomous project control
 
