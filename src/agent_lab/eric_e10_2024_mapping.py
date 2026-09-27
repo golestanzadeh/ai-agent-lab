@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "13"
+MAPPING_PROFILE_VERSION = "14"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -103,6 +103,8 @@ class E10MappingRequest:
     employer_tax_free_commuting_benefit_eur: int | None = None
     employer_flat_taxed_commuting_benefit_eur: int | None = None
     jobcenter_travel_cost_subsidy_eur: int | None = None
+    business_travel_transport_description: str | None = None
+    business_travel_transport_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -129,6 +131,28 @@ class E10MappingRequest:
         ):
             if value is not None:
                 _whole_euros(name, value)
+        if (self.business_travel_transport_description is None) is not (
+            self.business_travel_transport_eur is None
+        ):
+            raise E10MappingError(
+                "business-travel transport description and amount must be provided together"
+            )
+        if self.business_travel_transport_description is not None:
+            if (
+                not isinstance(self.business_travel_transport_description, str)
+                or not self.business_travel_transport_description.strip()
+            ):
+                raise E10MappingError(
+                    "business-travel transport description must be non-empty"
+                )
+            if len(self.business_travel_transport_description) > 999:
+                raise E10MappingError(
+                    "business-travel transport description exceeds the official boundary"
+                )
+            _whole_euros(
+                "business_travel_transport_eur",
+                self.business_travel_transport_eur,
+            )
         if (self.professional_association_name is None) is not (
             self.professional_association_eur is None
         ):
@@ -447,6 +471,25 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             E10FieldBinding("ferry_or_flight_description", "/N/Wk/Weitere_Wk/Flug/E0204801", "E0204801", request.ferry_or_flight_description),
             E10FieldBinding("ferry_or_flight_eur", "/N/Wk/Weitere_Wk/Flug/E0204802", "E0204802", _whole_euros("ferry_or_flight_eur", ferry_or_flight_amount)),
         )
+    business_travel_transport_bindings = ()
+    if request.business_travel_transport_description is not None:
+        business_travel_transport_bindings = (
+            E10FieldBinding(
+                "business_travel_transport_description",
+                "/N/Wk/AWT/Fahrt/E0205003",
+                "E0205003",
+                request.business_travel_transport_description,
+            ),
+            E10FieldBinding(
+                "business_travel_transport_eur",
+                "/N/Wk/AWT/Fahrt/E0205004",
+                "E0205004",
+                _whole_euros(
+                    "business_travel_transport_eur",
+                    request.business_travel_transport_eur,
+                ),
+            ),
+        )
     combined_other_expenses = payload.deductible_expenses_eur + ferry_or_flight_amount
     return wage_bindings + tax_bindings + commuting_subsidy_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + ferry_or_flight_bindings + (
         E10FieldBinding(
@@ -471,7 +514,7 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
                 "combined_other_expenses_eur", combined_other_expenses
             ),
         ),
-    ) + domestic_travel_bindings
+    ) + business_travel_transport_bindings + domestic_travel_bindings
 
 
 def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding, ...]) -> str:
@@ -562,6 +605,11 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     ET.SubElement(other_expense_item, _qname("E0205406")).text = values["E0205406"]
     expense_sum = ET.SubElement(other_expenses, _qname("Sum"))
     ET.SubElement(expense_sum, _qname("E0204803")).text = values["E0204803"]
+    if request.business_travel_transport_description is not None:
+        business_travel = ET.SubElement(expenses, _qname("AWT"))
+        transport = ET.SubElement(business_travel, _qname("Fahrt"))
+        ET.SubElement(transport, _qname("E0205003")).text = values["E0205003"]
+        ET.SubElement(transport, _qname("E0205004")).text = values["E0205004"]
     if any(value is not None for value in (
         request.domestic_travel_days_over_eight_hours,
         request.domestic_travel_arrival_departure_days,

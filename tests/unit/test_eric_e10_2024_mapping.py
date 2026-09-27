@@ -463,6 +463,71 @@ def test_rejects_invalid_employer_commuting_benefits(field, value):
         replace(request(), **{field: value})
 
 
+def test_maps_single_business_travel_transport_cost_item():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            business_travel_transport_description="Synthetic rail ticket",
+            business_travel_transport_eur=321,
+        )
+    )
+    assert [
+        (item.field_id, item.lexical_value)
+        for item in result.field_bindings
+        if item.field_id in {"E0205003", "E0205004"}
+    ] == [("E0205003", "Synthetic rail ticket"), ("E0205004", "321")]
+    assert (
+        "<AWT><Fahrt><E0205003>Synthetic rail ticket</E0205003>"
+        "<E0205004>321</E0205004></Fahrt></AWT>"
+    ) in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"business_travel_transport_description": "Synthetic rail ticket"},
+        {"business_travel_transport_eur": 1},
+        {
+            "business_travel_transport_description": "",
+            "business_travel_transport_eur": 1,
+        },
+        {
+            "business_travel_transport_description": "x" * 1000,
+            "business_travel_transport_eur": 1,
+        },
+        {
+            "business_travel_transport_description": "Synthetic rail ticket",
+            "business_travel_transport_eur": -1,
+        },
+        {
+            "business_travel_transport_description": "Synthetic rail ticket",
+            "business_travel_transport_eur": 1_000_000_000_000,
+        },
+    ],
+)
+def test_rejects_invalid_business_travel_transport_cost_semantics(changes):
+    with pytest.raises(E10MappingError, match="business-travel|business_travel"):
+        replace(request(), **changes)
+
+
+def test_business_travel_transport_zero_omission_and_identity_are_distinct():
+    omitted = request()
+    explicit_zero = replace(
+        omitted,
+        business_travel_transport_description="Synthetic rail ticket",
+        business_travel_transport_eur=0,
+    )
+    mapped_zero = map_synthetic_summary_to_e10_2024(explicit_zero)
+    assert explicit_zero.artifact_identity != omitted.artifact_identity
+    assert mapped_zero.artifact_identity != map_synthetic_summary_to_e10_2024(
+        omitted
+    ).artifact_identity
+    assert ("E0205004", "0") in [
+        (item.field_id, item.lexical_value) for item in mapped_zero.field_bindings
+    ]
+    assert "E0205003" not in map_synthetic_summary_to_e10_2024(omitted).fragment_xml
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -645,9 +710,9 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
 
 
 @pytest.mark.parametrize(
-    "profile_version", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+    "profile_version", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"]
 )
-def test_older_profile_request_is_rejected_after_v13_expansion(profile_version):
+def test_older_profile_request_is_rejected_after_v14_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 
