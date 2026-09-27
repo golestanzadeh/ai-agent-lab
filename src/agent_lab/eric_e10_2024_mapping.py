@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "11"
+MAPPING_PROFILE_VERSION = "12"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -100,6 +100,7 @@ class E10MappingRequest:
     domestic_travel_full_days: int | None = None
     domestic_meal_reduction_eur: int | None = None
     employer_tax_free_travel_reimbursement_eur: int | None = None
+    jobcenter_travel_cost_subsidy_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
     def __post_init__(self) -> None:
@@ -183,6 +184,11 @@ class E10MappingRequest:
             _whole_euros(
                 "employer_tax_free_travel_reimbursement_eur",
                 self.employer_tax_free_travel_reimbursement_eur,
+            )
+        if self.jobcenter_travel_cost_subsidy_eur is not None:
+            _whole_euros(
+                "jobcenter_travel_cost_subsidy_eur",
+                self.jobcenter_travel_cost_subsidy_eur,
             )
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
@@ -394,6 +400,17 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
         domestic_travel_bindings += (E10FieldBinding("domestic_meal_reduction_eur", "/N/Wk/VMA/Inl/E0205508", "E0205508", _whole_euros("domestic_meal_reduction_eur", request.domestic_meal_reduction_eur)),)
     if request.employer_tax_free_travel_reimbursement_eur is not None:
         domestic_travel_bindings += (E10FieldBinding("employer_tax_free_travel_reimbursement_eur", "/N/Wk/VMA/VMA_Ersatz/E0205108", "E0205108", _whole_euros("employer_tax_free_travel_reimbursement_eur", request.employer_tax_free_travel_reimbursement_eur)),)
+    commuting_subsidy_bindings = ()
+    if request.jobcenter_travel_cost_subsidy_eur is not None:
+        commuting_subsidy_bindings = (E10FieldBinding(
+            "jobcenter_travel_cost_subsidy_eur",
+            "/N/Wk/EP/Fahrtk_Ersatz/E0204004",
+            "E0204004",
+            _whole_euros(
+                "jobcenter_travel_cost_subsidy_eur",
+                request.jobcenter_travel_cost_subsidy_eur,
+            ),
+        ),)
     ferry_or_flight_bindings = ()
     ferry_or_flight_amount = 0
     if request.ferry_or_flight_description is not None:
@@ -403,7 +420,7 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
             E10FieldBinding("ferry_or_flight_eur", "/N/Wk/Weitere_Wk/Flug/E0204802", "E0204802", _whole_euros("ferry_or_flight_eur", ferry_or_flight_amount)),
         )
     combined_other_expenses = payload.deductible_expenses_eur + ferry_or_flight_amount
-    return wage_bindings + tax_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + ferry_or_flight_bindings + (
+    return wage_bindings + tax_bindings + commuting_subsidy_bindings + association_bindings + work_equipment_bindings + home_office_bindings + home_office_day_bindings + training_bindings + ferry_or_flight_bindings + (
         E10FieldBinding(
             source_field="other_expense_category",
             official_path="/N/Wk/Weitere_Wk/Sonst/E0205405",
@@ -456,6 +473,10 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     for field_id in field_ids:
         ET.SubElement(wage_group, _qname(field_id)).text = values[field_id]
     expenses = ET.SubElement(n, _qname("Wk"))
+    if request.jobcenter_travel_cost_subsidy_eur is not None:
+        commuting = ET.SubElement(expenses, _qname("EP"))
+        subsidy = ET.SubElement(commuting, _qname("Fahrtk_Ersatz"))
+        ET.SubElement(subsidy, _qname("E0204004")).text = values["E0204004"]
     if request.professional_association_name is not None:
         association = ET.SubElement(expenses, _qname("Berufsverb"))
         item = ET.SubElement(association, _qname("Einz"))
