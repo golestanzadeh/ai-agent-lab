@@ -16,6 +16,7 @@ Last reconciled: **2026-09-27**
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Owner approval `ORCH-CONT-20260927-001` is active. Milestone-authority contract v1 and its Kernel controls now fail closed on authority amplification, select ready packages in durable dependency order, permit only bounded queue-exhaustion replanning, and persist complete non-token STOP diagnostics. Contract validation and the focused Kernel suite pass (`41 passed`).
 - Owner authority `MILESTONE-A-20260927-001` is active. The exact five-package envelope is pinned to `sha256:2a6d89b6c350b5a1b653bfb7b8b1ddf472188785104389967786e23d97249d09`. MA-01 implements the closed twelve-stage golden-journey coverage manifest and is independently accepted; full unit regression passes (`876 passed, 1 warning`). Kernel checkpoint `sha256:9c7f5a28521d82ac70ffd2dd8c9d5de74b8c9e6512ac977380508ac50656625b` makes MA-02 ready.
+- MA-02 adds a case-registry-composed, SQLite-backed synthetic workflow journal with exact scope, atomic/idempotent transitions, hash-chain integrity, crash rollback, restart recovery, and cross-case rejection. Independent acceptance passes; focused verification `39 passed`; full unit regression `883 passed, 1 warning`; checkpoint `sha256:7434e9ef9fc227ddb6a808629c647644d637d225ecf5524b49f0d5ebb8071663` makes MA-03 ready.
 - The bounded `SYNTHETIC_LOCAL_V1` continuity proof passed with two dependency-ordered packages, three dispatch attempts, one recoverable failure, two independent acceptances, one bounded replan, durable close/reopen checkpoint recovery, simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. Focused verification passes (`31 passed`); the complete unit regression passes (`863 passed, 1 warning`).
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile version 14 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, single business-travel transport-cost item, employer-reimbursement, commuting-benefit/subsidy, and other-expense fields; omitted optional values remain absent and are never inferred.
@@ -71,14 +72,14 @@ Last reconciled: **2026-09-27**
 
 ## Remaining product work
 
-1. Execute registered synthetic packages MA-02 through MA-05 in dependency order without duplicating existing components.
+1. Execute registered synthetic packages MA-03 through MA-05 in dependency order without duplicating existing components.
 2. After synthetic Milestone A passes, verify the exact real-data/Gemini authority boundary before any controlled CASE-001 reproduction operation.
 3. Expand official E10/2024 field mapping only from separately reviewed exact source evidence and explicit synthetic semantics.
 4. Keep external submission, official ERiC execution, product release, and production controls behind their existing Human Gates.
 
 ## Exact next action
 
-The reset-aligned wake reported five-hour `100%` and weekly `85%` remaining, and the Recovery Gate passed at `73651a567b7849e099940ce6bd0edbf25fef7915`. `TOKEN_PAUSED` is ended. Execute dependency-ready `MA-02-COMPOSITION-AND-STORE`; real CASE-001/Gemini processing remains a separate post-synthetic authorization check.
+Execute dependency-ready `MA-03-INTAKE-REVIEW-DECLARATION`; real CASE-001/Gemini processing remains a separate post-synthetic authorization check.
 
 ## Non-negotiable constraints
 

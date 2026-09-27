@@ -55,6 +55,7 @@ Every package uses local synthetic data only. Budgets are ceilings, not entitlem
 - Deliverable: one composition service over existing components plus a case-scoped durable synthetic workflow store with atomic transitions and restart recovery.
 - Acceptance: mandatory `case_id`, cross-case rejection, schema/version rejection, idempotent transition identity, transactional audit, crash/reopen tests, and no second case/approval/orchestrator store.
 - Recovery: fail closed on corrupt/partial state; resume only from verified durable transition.
+- Execution result: implemented and independently accepted. The Case Registry remains authoritative; the store persists only scoped workflow metadata. Focused verification `39 passed`; full unit regression `883 passed, 1 warning`; Kernel checkpoint `sha256:7434e9ef9fc227ddb6a808629c647644d637d225ecf5524b49f0d5ebb8071663`.
 
 ### `MA-03-INTAKE-REVIEW-DECLARATION`
 

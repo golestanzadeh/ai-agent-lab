@@ -98,6 +98,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 ## Product milestones
 
 - `milestone-a-execution-plan.md` — reconciled A-01 through A-09 coverage, bounded package dependencies, budgets, recovery rules, and consolidated authority gate.
+- `milestone-a-composition-store.md` — MA-02 case-scoped synthetic composition/store contract, integrity and recovery boundaries, and verification evidence.
 
 ## Documentation rules
 
