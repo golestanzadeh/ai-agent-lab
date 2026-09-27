@@ -13,11 +13,10 @@ Last reconciled: **2026-09-27**
 
 ## Track 1 — Autonomous project control
 
-Status: **milestone authority and deterministic queue control verified; bounded synthetic dispatch/proof in progress; provider/production activation gated**
+Status: **milestone authority, deterministic queue control, and bounded two-package synthetic continuity proof verified; provider/production activation gated**
 
 Remaining goals:
 
-- implement the registered `SYNTHETIC_LOCAL_V1` continuity runtime and pass its two-package recovery proof under `ORCH-CONT-20260927-001`;
 - connect provider workers only after exact authority and security acceptance;
 - retain independent QA/acceptance, deterministic lineage, budgets, retry limits, kill switch, and checkpoint recovery;
 - demonstrate multi-session operation without chat memory.
@@ -67,7 +66,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-- `src/agent_lab/orchestrator_continuity.py`: bounded queue/replanning/dispatch/diagnostic runtime layered on the existing Kernel. Acceptance: dependency-ordered selection, deterministic bounded replanning, one synthetic local adapter, recoverable failure with a new attempt identity, independent acceptance, checkpoint recovery, simulated capacity pause, and durable complete STOP diagnostics for every non-token terminal stop. Human Gate: none inside this approval.
+No future artifact is currently registered. Register a necessary file here before creating it, including purpose, dependencies, acceptance criteria, and Human Gate.
 
 ## Cleanup rule
 

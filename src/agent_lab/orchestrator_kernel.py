@@ -329,6 +329,15 @@ class OrchestratorKernel:
                     payload_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS dispatch_attempts (
+                    attempt_id TEXT PRIMARY KEY,
+                    task_id TEXT NOT NULL REFERENCES tasks(task_id),
+                    ordinal INTEGER NOT NULL,
+                    status TEXT NOT NULL,
+                    failure_class TEXT,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(task_id, ordinal)
+                );
                 CREATE TABLE IF NOT EXISTS kill_switch (
                     singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
                     state TEXT NOT NULL,
@@ -694,6 +703,58 @@ class OrchestratorKernel:
                 "MASTER_PROJECT_ORCHESTRATOR", {"category": payload["category"], "continuation_point": payload["continuation_point"]},
             )
         return payload["diagnostic_id"]
+
+    def record_dispatch_attempt(
+        self,
+        task_id: str,
+        attempt_id: str,
+        *,
+        status: str,
+        failure_class: str | None = None,
+    ) -> KernelDecision:
+        _require_string(task_id, "task_id")
+        _require_string(attempt_id, "attempt_id")
+        if status not in {"PASS", "FAILED"}:
+            raise ContractError("dispatch attempt status must be PASS or FAILED")
+        task = self._connection.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+        if task is None or task["status"] != "REGISTERED":
+            raise StateTransitionError("dispatch attempt requires a ready REGISTERED task")
+        payload = json.loads(task["payload_json"])
+        count = self._connection.execute(
+            "SELECT COUNT(*) AS count FROM dispatch_attempts WHERE task_id=?", (task_id,)
+        ).fetchone()["count"]
+        if count > payload["max_retries"]:
+            return KernelDecision(False, "BLOCKED", "dispatch retry limit exhausted")
+        if status == "FAILED":
+            retryable = set(self.execution_policy["retry_policy"]["retryable_failures"])
+            if failure_class not in retryable:
+                outcome = "HUMAN_REQUIRED" if failure_class in self.execution_policy["retry_policy"]["non_retryable_failures"] else "DENY"
+                return KernelDecision(False, outcome, "dispatch failure is not automatically retryable")
+            if count >= payload["max_retries"] + 1:
+                return KernelDecision(False, "BLOCKED", "dispatch retry limit exhausted")
+        elif failure_class is not None:
+            raise ContractError("successful dispatch attempt cannot include failure_class")
+        with self._connection:
+            try:
+                self._connection.execute(
+                    "INSERT INTO dispatch_attempts(attempt_id, task_id, ordinal, status, failure_class, created_at) VALUES(?, ?, ?, ?, ?, ?)",
+                    (attempt_id, task_id, count + 1, status, failure_class, _utc_now().isoformat()),
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ContractError("dispatch attempt identity or ordinal already exists") from exc
+            if status == "FAILED":
+                self._connection.execute(
+                    "UPDATE tasks SET retry_count=retry_count+1 WHERE task_id=?", (task_id,)
+                )
+            self._append_event(
+                "DISPATCH_ATTEMPT_RECORDED", "TASK", task_id, "SYNTHETIC_LOCAL_V1",
+                {"attempt_id": attempt_id, "ordinal": count + 1, "status": status, "failure_class": failure_class},
+            )
+        if status == "FAILED":
+            if count < payload["max_retries"]:
+                return KernelDecision(True, "RETRYABLE", "recoverable dispatch failure recorded with a unique attempt identity")
+            return KernelDecision(False, "BLOCKED", "recoverable failure recorded but dispatch retry limit is exhausted")
+        return KernelDecision(True, "PASS", "successful dispatch attempt recorded")
 
     def register_task(
         self,
@@ -1411,6 +1472,7 @@ class OrchestratorKernel:
             "milestone_authorities": rows("SELECT * FROM milestone_authorities ORDER BY authority_id"),
             "milestone_packages": rows("SELECT * FROM milestone_packages ORDER BY authority_id, sequence"),
             "stop_diagnostics": rows("SELECT * FROM stop_diagnostics ORDER BY diagnostic_id"),
+            "dispatch_attempts": rows("SELECT * FROM dispatch_attempts ORDER BY task_id, ordinal"),
         }
 
     def recover_latest_checkpoint(self) -> dict[str, Any]:
@@ -1446,7 +1508,7 @@ class OrchestratorKernel:
             kill = connection.execute("SELECT state FROM kill_switch WHERE singleton=1").fetchone()
             counts = {
                 table: connection.execute(f"SELECT COUNT(*) AS count FROM {table}").fetchone()["count"]
-                for table in ("tasks", "dependencies", "task_human_gates", "manifests", "responses", "acceptance_records", "retry_attempts", "milestone_authorities", "milestone_packages", "stop_diagnostics", "audit_events", "checkpoints")
+                for table in ("tasks", "dependencies", "task_human_gates", "manifests", "responses", "acceptance_records", "retry_attempts", "milestone_authorities", "milestone_packages", "stop_diagnostics", "dispatch_attempts", "audit_events", "checkpoints")
             }
             checkpoint = connection.execute(
                 "SELECT checkpoint_id, snapshot_hash FROM checkpoints ORDER BY created_at DESC, checkpoint_id DESC LIMIT 1"

@@ -20,6 +20,15 @@ The Kernel validates the same closed boundary before persisting an authority. A 
 
 Every non-token terminal stop can be persisted through `record_stop_diagnostic()` with exact category, summary, impact, automated recovery, required next action, continuation point, and time. Diagnostics, authorities, package lineage, and counters are included in the Kernel checkpoint snapshot and hash-chained audit. Token pauses remain governed by the existing token checkpoint rather than this non-token record.
 
-## Dispatch and proof boundary
+## Dispatch and proof result
 
-The only authorized adapter is `SYNTHETIC_LOCAL_V1`. Its implementation and the two-package proof are the next registered package. The proof must include one classified recoverable failure with a new attempt identity, independent acceptance for both packages, queue-exhaustion replanning, checkpoint close/reopen recovery, and a simulated capacity pause. It must use no network, provider, credential, tax case, real data, official ERiC engine, protected-main write, external transmission, production operation, or scheduler change.
+The only authorized adapter is `SYNTHETIC_LOCAL_V1`. It writes a deterministic JSON evidence artifact below one fixed local root and cannot invoke a shell, network, provider, credential, tax-case path, ERiC engine, scheduler, or protected branch.
+
+The executed two-package proof returned `PASS` with two completed packages, three uniquely identified dispatch attempts, one classified `retriable_process_error`, two distinct Independent Acceptance records, one bounded queue-exhaustion replan, audit integrity `PASS`, and final kill-switch state `HALTED`. The simulated capacity pause was checkpointed, the database was closed and reopened, and the exact pause checkpoint was verified before resumption.
+
+- pause checkpoint: `sha256:8aa03d0e3fd8f86f2add293982a5772dd1844f0907d1cd234f4c667368176eaf`
+- final checkpoint: `sha256:66e5fda339348d375846a1128eb792828cf68576fb8853321b0751e7aacd8442`
+- focused continuity/Kernel verification: `31 passed`
+- complete unit regression: `863 passed, 1 warning`
+
+The negative suite also proves that authority amplification, premature replanning, duplicate/over-limit replanning, token misuse of non-token STOP diagnostics, and a terminal synthetic proof failure fail closed. A terminal non-token failure persists its impact, automated recovery, required next action, and continuation point.

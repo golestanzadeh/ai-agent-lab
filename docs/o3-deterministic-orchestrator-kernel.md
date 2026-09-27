@@ -107,6 +107,7 @@ The initial SQLite schema version is `1`. It contains:
 - `milestone_authorities`
 - `milestone_packages`
 - `stop_diagnostics`
+- `dispatch_attempts`
 - `kill_switch`
 - `audit_events`
 - `checkpoints`

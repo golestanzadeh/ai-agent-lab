@@ -1479,8 +1479,8 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 ## D-140 — Bounded Master Orchestrator milestone authority
 
-**Status:** Owner-approved and first implementation package technically verified on 2026-09-27
+**Status:** Owner-approved, implemented, and technically verified on 2026-09-27
 
 **Decision:** Under Owner approval `ORCH-CONT-20260927-001`, extend the existing O2/O3 control plane with milestone-authority contract version `1`; exact generated-package validation; dependency-ordered ready selection over the existing task registry; bounded queue-exhaustion replanning without authority amplification; and durable actionable non-token STOP diagnostics. Keep `ORCHESTRATOR_CONTRACT_SET_V1`, the existing Kernel, Agent Bridge, scheduler identity, Human Gates, and security boundaries. The accepted O2 base remains traceable to `382a140e42496ad9edd92dc2016cfde51d091575`; the approved extension is hash-pinned by the Kernel.
 
-**Verification:** contract validator `PASS`; focused O2/Kernel/milestone-control suite `41 passed`. The synthetic dispatch adapter and two-package proof remain the exact next bounded package. No external or production capability is authorized.
+**Verification:** contract validator `PASS`; initial focused O2/Kernel/milestone-control suite `41 passed`; final continuity/Kernel suite `31 passed`; complete unit regression `863 passed, 1 warning`. The executed `SYNTHETIC_LOCAL_V1` proof completed two packages with three attempts, one recoverable failure, two independent acceptances, one bounded replan, exact checkpoint reopen/recovery, a simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. No external or production capability is authorized.

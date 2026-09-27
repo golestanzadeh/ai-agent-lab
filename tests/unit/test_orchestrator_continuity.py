@@ -8,6 +8,12 @@ from pathlib import Path
 import pytest
 
 from agent_lab.orchestrator_kernel import ContractError, OrchestratorKernel, PermissionDenied, StateTransitionError
+from agent_lab.orchestrator_continuity import (
+    AUTHORITY_ID,
+    OrchestratorContinuityProof,
+    RecoverableSyntheticDispatchError,
+    SyntheticLocalDispatchAdapter,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -150,3 +156,48 @@ def test_stop_diagnostic_is_durable_and_checkpoint_bound(kernel: OrchestratorKer
     assert json.loads(diagnostics[0]["payload_json"]) == payload
     with pytest.raises(ContractError, match="token pauses"):
         kernel.record_stop_diagnostic({**payload, "diagnostic_id": "STOP-CONT-002", "category": "TOKEN_PAUSED"})
+
+
+def test_two_package_proof_covers_retry_acceptance_replan_and_recovery(tmp_path: Path):
+    database = tmp_path / "repository" / "continuity.sqlite3"
+    artifact_root = tmp_path / "repository" / "artifacts" / "orchestrator-continuity"
+    result = OrchestratorContinuityProof(database, artifact_root, CONTRACT_ROOT).run()
+    assert result["status"] == "PASS"
+    assert result["authority_id"] == AUTHORITY_ID
+    assert result["packages_completed"] == 2
+    assert result["recoverable_failures"] == 1
+    assert result["dispatch_attempts"] == 3
+    assert result["independent_acceptances"] == 2
+    assert result["replans"] == 1
+    assert result["audit_integrity"] == "PASS"
+    assert result["kill_switch"] == "HALTED"
+    assert len(list(artifact_root.glob("*.json"))) == 2
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        statuses = dict(kernel._connection.execute(
+            "SELECT task_id, status FROM tasks WHERE task_id LIKE 'TASK-ORCH-CONT-00%' ORDER BY task_id"
+        ))
+        assert statuses == {"TASK-ORCH-CONT-001": "COMPLETED", "TASK-ORCH-CONT-002": "COMPLETED"}
+        dependency = kernel._connection.execute(
+            "SELECT task_id, depends_on_task_id FROM dependencies"
+        ).fetchone()
+        assert tuple(dependency) == ("TASK-ORCH-CONT-002", "TASK-ORCH-CONT-001")
+
+
+def test_terminal_proof_failure_persists_actionable_stop_diagnostic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    database = tmp_path / "repository" / "continuity.sqlite3"
+
+    def always_fail(self, ready, attempt_id):
+        raise RecoverableSyntheticDispatchError("forced terminal synthetic failure")
+
+    monkeypatch.setattr(SyntheticLocalDispatchAdapter, "dispatch", always_fail)
+    with pytest.raises(RecoverableSyntheticDispatchError, match="forced terminal"):
+        OrchestratorContinuityProof(database, tmp_path / "repository" / "artifacts", CONTRACT_ROOT).run()
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        row = kernel._connection.execute("SELECT payload_json FROM stop_diagnostics").fetchone()
+        assert row is not None
+        diagnostic = json.loads(row["payload_json"])
+        assert diagnostic["category"] == "MATERIAL_FAILURE"
+        assert diagnostic["impact"]
+        assert diagnostic["automated_recovery"]
+        assert diagnostic["required_next_action"]
+        assert diagnostic["continuation_point"] == "NO_CHECKPOINT"

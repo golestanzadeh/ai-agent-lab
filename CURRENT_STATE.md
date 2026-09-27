@@ -15,6 +15,7 @@ Last reconciled: **2026-09-27**
 - Controlled CASE-001 migration, document processing, six-role tax runtime, and Chief review.
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Owner approval `ORCH-CONT-20260927-001` is active. Milestone-authority contract v1 and its Kernel controls now fail closed on authority amplification, select ready packages in durable dependency order, permit only bounded queue-exhaustion replanning, and persist complete non-token STOP diagnostics. Contract validation and the focused Kernel suite pass (`41 passed`).
+- The bounded `SYNTHETIC_LOCAL_V1` continuity proof passed with two dependency-ordered packages, three dispatch attempts, one recoverable failure, two independent acceptances, one bounded replan, durable close/reopen checkpoint recovery, simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. Focused verification passes (`31 passed`); the complete unit regression passes (`863 passed, 1 warning`).
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile version 14 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, single business-travel transport-cost item, employer-reimbursement, commuting-benefit/subsidy, and other-expense fields; omitted optional values remain absent and are never inferred.
 - Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
@@ -71,12 +72,11 @@ Last reconciled: **2026-09-27**
 
 1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics.
 2. Extend the UI from its current accurate synthetic readiness display to governed real workflows only after each required authority.
-3. Complete the authorized `SYNTHETIC_LOCAL_V1` two-package continuity proof while keeping provider-backed operation gated before production activation.
-4. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
+3. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
 
 ## Exact next action
 
-Implement the registered bounded `SYNTHETIC_LOCAL_V1` continuity runtime and execute its two-package recoverable-failure, independent-acceptance, checkpoint-recovery, and simulated-capacity-pause proof under `ORCH-CONT-20260927-001`.
+No additional package is already authorized and prerequisite-ready after completion of `ORCH-CONT-20260927-001`. Keep the continuation scheduler paused under terminal condition (3) until a new bounded package is durably authorized and registered.
 
 ## Non-negotiable constraints
 
