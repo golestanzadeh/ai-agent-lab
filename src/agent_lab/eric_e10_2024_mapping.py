@@ -10,7 +10,7 @@ from agent_lab.artifact_identity import ArtifactIdentity, build_artifact_identit
 from agent_lab.elster_dry_run import SyntheticSubmissionEnvelope
 
 
-MAPPING_PROFILE_VERSION = "12"
+MAPPING_PROFILE_VERSION = "13"
 E10_NAMESPACE = "http://finkonsens.de/elster/elstererklaerung/est/e10/v2024"
 E10_VERSION = "2024"
 MAX_EURO_AMOUNT = 999_999_999_999
@@ -100,6 +100,8 @@ class E10MappingRequest:
     domestic_travel_full_days: int | None = None
     domestic_meal_reduction_eur: int | None = None
     employer_tax_free_travel_reimbursement_eur: int | None = None
+    employer_tax_free_commuting_benefit_eur: int | None = None
+    employer_flat_taxed_commuting_benefit_eur: int | None = None
     jobcenter_travel_cost_subsidy_eur: int | None = None
     profile_version: str = MAPPING_PROFILE_VERSION
 
@@ -190,6 +192,18 @@ class E10MappingRequest:
                 "jobcenter_travel_cost_subsidy_eur",
                 self.jobcenter_travel_cost_subsidy_eur,
             )
+        for name, value in (
+            (
+                "employer_tax_free_commuting_benefit_eur",
+                self.employer_tax_free_commuting_benefit_eur,
+            ),
+            (
+                "employer_flat_taxed_commuting_benefit_eur",
+                self.employer_flat_taxed_commuting_benefit_eur,
+            ),
+        ):
+            if value is not None:
+                _whole_euros(name, value)
         if self.profile_version != MAPPING_PROFILE_VERSION:
             raise E10MappingError("unsupported E10 mapping profile version")
 
@@ -401,16 +415,30 @@ def _expected_bindings(request: E10MappingRequest) -> tuple[E10FieldBinding, ...
     if request.employer_tax_free_travel_reimbursement_eur is not None:
         domestic_travel_bindings += (E10FieldBinding("employer_tax_free_travel_reimbursement_eur", "/N/Wk/VMA/VMA_Ersatz/E0205108", "E0205108", _whole_euros("employer_tax_free_travel_reimbursement_eur", request.employer_tax_free_travel_reimbursement_eur)),)
     commuting_subsidy_bindings = ()
-    if request.jobcenter_travel_cost_subsidy_eur is not None:
-        commuting_subsidy_bindings = (E10FieldBinding(
+    for source_field, field_id, value in (
+        (
+            "employer_tax_free_commuting_benefit_eur",
+            "E0204103",
+            request.employer_tax_free_commuting_benefit_eur,
+        ),
+        (
+            "employer_flat_taxed_commuting_benefit_eur",
+            "E0203901",
+            request.employer_flat_taxed_commuting_benefit_eur,
+        ),
+        (
             "jobcenter_travel_cost_subsidy_eur",
-            "/N/Wk/EP/Fahrtk_Ersatz/E0204004",
             "E0204004",
-            _whole_euros(
-                "jobcenter_travel_cost_subsidy_eur",
-                request.jobcenter_travel_cost_subsidy_eur,
-            ),
-        ),)
+            request.jobcenter_travel_cost_subsidy_eur,
+        ),
+    ):
+        if value is not None:
+            commuting_subsidy_bindings += (E10FieldBinding(
+                source_field,
+                f"/N/Wk/EP/Fahrtk_Ersatz/{field_id}",
+                field_id,
+                _whole_euros(source_field, value),
+            ),)
     ferry_or_flight_bindings = ()
     ferry_or_flight_amount = 0
     if request.ferry_or_flight_description is not None:
@@ -473,10 +501,20 @@ def _build_fragment(request: E10MappingRequest, bindings: tuple[E10FieldBinding,
     for field_id in field_ids:
         ET.SubElement(wage_group, _qname(field_id)).text = values[field_id]
     expenses = ET.SubElement(n, _qname("Wk"))
-    if request.jobcenter_travel_cost_subsidy_eur is not None:
+    if any(value is not None for value in (
+        request.employer_tax_free_commuting_benefit_eur,
+        request.employer_flat_taxed_commuting_benefit_eur,
+        request.jobcenter_travel_cost_subsidy_eur,
+    )):
         commuting = ET.SubElement(expenses, _qname("EP"))
         subsidy = ET.SubElement(commuting, _qname("Fahrtk_Ersatz"))
-        ET.SubElement(subsidy, _qname("E0204004")).text = values["E0204004"]
+        for field_id, value in (
+            ("E0204103", request.employer_tax_free_commuting_benefit_eur),
+            ("E0203901", request.employer_flat_taxed_commuting_benefit_eur),
+            ("E0204004", request.jobcenter_travel_cost_subsidy_eur),
+        ):
+            if value is not None:
+                ET.SubElement(subsidy, _qname(field_id)).text = values[field_id]
     if request.professional_association_name is not None:
         association = ET.SubElement(expenses, _qname("Berufsverb"))
         item = ET.SubElement(association, _qname("Einz"))

@@ -409,6 +409,60 @@ def test_rejects_invalid_jobcenter_travel_cost_subsidy(value):
         replace(request(), jobcenter_travel_cost_subsidy_eur=value)
 
 
+def test_maps_employer_commuting_benefits_in_official_order():
+    result = map_synthetic_summary_to_e10_2024(
+        replace(
+            request(),
+            employer_tax_free_commuting_benefit_eur=111,
+            employer_flat_taxed_commuting_benefit_eur=222,
+            jobcenter_travel_cost_subsidy_eur=333,
+        )
+    )
+    assert [
+        (item.field_id, item.lexical_value)
+        for item in result.field_bindings
+        if item.field_id in {"E0204103", "E0203901", "E0204004"}
+    ] == [("E0204103", "111"), ("E0203901", "222"), ("E0204004", "333")]
+    assert (
+        "<Fahrtk_Ersatz><E0204103>111</E0204103><E0203901>222</E0203901>"
+        "<E0204004>333</E0204004></Fahrtk_Ersatz>"
+    ) in result.fragment_xml
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "employer_tax_free_commuting_benefit_eur",
+        "employer_flat_taxed_commuting_benefit_eur",
+    ],
+)
+def test_employer_commuting_benefits_preserve_zero_boundary_and_identity(field):
+    omitted = request()
+    zero_request = replace(omitted, **{field: 0})
+    maximum = map_synthetic_summary_to_e10_2024(
+        replace(omitted, **{field: 999_999_999_999})
+    )
+    assert zero_request.artifact_identity != omitted.artifact_identity
+    assert (
+        map_synthetic_summary_to_e10_2024(zero_request).artifact_identity
+        != map_synthetic_summary_to_e10_2024(omitted).artifact_identity
+    )
+    assert "999999999999" in [item.lexical_value for item in maximum.field_bindings]
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "employer_tax_free_commuting_benefit_eur",
+        "employer_flat_taxed_commuting_benefit_eur",
+    ],
+)
+@pytest.mark.parametrize("value", [-1, True, 1_000_000_000_000])
+def test_rejects_invalid_employer_commuting_benefits(field, value):
+    with pytest.raises(E10MappingError, match=field):
+        replace(request(), **{field: value})
+
+
 @pytest.mark.parametrize(
     "changes",
     [
@@ -591,9 +645,9 @@ def test_request_identity_changes_with_person_tax_class_or_payload():
 
 
 @pytest.mark.parametrize(
-    "profile_version", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+    "profile_version", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 )
-def test_older_profile_request_is_rejected_after_v12_expansion(profile_version):
+def test_older_profile_request_is_rejected_after_v13_expansion(profile_version):
     with pytest.raises(E10MappingError, match="profile version"):
         replace(request(), profile_version=profile_version)
 

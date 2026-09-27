@@ -96,14 +96,14 @@ def test_active_e10_and_ui_records_use_current_rule_profile() -> None:
         assert "LOCAL_SIX_RULE_SUBSET_PASS" not in text
 
 
-def test_canonical_current_records_use_mapping_profile_v12() -> None:
+def test_canonical_current_records_use_mapping_profile_v13() -> None:
     checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
     current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
     roadmap = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
     snapshot = checkpoint.split("All later dated checkpoint sections", 1)[0]
 
     for text in (snapshot, current, roadmap):
-        assert "mapping profile v12" in text or "mapping profile version 12" in text
+        assert "mapping profile v13" in text or "mapping profile version 13" in text
 
     assert "mapping profile version 2 for the bounded Anlage N" not in current
 
@@ -115,7 +115,7 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 
     for text in (adapter, material, preview):
         assert "historical" in text
-        assert "mapping profile v12" in text
+        assert "mapping profile v13" in text
         assert "thirty-nine-rule local plausibility subset" in text
         assert "ERiC-engine execution" in text
 
