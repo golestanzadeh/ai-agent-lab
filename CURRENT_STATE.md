@@ -70,13 +70,14 @@ Last reconciled: **2026-09-27**
 
 ## Remaining product work
 
-1. Expand official E10/2024 field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics.
-2. Extend the UI from its current accurate synthetic readiness display to governed real workflows only after each required authority.
-3. Complete product acceptance, security review, release controls, and an explicitly authorized end-to-end submission with recoverable receipt.
+1. Obtain consolidated product-execution authority for the five `PLANNED_UNAUTHORIZED` Milestone A packages defined in `docs/milestone-a-execution-plan.md`.
+2. After exact authority is durably bound, register and execute the local synthetic golden-journey queue without duplicating existing components.
+3. Expand official E10/2024 field mapping only from separately reviewed exact source evidence and explicit synthetic semantics.
+4. Keep real workflows, external submission, product acceptance/release, and production controls behind their existing Human Gates.
 
 ## Exact next action
 
-No additional package is already authorized and prerequisite-ready after completion of `ORCH-CONT-20260927-001`. Keep the continuation scheduler paused under terminal condition (3) until a new bounded package is durably authorized and registered.
+Project Owner action is required: approve or reject the single consolidated authority `MILESTONE-A-20260927-001` exactly as scoped in `docs/milestone-a-execution-plan.md`. No Milestone A product package is currently authorized or registered as ready. Keep `plan-limit-continuation-guard` paused under `HUMAN_REQUIRED / PRODUCT_EXECUTION_AUTHORITY`; do not poll every five minutes.
 
 ## Non-negotiable constraints
 

@@ -95,6 +95,10 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `ui-local-security-headers.md`
 - `ui-persian-status-labels.md`
 
+## Product milestones
+
+- `milestone-a-execution-plan.md` — reconciled A-01 through A-09 coverage, bounded package dependencies, budgets, recovery rules, and consolidated authority gate.
+
 ## Documentation rules
 
 - Do not place private case documents, credentials, tokens, or provider object IDs here.

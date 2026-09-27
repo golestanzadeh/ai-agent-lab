@@ -66,7 +66,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. Register a necessary file here before creating it, including purpose, dependencies, acceptance criteria, and Human Gate.
+No future artifact is currently registered. `docs/milestone-a-execution-plan.md` was registered before creation and now records the planned artifact boundary; implementation files must be registered here only after exact product authority is granted.
 
 ## Cleanup rule
 
