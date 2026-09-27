@@ -35,6 +35,13 @@ Remaining goals:
 - bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
 - prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
 
+Active bounded package — **E10/2024 business-travel transport-cost item**:
+
+- map exactly one synthetic `/N/Wk/AWT/Fahrt` item using official description field `E0205003` followed by whole-euro amount field `E0205004`;
+- enforce reviewed official rule `100200074` by requiring the description and amount together, with non-empty description length `1..999`, amount `0..999999999999`, omission distinct from explicit zero, and no inferred value;
+- accept only if focused mapping/declaration/documentation tests pass and a generated declaration validates against the exact locally retrieved official `E10-2024.xsd`;
+- retain all existing synthetic-only, no-network, no-credential, no-ERiC-execution, no-signing, and no-transmission boundaries.
+
 ## Track 3 — User interface
 
 Status: **local synthetic prototype complete through UI-19 with Persian states, semantic accessibility, concise dynamic announcements, fail-closed empty-state startup, loopback launch, and browser hardening; real operations gated**
