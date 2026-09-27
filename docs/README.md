@@ -8,6 +8,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `agent-organization-v1-proposal.md` — Human-ratified active organizational contract defining the 20 permanent Agent roles, three inactive domain templates, hierarchy, access levels, communication rules, Agent lifecycle, separation of duties, and O0–P4 path.
 - `o2-machine-readable-contracts.md` — Phase O2 contract map, invariants, technical verification, and current Human acceptance boundary; machine-readable artifacts live under `../contracts/orchestrator/v1/`.
 - `o3-deterministic-orchestrator-kernel.md` — persistent Kernel architecture, controls, failure behavior, inspection path, verification, and activation boundary.
+- `orchestrator-milestone-control.md` — Owner-approved milestone-authority extension, deterministic queue/replanning controls, STOP diagnostics, and synthetic dispatch proof boundary.
 - `o4-controlled-autonomous-development-pilot.md` — bounded autonomous-development pilot and recovery boundary.
 - `o5-production-control-plane-readiness.md` — deterministic production-control-plane readiness evidence and activation boundary.
 - `agent-runtime-activation-layer.md` — local synthetic Planning/Implementation/QE/Independent Acceptance runtime layer.

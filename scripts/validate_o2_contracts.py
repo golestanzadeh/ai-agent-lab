@@ -15,6 +15,7 @@ CONTRACT_PATHS = (
     "agent-manifest.schema.json",
     "permission-matrix.json",
     "task.schema.json",
+    "milestone-authority.schema.json",
     "response.schema.json",
     "lifecycle.json",
     "human-gates.json",
@@ -200,6 +201,7 @@ def validate_contracts(contracts: dict[str, Any]) -> list[str]:
     required_schema_fields = {
         "agent-manifest.schema.json": {"manifest_id", "role_id", "actor_instance_id", "task_id", "scope", "budget", "expires_at", "status"},
         "task.schema.json": {"task_id", "parent_task_id", "role_id", "actor_instance_id", "permissions", "acceptance_criteria", "status"},
+        "milestone-authority.schema.json": {"authority_id", "milestone_id", "owner_approval_reference", "package_templates", "max_generated_packages", "max_replans", "dispatch_adapters", "forbidden_actions", "status"},
         "response.schema.json": {"response_id", "task_id", "role_id", "actor_instance_id", "status", "evidence", "authority_used", "human_required"},
     }
     for name, expected in required_schema_fields.items():

@@ -1475,3 +1475,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** implemented and technically verified on 2026-09-22
 
 **Decision:** Add explicit regression coverage proving that employer tax-free travel reimbursement preserves an explicit zero, accepts the exact official twelve-digit maximum, changes both request and mapped-result identities, and rejects every superseded mapping profile version. Focused mapping/documentation verification passes with `110 passed`. This changes no mapping or plausibility profile, authority, or external capability.
+
+
+## D-140 — Bounded Master Orchestrator milestone authority
+
+**Status:** Owner-approved and first implementation package technically verified on 2026-09-27
+
+**Decision:** Under Owner approval `ORCH-CONT-20260927-001`, extend the existing O2/O3 control plane with milestone-authority contract version `1`; exact generated-package validation; dependency-ordered ready selection over the existing task registry; bounded queue-exhaustion replanning without authority amplification; and durable actionable non-token STOP diagnostics. Keep `ORCHESTRATOR_CONTRACT_SET_V1`, the existing Kernel, Agent Bridge, scheduler identity, Human Gates, and security boundaries. The accepted O2 base remains traceable to `382a140e42496ad9edd92dc2016cfde51d091575`; the approved extension is hash-pinned by the Kernel.
+
+**Verification:** contract validator `PASS`; focused O2/Kernel/milestone-control suite `41 passed`. The synthetic dispatch adapter and two-package proof remain the exact next bounded package. No external or production capability is authorized.

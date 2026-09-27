@@ -16,6 +16,7 @@ The contract set is rooted at `contracts/orchestrator/v1/contract-set.json`. Com
 | `agent-manifest.schema.json` | Strict temporary-instance identity, task, scope, inputs, outputs, tools, permissions, budget, expiry, and stop contract |
 | `permission-matrix.json` | Default-deny access tiers, capability ceiling, role defaults, temporary elevation, case/run scoping, and A6 prohibition |
 | `task.schema.json` | Registered Master-to-Agent command and lineage contract |
+| `milestone-authority.schema.json` | Owner-approved bounded milestone envelope, package templates, closed dispatch adapter, generation/replan limits, and non-amplification boundary |
 | `response.schema.json` | Agent-to-Master result, evidence, cost, status, and Human Gate contract |
 | `lifecycle.json` | Agent instance states, legal transitions, terminal behavior, expiry, revocation, and retention |
 | `human-gates.json` | Mandatory Human Gate triggers, conflicts of interest, authority precedence, and Article 1 transfer approvals |
@@ -98,3 +99,5 @@ The Project Owner / Human explicitly accepted the exact Phase O2 contract set at
 Phase O3 authorization is limited to implementing the deterministic Orchestrator Kernel against these accepted contracts. It does not activate Agent instances, grant high-risk permissions, authorize protected-main merge/release, or authorize external transfer.
 
 O2 performs no Agent activation, permission issuance, credential operation, private case-data access, protected-main action, production release, destructive action, ELSTER/Finanzamt contact, or external transfer.
+
+The exact O2 base accepted at `382a140e42496ad9edd92dc2016cfde51d091575` remains the historical authority. Owner approval `ORCH-CONT-20260927-001` subsequently authorized the bounded milestone-authority v1 extension in the same versioned contract directory; it adds no external or production authority.

@@ -6,7 +6,7 @@ Status: **IMPLEMENTED, TECHNICALLY VERIFIED, AND HUMAN-ACCEPTED**
 
 The Phase O3 Kernel turns the Human-accepted O2 contracts into a persistent, fail-closed control plane. It records tasks, dependencies, Human Gates, manifests, lifecycle, permissions, budgets, retries, responses, independent acceptance, audit events, checkpoints, recovery state, kill-switch state, and Agent Bridge bindings in one SQLite database.
 
-The Kernel binds to the canonical SHA-256 digest of the exact O2 JSON set accepted at commit `382a140e42496ad9edd92dc2016cfde51d091575`. A same-version content change is rejected until a separately governed contract-version change is accepted.
+The Kernel binds to the canonical SHA-256 digest of the exact O2 base accepted at commit `382a140e42496ad9edd92dc2016cfde51d091575` plus the bounded milestone-authority v1 extension approved by `ORCH-CONT-20260927-001`. Any unapproved same-version content change is rejected.
 
 The Kernel controls state and authority. It does not run an LLM, spawn an Agent, issue a real credential, access private tax data, merge or release code, or transmit externally.
 
@@ -104,6 +104,9 @@ The initial SQLite schema version is `1`. It contains:
 - `responses`
 - `acceptance_records`
 - `bridge_bindings`
+- `milestone_authorities`
+- `milestone_packages`
+- `stop_diagnostics`
 - `kill_switch`
 - `audit_events`
 - `checkpoints`

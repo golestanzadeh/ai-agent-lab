@@ -17,13 +17,15 @@ from typing import Any, Iterable
 KERNEL_SCHEMA_VERSION = 1
 CONTRACT_SET_ID = "ORCHESTRATOR_CONTRACT_SET_V1"
 ACCEPTED_O2_COMMIT = "382a140e42496ad9edd92dc2016cfde51d091575"
-ACCEPTED_O2_DIGEST = "sha256:361c3dbd2e8750fb8985a2d6f52e9330ff42f398cdc792dbd85a2573d831674e"
+ACCEPTED_MILESTONE_AUTHORITY = "ORCH-CONT-20260927-001"
+ACCEPTED_CONTRACT_DIGEST = "sha256:63574e753fddae774f7dcb9464814f7c26dc76f8f145883c35db86c332c0b419"
 CONTRACT_FILES = (
     "contract-set.json",
     "roles.json",
     "agent-manifest.schema.json",
     "permission-matrix.json",
     "task.schema.json",
+    "milestone-authority.schema.json",
     "response.schema.json",
     "lifecycle.json",
     "human-gates.json",
@@ -141,6 +143,22 @@ class OrchestratorKernel:
         "unresolved_risks", "recommended_next_action", "human_required", "created_at",
     }
     BUDGET_FIELDS = {"token_limit", "tool_call_limit", "cost_limit_usd"}
+    MILESTONE_AUTHORITY_FIELDS = {
+        "schema_version", "authority_id", "milestone_id", "owner_approval_reference",
+        "repository", "ref", "package_templates", "max_generated_packages",
+        "max_replans", "dispatch_adapters", "forbidden_actions", "created_at",
+        "expires_at", "status",
+    }
+    PACKAGE_TEMPLATE_FIELDS = {
+        "package_id", "sequence", "depends_on", "objective", "role_id",
+        "actor_instance_id", "inputs", "expected_outputs", "allowed_tools",
+        "permissions", "forbidden_actions", "budget", "timeout_seconds",
+        "max_retries", "acceptance_criteria", "stop_conditions", "escalation_route",
+    }
+    STOP_DIAGNOSTIC_FIELDS = {
+        "diagnostic_id", "category", "summary", "impact", "automated_recovery",
+        "required_next_action", "continuation_point", "created_at",
+    }
 
     def __init__(self, database_path: Path | str, contract_root: Path | str) -> None:
         self.database_path = Path(database_path)
@@ -199,8 +217,11 @@ class OrchestratorKernel:
                 version = loaded[filename].get("schema_version")
             if version != 1:
                 raise ContractError(f"unsupported {filename} version")
-        if _digest(loaded) != ACCEPTED_O2_DIGEST:
-            raise ContractError(f"contract set does not match accepted O2 commit {ACCEPTED_O2_COMMIT}")
+        if _digest(loaded) != ACCEPTED_CONTRACT_DIGEST:
+            raise ContractError(
+                f"contract set does not match accepted O2 base {ACCEPTED_O2_COMMIT} "
+                f"and milestone authority {ACCEPTED_MILESTONE_AUTHORITY}"
+            )
         return loaded
 
     def _initialize_schema(self) -> None:
@@ -285,6 +306,28 @@ class OrchestratorKernel:
                     base_commit TEXT NOT NULL,
                     allowed_scope_json TEXT NOT NULL,
                     risk_class TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS milestone_authorities (
+                    authority_id TEXT PRIMARY KEY,
+                    milestone_id TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL,
+                    replan_count INTEGER NOT NULL DEFAULT 0
+                );
+                CREATE TABLE IF NOT EXISTS milestone_packages (
+                    authority_id TEXT NOT NULL REFERENCES milestone_authorities(authority_id),
+                    package_id TEXT NOT NULL,
+                    sequence INTEGER NOT NULL,
+                    task_id TEXT NOT NULL UNIQUE REFERENCES tasks(task_id),
+                    PRIMARY KEY(authority_id, package_id),
+                    UNIQUE(authority_id, sequence)
+                );
+                CREATE TABLE IF NOT EXISTS stop_diagnostics (
+                    diagnostic_id TEXT PRIMARY KEY,
+                    category TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS kill_switch (
                     singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
@@ -446,6 +489,211 @@ class OrchestratorKernel:
         expires_at = _parse_timestamp(payload["expires_at"], "expires_at")
         if expires_at <= created_at or expires_at <= _utc_now():
             raise ContractError("task expiry must be after creation and in the future")
+
+    def _validate_milestone_authority(self, payload: dict[str, Any]) -> None:
+        _require_exact_fields(payload, self.MILESTONE_AUTHORITY_FIELDS, "milestone authority")
+        if payload.get("schema_version") != 1 or payload.get("status") != "ACTIVE":
+            raise ContractError("milestone authority version/status is unsupported")
+        for field in ("authority_id", "milestone_id", "owner_approval_reference", "repository", "ref"):
+            _require_string(payload[field], field)
+        if payload["dispatch_adapters"] != ["SYNTHETIC_LOCAL_V1"]:
+            raise ContractError("milestone authority dispatch adapter is not allowlisted")
+        _require_string_list(payload["forbidden_actions"], "authority.forbidden_actions", non_empty=True)
+        templates = payload["package_templates"]
+        if not isinstance(templates, list) or not templates or len(templates) > 20:
+            raise ContractError("package_templates must contain between 1 and 20 packages")
+        package_ids: set[str] = set()
+        sequences: set[int] = set()
+        for template in templates:
+            if not isinstance(template, dict):
+                raise ContractError("package template must be an object")
+            _require_exact_fields(template, self.PACKAGE_TEMPLATE_FIELDS, "package template")
+            for field in ("package_id", "objective", "role_id", "actor_instance_id"):
+                _require_string(template[field], field)
+            if template["package_id"] in package_ids:
+                raise ContractError("package template identities must be unique")
+            package_ids.add(template["package_id"])
+            sequence = template["sequence"]
+            if isinstance(sequence, bool) or not isinstance(sequence, int) or sequence < 1 or sequence in sequences:
+                raise ContractError("package template sequence must be a unique positive integer")
+            sequences.add(sequence)
+            if template["role_id"] not in self.roles:
+                raise ContractError("package template role is unknown")
+            for field in ("depends_on", "inputs", "allowed_tools", "permissions"):
+                _require_string_list(template[field], f"package.{field}")
+            for field in ("expected_outputs", "forbidden_actions", "acceptance_criteria", "stop_conditions", "escalation_route"):
+                _require_string_list(template[field], f"package.{field}", non_empty=True)
+            if any(not value.startswith("synthetic://") for value in template["inputs"]):
+                raise PermissionDenied("milestone package inputs must be synthetic")
+            if any(not value.startswith("artifact://local/") for value in template["expected_outputs"]):
+                raise PermissionDenied("milestone package outputs must be local artifacts")
+            if not set(template["allowed_tools"]) <= {"synthetic_local_dispatch", "pytest"}:
+                raise PermissionDenied("milestone package tool is not allowlisted")
+            if not set(template["permissions"]) <= {"write_bounded_branch", "run_tests", "report_evidence"}:
+                raise PermissionDenied("milestone package permission exceeds bounded authority")
+            if not set(payload["forbidden_actions"]) <= set(template["forbidden_actions"]):
+                raise PermissionDenied("package template weakens milestone forbidden actions")
+            self._validate_budget(template["budget"], template["timeout_seconds"], template["max_retries"])
+        for template in templates:
+            unknown = set(template["depends_on"]) - package_ids
+            if unknown or template["package_id"] in template["depends_on"]:
+                raise ContractError("package template dependency is invalid")
+            dependency_sequences = {
+                candidate["package_id"]: candidate["sequence"] for candidate in templates
+            }
+            if any(dependency_sequences[item] >= template["sequence"] for item in template["depends_on"]):
+                raise ContractError("package template dependencies must precede the package")
+        maximum = payload["max_generated_packages"]
+        replans = payload["max_replans"]
+        if isinstance(maximum, bool) or not isinstance(maximum, int) or maximum < 1 or maximum > len(templates):
+            raise ContractError("max_generated_packages exceeds authorized templates")
+        if isinstance(replans, bool) or not isinstance(replans, int) or replans < 0 or replans > 5:
+            raise ContractError("max_replans is outside the bounded range")
+        created_at = _parse_timestamp(payload["created_at"], "authority.created_at")
+        expires_at = _parse_timestamp(payload["expires_at"], "authority.expires_at")
+        if expires_at <= created_at or expires_at <= _utc_now():
+            raise ContractError("milestone authority expiry must be future and after creation")
+
+    def register_milestone_authority(self, payload: dict[str, Any]) -> str:
+        self._validate_milestone_authority(payload)
+        with self._connection:
+            try:
+                self._connection.execute(
+                    "INSERT INTO milestone_authorities(authority_id, milestone_id, payload_json, created_at, expires_at) VALUES(?, ?, ?, ?, ?)",
+                    (payload["authority_id"], payload["milestone_id"], _canonical(payload), payload["created_at"], payload["expires_at"]),
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ContractError("milestone authority identity already exists") from exc
+            self._append_event(
+                "MILESTONE_AUTHORITY_REGISTERED", "MILESTONE_AUTHORITY", payload["authority_id"],
+                "MASTER_PROJECT_ORCHESTRATOR",
+                {"milestone_id": payload["milestone_id"], "owner_approval_reference": payload["owner_approval_reference"]},
+            )
+        return payload["authority_id"]
+
+    def _authority_and_template(self, authority_id: str, package_id: str) -> tuple[sqlite3.Row, dict[str, Any], dict[str, Any]]:
+        row = self._connection.execute(
+            "SELECT * FROM milestone_authorities WHERE authority_id=?", (authority_id,)
+        ).fetchone()
+        if row is None:
+            raise ContractError("milestone authority is not registered")
+        authority = json.loads(row["payload_json"])
+        if _parse_timestamp(authority["expires_at"], "authority.expires_at") <= _utc_now():
+            raise PermissionDenied("milestone authority is expired")
+        template = next((item for item in authority["package_templates"] if item["package_id"] == package_id), None)
+        if template is None:
+            raise PermissionDenied("package is outside milestone authority")
+        return row, authority, template
+
+    def register_authorized_package(self, authority_id: str, package_id: str, payload: dict[str, Any]) -> str:
+        _, authority, template = self._authority_and_template(authority_id, package_id)
+        generated = self._connection.execute(
+            "SELECT COUNT(*) AS count FROM milestone_packages WHERE authority_id=?", (authority_id,)
+        ).fetchone()["count"]
+        if generated >= authority["max_generated_packages"]:
+            raise PermissionDenied("milestone generated-package limit reached")
+        expected = {
+            field: template[field]
+            for field in (
+                "objective", "role_id", "actor_instance_id", "inputs", "expected_outputs",
+                "allowed_tools", "permissions", "forbidden_actions", "budget", "timeout_seconds",
+                "max_retries", "acceptance_criteria", "stop_conditions", "escalation_route",
+            )
+        }
+        for field, value in expected.items():
+            if payload.get(field) != value:
+                raise PermissionDenied(f"generated package exceeds milestone authority at {field}")
+        if payload.get("repository") != authority["repository"] or payload.get("ref") != authority["ref"]:
+            raise PermissionDenied("generated package repository/ref exceeds milestone authority")
+        if payload.get("case_context") is not None or payload.get("parent_task_id") is not None:
+            raise PermissionDenied("milestone package must remain non-case and top-level")
+        dependency_rows = self._connection.execute(
+            "SELECT package_id, task_id FROM milestone_packages WHERE authority_id=?", (authority_id,)
+        ).fetchall()
+        task_by_package = {row["package_id"]: row["task_id"] for row in dependency_rows}
+        if not set(template["depends_on"]) <= set(task_by_package):
+            raise ContractError("authorized package prerequisites are not registered")
+        dependency_tasks = tuple(task_by_package[item] for item in template["depends_on"])
+        task_id = self.register_task(payload, gate_triggers=(), depends_on=dependency_tasks)
+        with self._connection:
+            try:
+                self._connection.execute(
+                    "INSERT INTO milestone_packages(authority_id, package_id, sequence, task_id) VALUES(?, ?, ?, ?)",
+                    (authority_id, package_id, template["sequence"], task_id),
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ContractError("milestone package identity or sequence already exists") from exc
+            self._append_event(
+                "AUTHORIZED_PACKAGE_REGISTERED", "TASK", task_id, "MASTER_PROJECT_ORCHESTRATOR",
+                {"authority_id": authority_id, "package_id": package_id, "sequence": template["sequence"]},
+            )
+        return task_id
+
+    def select_ready_package(self, authority_id: str) -> dict[str, Any] | None:
+        authority_row = self._connection.execute(
+            "SELECT payload_json FROM milestone_authorities WHERE authority_id=?", (authority_id,)
+        ).fetchone()
+        if authority_row is None:
+            raise ContractError("milestone authority is not registered")
+        authority = json.loads(authority_row["payload_json"])
+        if _parse_timestamp(authority["expires_at"], "authority.expires_at") <= _utc_now():
+            raise PermissionDenied("milestone authority is expired")
+        rows = self._connection.execute(
+            """
+            SELECT mp.package_id, mp.sequence, mp.task_id, t.payload_json
+            FROM milestone_packages mp JOIN tasks t ON t.task_id=mp.task_id
+            WHERE mp.authority_id=? AND t.status='REGISTERED'
+              AND NOT EXISTS (
+                SELECT 1 FROM dependencies d JOIN tasks prerequisite ON prerequisite.task_id=d.depends_on_task_id
+                WHERE d.task_id=t.task_id AND prerequisite.status!='COMPLETED'
+              )
+              AND NOT EXISTS (
+                SELECT 1 FROM task_human_gates g WHERE g.task_id=t.task_id AND g.status!='APPROVED'
+              )
+            ORDER BY mp.sequence, mp.task_id LIMIT 1
+            """, (authority_id,)
+        ).fetchone()
+        if rows is None:
+            return None
+        return {"authority_id": authority_id, "package_id": rows["package_id"], "sequence": rows["sequence"], "task_id": rows["task_id"], "task": json.loads(rows["payload_json"])}
+
+    def replan_authorized_package(self, authority_id: str, package_id: str, payload: dict[str, Any]) -> str:
+        if self.select_ready_package(authority_id) is not None:
+            raise StateTransitionError("queue is not exhausted while an authorized package is ready")
+        row, authority, _ = self._authority_and_template(authority_id, package_id)
+        if row["replan_count"] >= authority["max_replans"]:
+            raise PermissionDenied("milestone replan limit reached")
+        task_id = self.register_authorized_package(authority_id, package_id, payload)
+        with self._connection:
+            self._connection.execute(
+                "UPDATE milestone_authorities SET replan_count=replan_count+1 WHERE authority_id=?", (authority_id,)
+            )
+            self._append_event(
+                "QUEUE_EXHAUSTION_REPLAN", "MILESTONE_AUTHORITY", authority_id,
+                "MASTER_PROJECT_ORCHESTRATOR", {"package_id": package_id, "task_id": task_id},
+            )
+        return task_id
+
+    def record_stop_diagnostic(self, payload: dict[str, Any]) -> str:
+        _require_exact_fields(payload, self.STOP_DIAGNOSTIC_FIELDS, "STOP diagnostic")
+        for field in self.STOP_DIAGNOSTIC_FIELDS:
+            _require_string(payload[field], f"STOP diagnostic {field}")
+        if payload["category"] == "TOKEN_PAUSED":
+            raise ContractError("token pauses use the governed token checkpoint, not a non-token STOP diagnostic")
+        _parse_timestamp(payload["created_at"], "STOP diagnostic created_at")
+        with self._connection:
+            try:
+                self._connection.execute(
+                    "INSERT INTO stop_diagnostics(diagnostic_id, category, payload_json, created_at) VALUES(?, ?, ?, ?)",
+                    (payload["diagnostic_id"], payload["category"], _canonical(payload), payload["created_at"]),
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ContractError("STOP diagnostic identity already exists") from exc
+            self._append_event(
+                "STOP_DIAGNOSTIC_RECORDED", "STOP_DIAGNOSTIC", payload["diagnostic_id"],
+                "MASTER_PROJECT_ORCHESTRATOR", {"category": payload["category"], "continuation_point": payload["continuation_point"]},
+            )
+        return payload["diagnostic_id"]
 
     def register_task(
         self,
@@ -1160,6 +1408,9 @@ class OrchestratorKernel:
             "responses": rows("SELECT * FROM responses ORDER BY response_id"),
             "acceptance_records": rows("SELECT * FROM acceptance_records ORDER BY acceptance_id"),
             "bridge_bindings": rows("SELECT * FROM bridge_bindings ORDER BY task_id"),
+            "milestone_authorities": rows("SELECT * FROM milestone_authorities ORDER BY authority_id"),
+            "milestone_packages": rows("SELECT * FROM milestone_packages ORDER BY authority_id, sequence"),
+            "stop_diagnostics": rows("SELECT * FROM stop_diagnostics ORDER BY diagnostic_id"),
         }
 
     def recover_latest_checkpoint(self) -> dict[str, Any]:
@@ -1195,7 +1446,7 @@ class OrchestratorKernel:
             kill = connection.execute("SELECT state FROM kill_switch WHERE singleton=1").fetchone()
             counts = {
                 table: connection.execute(f"SELECT COUNT(*) AS count FROM {table}").fetchone()["count"]
-                for table in ("tasks", "dependencies", "task_human_gates", "manifests", "responses", "acceptance_records", "retry_attempts", "audit_events", "checkpoints")
+                for table in ("tasks", "dependencies", "task_human_gates", "manifests", "responses", "acceptance_records", "retry_attempts", "milestone_authorities", "milestone_packages", "stop_diagnostics", "audit_events", "checkpoints")
             }
             checkpoint = connection.execute(
                 "SELECT checkpoint_id, snapshot_hash FROM checkpoints ORDER BY created_at DESC, checkpoint_id DESC LIMIT 1"

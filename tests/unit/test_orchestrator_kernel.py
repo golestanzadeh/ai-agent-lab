@@ -447,5 +447,5 @@ def test_same_version_contract_tampering_fails_closed(tmp_path):
     roles = json.loads((contract_copy / "roles.json").read_text(encoding="utf-8"))
     roles["roles"][0]["can_block"] = False
     (contract_copy / "roles.json").write_text(json.dumps(roles), encoding="utf-8")
-    with pytest.raises(ContractError, match="does not match accepted O2 commit"):
+    with pytest.raises(ContractError, match="does not match accepted O2 base"):
         OrchestratorKernel(tmp_path / "kernel.sqlite3", contract_copy)
