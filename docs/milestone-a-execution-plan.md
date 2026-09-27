@@ -1,6 +1,6 @@
 # Milestone A Execution Plan
 
-Status: **PLANNED / HUMAN AUTHORITY REQUIRED**  
+Status: **OWNER-AUTHORIZED / EXECUTION ACTIVE**
 Plan identifier: `MILESTONE-A-PLAN-20260927-001`  
 Recovered baseline: `62747b16a11dbd997f0c023c6c40c0f2f408cc5f` on `d021-agent-case-provisioning`
 
@@ -15,7 +15,7 @@ The existing durable authorities are narrower:
 - `ORCH-CONT-20260927-001` authorized milestone-control infrastructure and its bounded synthetic continuity proof, now complete under D-140. It expressly did not amplify product authority.
 - The recovered `PRD-RECOVERY-PLAN-001` was planning-only and stated that its proposed queue did not authorize execution.
 
-Therefore the packages below stay `PLANNED_UNAUTHORIZED`. Registering them as ready would incorrectly convert documentation into authority and must fail closed.
+Owner directive `MILESTONE-A-20260927-001` approved this exact package envelope on 2026-09-27. The hash-bound authority and five tasks are now registered in the existing local Kernel; registration does not itself complete or dispatch a package.
 
 ## Golden journey and coverage manifest (A-01)
 
@@ -47,6 +47,7 @@ Every package uses local synthetic data only. Budgets are ceilings, not entitlem
 - Deliverable: versioned journey contract and machine-checkable coverage manifest mapped only to existing exact component APIs.
 - Acceptance: all stages, identities, dependencies, blockers, and exclusions are closed enums; unsupported capabilities fail closed; no duplicate subsystem is introduced.
 - Recovery: documentation/contract-only rollback; no runtime state.
+- Execution result: implemented and independently accepted. Authority hash `sha256:2a6d89b6c350b5a1b653bfb7b8b1ddf472188785104389967786e23d97249d09`; journey hash `sha256:62fea6ef5936cb6897b7ff54a37a43ba98bc90e6adbae20b1c5e9bb64565d6ad`; focused suite `44 passed`; documentation suite `9 passed`; full unit regression `876 passed, 1 warning`; O2 validator `PASS`; Kernel checkpoint `sha256:9c7f5a28521d82ac70ffd2dd8c9d5de74b8c9e6512ac977380508ac50656625b`. Next ready package: `PKG-MA-02-COMPOSITION-AND-STORE`.
 
 ### `MA-02-COMPOSITION-AND-STORE`
 
@@ -86,6 +87,4 @@ Real taxpayer data, provider credentials, Manufacturer-ID, certificates, protect
 
 ## Consolidated authority required
 
-Owner action required: approve one exact authority identifier, proposed as `MILESTONE-A-20260927-001`, covering the five packages above, their stated budgets/dependencies/acceptance/recovery rules, the narrowly scoped new and existing artifact boundary, and the explicit exclusions. Approval must permit Kernel registration only after the authority contract hash is durably bound. Anything outside that boundary requires a separate Human Gate.
-
-Until that approval is granted, the correct terminal state is `HUMAN_REQUIRED / PRODUCT_EXECUTION_AUTHORITY`; the existing scheduler stays `PAUSED` and no five-minute polling is warranted.
+Owner authority `MILESTONE-A-20260927-001` now covers the five packages above. Anything outside this boundary, especially real-data/provider transfer, requires its separate recorded authority. The synthetic queue can continue package-by-package after each independent acceptance and durable checkpoint.

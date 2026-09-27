@@ -15,6 +15,7 @@ Last reconciled: **2026-09-27**
 - Controlled CASE-001 migration, document processing, six-role tax runtime, and Chief review.
 - Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Owner approval `ORCH-CONT-20260927-001` is active. Milestone-authority contract v1 and its Kernel controls now fail closed on authority amplification, select ready packages in durable dependency order, permit only bounded queue-exhaustion replanning, and persist complete non-token STOP diagnostics. Contract validation and the focused Kernel suite pass (`41 passed`).
+- Owner authority `MILESTONE-A-20260927-001` is active. The exact five-package envelope is pinned to `sha256:2a6d89b6c350b5a1b653bfb7b8b1ddf472188785104389967786e23d97249d09`. MA-01 implements the closed twelve-stage golden-journey coverage manifest and is independently accepted; full unit regression passes (`876 passed, 1 warning`). Kernel checkpoint `sha256:9c7f5a28521d82ac70ffd2dd8c9d5de74b8c9e6512ac977380508ac50656625b` makes MA-02 ready.
 - The bounded `SYNTHETIC_LOCAL_V1` continuity proof passed with two dependency-ordered packages, three dispatch attempts, one recoverable failure, two independent acceptances, one bounded replan, durable close/reopen checkpoint recovery, simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. Focused verification passes (`31 passed`); the complete unit regression passes (`863 passed, 1 warning`).
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile version 14 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, single business-travel transport-cost item, employer-reimbursement, commuting-benefit/subsidy, and other-expense fields; omitted optional values remain absent and are never inferred.
@@ -70,14 +71,14 @@ Last reconciled: **2026-09-27**
 
 ## Remaining product work
 
-1. Obtain consolidated product-execution authority for the five `PLANNED_UNAUTHORIZED` Milestone A packages defined in `docs/milestone-a-execution-plan.md`.
-2. After exact authority is durably bound, register and execute the local synthetic golden-journey queue without duplicating existing components.
+1. Execute registered synthetic packages MA-02 through MA-05 in dependency order without duplicating existing components.
+2. After synthetic Milestone A passes, verify the exact real-data/Gemini authority boundary before any controlled CASE-001 reproduction operation.
 3. Expand official E10/2024 field mapping only from separately reviewed exact source evidence and explicit synthetic semantics.
-4. Keep real workflows, external submission, product acceptance/release, and production controls behind their existing Human Gates.
+4. Keep external submission, official ERiC execution, product release, and production controls behind their existing Human Gates.
 
 ## Exact next action
 
-Project Owner action is required: approve or reject the single consolidated authority `MILESTONE-A-20260927-001` exactly as scoped in `docs/milestone-a-execution-plan.md`. No Milestone A product package is currently authorized or registered as ready. Keep `plan-limit-continuation-guard` paused under `HUMAN_REQUIRED / PRODUCT_EXECUTION_AUTHORITY`; do not poll every five minutes.
+Execute the already authorized dependency-ready `MA-02-COMPOSITION-AND-STORE`. Real CASE-001/Gemini processing remains a separate post-synthetic authorization check.
 
 ## Non-negotiable constraints
 

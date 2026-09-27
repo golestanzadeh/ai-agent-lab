@@ -1491,3 +1491,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Status:** planned and stopped at Human Gate on 2026-09-27
 
 **Decision:** Reconcile Owner-directed workstreams A-01 through A-09 into five dependency-ordered bounded packages in `docs/milestone-a-execution-plan.md`. Existing Phase P1, UI, and `ORCH-CONT-20260927-001` authorities do not authorize the new product composition, durable workflow-store, operational action, approval integration, synthetic end-to-end, or CI changes. The packages must remain `PLANNED_UNAUTHORIZED` and must not be registered as ready in the Kernel until the Project Owner grants one consolidated exact authority. The proposed authority identifier is `MILESTONE-A-20260927-001`. Scheduler `plan-limit-continuation-guard` remains `PAUSED`; this planning record changes no runtime or external capability.
+
+
+## D-142 — Milestone A synthetic execution authority activated
+
+**Status:** Owner-approved, MA-01 implemented and independently accepted on 2026-09-27
+
+**Decision:** Owner directive `MILESTONE-A-20260927-001` approves the exact five-package synthetic execution plan. Bind the authority contract to canonical hash `sha256:2a6d89b6c350b5a1b653bfb7b8b1ddf472188785104389967786e23d97249d09` and the golden-journey manifest to `sha256:62fea6ef5936cb6897b7ff54a37a43ba98bc90e6adbae20b1c5e9bb64565d6ad`. Register exact machine package/task identities derived from the five approved package names in the existing Kernel with dependency order and select `PKG-MA-01-GOLDEN-JOURNEY-CONTRACT` first. This authority remains synthetic/local and explicitly forbids every exclusion in the approved plan, including real data/provider secrets, Manufacturer-ID/certificates, protected-document copying, official ERiC, signing/networking, ELSTER/Finanzamt contact, external transfer, production/protected-main/release/destructive action, duplicate control subsystems, and a general-purpose shell.
+
+**Verification:** focused Milestone A/continuity/Kernel suite `44 passed`; documentation suite `9 passed`; full unit regression `876 passed, 1 warning`; O2 validator `PASS`; independent acceptance `PASS`; durable Kernel checkpoint `sha256:9c7f5a28521d82ac70ffd2dd8c9d5de74b8c9e6512ac977380508ac50656625b`. The ready selector advances only to `PKG-MA-02-COMPOSITION-AND-STORE`.

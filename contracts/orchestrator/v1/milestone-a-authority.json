@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "authority_id": "AUTH-MILESTONE-A-20260927-001",
+  "milestone_id": "MILESTONE_A_SYNTHETIC_PRODUCT_V1",
+  "owner_approval_reference": "MILESTONE-A-20260927-001",
+  "repository": "golestanzadeh/ai-agent-lab",
+  "ref": "d021-agent-case-provisioning",
+  "package_templates": [
+    {
+      "package_id": "PKG-MA-01-GOLDEN-JOURNEY-CONTRACT", "sequence": 1, "depends_on": [],
+      "objective": "Implement and verify the versioned Milestone A golden-journey contract and coverage manifest",
+      "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-MA-01",
+      "inputs": ["synthetic://milestone-a/golden-journey"], "expected_outputs": ["artifact://local/milestone-a/ma-01"],
+      "allowed_tools": ["synthetic_local_dispatch", "pytest"], "permissions": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+      "budget": {"token_limit": 30000, "tool_call_limit": 60, "cost_limit_usd": 1.0}, "timeout_seconds": 3600, "max_retries": 1,
+      "acceptance_criteria": ["all stages identities dependencies blockers and exclusions are closed enums", "unsupported capabilities fail closed", "no duplicate subsystem is introduced", "independent acceptance passes"],
+      "stop_conditions": ["authority ambiguity", "budget exhausted", "non-recoverable failure", "recovery: documentation and contract rollback only; no runtime state"],
+      "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"]
+    },
+    {
+      "package_id": "PKG-MA-02-COMPOSITION-AND-STORE", "sequence": 2, "depends_on": ["PKG-MA-01-GOLDEN-JOURNEY-CONTRACT"],
+      "objective": "Implement the bounded product composition service and durable synthetic workflow store",
+      "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-MA-02",
+      "inputs": ["synthetic://milestone-a/composition-store"], "expected_outputs": ["artifact://local/milestone-a/ma-02"],
+      "allowed_tools": ["synthetic_local_dispatch", "pytest"], "permissions": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+      "budget": {"token_limit": 30000, "tool_call_limit": 60, "cost_limit_usd": 1.0}, "timeout_seconds": 3600, "max_retries": 1,
+      "acceptance_criteria": ["case_id is mandatory", "cross-case access is rejected", "unknown schema and version are rejected", "transition identity is idempotent", "audit is transactional", "crash and reopen tests pass", "no second case approval or orchestrator store is introduced"],
+      "stop_conditions": ["authority ambiguity", "budget exhausted", "non-recoverable failure", "recovery: fail closed on corrupt or partial state; resume only from a verified durable transition"],
+      "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"]
+    },
+    {
+      "package_id": "PKG-MA-03-INTAKE-REVIEW-DECLARATION", "sequence": 3, "depends_on": ["PKG-MA-02-COMPOSITION-AND-STORE"],
+      "objective": "Implement bounded synthetic intake review correction calculation and declaration actions",
+      "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-MA-03",
+      "inputs": ["synthetic://milestone-a/intake-review-declaration"], "expected_outputs": ["artifact://local/milestone-a/ma-03"],
+      "allowed_tools": ["synthetic_local_dispatch", "pytest"], "permissions": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+      "budget": {"token_limit": 30000, "tool_call_limit": 60, "cost_limit_usd": 1.0}, "timeout_seconds": 3600, "max_retries": 1,
+      "acceptance_criteria": ["action catalog is closed", "role and sequence enforcement pass", "lineage is deterministic", "correction invalidation is deterministic", "arbitrary command execution is absent", "negative case-isolation tests pass"],
+      "stop_conditions": ["authority ambiguity", "budget exhausted", "non-recoverable failure", "recovery: one write-once attempt per transition with exact prior-state verification"],
+      "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"]
+    },
+    {
+      "package_id": "PKG-MA-04-APPROVAL-SUBMISSION-RECEIPT", "sequence": 4, "depends_on": ["PKG-MA-03-INTAKE-REVIEW-DECLARATION"],
+      "objective": "Bind two-stage durable approval to synthetic submission receipt and recovery",
+      "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-MA-04",
+      "inputs": ["synthetic://milestone-a/approval-submission-receipt"], "expected_outputs": ["artifact://local/milestone-a/ma-04"],
+      "allowed_tools": ["synthetic_local_dispatch", "pytest"], "permissions": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+      "budget": {"token_limit": 30000, "tool_call_limit": 60, "cost_limit_usd": 1.0}, "timeout_seconds": 3600, "max_retries": 1,
+      "acceptance_criteria": ["two approvals remain distinct", "payload recipient channel and expiry are exactly bound", "revoked and expired approvals are rejected", "synthetic submission is idempotent", "duplicate synthetic submission is prevented", "receipt is durable", "restart and retry proof passes", "external connectivity is absent"],
+      "stop_conditions": ["authority ambiguity", "budget exhausted", "non-recoverable failure", "recovery: approval text or export is never imported; only durable reload and one-time consumption are valid"],
+      "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"]
+    },
+    {
+      "package_id": "PKG-MA-05-E2E-FAILURE-CI", "sequence": 5, "depends_on": ["PKG-MA-04-APPROVAL-SUBMISSION-RECEIPT"],
+      "objective": "Prove the complete synthetic golden journey failure matrix reproducible setup and CI",
+      "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-MA-05",
+      "inputs": ["synthetic://milestone-a/e2e-failure-ci"], "expected_outputs": ["artifact://local/milestone-a/ma-05"],
+      "allowed_tools": ["synthetic_local_dispatch", "pytest"], "permissions": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+      "budget": {"token_limit": 30000, "tool_call_limit": 60, "cost_limit_usd": 1.0}, "timeout_seconds": 3600, "max_retries": 1,
+      "acceptance_criteria": ["golden journey passes", "cross-case crash retry duplicate stale-approval revocation expiry corruption and recovery cases pass", "fresh setup is reproducible", "CI performs no secret-bearing or external tax action"],
+      "stop_conditions": ["authority ambiguity", "budget exhausted", "non-recoverable failure", "recovery: test artifacts are non-authoritative and failure persists an actionable STOP diagnostic"],
+      "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"]
+    }
+  ],
+  "max_generated_packages": 5,
+  "max_replans": 2,
+  "dispatch_adapters": ["SYNTHETIC_LOCAL_V1"],
+  "forbidden_actions": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+  "created_at": "2026-09-27T19:00:00Z",
+  "expires_at": "2026-10-05T21:59:59Z",
+  "status": "ACTIVE"
+}

@@ -10,6 +10,7 @@ Last reconciled: **2026-09-27**
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
+- Owner authority `MILESTONE-A-20260927-001` is active. `MA-01-GOLDEN-JOURNEY-CONTRACT` is implemented, independently accepted, and checkpointed; the five dependency-ordered packages are registered in the existing Kernel and `MA-02-COMPOSITION-AND-STORE` is ready next.
 
 ## Track 1 — Autonomous project control
 
@@ -66,7 +67,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. `docs/milestone-a-execution-plan.md` was registered before creation and now records the planned artifact boundary; implementation files must be registered here only after exact product authority is granted.
+No future artifact is currently registered. The five MA-01 files were registered before creation and are now implemented. Register MA-02 files here before creation.
 
 ## Cleanup rule
 
