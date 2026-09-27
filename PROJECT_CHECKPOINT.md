@@ -106,6 +106,7 @@ All later dated checkpoint sections are chronological history. Their former “e
 - **گزینه‌های مجاز باقی‌مانده:** فقط بازبینی یا اصلاح طرح و پاسخ Owner به درخواست اختیار یکپارچه مجاز است. کار مستقلِ دیگری که این milestone را بدون عبور از همان gate پیش ببرد شناسایی نشد.
 - **اقدام دقیق لازم از Owner:** اختیار واحد `MILESTONE-A-20260927-001` را دقیقاً با پنج package، budgetها، dependencyها، acceptance/recovery rules، artifact boundary و exclusions ثبت‌شده در طرح تأیید یا رد کند. پس از تأیید، authority contract باید hash-bound شود؛ سپس Recovery Gate تکرار و فقط package آماده ثبت شود.
 - **وضعیت ادامه:** scheduler `plan-limit-continuation-guard` باید `PAUSED` بماند. ظرفیت علت توقف نیست؛ Human Gate علت توقف است. نقطه ادامه، commit حاوی همین plan/checkpoint پس از push خواهد بود.
+- **نتیجه پایدار:** plan/checkpoint در commit `2acf07d5b19ea3a0785b9fcf3e263410985a3da3` روی `d021-agent-case-provisioning` push شد؛ targeted documentation verification برابر `9 passed` بود. بررسی پایان بسته five-hour `50%` used / `50%` remaining و weekly `8%` used / `92%` remaining را گزارش کرد. این ظرفیت Human Gate را رفع نمی‌کند و package دیگری مجاز نیست.
 
 ### STOP DIAGNOSTIC — ORCH-CONT-20260927-001
 
