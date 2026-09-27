@@ -57,7 +57,7 @@ Last reconciled: **2026-09-27**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the reset-aligned wake on 2026-09-27 reported five-hour `99%` and weekly `100%` remaining, and the clean synchronized repository recovery gate passed at `72d922d2b8c64293fadd3203097080a8bc5aaf9c`.
+- Execution status is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`: the latest end-of-package observation reported five-hour `68%` and weekly `95%` remaining after the clean synchronized reset recovery and mapping profiles v12-v13.
 - The Project Owner reaffirmed continuous autonomous progression on 2026-09-20 with no routine reporting. The active plan-limit guard uses a five-minute cadence, reflects completed developer access, and may execute sequential authorized bounded packages while each end-of-package check remains safe, retaining all token thresholds and Human Gates.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
@@ -74,7 +74,7 @@ Last reconciled: **2026-09-27**
 
 ## Exact next action
 
-Select and register the highest-value bounded local synthetic non-production package that is already authorized and prerequisite-ready; preserve every existing Human Gate and external-operation blocker.
+Review the already retrieved protected E10/2024 material locally to define and register one bounded next mapping/plausibility slice before implementation. No further already-scoped prerequisite-ready package remains; broader AWT or foreign-travel semantics must not be inferred.
 
 ## Non-negotiable constraints
 
