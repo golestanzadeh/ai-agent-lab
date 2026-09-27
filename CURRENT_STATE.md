@@ -61,6 +61,7 @@ Last reconciled: **2026-09-27**
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
 - The focused documentation index now includes the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI records through UI-19; a deterministic test prevents future silent index drift.
 - Canonical-state tests also require the checkpoint, current state, and roadmap to agree on the latest UI package, active branch, and continuous-execution state.
+- Canonical-state tests now also require every active record to retain mapping profile v11 and reject the superseded profile-v2 summary.
 
 ## Remaining product work
 
