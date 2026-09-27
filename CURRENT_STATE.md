@@ -78,7 +78,7 @@ Last reconciled: **2026-09-27**
 
 ## Exact next action
 
-Execute the already authorized dependency-ready `MA-02-COMPOSITION-AND-STORE`. Real CASE-001/Gemini processing remains a separate post-synthetic authorization check.
+State is `TOKEN_PAUSED` because the post-MA-01 five-hour window has `12%` remaining. At or after `2026-09-27T23:41:49Z`, read only live limits; if resume thresholds pass, run the Recovery Gate before ending the pause, then execute dependency-ready `MA-02-COMPOSITION-AND-STORE`. Real CASE-001/Gemini processing remains a separate post-synthetic authorization check.
 
 ## Non-negotiable constraints
 
