@@ -28,6 +28,7 @@ from agent_lab.approval import (
     MigrationApproval,
 )
 from agent_lab.audit import ActorType, AuditEvent, AuditEventType, AuditStatus
+from agent_lab.elster_dry_run import ContentReleaseApproval, DestinationTransmissionApproval, ApprovalStatus as SubmissionApprovalStatus
 
 
 DURABLE_APPROVAL_SCHEMA_VERSION = 1
@@ -194,6 +195,13 @@ class DurableApprovalStore:
                     metadata TEXT NOT NULL,
                     integrity_digest TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS durable_submission_approvals (
+                    approval_id TEXT PRIMARY KEY,
+                    kind TEXT NOT NULL CHECK(kind IN ('CONTENT','DESTINATION')),
+                    payload_json TEXT NOT NULL,
+                    integrity_digest TEXT NOT NULL,
+                    consumed_by TEXT
+                );
                 """
             )
             row = self._connection.execute(
@@ -214,6 +222,51 @@ class DurableApprovalStore:
             self._connection.execute(
                 "INSERT OR IGNORE INTO durable_counters(kind, value) VALUES('audit', 0)"
             )
+
+    @staticmethod
+    def _submission_payload(approval: ContentReleaseApproval | DestinationTransmissionApproval) -> dict[str, object]:
+        payload=asdict(approval)
+        payload["issued_at"]=_utc_iso(approval.issued_at); payload["expires_at"]=_utc_iso(approval.expires_at)
+        payload["status"]=approval.status.value
+        return payload
+
+    def register_submission_approval(self, approval: ContentReleaseApproval | DestinationTransmissionApproval) -> str:
+        if type(approval) not in {ContentReleaseApproval,DestinationTransmissionApproval}:
+            raise DurableApprovalError("exact submission approval type is required")
+        payload=self._submission_payload(approval); encoded=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False)
+        digest=_digest(payload); kind="CONTENT" if type(approval) is ContentReleaseApproval else "DESTINATION"
+        with self._lock,self._connection:
+            self._require_schema()
+            prior=self._connection.execute("SELECT kind,payload_json,integrity_digest FROM durable_submission_approvals WHERE approval_id=?",(approval.approval_id,)).fetchone()
+            if prior:
+                if (prior["kind"],prior["payload_json"],prior["integrity_digest"])!=(kind,encoded,digest): raise DurableApprovalError("submission approval identity was already used differently")
+                return digest
+            self._connection.execute("INSERT INTO durable_submission_approvals VALUES(?,?,?,?,NULL)",(approval.approval_id,kind,encoded,digest))
+        return digest
+
+    def get_submission_approval(self, approval_id: str) -> ContentReleaseApproval | DestinationTransmissionApproval:
+        row=self._connection.execute("SELECT * FROM durable_submission_approvals WHERE approval_id=?",(approval_id,)).fetchone()
+        if row is None: raise ApprovalNotFoundError(approval_id)
+        payload=json.loads(row["payload_json"])
+        if _digest(payload)!=row["integrity_digest"]: raise DurableApprovalIntegrityError("submission approval integrity mismatch")
+        payload["issued_at"]=_parse_utc(payload["issued_at"]); payload["expires_at"]=_parse_utc(payload["expires_at"]); payload["status"]=SubmissionApprovalStatus(payload["status"])
+        cls=ContentReleaseApproval if row["kind"]=="CONTENT" else DestinationTransmissionApproval
+        return cls(**payload)
+
+    def consume_submission_pair(self, content_id: str, destination_id: str, consumption_id: str) -> tuple[ContentReleaseApproval,DestinationTransmissionApproval]:
+        if not consumption_id.strip(): raise DurableApprovalError("consumption_id is required")
+        content=self.get_submission_approval(content_id); destination=self.get_submission_approval(destination_id)
+        if type(content) is not ContentReleaseApproval or type(destination) is not DestinationTransmissionApproval: raise DurableApprovalError("ordered content and destination approvals are required")
+        if destination.content_release_approval_id!=content.approval_id: raise DurableApprovalError("destination approval is not bound to content approval")
+        with self._lock,self._connection:
+            self._require_schema()
+            rows=self._connection.execute("SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",(content_id,destination_id)).fetchall()
+            if len(rows)!=2: raise DurableApprovalError("approval pair is incomplete")
+            states={row["consumed_by"] for row in rows}
+            if states=={consumption_id}: return content,destination
+            if states!={None}: raise ApprovalAlreadyConsumedError("APPROVAL_ALREADY_CONSUMED")
+            self._connection.execute("UPDATE durable_submission_approvals SET consumed_by=? WHERE approval_id IN (?,?)",(consumption_id,content_id,destination_id))
+        return content,destination
 
     def _require_schema(self) -> None:
         row = self._connection.execute(

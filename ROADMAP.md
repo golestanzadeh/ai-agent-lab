@@ -67,7 +67,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. MA-03 files were registered before creation and are now implemented. Register MA-04 files here before creation.
+No future artifact is currently registered. The MA-04 durable approval foundation is implemented inside the existing `DurableApprovalStore`; service binding and package acceptance remain incomplete.
 
 ## Cleanup rule
 
