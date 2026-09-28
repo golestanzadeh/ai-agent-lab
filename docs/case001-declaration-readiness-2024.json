@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "audit_run_id": "RUN-CASE001-DECLARATION-READINESS-20260928-006",
+  "state": "CASE_CLOSED_REMEDIATION_REQUIRED",
+  "frozen_case": {
+    "calculation_run_id": "RUN-CASE001-STRUCTURED-FINANCIAL-20260928-004",
+    "refund_eur": "133.83",
+    "zve_eur": 27784,
+    "income_tax_before_35a_eur": "674.00",
+    "section_35a_credit_eur": "31.83",
+    "income_tax_after_35a_eur": "642.17",
+    "withheld_wage_tax_eur": "776.00",
+    "inventory_sha256": "d36daeb574e17e8487a830decd0ea31bc823a7d1aa5f5415c9a0c8df7e6a5694",
+    "structured_source_sha256": "f122db653b3e3ef738127e279b82e756fa9ea9744e9b106400e676d08fea90c9",
+    "transaction_classifications_sha256": "4b8a5f39e291e35f845d517095e877b1e11494bc2ca7ba58e249324ccfd6a521",
+    "evidence_reconciliation_sha256": "a3861e76dc79ddd4acd1fe8a9db956d3be6c2a17e0f90f4a8073814c1efdb821",
+    "calculation_sha256": "ab16f47708b0c46898f227a566fb572bb04795ce61cf396a90d9aef8fdfeb0ea",
+    "agent_review_sha256": "53ac7feb65396fde934be5624a10803a7930903e4d92c5dd2de372bf69fb3ce6",
+    "final_result_sha256": "56fcb1c476e87a8bed3e9821ff12f83c784a07efc3138e18bb30a9aca2b20540",
+    "donation_result_sha256": "ad265dd1c4ea203260865f383d9b22b8d713221f7283735238a2991084ec86cf",
+    "source_pdf_count": 16,
+    "ledger_row_count": 946,
+    "specialist_status": "PASS",
+    "chief_status": "PASS",
+    "independent_acceptance": "PASS"
+  },
+  "implementation": {
+    "mapping_profile_version": "14",
+    "declaration_profile_version": "1",
+    "plausibility_profile_version": "11",
+    "scope": "SYNTHETIC_BOUNDED_ANLAGE_N",
+    "official_xsd": "LOCALLY_HASH_PINNED_E10_2024",
+    "official_xsd_result": "PASS_FOR_EXISTING_SYNTHETIC_PROFILE",
+    "local_plausibility_result": "PASS_FOR_39_RULE_EXISTING_SYNTHETIC_PROFILE",
+    "official_eric_executed": false
+  },
+  "coverage_counts": {
+    "total": 18,
+    "SUPPORTED": 0,
+    "MISSING_MAPPING": 0,
+    "MISSING_RULE": 1,
+    "MISSING_FORM_OR_SECTION": 7,
+    "SUPPORTED_BUT_UNVERIFIED": 1,
+    "IRRELEVANT_FOR_CASE": 2,
+    "EXCLUDED_BY_ACCEPTED_CASE_DECISION": 7
+  },
+  "coverage": {
+    "affirmative_declaration_requirements": 9,
+    "source_backed_field_semantics_present": 2,
+    "semantic_coverage_percent": 22.22,
+    "case_bound_end_to_end_verified_percent": 0,
+    "complete_non_transmitting_declaration_possible": false,
+    "preview_status": "DECLARATION_CONTENT_INCOMPLETE",
+    "preview_type": "NON_TRANSMITTING_PREVIEW"
+  },
+  "independent_acceptance": {
+    "status": "PASS",
+    "cycles": 4,
+    "resolved_defects": ["gross-wage transformation overclaim", "missing Kindergeld and section 31 lineage", "incomplete Vorsorge component lineage", "aggregate tenant-payment lineage", "misnamed and missing freeze hashes", "DR-03 Kindergeld scope omission", "Markdown queue inconsistency", "stale DR-05 affirmative count"]
+  },
+  "items": [
+    {"id":"DEC-001","tax_item":"joint assessment and taxpayer/spouse declaration context","source_evidence":["accepted CASE-001 joint-assessment calculation"],"accepted_tax_fact":"joint assessment under splitting tariff","tax_treatment":"required declaration context","calculation_input":"joint_assessment=true","form_section":"ESt 1 A / Hauptvordruck","required_field":"taxpayer and spouse identity plus Zusammenveranlagung election","implementation":"no real-case Hauptvordruck binding","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-01"},
+    {"id":"DEC-002","tax_item":"primary gross employment wages","source_evidence":["DOC-CASE-001-00000001"],"accepted_tax_fact":"EUR 36470.23 gross wages; tax class III","tax_treatment":"employment income","calculation_input":"gross_wage_eur=36470.23","form_section":"Anlage N / ArbL / LStB_1_5_Sum","required_field":"E0200002 tax class; E0200201 whole-euro gross wages","implementation":"profile 14 has the fields but accepts only whole-euro gross input","validation":"source cents to whole-euro declaration transformation is absent and unverified","classification":"MISSING_RULE","package_id":"DR-01"},
+    {"id":"DEC-003","tax_item":"withheld wage tax","source_evidence":["DOC-CASE-001-00000001"],"accepted_tax_fact":"EUR 776.00 withheld","tax_treatment":"settlement credit","calculation_input":"withheld_wage_tax_eur=776.00","form_section":"Anlage N / ArbL / LStB_1_5_Sum","required_field":"E0200301 withheld wage tax","implementation":"mapping profile 14","validation":"field semantics, XSD and local rules verified only in synthetic contract","classification":"SUPPORTED_BUT_UNVERIFIED","package_id":"DR-01"},
+    {"id":"DEC-004","tax_item":"employee lump sum","source_evidence":["accepted calculation trace"],"accepted_tax_fact":"EUR 1230 Arbeitnehmer-Pauschbetrag","tax_treatment":"statutory automatic deduction","calculation_input":"employee_lump_sum_eur=1230.00","form_section":"no taxpayer input field","required_field":"none; assessment rule","implementation":"not a declaration payload item","validation":"accepted calculation","classification":"IRRELEVANT_FOR_CASE","package_id":null},
+    {"id":"DEC-005","tax_item":"spouse flat-taxed minijob wages","source_evidence":["DOC-CASE-001-00000016"],"accepted_tax_fact":"EUR 3337.29 employer-flat-taxed wages excluded from assessment","tax_treatment":"not included in joint taxable income","calculation_input":"0.00 taxable wages","form_section":"no income declaration entry for accepted treatment","required_field":"none","implementation":"correctly omitted","validation":"accepted Specialist and Chief decision","classification":"IRRELEVANT_FOR_CASE","package_id":null},
+    {"id":"DEC-006","tax_item":"statutory pension contributions including spouse RV-AN","source_evidence":["DOC-CASE-001-00000001","DOC-CASE-001-00000016"],"accepted_tax_fact":{"primary_employee_rv_eur":"3391.74","primary_employer_rv_eur":"3391.74","spouse_employee_rv_eur":"120.15","gross_eligible_contributions_eur":"6903.63","less_tax_free_employer_share_eur":"3391.74","deductible_eur":"3511.89"},"tax_treatment":"Altersvorsorgeaufwendungen; 100 percent recognition for 2024 less tax-free employer share","calculation_input":"pension_deduction_eur=3511.89","form_section":"Anlage Vorsorgeaufwand","required_field":"2024 form lines 4, 6 and 8; exact ERiC field IDs require protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-02"},
+    {"id":"DEC-007","tax_item":"health, care and unemployment insurance","source_evidence":["DOC-CASE-001-00000001"],"accepted_tax_fact":{"employee_health_eur":"2954.09","health_after_4_percent_krankengeld_reduction_eur":"2835.93","care_eur":"620.00","unemployment_eur":"474.11","raw_other_vorsorge_eur":"3930.04","joint_cap_eur":"3800.00","deductible_eur":"3800.00"},"tax_treatment":"sonstige Vorsorgeaufwendungen with 4 percent health adjustment and joint cap","calculation_input":"other_vorsorge_deduction_eur=3800.00","form_section":"Anlage Vorsorgeaufwand","required_field":"2024 form lines 16, 17 and 22; exact ERiC field IDs require protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-02"},
+    {"id":"DEC-008","tax_item":"school fees","source_evidence":["DOC-CASE-001-00000014","DOC-CASE-001-00000015","TX-de313fcd2268cdea5f78e0f8","TX-6ab4508354f25e43fd19f212"],"accepted_tax_fact":"EUR 480 paid; EUR 144 deductible","tax_treatment":"section 10(1) no. 9 Sonderausgaben","calculation_input":"school_fee_deduction_eur=144.00","form_section":"Anlage Kind","required_field":"child/school eligibility context and 2024 school-fee amount field; exact ERiC IDs require protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-03"},
+    {"id":"DEC-009","tax_item":"craftsman labor","source_evidence":["DOC-CASE-001-00000011","TX-330dcf5dcbed94319cc0d4a1"],"accepted_tax_fact":"EUR 90.00 eligible basis","tax_treatment":"section 35a(3) direct credit","calculation_input":"section_35a_craftsman_basis_eur=90.00","form_section":"Anlage Haushaltsnahe Aufwendungen","required_field":"2024 craftsman labor expense field; exact ERiC ID requires protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-04"},
+    {"id":"DEC-010","tax_item":"tenant household-service allocation","source_evidence":["DOC-CASE-001-00000006","TX-5ffdfe77d009c86ec5148622","TX-de99c35781265ae37b9f4181","TX-3461d1d49e67848c98c9eb85","TX-126d98643b6b064114b67fc7","TX-bdb8a6203252e90f8d0b767d","TX-c6b9d9103a9fd4978d6c0e04","TX-16a8e1e0f0f55d5cfce9fa20","TX-005af4ae985cd15b25be4951","TX-e56a82e0c57fb0f444095ffa","TX-37b8f5c7d4e148f50060f52b","TX-9c19fb2354cac1ad475dc4ab","TX-63838fd5f3e62dcfeff6dcfb"],"relationship_artifact_sha256":"a3861e76dc79ddd4acd1fe8a9db956d3be6c2a17e0f90f4a8073814c1efdb821","accepted_tax_fact":"EUR 69.13 eligible basis","tax_treatment":"section 35a household-related direct credit","calculation_input":"section_35a_tenant_service_basis_eur=69.13","form_section":"Anlage Haushaltsnahe Aufwendungen","required_field":"2024 household-service expense field; exact ERiC ID requires protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-04"},
+    {"id":"DEC-011","tax_item":"Bjorn Steiger Stiftung payment","source_evidence":["DOC-CASE-001-00000007","TX-c67f3a594d3273589c5a9ce3"],"accepted_tax_fact":"EUR 60 outgoing payment","tax_treatment":"DONATION_EVIDENCE_INCOMPLETE / EXCLUDED","calculation_input":"0.00","form_section":"Anlage Sonderausgaben","required_field":"none for excluded claim","implementation":"explicit exclusion","validation":"Independent Acceptance PASS","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-012","tax_item":"medical and pharmacy expenses","source_evidence":["accepted evidence reconciliation"],"accepted_tax_fact":"Owner declined further pursuit","tax_treatment":"OWNER_DECLINED / EXCLUDED","calculation_input":"0.00","form_section":"Anlage Aussergewoehnliche Belastungen","required_field":"none for excluded claim","implementation":"explicit exclusion","validation":"closure decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-013","tax_item":"lawyer expenses","source_evidence":["accepted structured ledger"],"accepted_tax_fact":"Owner declined further pursuit","tax_treatment":"OWNER_DECLINED / EXCLUDED","calculation_input":"0.00","form_section":"Anlage Aussergewoehnliche Belastungen","required_field":"none for excluded claim","implementation":"explicit exclusion","validation":"closure decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-014","tax_item":"additional insurance cash flows","source_evidence":["SFS-CASE-001-2024-0001:insurance-41"],"accepted_tax_fact":"unallocated and no incremental effect beyond accepted cap","tax_treatment":"EXCLUDED","calculation_input":"0.00 incremental","form_section":"Anlage Vorsorgeaufwand","required_field":"none beyond accepted DOC-00000001 inputs","implementation":"explicit exclusion","validation":"accepted Chief decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-015","tax_item":"EVG and commuting candidates","source_evidence":["DOC-CASE-001-00000005","accepted calculation trace"],"accepted_tax_fact":"not claimed above EUR 1230 lump sum","tax_treatment":"EXCLUDED / absorbed by Arbeitnehmer-Pauschbetrag","calculation_input":"0.00 incremental","form_section":"Anlage N Werbungskosten","required_field":"none for accepted exclusion","implementation":"explicit exclusion","validation":"accepted Chief decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-016","tax_item":"additional meal allowance candidate","source_evidence":["accepted evidence record"],"accepted_tax_fact":"qualifying day-level absence evidence insufficient","tax_treatment":"EXCLUDED","calculation_input":"0.00","form_section":"Anlage N VMA","required_field":"none for accepted exclusion","implementation":"explicit exclusion","validation":"accepted Chief decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-017","tax_item":"tax software invoice","source_evidence":["DOC-CASE-001-00000013"],"accepted_tax_fact":"2025 outflow, not tax year 2024","tax_treatment":"EXCLUDED","calculation_input":"0.00","form_section":"Anlage N Werbungskosten","required_field":"none for tax year 2024","implementation":"explicit exclusion","validation":"accepted Chief decision","classification":"EXCLUDED_BY_ACCEPTED_CASE_DECISION","package_id":null},
+    {"id":"DEC-018","tax_item":"child-benefit entitlement and section 31 favorable-treatment comparison","source_evidence":["accepted corrected calculation trace","DOC-CASE-001-00000014","DOC-CASE-001-00000015"],"accepted_tax_fact":"EUR 3000.00 Kindergeld entitlement is more favorable than child-allowance tax relief","tax_treatment":"section 31 Günstigerprüfung; Kindergeld outcome retained","calculation_input":"kindergeld_entitlement_eur=3000.00","form_section":"Anlage Kind","required_field":"2024 child and Kindergeld entitlement context; exact ERiC field IDs require protected annual-material review","implementation":"form absent","validation":"not implemented","classification":"MISSING_FORM_OR_SECTION","package_id":"DR-03"}
+  ],
+  "preview": {
+    "status": "DECLARATION_CONTENT_INCOMPLETE",
+    "type": "NON_TRANSMITTING_PREVIEW",
+    "supported_portion": [
+      {"form":"Anlage N","field_id":"E0200002","value":"3","status":"FIELD_SEMANTIC_ONLY; GROSS_WAGE_TRANSFORMATION_MISSING"},
+      {"form":"Anlage N","field_id":"E0200301","value":"776,00","status":"SUPPORTED_BUT_UNVERIFIED_CASE_BINDING"}
+    ],
+    "external_action": false
+  },
+  "remediation_queue": [
+    {"package_id":"DR-01","name":"case-bound E10 composition and Hauptvordruck","authority_reference":"BOUNDED_OWNER_APPROVAL_REQUIRED_FOR_IMPLEMENTATION","dependencies":[],"prerequisite_commit":"AUDIT_FINAL_COMMIT","scope":"source-backed CASE-001 input binding, Hauptvordruck/joint-assessment context, and existing Anlage N fields","budget":"MEDIUM","definition_of_done":"real-case-scoped non-transmitting root plus exact, authoritative source-cent-to-whole-euro gross-wage transformation and existing wage fields passes identity, isolation, XSD and negative tests","required_tests":["case isolation","exact-source lineage","gross-wage rounding/transformation boundaries","mapping","XSD","no external capability"],"independent_acceptance":true,"stop_conditions":["missing authoritative 2024 field semantics","identity ambiguity","capacity threshold","new governance conflict"],"scheduler_disposition":"EXISTING_SCHEDULER_ONLY_AFTER_RECOVERY_GATE","human_gate":"one bounded implementation authority; no filing authority"},
+    {"package_id":"DR-02","name":"Anlage Vorsorgeaufwand vertical slice","authority_reference":"BOUNDED_OWNER_APPROVAL_REQUIRED_FOR_IMPLEMENTATION","dependencies":["DR-01"],"prerequisite_commit":"DR-01_ACCEPTED_COMMIT","scope":"primary/spouse pension and accepted health/care/unemployment inputs only","budget":"MEDIUM","definition_of_done":"authoritative 2024 fields and deterministic transformations represent DEC-006/007 and pass XSD/plausibility/lineage tests","required_tests":["official-field mapping","cap and employer-share transformations","spouse isolation","XSD","plausibility"],"independent_acceptance":true,"stop_conditions":["unrecovered protected annual material","semantic ambiguity","capacity threshold"],"scheduler_disposition":"EXISTING_SCHEDULER_ONLY_AFTER_RECOVERY_GATE","human_gate":"covered by the same bounded implementation authority"},
+    {"package_id":"DR-03","name":"Anlage Kind school-fee and section 31 vertical slice","authority_reference":"BOUNDED_OWNER_APPROVAL_REQUIRED_FOR_IMPLEMENTATION","dependencies":["DR-01"],"prerequisite_commit":"DR-01_ACCEPTED_COMMIT","scope":"accepted child/school context, EUR 480 payment/EUR 144 deduction, EUR 3000 Kindergeld entitlement, and section 31 Günstigerprüfung inputs only","budget":"MEDIUM","definition_of_done":"source-backed 2024 child/school and Kindergeld fields represent DEC-008 and DEC-018 without inferred identity; the section 31 comparison inputs are preserved; XSD/plausibility/lineage tests pass","required_tests":["eligibility completeness","30 percent school-fee transformation","Kindergeld entitlement","section 31 Günstigerprüfung input preservation","payment lineage","XSD","cross-case rejection"],"independent_acceptance":true,"stop_conditions":["missing required child fact","authoritative semantic ambiguity","capacity threshold"],"scheduler_disposition":"EXISTING_SCHEDULER_ONLY_AFTER_RECOVERY_GATE","human_gate":"covered by the same bounded implementation authority"},
+    {"package_id":"DR-04","name":"Anlage Haushaltsnahe Aufwendungen vertical slice","authority_reference":"BOUNDED_OWNER_APPROVAL_REQUIRED_FOR_IMPLEMENTATION","dependencies":["DR-01"],"prerequisite_commit":"DR-01_ACCEPTED_COMMIT","scope":"accepted EUR 90 craftsman and EUR 69.13 tenant-service bases only","budget":"MEDIUM","definition_of_done":"authoritative 2024 fields represent DEC-009/010 and preserve invoice/payment lineage with deterministic section-35a validation","required_tests":["category mapping","cashless-payment lineage","rounding","XSD","plausibility","duplicate prevention"],"independent_acceptance":true,"stop_conditions":["authoritative semantic ambiguity","lineage mismatch","capacity threshold"],"scheduler_disposition":"EXISTING_SCHEDULER_ONLY_AFTER_RECOVERY_GATE","human_gate":"covered by the same bounded implementation authority"},
+    {"package_id":"DR-05","name":"integrated CASE-001 declaration content proof","authority_reference":"BOUNDED_OWNER_APPROVAL_REQUIRED_FOR_IMPLEMENTATION","dependencies":["DR-02","DR-03","DR-04"],"prerequisite_commit":"DR-02_DR-03_DR-04_ACCEPTED_COMMITS","scope":"compose only accepted CASE-001 items, freeze exclusions, produce non-transmitting complete preview","budget":"MEDIUM","definition_of_done":"all nine affirmative requirements are case-bound, XSD-valid and locally plausible; all exclusions remain explicit; independent acceptance passes","required_tests":["coverage manifest equality","integrated XSD","local plausibility","restart/replay","cross-case isolation","regression"],"independent_acceptance":true,"stop_conditions":["any silent item loss","official ERiC requirement","external-action request","capacity threshold"],"scheduler_disposition":"EXISTING_SCHEDULER_ONLY_AFTER_RECOVERY_GATE","human_gate":"no additional per-package approval inside one bounded authority; external ERiC/filing remains separately gated"}
+  ],
+  "external_actions": {"official_eric":false,"elster":false,"finanzamt":false,"signing":false,"certificate_use":false,"drive_mutation":false,"production":false}
+}

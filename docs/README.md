@@ -107,6 +107,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-comparative-audit-2024.md` — diagnostic field/rule reconciliation between the frozen EUR 76 result and historical EUR 70.83 endpoint, including the exact settlement bridge and unresolved historical intermediates.
 - `case001-structured-financial-evidence-2024.md` — immutable CSV registration, 946-row deterministic ledger, exact candidate lineage, successor evidence/calculation, and independent acceptance.
 - `case001-donation-evidence-2024.md` — bounded EUR 60 donation/payment reconciliation, section 50(4) EStDV requirement matrix, and unchanged-calculation boundary.
+- `case001-declaration-readiness-2024.md` — final CASE-001 tax freeze, machine-readable declaration coverage audit, incomplete non-transmitting preview, and bounded remediation queue.
 
 ## Documentation rules
 
