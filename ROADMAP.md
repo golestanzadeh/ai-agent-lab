@@ -68,6 +68,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 - `docs/case001-reproduction-2024.md` is the privacy-safe durable execution record for Owner-authorized `RUN-CASE001-REPRO-20260928-001`. The 15-document Gemini run completed, but the formal Specialist/Chief result is `BLOCKED` by material source-evidence gaps; the historical refund cannot be numerically reproduced. Independent acceptance is `PASS`; sensitive source/provider artifacts remain outside Git.
 - `docs/case001-independent-real-document-execution-2024.md` records completed corrected Owner run `RUN-CASE001-INDEPENDENT-20260928-002`: recursive discovery froze 16 taxpayer-source PDFs and excluded one official D026 form package; Gemini completed 16/16; all final Specialist roles, Chief, non-transmitting preview, and Independent Acceptance passed. The independent current result is z.v.E. EUR 27,928, Einkommensteuer EUR 700, and refund EUR 76; no historical target was used.
+- `docs/case001-comparative-audit-2024.md` records the diagnostic-only comparison: the EUR 5.17 endpoint difference reconciles exactly through the reported EUR 37 tariff difference and EUR 31.83 historical section 35a credit, while missing historical deduction intermediates and a one-euro tariff inconsistency keep the rule-level result at `AUDIT_UNRESOLVED`. No current implementation defect or repair authority exists.
 
 ## Cleanup rule
 
