@@ -48,6 +48,7 @@ class SyntheticWorkflowStore:
             self._db.execute("CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL)")
             self._db.execute("CREATE TABLE IF NOT EXISTS workflows(run_id TEXT PRIMARY KEY,case_id TEXT NOT NULL,tax_year INTEGER NOT NULL,stage TEXT NOT NULL,sequence INTEGER NOT NULL,artifact_identity TEXT NOT NULL,transition_hash TEXT NOT NULL,UNIQUE(case_id,tax_year,run_id))")
             self._db.execute("CREATE TABLE IF NOT EXISTS transitions(transition_id TEXT PRIMARY KEY,run_id TEXT NOT NULL REFERENCES workflows(run_id),ordinal INTEGER NOT NULL,payload_json TEXT NOT NULL,event_hash TEXT NOT NULL,UNIQUE(run_id,ordinal))")
+            self._db.execute("CREATE TABLE IF NOT EXISTS action_attempts(transition_id TEXT PRIMARY KEY,run_id TEXT NOT NULL REFERENCES workflows(run_id),request_json TEXT NOT NULL,request_hash TEXT NOT NULL,outcome TEXT NOT NULL CHECK(outcome IN ('PENDING','ACCEPTED','REJECTED')))")
             row=self._db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()
             if row is None: self._db.execute("INSERT INTO metadata VALUES('schema_version',?)",(str(self.SCHEMA_VERSION),))
             elif row["value"] != str(self.SCHEMA_VERSION): raise WorkflowIntegrityError("unsupported workflow schema version")
@@ -96,6 +97,27 @@ class SyntheticWorkflowStore:
         if row is None or (row["case_id"],row["tax_year"])!=(case_id,tax_year): raise WorkflowScopeError("workflow scope not found")
         return self._snapshot(row)
 
+    def reserve_action_attempt(self, run_id: str, transition_id: str, request_payload: dict[str, object]) -> str:
+        request_json=_canonical(request_payload); request_hash="sha256:"+hashlib.sha256(request_json.encode()).hexdigest()
+        prior=self._db.execute("SELECT request_hash,outcome FROM action_attempts WHERE transition_id=?",(transition_id,)).fetchone()
+        if prior:
+            if prior["request_hash"]!=request_hash: raise WorkflowTransitionError("action attempt identity was already used differently")
+            return prior["outcome"]
+        with self._db:
+            self._db.execute("INSERT INTO action_attempts VALUES(?,?,?,?,?)",(transition_id,run_id,request_json,request_hash,"PENDING"))
+        return "PENDING"
+
+    def finalize_action_attempt(self, transition_id: str, outcome: str) -> None:
+        if outcome not in {"ACCEPTED","REJECTED"}: raise ValueError("invalid action attempt outcome")
+        with self._db:
+            changed=self._db.execute("UPDATE action_attempts SET outcome=? WHERE transition_id=? AND outcome='PENDING'",(outcome,transition_id)).rowcount
+        if changed != 1: raise WorkflowTransitionError("action attempt is already final")
+
+    def action_attempt(self, transition_id: str) -> dict[str, object]:
+        row=self._db.execute("SELECT request_json,outcome FROM action_attempts WHERE transition_id=?",(transition_id,)).fetchone()
+        if row is None: raise WorkflowTransitionError("action attempt not found")
+        return {"request":json.loads(row["request_json"]),"outcome":row["outcome"]}
+
     def _write(self, case_id, tax_year, run_id, current, target, artifact_identity, transition_id):
         if not artifact_identity.startswith("sha256:") or len(artifact_identity)!=71 or not transition_id.strip(): raise WorkflowTransitionError("valid artifact and transition identities are required")
         ordinal=1 if current is None else current.sequence+1
@@ -121,6 +143,9 @@ class SyntheticWorkflowStore:
             last=self._db.execute("SELECT event_hash,payload_json,ordinal FROM transitions WHERE run_id=? ORDER BY ordinal DESC LIMIT 1",(row["run_id"],)).fetchone()
             payload=json.loads(last["payload_json"]) if last else {}
             if last is None or last["event_hash"]!=row["transition_hash"] or last["ordinal"]!=row["sequence"] or payload.get("target")!=row["stage"] or payload.get("artifact_identity")!=row["artifact_identity"]: raise WorkflowIntegrityError("workflow head integrity failed")
+        for row in self._db.execute("SELECT request_json,request_hash FROM action_attempts"):
+            digest="sha256:"+hashlib.sha256(row["request_json"].encode()).hexdigest()
+            if digest!=row["request_hash"]: raise WorkflowIntegrityError("action attempt integrity failed")
 
     @staticmethod
     def _snapshot(row):

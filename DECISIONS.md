@@ -1509,3 +1509,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Reuse the Case Registry as the sole case identity authority and add a separate workflow-metadata journal only. Require exact synthetic `case_id`, tax year, and run identity; serialize stage transitions in closed order; bind idempotency keys to exact transition payloads; maintain a verifiable hash chain and workflow head; and fail closed on stale stages, cross-case lookup, schema mismatch, corruption, or partial transaction failure. Store no taxpayer facts, documents, approvals, Orchestrator state, provider configuration, or external capability.
 
 **Verification:** focused `39 passed`; full unit regression `883 passed, 1 warning`; independent acceptance `PASS`; Kernel checkpoint `sha256:7434e9ef9fc227ddb6a808629c647644d637d225ecf5524b49f0d5ebb8071663` selects MA-03 next.
+
+
+## D-144 — MA-03 closed synthetic action and durable-attempt boundary
+
+**Status:** implemented and independently accepted on 2026-09-28
+
+**Decision:** Implement only six enum-valued local actions from intake through declaration preview. Bind each action to one exact role, prior stage/hash/artifact, synthetic case scope, and canonical input lineage. Persist every attempt before validation; rejected identifiers are consumed, accepted exact replays are idempotent, and correction may invalidate only the exact active artifact during specialist/chief review. Free-form commands and external capabilities remain absent.
+
+**Verification:** the first independent review rejected non-durable failed attempts and non-auditable correction lineage; both were repaired. Final independent acceptance `PASS`; focused `16 passed`; full unit regression `892 passed, 1 warning`; Kernel checkpoint `sha256:c90bbe7a41bf1ade4e491c4abdec8ac11473da2f782ef7e9b7f759a5434dd2d3` selects MA-04.
