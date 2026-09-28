@@ -10,7 +10,7 @@ Last reconciled: **2026-09-27**
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
-- Owner authority `MILESTONE-A-20260927-001` is active. MA-01 through `MA-03-INTAKE-REVIEW-DECLARATION` are implemented, independently accepted, and checkpointed; `MA-04-APPROVAL-SUBMISSION-RECEIPT` is ready next.
+- Owner authority `MILESTONE-A-20260927-001` is active. MA-01 through MA-03 are accepted. MA-04 is stopped at a recorded architecture gate between shared-transaction and durable coordinator/saga recovery; MA-05 remains dependency-blocked.
 
 ## Track 1 — Autonomous project control
 
@@ -67,7 +67,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. The MA-04 durable approval foundation is implemented inside the existing `DurableApprovalStore`; service binding and package acceptance remain incomplete.
+No future artifact is currently registered. The MA-04 durable approval foundation is implemented inside the existing `DurableApprovalStore`; integration awaits the recorded Owner architecture choice.
 
 ## Cleanup rule
 
