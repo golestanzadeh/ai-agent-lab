@@ -79,6 +79,7 @@ Every package uses local synthetic data only. Budgets are ceilings, not entitlem
 - Deliverable: full synthetic golden-journey integration proof, failure matrix, reproducible local setup, and a narrowly scoped CI workflow.
 - Acceptance: success path plus cross-case, crash, retry, duplicate, stale approval, revocation, expiry, corruption, and recovery cases; clean fresh setup; CI performs no secret-bearing or external tax action.
 - Recovery: test artifacts are non-authoritative; failure persists an actionable STOP diagnostic.
+- Execution result: implemented and independently accepted. The complete twelve-stage synthetic journey reopens at `RECOVERY` with exactly one durable coordinator operation, result, and placeholder receipt. Existing focused suites plus the new stale-preview proof cover cross-case, every commit crash boundary, replay/retry, duplicate prevention, revocation, expiry, corruption, and recovery. A fresh temporary virtual environment with only pytest installed passes the focused surface. The read-only hash-pinned CI workflow has no secrets or external tax action; on failure it records an actionable diagnostic and checkpoint through the existing Kernel and uploads only non-authoritative recovery evidence. Focused verification `62 passed`; full unit regression `915 passed, 1 warning`; independent acceptance `PASS`.
 
 ## Intended artifact boundary
 

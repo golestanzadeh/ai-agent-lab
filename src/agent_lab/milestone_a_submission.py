@@ -31,6 +31,17 @@ class MilestoneASubmissionCoordinator:
         state = self.approvals.begin_submission_coordinator(intent)
         if crash_after == "INTENT_RECORDED":
             raise RuntimeError("injected crash after intent commit")
+        if state["state"] == "INTENT_RECORDED":
+            current = self.workflow.get(
+                str(intent["case_id"]), int(intent["tax_year"]), str(intent["run_id"])
+            )
+            if (
+                current.stage is not WorkflowStage.FORM_PREVIEW
+                or current.artifact_identity != intent["artifact_reference"]
+            ):
+                raise WorkflowTransitionError(
+                    "approval intent does not match the active form-preview artifact"
+                )
         state = self.approvals.consume_coordinator_approvals(str(intent["operation_id"]), now=now)
         if crash_after == "APPROVALS_CONSUMED":
             raise RuntimeError("injected crash after approval consumption")

@@ -101,6 +101,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `milestone-a-composition-store.md` — MA-02 case-scoped synthetic composition/store contract, integrity and recovery boundaries, and verification evidence.
 - `milestone-a-actions.md` — MA-03 closed local action catalog, role/sequence boundary, correction lineage, and recovery behavior.
 - `milestone-a-submission-coordinator.md` — MA-04 versioned durable coordinator/saga, two-database recovery contract, and synthetic result/receipt boundary.
+- `milestone-a-e2e.md` — MA-05 complete synthetic golden journey, failure matrix, reproducible setup, and read-only CI boundary.
 
 ## Documentation rules
 

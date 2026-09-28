@@ -1,0 +1,63 @@
+name: Milestone A synthetic acceptance
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/agent_lab/**"
+      - "tests/unit/**"
+      - "tests/integration/test_milestone_a_golden_journey.py"
+      - "scripts/ma05_stop_diagnostic.py"
+      - "contracts/orchestrator/v1/**"
+      - "docs/milestone-a-*.md"
+      - ".github/workflows/milestone-a-synthetic.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: milestone-a-synthetic-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  synthetic-local-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: src:.
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install local test dependency
+        run: python -m pip install pytest
+      - name: Prove complete synthetic journey
+        run: python -m pytest -q tests/integration/test_milestone_a_golden_journey.py
+      - name: Prove failure and recovery matrix
+        run: >-
+          python -m pytest -q
+          tests/unit/test_synthetic_workflow_store.py
+          tests/unit/test_synthetic_workflow_actions.py
+          tests/unit/test_durable_submission_approval.py
+          tests/unit/test_milestone_a_submission.py
+      - name: Prove governance and documentation contracts
+        run: >-
+          python -m pytest -q
+          tests/unit/test_milestone_a_contract.py
+          tests/unit/test_documentation_index.py
+          tests/unit/test_ma05_stop_diagnostic.py
+      - name: Persist actionable STOP diagnostic on failure
+        if: failure()
+        run: python scripts/ma05_stop_diagnostic.py
+      - name: Upload failure diagnostic
+        if: failure()
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: ma05-stop-diagnostic-${{ github.run_id }}
+          path: artifacts/ma05-ci-stop/
+          if-no-files-found: error
+          retention-days: 30

@@ -114,3 +114,19 @@ def test_unregistered_but_internally_consistent_scope_is_denied(tmp_path):
     with pytest.raises(InvalidApprovalError,match="unknown case_id"):
         approvals.begin_submission_coordinator(unknown_intent)
     approvals.close(); workflow.close()
+
+def test_stale_approval_cannot_advance_a_newer_form_preview(tmp_path):
+    approvals,workflow,intent=setup(tmp_path)
+    current=workflow.get(CASE,YEAR,RUN)
+    newer="sha256:"+"b"*64
+    # Simulate a separately governed correction producing a newer active preview.
+    workflow._db.execute("UPDATE workflows SET artifact_identity=? WHERE run_id=?",(newer,RUN))
+    workflow._db.execute("UPDATE transitions SET payload_json=json_set(payload_json,'$.artifact_identity',?) WHERE run_id=? AND ordinal=?",(newer,RUN,current.sequence))
+    # Recalculate the last transition/head digest so this is valid newer state, not corruption.
+    row=workflow._db.execute("SELECT payload_json FROM transitions WHERE run_id=? AND ordinal=?",(RUN,current.sequence)).fetchone(); payload=json.loads(row["payload_json"]); canonical=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False); digest="sha256:"+hashlib.sha256(canonical.encode()).hexdigest()
+    workflow._db.execute("UPDATE transitions SET event_hash=? WHERE run_id=? AND ordinal=?",(digest,RUN,current.sequence)); workflow._db.execute("UPDATE workflows SET transition_hash=? WHERE run_id=?",(digest,RUN)); workflow._db.commit(); workflow.verify_integrity()
+    with pytest.raises(Exception,match="active form-preview artifact"):
+        MilestoneASubmissionCoordinator(approvals,workflow).execute(intent,now=NOW+timedelta(minutes=2))
+    assert approvals.get_submission_coordinator(intent["operation_id"])["state"]=="INTENT_RECORDED"
+    rows=approvals._connection.execute("SELECT DISTINCT consumed_by FROM durable_submission_approvals").fetchall(); assert {row["consumed_by"] for row in rows}=={None}
+    approvals.close(); workflow.close()
