@@ -26,6 +26,7 @@ def main() -> int:
     parser.add_argument("--env-file", type=Path)
     parser.add_argument("--model", default="gemini-3.8-flash")
     parser.add_argument("--goal", default="Audit the case for missed or incorrect German tax treatment")
+    parser.add_argument("--output", type=Path, help="Optional private JSON output path")
     args = parser.parse_args()
 
     if args.env_file:
@@ -81,7 +82,12 @@ def main() -> int:
             for report in result.reports
         ],
     }
-    print(json.dumps(output, ensure_ascii=False, indent=2))
+    rendered = json.dumps(output, ensure_ascii=False, indent=2)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(rendered + "\n", encoding="utf-8")
+    else:
+        print(rendered)
     return 0
 
 
