@@ -1547,7 +1547,7 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 The historical baseline is excluded from calculation input and may be loaded only after the new result is frozen. Provider outputs and sensitive intermediates remain inside the approved case-data boundary; Git evidence uses hashes, logical document IDs, counts, and redacted summaries. The authority excludes every other case/year/provider/purpose and does not permit ERiC external communication, ELSTER/Finanzamt transmission, signing, production, protected-main, merge, release, destructive Drive action, or a second store/Orchestrator/scheduler. A new material architecture or governance conflict must persist the existing Persian STOP diagnostic.
 ## D-148 — Corrected CASE-001 objective uses the current 16-PDF taxpayer-source set
 
-**Date:** 2026-09-28  
+**Date:** 2026-09-28
 **Status:** Owner directed
 
 The Owner replaces the prior historical-reproduction objective with an independent current-document execution for `CASE-001` / 2024. Run `RUN-CASE001-INDEPENDENT-20260928-002` may recursively enumerate the exact registered CASE-001 Drive root read-only, freeze the current taxpayer-source PDF set, freshly process every included PDF through the existing Gemini integration, and run the existing tax analysis/review/calculation/form-preview path. Historical analytical conclusions and final tax amounts are prohibited calculation inputs and no historical-result comparison belongs in the final report.
