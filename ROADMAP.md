@@ -66,7 +66,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. The Milestone A five-package synthetic envelope is complete.
+- `docs/case001-reproduction-2024.md` is registered as the privacy-safe durable execution record for Owner-authorized `RUN-CASE001-REPRO-20260928-001`. Sensitive source/provider artifacts remain outside Git.
 
 ## Cleanup rule
 
