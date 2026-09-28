@@ -32,6 +32,7 @@ from agent_lab.elster_dry_run import ContentReleaseApproval, DestinationTransmis
 
 
 DURABLE_APPROVAL_SCHEMA_VERSION = 1
+SUBMISSION_COORDINATOR_VERSION = 1
 
 
 class DurableApprovalError(InvalidApprovalError):
@@ -202,6 +203,20 @@ class DurableApprovalStore:
                     integrity_digest TEXT NOT NULL,
                     consumed_by TEXT
                 );
+                CREATE TABLE IF NOT EXISTS durable_submission_coordinators (
+                    operation_id TEXT PRIMARY KEY,
+                    coordinator_version INTEGER NOT NULL,
+                    case_id TEXT NOT NULL,
+                    tax_year INTEGER NOT NULL,
+                    run_id TEXT NOT NULL,
+                    intent_json TEXT NOT NULL,
+                    intent_digest TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    markers_json TEXT NOT NULL,
+                    result_json TEXT,
+                    receipt_json TEXT,
+                    integrity_digest TEXT NOT NULL
+                );
                 """
             )
             row = self._connection.execute(
@@ -224,6 +239,244 @@ class DurableApprovalStore:
             )
 
     @staticmethod
+    def _coordinator_digest(payload: Mapping[str, object]) -> str:
+        return _digest(payload)
+
+    def _coordinator_row_payload(self, row: sqlite3.Row) -> dict[str, object]:
+        return {
+            "coordinator_version": row["coordinator_version"],
+            "operation_id": row["operation_id"],
+            "case_id": row["case_id"],
+            "tax_year": row["tax_year"],
+            "run_id": row["run_id"],
+            "intent": json.loads(row["intent_json"]),
+            "state": row["state"],
+            "markers": json.loads(row["markers_json"]),
+            "result": json.loads(row["result_json"]) if row["result_json"] else None,
+            "receipt": json.loads(row["receipt_json"]) if row["receipt_json"] else None,
+        }
+
+    def _load_coordinator(self, operation_id: str) -> tuple[sqlite3.Row, dict[str, object]]:
+        row = self._connection.execute(
+            "SELECT * FROM durable_submission_coordinators WHERE operation_id=?",
+            (operation_id,),
+        ).fetchone()
+        if row is None:
+            raise DurableApprovalError("submission coordinator operation not found")
+        payload = self._coordinator_row_payload(row)
+        if (
+            row["coordinator_version"] != SUBMISSION_COORDINATOR_VERSION
+            or _digest(payload["intent"]) != row["intent_digest"]
+            or self._coordinator_digest(payload) != row["integrity_digest"]
+        ):
+            raise DurableApprovalIntegrityError("submission coordinator integrity mismatch")
+        return row, payload
+
+    def get_submission_coordinator(self, operation_id: str) -> dict[str, object]:
+        with self._lock:
+            return self._load_coordinator(operation_id)[1]
+
+    def begin_submission_coordinator(self, intent: Mapping[str, object]) -> dict[str, object]:
+        required = {
+            "operation_id", "case_id", "tax_year", "run_id", "artifact_reference",
+            "artifact_version", "content_approval_id", "destination_approval_id",
+            "destination_identity", "channel", "purpose", "requested_at",
+        }
+        if set(intent) != required:
+            raise DurableApprovalError("submission coordinator intent fields are not exact")
+        canonical_intent = dict(intent)
+        for name in required - {"tax_year"}:
+            if not isinstance(canonical_intent[name], str) or not canonical_intent[name].strip():
+                raise DurableApprovalError(f"coordinator intent {name} is required")
+        if not str(canonical_intent["operation_id"]).startswith("SYNTH-"):
+            raise DurableApprovalError("coordinator operation must be synthetic")
+        if not str(canonical_intent["case_id"]).startswith("SYNTHETIC-") or not str(canonical_intent["run_id"]).startswith("RUN-SYNTHETIC-"):
+            raise DurableApprovalError("coordinator scope must be synthetic")
+        if not isinstance(canonical_intent["tax_year"], int) or isinstance(canonical_intent["tax_year"], bool):
+            raise DurableApprovalError("coordinator tax_year is invalid")
+        self._require_scope(str(canonical_intent["case_id"]), str(canonical_intent["run_id"]))
+        case_record = self._case_registry.get(str(canonical_intent["case_id"]))
+        if case_record is None or case_record.tax_period.year != canonical_intent["tax_year"]:
+            raise DurableApprovalError("coordinator tax year does not match the Case Registry")
+        _parse_utc(str(canonical_intent["requested_at"]))
+        operation_id = str(canonical_intent["operation_id"])
+        with self._lock, self._connection:
+            prior = self._connection.execute(
+                "SELECT * FROM durable_submission_coordinators WHERE operation_id=?", (operation_id,)
+            ).fetchone()
+            if prior is not None:
+                prior, payload = self._load_coordinator(operation_id)
+                if payload["intent"] != canonical_intent:
+                    raise DurableApprovalError("coordinator operation identity was rebound")
+                return payload
+            payload = {
+                "coordinator_version": SUBMISSION_COORDINATOR_VERSION,
+                "operation_id": operation_id,
+                "case_id": canonical_intent["case_id"], "tax_year": canonical_intent["tax_year"],
+                "run_id": canonical_intent["run_id"], "intent": canonical_intent,
+                "state": "INTENT_RECORDED", "markers": {}, "result": None, "receipt": None,
+            }
+            self._connection.execute(
+                "INSERT INTO durable_submission_coordinators VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                (operation_id, SUBMISSION_COORDINATOR_VERSION, canonical_intent["case_id"],
+                 canonical_intent["tax_year"], canonical_intent["run_id"],
+                 json.dumps(canonical_intent, sort_keys=True, separators=(",", ":")),
+                 _digest(canonical_intent), "INTENT_RECORDED", "{}", None, None,
+                 self._coordinator_digest(payload)),
+            )
+        return payload
+
+    def consume_coordinator_approvals(self, operation_id: str, *, now: datetime) -> dict[str, object]:
+        if now.tzinfo is None:
+            raise DurableApprovalError("coordinator time must be timezone-aware")
+        with self._lock, self._connection:
+            row, payload = self._load_coordinator(operation_id)
+            if payload["state"] != "INTENT_RECORDED":
+                intent = payload["intent"]
+                approvals = self._connection.execute(
+                    "SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",
+                    (intent["content_approval_id"], intent["destination_approval_id"]),
+                ).fetchall()
+                if len(approvals) != 2 or {item["consumed_by"] for item in approvals} != {operation_id}:
+                    raise DurableApprovalIntegrityError("coordinator approval consumption is inconsistent")
+                return payload
+            intent = payload["intent"]
+            content = self.get_submission_approval(str(intent["content_approval_id"]))
+            destination = self.get_submission_approval(str(intent["destination_approval_id"]))
+            if type(content) is not ContentReleaseApproval or type(destination) is not DestinationTransmissionApproval:
+                raise DurableApprovalError("exact ordered approval pair is required")
+            expected = (
+                content.case_id, content.run_id, content.artifact_reference, content.artifact_version,
+                content.purpose, destination.case_id, destination.run_id,
+                destination.artifact_reference, destination.artifact_version,
+                destination.destination_identity, destination.channel, destination.purpose,
+            )
+            actual = (
+                intent["case_id"], intent["run_id"], intent["artifact_reference"], intent["artifact_version"],
+                intent["purpose"], intent["case_id"], intent["run_id"],
+                intent["artifact_reference"], intent["artifact_version"],
+                intent["destination_identity"], intent["channel"], intent["purpose"],
+            )
+            if expected != actual or destination.content_release_approval_id != content.approval_id:
+                raise DurableApprovalError("approval pair does not match coordinator intent")
+            if content.status is not SubmissionApprovalStatus.APPROVED or destination.status is not SubmissionApprovalStatus.APPROVED:
+                raise DurableApprovalError("approval pair is not approved")
+            if content.issued_at > now or destination.issued_at > now or content.expires_at <= now or destination.expires_at <= now:
+                raise DurableApprovalError("approval pair is expired or not yet valid")
+            approvals = self._connection.execute(
+                "SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",
+                (content.approval_id, destination.approval_id),
+            ).fetchall()
+            if len(approvals) != 2:
+                raise DurableApprovalError("approval pair is incomplete")
+            consumers = {item["consumed_by"] for item in approvals}
+            if consumers not in ({None}, {operation_id}):
+                raise ApprovalAlreadyConsumedError("APPROVAL_ALREADY_CONSUMED")
+            if consumers == {None}:
+                self._connection.execute(
+                    "UPDATE durable_submission_approvals SET consumed_by=? WHERE approval_id IN (?,?)",
+                    (operation_id, content.approval_id, destination.approval_id),
+                )
+            markers = {"APPROVALS_CONSUMED": operation_id}
+            payload.update(state="APPROVALS_CONSUMED", markers=markers)
+            self._update_coordinator(row, payload)
+            return payload
+
+    def commit_submission_coordinator(
+        self, operation_id: str, marker: str, *, result: Mapping[str, object] | None = None,
+        receipt: Mapping[str, object] | None = None,
+    ) -> dict[str, object]:
+        allowed = ("APPROVAL_STAGE_1", "APPROVAL_STAGE_2", "SYNTHETIC_SUBMISSION", "RECEIPT", "RECOVERY")
+        with self._lock, self._connection:
+            row, payload = self._load_coordinator(operation_id)
+            markers = dict(payload["markers"])
+            completed = [name for name in allowed if name in markers]
+            next_marker = allowed[len(completed)] if len(completed) < len(allowed) else None
+            if marker in markers:
+                if (result is not None and payload["result"] != dict(result)) or (receipt is not None and payload["receipt"] != dict(receipt)):
+                    raise DurableApprovalError("coordinator replay payload changed")
+                return payload
+            if payload["state"] == "INTENT_RECORDED" or marker != next_marker:
+                raise DurableApprovalError("coordinator commit marker is out of order")
+            if (marker == "SYNTHETIC_SUBMISSION") != (result is not None):
+                raise DurableApprovalError("result is permitted exactly at the submission marker")
+            if (marker == "RECEIPT") != (receipt is not None):
+                raise DurableApprovalError("receipt is permitted exactly at the receipt marker")
+            if result is not None:
+                self._validate_coordinator_result(payload, result)
+            if receipt is not None:
+                self._validate_coordinator_receipt(payload, receipt)
+            markers[marker] = operation_id + ":" + marker
+            payload["markers"] = markers
+            if result is not None:
+                payload["result"] = dict(result)
+            if receipt is not None:
+                payload["receipt"] = dict(receipt)
+            payload["state"] = "COMPLETE" if marker == "RECOVERY" else marker + "_COMMITTED"
+            self._update_coordinator(row, payload)
+            return payload
+
+    @staticmethod
+    def _canonical_reference(name: str, value: object) -> None:
+        if not isinstance(value, str) or len(value) != 71 or not value.startswith("sha256:"):
+            raise DurableApprovalError(f"{name} must be a canonical sha256 reference")
+        try:
+            int(value[7:], 16)
+        except ValueError as exc:
+            raise DurableApprovalError(f"{name} must be a canonical sha256 reference") from exc
+
+    def _validate_coordinator_result(self, coordinator: Mapping[str, object], result: Mapping[str, object]) -> None:
+        required = {"schema_version", "result_id", "operation_id", "case_id", "run_id", "outcome", "artifact_reference", "network_calls", "credential_access"}
+        if set(result) != required:
+            raise DurableApprovalError("submission result fields are not exact")
+        if (
+            result["schema_version"] != 1
+            or result["operation_id"] != coordinator["operation_id"]
+            or result["case_id"] != coordinator["case_id"]
+            or result["run_id"] != coordinator["run_id"]
+            or result["outcome"] != "SYNTHETIC_SUCCESS_PLACEHOLDER"
+            or result["network_calls"] != []
+            or result["credential_access"] is not False
+            or not isinstance(result["result_id"], str)
+            or not result["result_id"].startswith("SYNTH-RESULT-")
+        ):
+            raise DurableApprovalError("submission result violates the synthetic contract")
+        self._canonical_reference("result artifact_reference", result["artifact_reference"])
+
+    def _validate_coordinator_receipt(self, coordinator: Mapping[str, object], receipt: Mapping[str, object]) -> None:
+        required = {"schema_version", "receipt_id", "operation_id", "case_id", "run_id", "result_reference", "artifact_reference", "marker", "external_receipt_received", "network_calls"}
+        if set(receipt) != required:
+            raise DurableApprovalError("receipt fields are not exact")
+        result = coordinator["result"]
+        if not isinstance(result, dict) or (
+            receipt["schema_version"] != 1
+            or receipt["operation_id"] != coordinator["operation_id"]
+            or receipt["case_id"] != coordinator["case_id"]
+            or receipt["run_id"] != coordinator["run_id"]
+            or receipt["result_reference"] != result.get("artifact_reference")
+            or receipt["marker"] != "SYNTHETIC_PLACEHOLDER_NO_EXTERNAL_RECEIPT"
+            or receipt["external_receipt_received"] is not False
+            or receipt["network_calls"] != []
+            or not isinstance(receipt["receipt_id"], str)
+            or not receipt["receipt_id"].startswith("SYNTH-RECEIPT-")
+        ):
+            raise DurableApprovalError("receipt violates the synthetic contract")
+        self._canonical_reference("receipt artifact_reference", receipt["artifact_reference"])
+        self._canonical_reference("receipt result_reference", receipt["result_reference"])
+
+    def _update_coordinator(self, row: sqlite3.Row, payload: Mapping[str, object]) -> None:
+        markers_json = json.dumps(payload["markers"], sort_keys=True, separators=(",", ":"))
+        result_json = json.dumps(payload["result"], sort_keys=True, separators=(",", ":")) if payload["result"] is not None else None
+        receipt_json = json.dumps(payload["receipt"], sort_keys=True, separators=(",", ":")) if payload["receipt"] is not None else None
+        changed = self._connection.execute(
+            "UPDATE durable_submission_coordinators SET state=?,markers_json=?,result_json=?,receipt_json=?,integrity_digest=? WHERE operation_id=? AND integrity_digest=?",
+            (payload["state"], markers_json, result_json, receipt_json,
+             self._coordinator_digest(payload), payload["operation_id"], row["integrity_digest"]),
+        ).rowcount
+        if changed != 1:
+            raise DurableApprovalError("coordinator changed concurrently")
+
+    @staticmethod
     def _submission_payload(approval: ContentReleaseApproval | DestinationTransmissionApproval) -> dict[str, object]:
         payload=asdict(approval)
         payload["issued_at"]=_utc_iso(approval.issued_at); payload["expires_at"]=_utc_iso(approval.expires_at)
@@ -233,6 +486,7 @@ class DurableApprovalStore:
     def register_submission_approval(self, approval: ContentReleaseApproval | DestinationTransmissionApproval) -> str:
         if type(approval) not in {ContentReleaseApproval,DestinationTransmissionApproval}:
             raise DurableApprovalError("exact submission approval type is required")
+        self._require_scope(approval.case_id, approval.run_id)
         payload=self._submission_payload(approval); encoded=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False)
         digest=_digest(payload); kind="CONTENT" if type(approval) is ContentReleaseApproval else "DESTINATION"
         with self._lock,self._connection:

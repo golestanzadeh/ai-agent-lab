@@ -2,7 +2,7 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-09-27**
+Last reconciled: **2026-09-28**
 
 ## Current position
 
@@ -10,7 +10,7 @@ Last reconciled: **2026-09-27**
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
-- Owner authority `MILESTONE-A-20260927-001` is active. MA-01 through MA-03 are accepted. MA-04 is stopped at a recorded architecture gate between shared-transaction and durable coordinator/saga recovery; MA-05 remains dependency-blocked.
+- Owner authority `MILESTONE-A-20260927-001` is active. MA-01 through MA-04 are independently accepted. MA-04 uses the Owner-approved versioned durable coordinator/saga in the existing approval store and makes MA-05 dependency-ready; external and production capabilities remain blocked.
 
 ## Track 1 — Autonomous project control
 
@@ -33,8 +33,7 @@ Dependency path:
 Remaining goals:
 
 - expand later official field mapping and local plausibility coverage only from reviewed source evidence and explicit synthetic semantics;
-- bind payload, recipient, channel, expiry, idempotency, and retry to durable approvals;
-- prevent silent, stale, duplicate, or cross-case filing and preserve recoverable receipts.
+- extend later real-operational binding only behind the existing Human Gates; MA-04 proves the local synthetic durable approval/submission/receipt path without external capability.
 
 ## Track 3 — User interface
 
@@ -67,7 +66,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
-No future artifact is currently registered. The MA-04 durable approval foundation is implemented inside the existing `DurableApprovalStore`; integration awaits the recorded Owner architecture choice.
+No future artifact is currently registered. Register any MA-05 CI/setup artifact here before creation.
 
 ## Cleanup rule
 

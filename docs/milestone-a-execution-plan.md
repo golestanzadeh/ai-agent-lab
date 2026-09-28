@@ -71,6 +71,7 @@ Every package uses local synthetic data only. Budgets are ceilings, not entitlem
 - Deliverable: bind the existing durable two-stage approval lifecycle to the synthetic journey and existing inert submission/receipt/recovery contracts.
 - Acceptance: two distinct approvals, exact payload/recipient/channel/expiry binding, revocation and expiry rejection, idempotent synthetic submission, duplicate prevention, receipt persistence, restart/retry proof, and zero external connectivity.
 - Recovery: no approval import from text/export; durable reload and one-time consumption only.
+- Execution result: Owner-approved option B is implemented and independently accepted. Coordinator contract version 1 resides in the existing `DurableApprovalStore`; the separate workflow database is coordinated by deterministic transition identities and durable ordered markers, without any atomicity claim across databases. Intent, exact case/year/run/operation, approval consumption, result, and receipt are integrity-bound. Crash/restart/replay is verified after the intent commit, approval-consumption commit, every workflow commit, and every coordinator-marker commit. Revocation, expiry, second-operation reuse, registered and unregistered cross-case scope, corruption, duplicate result/receipt prevention, and zero external activity fail closed. Focused verification `32 passed`; full unit regression `913 passed, 1 warning`; independent acceptance `PASS`.
 
 ### `MA-05-E2E-FAILURE-CI`
 

@@ -1518,3 +1518,12 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 **Decision:** Implement only six enum-valued local actions from intake through declaration preview. Bind each action to one exact role, prior stage/hash/artifact, synthetic case scope, and canonical input lineage. Persist every attempt before validation; rejected identifiers are consumed, accepted exact replays are idempotent, and correction may invalidate only the exact active artifact during specialist/chief review. Free-form commands and external capabilities remain absent.
 
 **Verification:** the first independent review rejected non-durable failed attempts and non-auditable correction lineage; both were repaired. Final independent acceptance `PASS`; focused `16 passed`; full unit regression `892 passed, 1 warning`; Kernel checkpoint `sha256:c90bbe7a41bf1ade4e491c4abdec8ac11473da2f782ef7e9b7f759a5434dd2d3` selects MA-04.
+
+
+## D-145 — MA-04 durable approval/submission coordinator
+
+**Status:** Owner-approved architecture, implemented, and independently accepted on 2026-09-28
+
+**Decision:** Under the Owner's bounded MA-04 option-B approval, place coordinator contract version `1` inside the existing `DurableApprovalStore` and compose it with the existing synthetic workflow store. Persist exact intent and case/year/run/operation identities, approval-consumption ownership, ordered commit markers, closed synthetic result and receipt payloads, and integrity digests. Treat the two SQLite databases as independent commit domains: recovery uses exact idempotent workflow transition identities followed by durable coordinator markers and never claims cross-database atomicity. Any mismatch, partial consumption, unknown scope, schema drift, corrupt payload, stale/revoked/expired approval, duplicate operation, or ambiguous workflow state fails closed. No store, Orchestrator, scheduler, authority, network, credential, ERiC, ELSTER/Finanzamt, or external receipt capability is added.
+
+**Verification:** two independent review cycles rejected unsafe payload/consumption/crash-coverage gaps and missing Case Registry scope enforcement; all findings were repaired. Final independent acceptance `PASS`; focused approval/coordinator verification `32 passed`; full unit regression `913 passed, 1 warning`. MA-05 becomes dependency-ready only after the durable MA-04 checkpoint and Recovery Gate.
