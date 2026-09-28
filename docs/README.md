@@ -106,6 +106,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-independent-real-document-execution-2024.md` — corrected 16-PDF current-source inventory, independent Gemini/tax execution, and no-historical-target boundary.
 - `case001-comparative-audit-2024.md` — diagnostic field/rule reconciliation between the frozen EUR 76 result and historical EUR 70.83 endpoint, including the exact settlement bridge and unresolved historical intermediates.
 - `case001-structured-financial-evidence-2024.md` — immutable CSV registration, 946-row deterministic ledger, exact candidate lineage, successor evidence/calculation, and independent acceptance.
+- `case001-donation-evidence-2024.md` — bounded EUR 60 donation/payment reconciliation, section 50(4) EStDV requirement matrix, and unchanged-calculation boundary.
 
 ## Documentation rules
 
