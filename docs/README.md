@@ -103,6 +103,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `milestone-a-submission-coordinator.md` — MA-04 versioned durable coordinator/saga, two-database recovery contract, and synthetic result/receipt boundary.
 - `milestone-a-e2e.md` — MA-05 complete synthetic golden journey, failure matrix, reproducible setup, and read-only CI boundary.
 - `case001-reproduction-2024.md` — privacy-safe durable authority, run identity, recovery boundary, and final evidence for the controlled real CASE-001 reproduction.
+- `case001-independent-real-document-execution-2024.md` — corrected 16-PDF current-source inventory, independent Gemini/tax execution, and no-historical-target boundary.
 
 ## Documentation rules
 
