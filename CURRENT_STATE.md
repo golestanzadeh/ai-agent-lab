@@ -1,6 +1,6 @@
 # Current State
 
-Last reconciled: **2026-09-28**
+Last reconciled: **2026-09-29**
 
 ## Authoritative status
 
@@ -27,6 +27,7 @@ Last reconciled: **2026-09-28**
 - Owner-authorized structured-financial intake registered one immutable canonical CASE-001 CSV separately from the frozen 16 PDFs. Deterministic parsing preserved all 946 rows; exact row-level lineage closes the first Independent Acceptance defect with 946 classified, zero unclassified, one retained duplicate group and two retained reversal pairs. School payment evidence now supports EUR 144 of deduction and matched section 35a payments support a EUR 159.13 basis/EUR 31.83 credit. Successor z.v.E. is EUR 27,784, final tax after section 35a is EUR 642.17, and refund is EUR 133.83. Six Specialists, Chief and final Independent Acceptance are `PASS`; the frozen EUR 76 predecessor remains unchanged.
 - The bounded EUR 60 Bjorn Steiger Stiftung reconciliation links frozen PDF `DOC-CASE-001-00000007` exactly to accepted debit `TX-c67f3a594d3273589c5a9ce3`. The form proves recurring support and charitable/benevolent recognition, while the bank record proves execution, but the recipient-produced form lacks the exact tax-privileged use purpose, corporation-tax exemption particulars, and deterministic donation-versus-membership designation required by section 50(4) EStDV. Status is `DONATION_EVIDENCE_INCOMPLETE`; the EUR 133.83 successor remains unchanged and no unrelated case work was reopened.
 - CASE-001 tax analysis is now frozen at the accepted EUR 133.83 refund. Its declaration-readiness audit records 18 items: 1 existing Anlage N item is `SUPPORTED_BUT_UNVERIFIED` for real case binding, 1 requires a missing cent-to-whole-euro transformation rule, 7 are `MISSING_FORM_OR_SECTION`, 2 are irrelevant to the 2024 payload, and 7 are explicit accepted exclusions. The current synthetic E10 profile cannot generate a complete real CASE-001 declaration; bounded queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05` covers case binding/Hauptvordruck, Vorsorgeaufwand, Kind including the accepted Kindergeld comparison, Haushaltsnahe Aufwendungen and integrated acceptance. Implementation requires one bounded Owner authority; external ERiC/filing remains separately gated.
+- The Owner granted the bounded DR-01 through DR-05 implementation authority on 2026-09-29. Recovery and capacity gates passed, but DR-01 stopped before implementation because the hash-pinned protected 2024 annual documentation/schema artifacts were absent and the existing browser session reached the ELSTER developer username/password boundary. Exhaustive bounded local recovery found no copy. Status is `STOP_DIAGNOSTIC`; all packages remain unstarted, the frozen EUR 133.83 result is unchanged, and exact continuation is private Owner authentication followed by local availability and hash verification of the same ERiC 44.3.6.0 documentation packages.
 - The bounded `SYNTHETIC_LOCAL_V1` continuity proof passed with two dependency-ordered packages, three dispatch attempts, one recoverable failure, two independent acceptances, one bounded replan, durable close/reopen checkpoint recovery, simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. Focused verification passes (`31 passed`); the complete unit regression passes (`863 passed, 1 warning`).
 - Phase P1 local synthetic ERiC boundary through package 7.
 - Local E10/2024 mapping profile version 14 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, single business-travel transport-cost item, employer-reimbursement, commuting-benefit/subsidy, and other-expense fields; omitted optional values remain absent and are never inferred.
@@ -88,7 +89,7 @@ Last reconciled: **2026-09-28**
 
 ## Exact next action
 
-CASE-001 tax analysis is closed and frozen at EUR 133.83. Exact next work, if separately authorized, is declaration-remediation queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05`; do not reopen tax evidence or calculation. All external-action gates remain closed.
+CASE-001 tax analysis is closed and frozen at EUR 133.83. DR-01 through DR-05 are authorized, but DR-01 is stopped at the protected official-material recovery boundary. After private Owner authentication makes the same ERiC 44.3.6.0 documentation packages locally available, verify their recorded hashes and resume DR-01 without restarting accepted tax work. All external-action gates remain closed.
 
 ## Non-negotiable constraints
 

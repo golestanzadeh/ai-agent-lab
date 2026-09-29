@@ -108,6 +108,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-structured-financial-evidence-2024.md` — immutable CSV registration, 946-row deterministic ledger, exact candidate lineage, successor evidence/calculation, and independent acceptance.
 - `case001-donation-evidence-2024.md` — bounded EUR 60 donation/payment reconciliation, section 50(4) EStDV requirement matrix, and unchanged-calculation boundary.
 - `case001-declaration-readiness-2024.md` — final CASE-001 tax freeze, machine-readable declaration coverage audit, incomplete non-transmitting preview, and bounded remediation queue.
+- `case001-dr01-stop-diagnostic-20260929.md` — fail-closed DR-01 source-material recovery diagnostic, capacity record, protected-artifact identities, and exact continuation point.
 
 ## Documentation rules
 
