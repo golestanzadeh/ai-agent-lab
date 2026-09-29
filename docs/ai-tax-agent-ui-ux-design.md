@@ -459,3 +459,340 @@ Approved:
 - CASE-001/2024 frozen values as prototype fixtures
 
 No implementation authorization was granted by these decisions.
+
+
+## 24. UI-2 — Workflow Design
+
+### 24.1 Workflow topology
+
+The Tax-Year workflow is **stage-based but non-linear**. It is not a one-way wizard.
+
+Users may move backward to inspect or correct earlier stages. The product preserves state and explicitly surfaces downstream consequences of material changes.
+
+```text
+Setup
+→ Documents
+→ Analysis
+↔ Issues / Attention
+→ Result
+→ Declaration
+→ Human Gate 1: Content Approval
+→ Ready for Submission
+   ├─ Electronic → Human Gate 2 → External Transmission
+   ├─ Print → Official Print Package → User Prints/Signs/Sends
+   └─ Export Only → No External Transmission
+```
+
+Attention/Issues is an overlay across the workflow rather than a terminal stage.
+
+### 24.2 Stage readiness model
+
+Each workflow stage has two separate concepts:
+
+1. **State** — what is happening in that stage.
+2. **Readiness** — whether the user may safely proceed to a dependent stage.
+
+A stage being visually “complete” does not automatically imply that the whole Tax Year is ready for submission.
+
+Core readiness states:
+
+- Not started
+- In progress
+- Needs attention
+- Ready
+- Approval required
+- Approved
+- Paused
+- Problem detected
+- Superseded / review required after material change
+
+Technical/internal states remain inspectable but are not the primary user vocabulary.
+
+### 24.3 Setup
+
+Setup establishes the Tax-Year context without forcing an early submission choice.
+
+It may include applicable participants, year, and tax context required by the real Case contract.
+
+Submission method is **not** selected here.
+
+Setup may be revisited. A material identity/participant change can invalidate downstream analysis or approval and must surface its impact before continuation.
+
+### 24.4 Document intake
+
+Document intake supports repeated uploads throughout the workflow.
+
+Conceptual document lifecycle:
+
+```text
+Uploaded
+→ Processing
+→ Classified
+→ Information extracted
+→ Linked to tax topic/evidence
+→ Reviewed/usable
+```
+
+Alternative outcomes include:
+
+- duplicate
+- unsupported/unreadable
+- ambiguous classification
+- missing required information
+- conflicting information
+- evidence incomplete
+
+Human-actionable outcomes create/update an Issue and become discoverable in Attention.
+
+The user is not required to understand which Agent processed the document.
+
+### 24.5 Analysis loop
+
+Analysis runs by tax topic.
+
+A topic can be:
+
+- not started
+- in progress
+- complete
+- needs attention
+- excluded
+- not applicable
+
+The user may enter a topic, inspect the decision, see supporting evidence, and resolve an Issue without leaving the Case context.
+
+Resolving an Issue returns the user to the affected topic/stage and triggers only the downstream re-evaluation required by the real system contract.
+
+The UI must never imply that an unresolved material Issue has disappeared merely because the user navigated away.
+
+### 24.6 Result readiness
+
+Result becomes authoritative for review only when the required analysis inputs are sufficiently resolved under the system’s actual validation rules.
+
+The Result page may still be visible earlier, but an incomplete/provisional result must be explicitly labelled and must not be visually confused with a declaration-ready result.
+
+The UI must not invent or silently recalculate values independently from the authoritative backend result.
+
+### 24.7 Declaration workflow
+
+Declaration is generated/mapped from accepted tax decisions and authoritative declaration rules.
+
+The user can review:
+
+- official form/section identity
+- populated values
+- explanation
+- evidence/provenance
+- validation status
+
+Technical field identifiers are available through progressive disclosure.
+
+Declaration validation problems route to Issues/Attention and block Content Approval when material.
+
+### 24.8 Human Gate 1 — Content Approval workflow
+
+Human Gate 1 occurs only when the declaration is ready for meaningful review.
+
+Before approval, the UI presents a review checkpoint containing at least:
+
+- Case identity
+- Tax Year
+- declaration readiness
+- material unresolved warnings, if any are legally/technically permitted to remain
+- result summary
+- declaration/forms included
+
+Approval semantics:
+
+> The user confirms the content for the identified declaration version.
+
+It does **not** authorize transmission.
+
+The approval must be bound to a concrete declaration/version/checkpoint according to the real backend approval contract.
+
+### 24.9 Approval invalidation and re-review
+
+A material change after Content Approval must never silently retain a misleading “Approved” state.
+
+UX rule:
+
+```text
+Approved declaration
++ material upstream change
+→ Previous approval becomes stale/superseded
+→ Review required
+→ Human Gate 1 must be completed again before submission
+```
+
+Examples of potentially material changes include accepted tax values, participants, declaration fields/forms, or evidence that changes a tax decision.
+
+A purely presentational change must not automatically invalidate approval.
+
+The exact technical invalidation predicate must come from the durable approval/declaration contracts; UI implementation must not invent it.
+
+### 24.10 Ready for Submission
+
+After valid Content Approval, the Tax Year enters **Ready for Submission**.
+
+This is a stable decision point, not an automatic transmission trigger.
+
+The Submission page presents only methods that are supported/eligible for the declaration context.
+
+No submission method is preselected in a way that could accidentally authorize transmission.
+
+### 24.11 Electronic submission workflow
+
+```text
+Ready for Submission
+→ Select Electronic
+→ Review destination and transmission summary
+→ Human Gate 2: External Transmission Approval
+→ Submit
+→ Receive technical outcome
+```
+
+Human Gate 2 must clearly identify:
+
+- destination
+- Case
+- Tax Year
+- declaration/version
+- what action will occur
+- that data will leave AI-Tax-Agent
+
+Failure/cancellation before successful transmission returns to a safe non-submitted state.
+
+A technical attempt is not presented as successful submission unless the authoritative submission contract reports success.
+
+### 24.12 Print and personal submission workflow
+
+```text
+Ready for Submission
+→ Select Print / submit personally
+→ Eligibility confirmed
+→ Generate Official Declaration Print Package
+→ Preview
+→ Download / Print
+→ Sign where required
+→ User posts or delivers personally
+```
+
+Generating/downloading the package does not trigger Human Gate 2 because AI-Tax-Agent is not transmitting to an external authority.
+
+The product may separately generate a Review/Evidence Package.
+
+User-recorded states may include:
+
+- Print package prepared
+- Printed
+- Marked as sent by user
+
+“Marked as sent” is explicitly a user assertion and not proof of Finanzamt receipt.
+
+### 24.13 Export-only workflow
+
+```text
+Ready for Submission
+→ Export only / no submission yet
+→ Generate selected output
+→ Remain not submitted
+```
+
+Export must not be treated as submission and must not consume External Transmission Approval.
+
+The Case/Tax Year remains available for later submission.
+
+### 24.14 Attention behavior
+
+Attention is a global action inbox, not a duplicate workflow.
+
+Each Attention item must point to the exact affected Case, Tax Year, stage/topic, and action.
+
+Opening an item deep-links into the relevant context.
+
+After resolution:
+
+- the item resolves/disappears from the actionable queue when authoritative state confirms resolution;
+- Activity/Audit retain the history;
+- downstream readiness is recalculated by the authoritative system.
+
+The UI must not allow a user to “dismiss” a material blocking condition merely to make the dashboard look clean.
+
+### 24.15 Pause and system problems
+
+`TOKEN_PAUSED` and similar execution-resource states are not tax problems.
+
+The user-facing workflow distinguishes:
+
+- **Tax/content attention** — user action may be required.
+- **System paused** — work is temporarily not progressing.
+- **System problem** — technical intervention may be required.
+
+A pause does not erase progress or turn completed tax decisions into failures.
+
+System diagnostics remain progressively disclosed.
+
+### 24.16 Navigation and resumability
+
+Leaving the application, changing device, or switching language must not change workflow meaning.
+
+On return, the user should land on the Tax Year with:
+
+- current overall status
+- next meaningful action
+- unresolved Attention count
+- last meaningful activity
+- safe continuation point
+
+“Continue” is contextual. It routes to the highest-priority meaningful next action, not mechanically to the next navigation tab.
+
+### 24.17 Desktop/mobile equivalence
+
+The workflow semantics are identical on desktop and mobile.
+
+Mobile may change presentation and navigation density, but not:
+
+- available core workflow actions
+- approval semantics
+- evidence access
+- declaration review capability
+- submission safety
+
+No critical approval or submission step may require desktop merely because the screen is smaller.
+
+### 24.18 German/Persian workflow equivalence
+
+Switching between `de-DE` and `fa-IR` changes language/direction, not state or meaning.
+
+Approval wording must be semantically equivalent in both languages.
+
+Official German declaration identities remain visible in Persian mode where needed for legal/form identity.
+
+### 24.19 Workflow safety invariants
+
+The UI must preserve these invariants:
+
+1. Navigation does not equal approval.
+2. Content Approval does not equal transmission authorization.
+3. Export does not equal submission.
+4. Print-package generation does not equal submission.
+5. A submission attempt does not equal successful submission.
+6. User-marked postal delivery does not equal authority receipt.
+7. Material post-approval change requires re-review/re-approval according to the authoritative approval contract.
+8. Blocking Issues cannot be hidden by navigation or cosmetic dismissal.
+9. Paused execution does not erase completed work.
+10. The UI does not create an independent tax-calculation truth separate from the Kernel/authoritative result.
+
+### 24.20 UI-2 design status
+
+The workflow design above is the canonical design direction derived from the approved UI-1 baseline and project security constraints.
+
+Before implementation, contract-sensitive details must be verified read-only against the repository, especially:
+
+- durable approval lifecycle/version binding
+- exact invalidation semantics
+- declaration readiness/validation contract
+- submission success/failure states
+- Case/Tax-Year state transitions
+
+No implementation authorization is implied by UI-2.
