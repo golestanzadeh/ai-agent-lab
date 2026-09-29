@@ -56,10 +56,11 @@ def test_canonical_current_records_agree_on_branch_and_execution_state() -> None
         assert "d021-agent-case-provisioning" in text
 
     execution_states = {"AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE", "TOKEN_PAUSED"}
-    checkpoint_states = {state for state in execution_states if state in snapshot}
-    current_states = {state for state in execution_states if state in current}
-    assert len(checkpoint_states) == len(current_states) == 1
-    assert checkpoint_states == current_states
+    def latest_state(text: str) -> str:
+        positions = {state: text.rfind(state) for state in execution_states}
+        return max(positions, key=positions.get)
+
+    assert latest_state(snapshot) == latest_state(current) == "TOKEN_PAUSED"
 
 
 def test_current_limit_controller_allows_safe_package_chaining() -> None:

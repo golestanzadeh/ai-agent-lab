@@ -13,6 +13,7 @@ Last reconciled: **2026-09-29**
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
 - Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 is `STOP_DIAGNOSTIC` before implementation because the protected hash-pinned 2024 annual documentation/schema artifacts are unavailable locally and the ELSTER developer session requires private re-authentication. Resume by verifying the recovered 44.3.6.0 package hashes; do not restart the frozen tax analysis.
 - The DR-01 source blocker is resolved: the portable Protected Official Source Store and deterministic hash-verifying resolver are accepted. The previous STOP diagnostic is retained as history; DR-01 is the dependency-ready continuation.
+- DR-01 is independently accepted with exact Hauptvordruck/joint-assessment composition, taxpayer-favorable gross-wage transformation and official-XSD validation. Weekly safety policy paused execution before DR-02 at 21 percent remaining; exact resume point is DR-02, with DR-03/DR-04 also dependency-ready and DR-05 still dependent on all three.
 
 ## Track 1 — Autonomous project control
 
@@ -76,6 +77,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 - `docs/case001-declaration-readiness-2024.md` and its JSON companion freeze the accepted EUR 133.83 tax case and record 18 declaration requirements/decisions. Current profile v14 has source-backed Anlage N field semantics but no accepted real-case binding and lacks the gross-wage cent-to-whole-euro transformation; seven affirmative requirements need missing forms/sections. Queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05` is the bounded remediation plan and requires one future Owner implementation authority, not per-field approvals.
 - `docs/case001-dr01-stop-diagnostic-20260929.md` and its JSON companion record the authorized queue's fail-closed DR-01 stop, exact protected-artifact identities, exhausted bounded recovery, capacity observations, and precise continuation after private ELSTER developer re-authentication.
 - `docs/protected-official-source-store.md` records acceptance of the portable local ERiC 44.3.6.0 source store, registry/resolver, exact identities, minimal extraction, backup separation, and fail-closed tests.
+- `docs/case001-dr01-acceptance-2024.md` and its JSON companion record DR-01 implementation, authoritative field/rule lineage, exact XSD result, tests, Independent Acceptance and the limit-safe continuation at DR-02.
 
 ## Cleanup rule
 

@@ -110,6 +110,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-declaration-readiness-2024.md` — final CASE-001 tax freeze, machine-readable declaration coverage audit, incomplete non-transmitting preview, and bounded remediation queue.
 - `case001-dr01-stop-diagnostic-20260929.md` — fail-closed DR-01 source-material recovery diagnostic, capacity record, protected-artifact identities, and exact continuation point.
 - `protected-official-source-store.md` — accepted portable protected-source hierarchy, exact ERiC 44.3.6.0 package/artifact identities, deterministic resolver, and fail-closed guarantees.
+- `case001-dr01-acceptance-2024.md` — accepted case-bound Hauptvordruck/joint-assessment composition, authoritative gross-wage transformation, exact XSD result, and non-transmitting boundary.
 
 ## Documentation rules
 
