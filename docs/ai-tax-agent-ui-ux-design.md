@@ -2209,3 +2209,378 @@ Completion of UI-6 documentation does not itself authorize code changes.
 
 Actual UI implementation requires a separate explicit Owner authorization and should be executed through the project’s controlled Work/Kernel/Codex development path.
 
+
+
+## 30. UI-6 — Repository Contract Reconciliation
+
+### 30.1 Existing UI implementation baseline
+
+Read-only inspection of the active execution branch confirms an existing local UI foundation:
+
+- FastAPI application;
+- Jinja templates;
+- HTMX partial updates;
+- local static CSS/JS;
+- responsive Persian RTL prototype;
+- synthetic Case Registry;
+- explicit presentation contracts for workspace, workflow, documents, review, decision queue, submission readiness, and support;
+- automated UI contract/route/responsive tests.
+
+This foundation should be evolved rather than replaced without evidence that replacement is necessary.
+
+### 30.2 Existing hard safety boundary
+
+The current UI contracts are intentionally synthetic/non-operational.
+
+Current enforced properties include:
+
+- `SYNTH-` case/run namespaces;
+- synthetic metadata/content restrictions;
+- no persistence in presentation contracts;
+- no external source access;
+- no network calls;
+- no credential access;
+- no production submission;
+- no official receipt claim;
+- Human Gate display is non-operational;
+- submission readiness is always blocked by explicit production blockers.
+
+Therefore, visual implementation must not “unlock” production behavior by weakening frontend contracts.
+
+### 30.3 Existing framework decision
+
+The repository already contains an accepted local prototype architecture:
+
+```text
+FastAPI
++ Jinja
++ HTMX
++ local static assets
+```
+
+UI-6 adopts this as the default incremental implementation path for the current project phase.
+
+A SPA/framework rewrite is not justified merely for visual modernization.
+
+Future product-scale architecture may be reconsidered when authentication, multi-user tenancy, production hosting, or richer client-state requirements create a concrete need.
+
+### 30.4 Contract mapping
+
+| UI-6 concept | Existing repository contract | Current capability |
+|---|---|---|
+| Case/Tax-Year scope | `CaseRegistry`, `UIWorkspaceState` | synthetic resolved scope |
+| Workflow progress | `SyntheticUIWorkflow` | display-only |
+| Documents | `SyntheticDocumentInventoryView` | metadata-only, no upload |
+| Human decision queue | `SyntheticDecisionQueue` | display-only |
+| Review/result preview | `SyntheticReviewView` | synthetic summary |
+| Submission readiness | `SyntheticSubmissionReadiness` | blocked/non-operational |
+| Human Gate display | `HumanGateView` | exact scope/display only |
+| Durable authority | `DurableApprovalStore` | backend domain capability; not UI-wired |
+| Submission lifecycle | synthetic ELSTER lifecycle | no transmitter/network |
+| Submission coordinator | `MilestoneASubmissionCoordinator` | synthetic saga only |
+| Activity/Audit | existing audit contracts/docs | requires presentation integration |
+| Evidence lineage | existing evidence/document identity domains | requires UI adapter/presentation model |
+
+### 30.5 Workflow vocabulary reconciliation
+
+The existing technical workflow stages:
+
+```text
+CASE_SCOPE
+DOCUMENT_INTAKE
+PROCESSING
+SPECIALIST_REVIEW
+CHIEF_REVIEW
+CALCULATION
+FORM_PREVIEW
+HUMAN_APPROVAL
+SUBMISSION
+RECEIPT
+```
+
+should not be exposed verbatim as the primary user navigation.
+
+UI adapter maps them into the accepted product vocabulary:
+
+```text
+Overview
+Documents
+Analysis
+Issues
+Result
+Declaration
+Submission
+```
+
+Specialist/Chief review remain provenance/activity/audit concepts unless user action specifically depends on them.
+
+### 30.6 Production-capability gap matrix
+
+#### Can be implemented safely within current synthetic boundary
+
+- new AppShell/navigation;
+- accepted screen hierarchy;
+- DE/FA localization architecture;
+- RTL/LTR layout;
+- visual system/components;
+- Tax-Year overview;
+- improved document inventory presentation;
+- Analysis/Issues presentation using synthetic adapters;
+- Result presentation using synthetic review data;
+- Declaration preview presentation;
+- Evidence/Activity/Audit presentation from privacy-safe synthetic data;
+- Human Gate review screens as non-operational displays;
+- Submission option/readiness presentation with production paths disabled;
+- responsive/mobile behavior;
+- accessibility improvements;
+- stale/error/blocked visual states;
+- test coverage for all above.
+
+#### Requires governed backend/product work before production activation
+
+- real taxpayer-data UI binding;
+- document upload/persistence;
+- authentication/session identity;
+- multi-user permissions;
+- protected official-source access from UI;
+- operational Human Gate mutations;
+- durable approval UI wiring;
+- production declaration-generation mutation;
+- official ERiC plausibility execution if not already production-bound;
+- credentials;
+- transmitter/network capability;
+- external ELSTER/Finanzamt submission;
+- authoritative external receipt handling;
+- production hosting/security boundary.
+
+### 30.7 Minimal-change implementation strategy
+
+Implementation should proceed in packages that preserve the current safety boundary.
+
+**UI-A — Design-system shell**
+- restructure templates and CSS;
+- add semantic layout/component primitives;
+- DE/FA localization resources;
+- RTL/LTR switching;
+- preserve synthetic-only data and routes.
+
+**UI-B — Tax-Year workflow screens**
+- Overview;
+- Documents;
+- Analysis;
+- Issues;
+- Result;
+- Declaration;
+- Submission readiness.
+
+**UI-C — Transparency layer**
+- Evidence;
+- Activity;
+- Audit;
+- progressive technical details.
+
+**UI-D — Human Gate presentation**
+- dedicated Gate 1 and Gate 2 review screens;
+- display exact binding/scope/expiry;
+- no operational grant/consume/transmission capability.
+
+**UI-E — Responsive/accessibility hardening**
+- mobile parity;
+- keyboard/focus;
+- screen-reader semantics;
+- bidi edge cases;
+- long-string resilience.
+
+**UI-F — Production integration gates**
+- separate future work packages only after each required backend authority/capability is approved.
+
+### 30.8 Route evolution for current FastAPI/Jinja implementation
+
+Current `/` and `/workspace` routes may remain compatibility entrypoints while new scoped GET routes are introduced incrementally.
+
+For the synthetic phase, routes remain read/display oriented.
+
+No POST/PUT/DELETE route may be added merely to make a mockup button appear functional.
+
+Operational routes require an explicitly approved domain command and authority contract.
+
+### 30.9 Presentation adapter rule
+
+Do not contaminate authoritative domain models with UI-specific labels/layout.
+
+Introduce thin presentation adapters where necessary:
+
+```text
+Authoritative/Synthetic Domain Contract
+→ UI Presentation Adapter
+→ Localized View Model
+→ Jinja Template
+```
+
+Adapters may:
+
+- map technical stage to user-facing stage;
+- group issues;
+- choose localized labels;
+- derive non-authoritative display summaries.
+
+Adapters may not:
+
+- calculate tax independently;
+- manufacture readiness;
+- approve;
+- consume authority;
+- infer receipt success;
+- cross case scope.
+
+### 30.10 Localization structure
+
+Recommended resource structure:
+
+```text
+ui_i18n/
+  de.json
+  fa.json
+  terminology.json
+```
+
+Semantic keys, for example:
+
+```text
+nav.overview
+nav.cases
+nav.attention
+taxyear.result.expected_refund
+approval.content.title
+approval.transmission.title
+submission.method.electronic
+submission.method.print
+submission.method.export
+```
+
+Persian status labels currently implemented in code should migrate toward the same semantic localization boundary rather than growing as scattered language-specific functions.
+
+### 30.11 Design-token structure
+
+CSS should centralize semantic tokens:
+
+- typography;
+- spacing;
+- radii;
+- border/elevation;
+- focus ring;
+- surface hierarchy;
+- semantic status tones;
+- content widths;
+- responsive thresholds.
+
+Tokens are semantic rather than named after one page.
+
+No tax/business decision is encoded in CSS.
+
+### 30.12 Component/template structure
+
+Recommended Jinja structure:
+
+```text
+ui_templates/
+  base.html
+  pages/
+    overview.html
+    cases.html
+    tax_year.html
+    documents.html
+    document_detail.html
+    analysis.html
+    analysis_topic.html
+    issues.html
+    result.html
+    declaration.html
+    approval_content.html
+    submission.html
+    approval_transmission.html
+    evidence.html
+    activity.html
+    audit.html
+  components/
+    status.html
+    workflow_progress.html
+    attention_badge.html
+    context_header.html
+    document_card.html
+    issue_card.html
+    result_summary.html
+    submission_method.html
+    evidence_lineage.html
+    empty_state.html
+    error_state.html
+```
+
+Exact filenames may vary, but page/component separation should replace the current tendency toward one composite workspace partial as complexity grows.
+
+### 30.13 Test plan for synthetic implementation packages
+
+Each UI package must preserve existing tests and add targeted tests.
+
+Minimum test classes:
+
+- route/scope isolation;
+- localization;
+- RTL/LTR;
+- workflow mapping;
+- stale-state clearing;
+- disabled operational controls;
+- no submission mutation route;
+- no network capability;
+- no official receipt claim;
+- responsive semantic equivalence;
+- accessibility markup basics;
+- security headers;
+- cross-case denial;
+- synthetic-data labeling;
+- Human Gate exact-scope display.
+
+Full regression suite remains required before acceptance.
+
+### 30.14 Definition of Done for UI-A through UI-E
+
+A package is complete only when:
+
+1. scope is implemented without weakening safety invariants;
+2. targeted tests pass;
+3. full regression passes;
+4. DE and FA render correctly;
+5. desktop and mobile semantics match;
+6. no new external/network capability is introduced;
+7. no real case authority is inferred from synthetic UI;
+8. documentation is updated;
+9. changes are reviewable as an isolated branch/PR through the controlled development process.
+
+### 30.15 Explicit production stop line
+
+The following transition is a governed product/security boundary:
+
+```text
+Synthetic/display-only UI
+→ Real case data and operational commands
+```
+
+Crossing it requires explicit backend integration packages and authority. It must not occur as an incidental consequence of visual UI implementation.
+
+Similarly:
+
+```text
+Submission readiness display
+→ Actual external transmission
+```
+
+is a separate higher-consequence boundary requiring Human Gate 2 and a production transmitter contract.
+
+### 30.16 UI-6 readiness conclusion
+
+The repository is ready for **safe synthetic UI modernization** using its existing FastAPI/Jinja/HTMX foundation.
+
+It is **not** currently ready for frontend-enabled production ELSTER transmission, because the repository intentionally enforces no transmitter/network/credential capability and synthetic-only submission lifecycle semantics.
+
+This is a desirable safety property, not a UI defect.
+
