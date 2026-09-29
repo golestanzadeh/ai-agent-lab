@@ -1,0 +1,1041 @@
+"""SQLite-backed durable/reloadable D-017 approval authority.
+
+The durable store preserves the existing approval domain values and binding gate
+while persisting each lifecycle transition and its approval audit event in one
+SQLite transaction. It performs no Drive mutation.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sqlite3
+from dataclasses import asdict, replace
+from datetime import datetime, timezone
+from pathlib import Path
+from threading import RLock
+from typing import Mapping
+
+from agent_lab.approval import (
+    ApprovalAlreadyConsumedError,
+    ApprovalExecutionContext,
+    ApprovalGate,
+    ApprovalNotFoundError,
+    ApprovalStatus,
+    ApprovalValidationError,
+    IntendedOperation,
+    InvalidApprovalError,
+    MigrationApproval,
+)
+from agent_lab.audit import ActorType, AuditEvent, AuditEventType, AuditStatus
+from agent_lab.elster_dry_run import ContentReleaseApproval, DestinationTransmissionApproval, ApprovalStatus as SubmissionApprovalStatus
+
+
+DURABLE_APPROVAL_SCHEMA_VERSION = 1
+SUBMISSION_COORDINATOR_VERSION = 1
+
+
+class DurableApprovalError(InvalidApprovalError):
+    """Base fail-closed error for durable approval persistence."""
+
+
+class DurableApprovalIntegrityError(DurableApprovalError):
+    pass
+
+
+class DurableApprovalSchemaError(DurableApprovalError):
+    pass
+
+
+def _utc_iso(value: datetime) -> str:
+    if value.tzinfo is None:
+        raise InvalidApprovalError("timestamp must be timezone-aware")
+    return value.astimezone(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+def _parse_utc(value: str) -> datetime:
+    if not isinstance(value, str) or not value.endswith("Z"):
+        raise DurableApprovalIntegrityError("durable timestamp must be canonical UTC")
+    try:
+        parsed = datetime.fromisoformat(value[:-1] + "+00:00")
+    except ValueError as exc:
+        raise DurableApprovalIntegrityError("invalid durable timestamp") from exc
+    if parsed.tzinfo is None:
+        raise DurableApprovalIntegrityError("durable timestamp must be timezone-aware")
+    return parsed
+
+
+def _digest(payload: Mapping[str, object]) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
+def _approval_payload(approval: MigrationApproval) -> dict[str, object]:
+    return {
+        "schema_version": DURABLE_APPROVAL_SCHEMA_VERSION,
+        "approval_id": approval.approval_id,
+        "case_id": approval.case_id,
+        "run_id": approval.run_id,
+        "manifest_identity": approval.manifest_identity,
+        "manifest_version": approval.manifest_version,
+        "manifest_reference": approval.manifest_reference,
+        "preflight_identity": approval.preflight_identity,
+        "preflight_reference": approval.preflight_reference,
+        "preflight_result": approval.preflight_result,
+        "intended_operation": approval.intended_operation.value,
+        "approver": approval.approver,
+        "actor": approval.actor,
+        "approval_timestamp": _utc_iso(approval.approval_timestamp),
+        "authorization_reference": approval.authorization_reference,
+        "approval_status": approval.approval_status.value,
+        "audit_reference": approval.audit_reference,
+    }
+
+
+def _audit_payload(event: AuditEvent) -> dict[str, object]:
+    return {
+        "schema_version": event.schema_version,
+        "event_id": event.event_id,
+        "case_id": event.case_id,
+        "run_id": event.run_id,
+        "event_type": event.event_type.value,
+        "occurred_at": _utc_iso(event.occurred_at),
+        "actor_type": event.actor_type.value,
+        "actor_id": event.actor_id,
+        "operation": event.operation,
+        "status": event.status.value,
+        "input_refs": list(event.input_refs),
+        "decision_ref": event.decision_ref,
+        "evidence_refs": list(event.evidence_refs),
+        "output_refs": list(event.output_refs),
+        "error_code": event.error_code,
+        "approval_ref": event.approval_ref,
+        "metadata": dict(event.metadata),
+    }
+
+
+class DurableApprovalStore:
+    """Durable approval lifecycle authority backed by one SQLite database."""
+
+    def __init__(self, db_path: str | Path, *, case_registry, case_state) -> None:
+        self._path = str(db_path)
+        self._case_registry = case_registry
+        self._case_state = case_state
+        self._lock = RLock()
+        self._connection = sqlite3.connect(
+            self._path,
+            timeout=10.0,
+            isolation_level=None,
+            check_same_thread=False,
+        )
+        self._connection.row_factory = sqlite3.Row
+        self._connection.execute("PRAGMA foreign_keys = ON")
+        self._connection.execute("PRAGMA busy_timeout = 10000")
+        self._connection.execute("PRAGMA journal_mode = WAL")
+        self._initialize_schema()
+
+    def close(self) -> None:
+        with self._lock:
+            self._connection.close()
+
+    def __enter__(self) -> "DurableApprovalStore":
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        self.close()
+
+    def _initialize_schema(self) -> None:
+        with self._lock:
+            self._connection.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS durable_schema (
+                    component TEXT PRIMARY KEY,
+                    version INTEGER NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS durable_counters (
+                    kind TEXT PRIMARY KEY,
+                    value INTEGER NOT NULL CHECK(value >= 0)
+                );
+                CREATE TABLE IF NOT EXISTS durable_approvals (
+                    approval_id TEXT PRIMARY KEY,
+                    schema_version INTEGER NOT NULL,
+                    case_id TEXT NOT NULL,
+                    run_id TEXT NOT NULL,
+                    manifest_identity TEXT NOT NULL,
+                    manifest_version TEXT NOT NULL,
+                    manifest_reference TEXT NOT NULL,
+                    preflight_identity TEXT NOT NULL,
+                    preflight_reference TEXT NOT NULL,
+                    preflight_result TEXT NOT NULL,
+                    intended_operation TEXT NOT NULL,
+                    approver TEXT NOT NULL,
+                    actor TEXT NOT NULL,
+                    approval_timestamp TEXT NOT NULL,
+                    authorization_reference TEXT NOT NULL,
+                    approval_status TEXT NOT NULL,
+                    audit_reference TEXT NOT NULL,
+                    integrity_digest TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS durable_approval_audit (
+                    event_id TEXT PRIMARY KEY,
+                    schema_version INTEGER NOT NULL,
+                    case_id TEXT NOT NULL,
+                    run_id TEXT,
+                    event_type TEXT NOT NULL,
+                    occurred_at TEXT NOT NULL,
+                    actor_type TEXT NOT NULL,
+                    actor_id TEXT NOT NULL,
+                    operation TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    input_refs TEXT NOT NULL,
+                    decision_ref TEXT,
+                    evidence_refs TEXT NOT NULL,
+                    output_refs TEXT NOT NULL,
+                    error_code TEXT,
+                    approval_ref TEXT,
+                    metadata TEXT NOT NULL,
+                    integrity_digest TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS durable_submission_approvals (
+                    approval_id TEXT PRIMARY KEY,
+                    kind TEXT NOT NULL CHECK(kind IN ('CONTENT','DESTINATION')),
+                    payload_json TEXT NOT NULL,
+                    integrity_digest TEXT NOT NULL,
+                    consumed_by TEXT
+                );
+                CREATE TABLE IF NOT EXISTS durable_submission_coordinators (
+                    operation_id TEXT PRIMARY KEY,
+                    coordinator_version INTEGER NOT NULL,
+                    case_id TEXT NOT NULL,
+                    tax_year INTEGER NOT NULL,
+                    run_id TEXT NOT NULL,
+                    intent_json TEXT NOT NULL,
+                    intent_digest TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    markers_json TEXT NOT NULL,
+                    result_json TEXT,
+                    receipt_json TEXT,
+                    integrity_digest TEXT NOT NULL
+                );
+                """
+            )
+            row = self._connection.execute(
+                "SELECT version FROM durable_schema WHERE component = 'approval'"
+            ).fetchone()
+            if row is None:
+                self._connection.execute(
+                    "INSERT INTO durable_schema(component, version) VALUES('approval', ?)",
+                    (DURABLE_APPROVAL_SCHEMA_VERSION,),
+                )
+            elif row["version"] != DURABLE_APPROVAL_SCHEMA_VERSION:
+                raise DurableApprovalSchemaError(
+                    f"unsupported durable approval schema version: {row['version']}"
+                )
+            self._connection.execute(
+                "INSERT OR IGNORE INTO durable_counters(kind, value) VALUES('approval', 0)"
+            )
+            self._connection.execute(
+                "INSERT OR IGNORE INTO durable_counters(kind, value) VALUES('audit', 0)"
+            )
+
+    @staticmethod
+    def _coordinator_digest(payload: Mapping[str, object]) -> str:
+        return _digest(payload)
+
+    def _coordinator_row_payload(self, row: sqlite3.Row) -> dict[str, object]:
+        return {
+            "coordinator_version": row["coordinator_version"],
+            "operation_id": row["operation_id"],
+            "case_id": row["case_id"],
+            "tax_year": row["tax_year"],
+            "run_id": row["run_id"],
+            "intent": json.loads(row["intent_json"]),
+            "state": row["state"],
+            "markers": json.loads(row["markers_json"]),
+            "result": json.loads(row["result_json"]) if row["result_json"] else None,
+            "receipt": json.loads(row["receipt_json"]) if row["receipt_json"] else None,
+        }
+
+    def _load_coordinator(self, operation_id: str) -> tuple[sqlite3.Row, dict[str, object]]:
+        row = self._connection.execute(
+            "SELECT * FROM durable_submission_coordinators WHERE operation_id=?",
+            (operation_id,),
+        ).fetchone()
+        if row is None:
+            raise DurableApprovalError("submission coordinator operation not found")
+        payload = self._coordinator_row_payload(row)
+        if (
+            row["coordinator_version"] != SUBMISSION_COORDINATOR_VERSION
+            or _digest(payload["intent"]) != row["intent_digest"]
+            or self._coordinator_digest(payload) != row["integrity_digest"]
+        ):
+            raise DurableApprovalIntegrityError("submission coordinator integrity mismatch")
+        return row, payload
+
+    def get_submission_coordinator(self, operation_id: str) -> dict[str, object]:
+        with self._lock:
+            return self._load_coordinator(operation_id)[1]
+
+    def begin_submission_coordinator(self, intent: Mapping[str, object]) -> dict[str, object]:
+        required = {
+            "operation_id", "case_id", "tax_year", "run_id", "artifact_reference",
+            "artifact_version", "content_approval_id", "destination_approval_id",
+            "destination_identity", "channel", "purpose", "requested_at",
+        }
+        if set(intent) != required:
+            raise DurableApprovalError("submission coordinator intent fields are not exact")
+        canonical_intent = dict(intent)
+        for name in required - {"tax_year"}:
+            if not isinstance(canonical_intent[name], str) or not canonical_intent[name].strip():
+                raise DurableApprovalError(f"coordinator intent {name} is required")
+        if not str(canonical_intent["operation_id"]).startswith("SYNTH-"):
+            raise DurableApprovalError("coordinator operation must be synthetic")
+        if not str(canonical_intent["case_id"]).startswith("SYNTHETIC-") or not str(canonical_intent["run_id"]).startswith("RUN-SYNTHETIC-"):
+            raise DurableApprovalError("coordinator scope must be synthetic")
+        if not isinstance(canonical_intent["tax_year"], int) or isinstance(canonical_intent["tax_year"], bool):
+            raise DurableApprovalError("coordinator tax_year is invalid")
+        self._require_scope(str(canonical_intent["case_id"]), str(canonical_intent["run_id"]))
+        case_record = self._case_registry.get(str(canonical_intent["case_id"]))
+        if case_record is None or case_record.tax_period.year != canonical_intent["tax_year"]:
+            raise DurableApprovalError("coordinator tax year does not match the Case Registry")
+        _parse_utc(str(canonical_intent["requested_at"]))
+        operation_id = str(canonical_intent["operation_id"])
+        with self._lock, self._connection:
+            prior = self._connection.execute(
+                "SELECT * FROM durable_submission_coordinators WHERE operation_id=?", (operation_id,)
+            ).fetchone()
+            if prior is not None:
+                prior, payload = self._load_coordinator(operation_id)
+                if payload["intent"] != canonical_intent:
+                    raise DurableApprovalError("coordinator operation identity was rebound")
+                return payload
+            payload = {
+                "coordinator_version": SUBMISSION_COORDINATOR_VERSION,
+                "operation_id": operation_id,
+                "case_id": canonical_intent["case_id"], "tax_year": canonical_intent["tax_year"],
+                "run_id": canonical_intent["run_id"], "intent": canonical_intent,
+                "state": "INTENT_RECORDED", "markers": {}, "result": None, "receipt": None,
+            }
+            self._connection.execute(
+                "INSERT INTO durable_submission_coordinators VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                (operation_id, SUBMISSION_COORDINATOR_VERSION, canonical_intent["case_id"],
+                 canonical_intent["tax_year"], canonical_intent["run_id"],
+                 json.dumps(canonical_intent, sort_keys=True, separators=(",", ":")),
+                 _digest(canonical_intent), "INTENT_RECORDED", "{}", None, None,
+                 self._coordinator_digest(payload)),
+            )
+        return payload
+
+    def consume_coordinator_approvals(self, operation_id: str, *, now: datetime) -> dict[str, object]:
+        if now.tzinfo is None:
+            raise DurableApprovalError("coordinator time must be timezone-aware")
+        with self._lock, self._connection:
+            row, payload = self._load_coordinator(operation_id)
+            if payload["state"] != "INTENT_RECORDED":
+                intent = payload["intent"]
+                approvals = self._connection.execute(
+                    "SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",
+                    (intent["content_approval_id"], intent["destination_approval_id"]),
+                ).fetchall()
+                if len(approvals) != 2 or {item["consumed_by"] for item in approvals} != {operation_id}:
+                    raise DurableApprovalIntegrityError("coordinator approval consumption is inconsistent")
+                return payload
+            intent = payload["intent"]
+            content = self.get_submission_approval(str(intent["content_approval_id"]))
+            destination = self.get_submission_approval(str(intent["destination_approval_id"]))
+            if type(content) is not ContentReleaseApproval or type(destination) is not DestinationTransmissionApproval:
+                raise DurableApprovalError("exact ordered approval pair is required")
+            expected = (
+                content.case_id, content.run_id, content.artifact_reference, content.artifact_version,
+                content.purpose, destination.case_id, destination.run_id,
+                destination.artifact_reference, destination.artifact_version,
+                destination.destination_identity, destination.channel, destination.purpose,
+            )
+            actual = (
+                intent["case_id"], intent["run_id"], intent["artifact_reference"], intent["artifact_version"],
+                intent["purpose"], intent["case_id"], intent["run_id"],
+                intent["artifact_reference"], intent["artifact_version"],
+                intent["destination_identity"], intent["channel"], intent["purpose"],
+            )
+            if expected != actual or destination.content_release_approval_id != content.approval_id:
+                raise DurableApprovalError("approval pair does not match coordinator intent")
+            if content.status is not SubmissionApprovalStatus.APPROVED or destination.status is not SubmissionApprovalStatus.APPROVED:
+                raise DurableApprovalError("approval pair is not approved")
+            if content.issued_at > now or destination.issued_at > now or content.expires_at <= now or destination.expires_at <= now:
+                raise DurableApprovalError("approval pair is expired or not yet valid")
+            approvals = self._connection.execute(
+                "SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",
+                (content.approval_id, destination.approval_id),
+            ).fetchall()
+            if len(approvals) != 2:
+                raise DurableApprovalError("approval pair is incomplete")
+            consumers = {item["consumed_by"] for item in approvals}
+            if consumers not in ({None}, {operation_id}):
+                raise ApprovalAlreadyConsumedError("APPROVAL_ALREADY_CONSUMED")
+            if consumers == {None}:
+                self._connection.execute(
+                    "UPDATE durable_submission_approvals SET consumed_by=? WHERE approval_id IN (?,?)",
+                    (operation_id, content.approval_id, destination.approval_id),
+                )
+            markers = {"APPROVALS_CONSUMED": operation_id}
+            payload.update(state="APPROVALS_CONSUMED", markers=markers)
+            self._update_coordinator(row, payload)
+            return payload
+
+    def commit_submission_coordinator(
+        self, operation_id: str, marker: str, *, result: Mapping[str, object] | None = None,
+        receipt: Mapping[str, object] | None = None,
+    ) -> dict[str, object]:
+        allowed = ("APPROVAL_STAGE_1", "APPROVAL_STAGE_2", "SYNTHETIC_SUBMISSION", "RECEIPT", "RECOVERY")
+        with self._lock, self._connection:
+            row, payload = self._load_coordinator(operation_id)
+            markers = dict(payload["markers"])
+            completed = [name for name in allowed if name in markers]
+            next_marker = allowed[len(completed)] if len(completed) < len(allowed) else None
+            if marker in markers:
+                if (result is not None and payload["result"] != dict(result)) or (receipt is not None and payload["receipt"] != dict(receipt)):
+                    raise DurableApprovalError("coordinator replay payload changed")
+                return payload
+            if payload["state"] == "INTENT_RECORDED" or marker != next_marker:
+                raise DurableApprovalError("coordinator commit marker is out of order")
+            if (marker == "SYNTHETIC_SUBMISSION") != (result is not None):
+                raise DurableApprovalError("result is permitted exactly at the submission marker")
+            if (marker == "RECEIPT") != (receipt is not None):
+                raise DurableApprovalError("receipt is permitted exactly at the receipt marker")
+            if result is not None:
+                self._validate_coordinator_result(payload, result)
+            if receipt is not None:
+                self._validate_coordinator_receipt(payload, receipt)
+            markers[marker] = operation_id + ":" + marker
+            payload["markers"] = markers
+            if result is not None:
+                payload["result"] = dict(result)
+            if receipt is not None:
+                payload["receipt"] = dict(receipt)
+            payload["state"] = "COMPLETE" if marker == "RECOVERY" else marker + "_COMMITTED"
+            self._update_coordinator(row, payload)
+            return payload
+
+    @staticmethod
+    def _canonical_reference(name: str, value: object) -> None:
+        if not isinstance(value, str) or len(value) != 71 or not value.startswith("sha256:"):
+            raise DurableApprovalError(f"{name} must be a canonical sha256 reference")
+        try:
+            int(value[7:], 16)
+        except ValueError as exc:
+            raise DurableApprovalError(f"{name} must be a canonical sha256 reference") from exc
+
+    def _validate_coordinator_result(self, coordinator: Mapping[str, object], result: Mapping[str, object]) -> None:
+        required = {"schema_version", "result_id", "operation_id", "case_id", "run_id", "outcome", "artifact_reference", "network_calls", "credential_access"}
+        if set(result) != required:
+            raise DurableApprovalError("submission result fields are not exact")
+        if (
+            result["schema_version"] != 1
+            or result["operation_id"] != coordinator["operation_id"]
+            or result["case_id"] != coordinator["case_id"]
+            or result["run_id"] != coordinator["run_id"]
+            or result["outcome"] != "SYNTHETIC_SUCCESS_PLACEHOLDER"
+            or result["network_calls"] != []
+            or result["credential_access"] is not False
+            or not isinstance(result["result_id"], str)
+            or not result["result_id"].startswith("SYNTH-RESULT-")
+        ):
+            raise DurableApprovalError("submission result violates the synthetic contract")
+        self._canonical_reference("result artifact_reference", result["artifact_reference"])
+
+    def _validate_coordinator_receipt(self, coordinator: Mapping[str, object], receipt: Mapping[str, object]) -> None:
+        required = {"schema_version", "receipt_id", "operation_id", "case_id", "run_id", "result_reference", "artifact_reference", "marker", "external_receipt_received", "network_calls"}
+        if set(receipt) != required:
+            raise DurableApprovalError("receipt fields are not exact")
+        result = coordinator["result"]
+        if not isinstance(result, dict) or (
+            receipt["schema_version"] != 1
+            or receipt["operation_id"] != coordinator["operation_id"]
+            or receipt["case_id"] != coordinator["case_id"]
+            or receipt["run_id"] != coordinator["run_id"]
+            or receipt["result_reference"] != result.get("artifact_reference")
+            or receipt["marker"] != "SYNTHETIC_PLACEHOLDER_NO_EXTERNAL_RECEIPT"
+            or receipt["external_receipt_received"] is not False
+            or receipt["network_calls"] != []
+            or not isinstance(receipt["receipt_id"], str)
+            or not receipt["receipt_id"].startswith("SYNTH-RECEIPT-")
+        ):
+            raise DurableApprovalError("receipt violates the synthetic contract")
+        self._canonical_reference("receipt artifact_reference", receipt["artifact_reference"])
+        self._canonical_reference("receipt result_reference", receipt["result_reference"])
+
+    def _update_coordinator(self, row: sqlite3.Row, payload: Mapping[str, object]) -> None:
+        markers_json = json.dumps(payload["markers"], sort_keys=True, separators=(",", ":"))
+        result_json = json.dumps(payload["result"], sort_keys=True, separators=(",", ":")) if payload["result"] is not None else None
+        receipt_json = json.dumps(payload["receipt"], sort_keys=True, separators=(",", ":")) if payload["receipt"] is not None else None
+        changed = self._connection.execute(
+            "UPDATE durable_submission_coordinators SET state=?,markers_json=?,result_json=?,receipt_json=?,integrity_digest=? WHERE operation_id=? AND integrity_digest=?",
+            (payload["state"], markers_json, result_json, receipt_json,
+             self._coordinator_digest(payload), payload["operation_id"], row["integrity_digest"]),
+        ).rowcount
+        if changed != 1:
+            raise DurableApprovalError("coordinator changed concurrently")
+
+    @staticmethod
+    def _submission_payload(approval: ContentReleaseApproval | DestinationTransmissionApproval) -> dict[str, object]:
+        payload=asdict(approval)
+        payload["issued_at"]=_utc_iso(approval.issued_at); payload["expires_at"]=_utc_iso(approval.expires_at)
+        payload["status"]=approval.status.value
+        return payload
+
+    def register_submission_approval(self, approval: ContentReleaseApproval | DestinationTransmissionApproval) -> str:
+        if type(approval) not in {ContentReleaseApproval,DestinationTransmissionApproval}:
+            raise DurableApprovalError("exact submission approval type is required")
+        self._require_scope(approval.case_id, approval.run_id)
+        payload=self._submission_payload(approval); encoded=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False)
+        digest=_digest(payload); kind="CONTENT" if type(approval) is ContentReleaseApproval else "DESTINATION"
+        with self._lock,self._connection:
+            self._require_schema()
+            prior=self._connection.execute("SELECT kind,payload_json,integrity_digest FROM durable_submission_approvals WHERE approval_id=?",(approval.approval_id,)).fetchone()
+            if prior:
+                if (prior["kind"],prior["payload_json"],prior["integrity_digest"])!=(kind,encoded,digest): raise DurableApprovalError("submission approval identity was already used differently")
+                return digest
+            self._connection.execute("INSERT INTO durable_submission_approvals VALUES(?,?,?,?,NULL)",(approval.approval_id,kind,encoded,digest))
+        return digest
+
+    def get_submission_approval(self, approval_id: str) -> ContentReleaseApproval | DestinationTransmissionApproval:
+        row=self._connection.execute("SELECT * FROM durable_submission_approvals WHERE approval_id=?",(approval_id,)).fetchone()
+        if row is None: raise ApprovalNotFoundError(approval_id)
+        payload=json.loads(row["payload_json"])
+        if _digest(payload)!=row["integrity_digest"]: raise DurableApprovalIntegrityError("submission approval integrity mismatch")
+        payload["issued_at"]=_parse_utc(payload["issued_at"]); payload["expires_at"]=_parse_utc(payload["expires_at"]); payload["status"]=SubmissionApprovalStatus(payload["status"])
+        cls=ContentReleaseApproval if row["kind"]=="CONTENT" else DestinationTransmissionApproval
+        return cls(**payload)
+
+    def consume_submission_pair(self, content_id: str, destination_id: str, consumption_id: str) -> tuple[ContentReleaseApproval,DestinationTransmissionApproval]:
+        if not consumption_id.strip(): raise DurableApprovalError("consumption_id is required")
+        content=self.get_submission_approval(content_id); destination=self.get_submission_approval(destination_id)
+        if type(content) is not ContentReleaseApproval or type(destination) is not DestinationTransmissionApproval: raise DurableApprovalError("ordered content and destination approvals are required")
+        if destination.content_release_approval_id!=content.approval_id: raise DurableApprovalError("destination approval is not bound to content approval")
+        with self._lock,self._connection:
+            self._require_schema()
+            rows=self._connection.execute("SELECT approval_id,consumed_by FROM durable_submission_approvals WHERE approval_id IN (?,?)",(content_id,destination_id)).fetchall()
+            if len(rows)!=2: raise DurableApprovalError("approval pair is incomplete")
+            states={row["consumed_by"] for row in rows}
+            if states=={consumption_id}: return content,destination
+            if states!={None}: raise ApprovalAlreadyConsumedError("APPROVAL_ALREADY_CONSUMED")
+            self._connection.execute("UPDATE durable_submission_approvals SET consumed_by=? WHERE approval_id IN (?,?)",(consumption_id,content_id,destination_id))
+        return content,destination
+
+    def _require_schema(self) -> None:
+        row = self._connection.execute(
+            "SELECT version FROM durable_schema WHERE component = 'approval'"
+        ).fetchone()
+        if row is None or row["version"] != DURABLE_APPROVAL_SCHEMA_VERSION:
+            raise DurableApprovalSchemaError("durable approval schema is missing or unsupported")
+
+    def _require_scope(self, case_id: str, run_id: str) -> None:
+        if self._case_registry.get(case_id) is None:
+            raise InvalidApprovalError(f"unknown case_id: {case_id}")
+        try:
+            run = self._case_state.get_run(case_id, run_id)
+        except (KeyError, PermissionError) as exc:
+            raise InvalidApprovalError(f"run is outside case scope: {run_id}") from exc
+        if run.case_id != case_id:
+            raise InvalidApprovalError(f"run is outside case scope: {run_id}")
+
+    def _validate_common(self, **values: object) -> None:
+        self._require_scope(str(values["case_id"]), str(values["run_id"]))
+        for name in (
+            "case_id",
+            "run_id",
+            "manifest_identity",
+            "manifest_version",
+            "manifest_reference",
+            "preflight_identity",
+            "preflight_reference",
+            "preflight_result",
+            "actor",
+        ):
+            ApprovalGate._required(name, values[name])
+        if values["preflight_result"] != "PASSED":
+            raise InvalidApprovalError("preflight result is not successful")
+        if not isinstance(values["intended_operation"], IntendedOperation):
+            raise InvalidApprovalError("unknown intended operation")
+
+    def _next_id(self, kind: str, prefix: str) -> str:
+        row = self._connection.execute(
+            "SELECT value FROM durable_counters WHERE kind = ?", (kind,)
+        ).fetchone()
+        if row is None:
+            raise DurableApprovalSchemaError(f"missing durable counter: {kind}")
+        value = int(row["value"]) + 1
+        self._connection.execute(
+            "UPDATE durable_counters SET value = ? WHERE kind = ?", (value, kind)
+        )
+        return f"{prefix}-{value:08d}"
+
+    def _event(
+        self,
+        *,
+        event_id: str,
+        case_id: str,
+        run_id: str,
+        event_type: AuditEventType,
+        actor_type: ActorType,
+        actor_id: str,
+        operation: str,
+        status: AuditStatus,
+        approval_ref: str,
+        metadata: Mapping[str, str] | None = None,
+    ) -> AuditEvent:
+        ApprovalGate._required("actor_id", actor_id)
+        ApprovalGate._required("operation", operation)
+        return AuditEvent(
+            event_id=event_id,
+            case_id=case_id,
+            run_id=run_id,
+            event_type=event_type,
+            occurred_at=datetime.now(timezone.utc),
+            actor_type=actor_type,
+            actor_id=actor_id,
+            operation=operation,
+            status=status,
+            approval_ref=approval_ref,
+            metadata=dict(metadata or {}),
+        )
+
+    def _write_event(self, event: AuditEvent) -> None:
+        payload = _audit_payload(event)
+        self._connection.execute(
+            """
+            INSERT INTO durable_approval_audit(
+                event_id, schema_version, case_id, run_id, event_type, occurred_at,
+                actor_type, actor_id, operation, status, input_refs, decision_ref,
+                evidence_refs, output_refs, error_code, approval_ref, metadata,
+                integrity_digest
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                event.event_id,
+                event.schema_version,
+                event.case_id,
+                event.run_id,
+                event.event_type.value,
+                _utc_iso(event.occurred_at),
+                event.actor_type.value,
+                event.actor_id,
+                event.operation,
+                event.status.value,
+                json.dumps(list(event.input_refs), separators=(",", ":")),
+                event.decision_ref,
+                json.dumps(list(event.evidence_refs), separators=(",", ":")),
+                json.dumps(list(event.output_refs), separators=(",", ":")),
+                event.error_code,
+                event.approval_ref,
+                json.dumps(dict(event.metadata), sort_keys=True, separators=(",", ":")),
+                _digest(payload),
+            ),
+        )
+
+    def _write_approval(self, approval: MigrationApproval) -> None:
+        payload = _approval_payload(approval)
+        values = (
+            approval.approval_id,
+            DURABLE_APPROVAL_SCHEMA_VERSION,
+            approval.case_id,
+            approval.run_id,
+            approval.manifest_identity,
+            approval.manifest_version,
+            approval.manifest_reference,
+            approval.preflight_identity,
+            approval.preflight_reference,
+            approval.preflight_result,
+            approval.intended_operation.value,
+            approval.approver,
+            approval.actor,
+            _utc_iso(approval.approval_timestamp),
+            approval.authorization_reference,
+            approval.approval_status.value,
+            approval.audit_reference,
+            _digest(payload),
+        )
+        self._connection.execute(
+            """
+            INSERT INTO durable_approvals(
+                approval_id, schema_version, case_id, run_id, manifest_identity,
+                manifest_version, manifest_reference, preflight_identity,
+                preflight_reference, preflight_result, intended_operation, approver,
+                actor, approval_timestamp, authorization_reference, approval_status,
+                audit_reference, integrity_digest
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(approval_id) DO UPDATE SET
+                schema_version=excluded.schema_version,
+                case_id=excluded.case_id,
+                run_id=excluded.run_id,
+                manifest_identity=excluded.manifest_identity,
+                manifest_version=excluded.manifest_version,
+                manifest_reference=excluded.manifest_reference,
+                preflight_identity=excluded.preflight_identity,
+                preflight_reference=excluded.preflight_reference,
+                preflight_result=excluded.preflight_result,
+                intended_operation=excluded.intended_operation,
+                approver=excluded.approver,
+                actor=excluded.actor,
+                approval_timestamp=excluded.approval_timestamp,
+                authorization_reference=excluded.authorization_reference,
+                approval_status=excluded.approval_status,
+                audit_reference=excluded.audit_reference,
+                integrity_digest=excluded.integrity_digest
+            """,
+            values,
+        )
+
+    def _decode_approval(self, row: sqlite3.Row) -> MigrationApproval:
+        if row["schema_version"] != DURABLE_APPROVAL_SCHEMA_VERSION:
+            raise DurableApprovalSchemaError(
+                f"unsupported approval record schema version: {row['schema_version']}"
+            )
+        try:
+            approval = MigrationApproval(
+                approval_id=row["approval_id"],
+                case_id=row["case_id"],
+                run_id=row["run_id"],
+                manifest_identity=row["manifest_identity"],
+                manifest_version=row["manifest_version"],
+                manifest_reference=row["manifest_reference"],
+                preflight_identity=row["preflight_identity"],
+                preflight_reference=row["preflight_reference"],
+                preflight_result=row["preflight_result"],
+                intended_operation=IntendedOperation(row["intended_operation"]),
+                approver=row["approver"],
+                actor=row["actor"],
+                approval_timestamp=_parse_utc(row["approval_timestamp"]),
+                authorization_reference=row["authorization_reference"],
+                approval_status=ApprovalStatus(row["approval_status"]),
+                audit_reference=row["audit_reference"],
+            )
+        except (ValueError, TypeError) as exc:
+            raise DurableApprovalIntegrityError("malformed durable approval record") from exc
+        for name in (
+            "approval_id",
+            "case_id",
+            "run_id",
+            "manifest_identity",
+            "manifest_version",
+            "manifest_reference",
+            "preflight_identity",
+            "preflight_reference",
+            "preflight_result",
+            "actor",
+            "audit_reference",
+        ):
+            ApprovalGate._required(name, getattr(approval, name))
+        expected = _digest(_approval_payload(approval))
+        if row["integrity_digest"] != expected:
+            raise DurableApprovalIntegrityError("durable approval integrity mismatch")
+        return approval
+
+    def _decode_event(self, row: sqlite3.Row) -> AuditEvent:
+        if row["schema_version"] != 1:
+            raise DurableApprovalSchemaError("unsupported durable audit event schema version")
+        try:
+            event = AuditEvent(
+                event_id=row["event_id"],
+                case_id=row["case_id"],
+                run_id=row["run_id"],
+                event_type=AuditEventType(row["event_type"]),
+                occurred_at=_parse_utc(row["occurred_at"]),
+                actor_type=ActorType(row["actor_type"]),
+                actor_id=row["actor_id"],
+                operation=row["operation"],
+                status=AuditStatus(row["status"]),
+                input_refs=tuple(json.loads(row["input_refs"])),
+                decision_ref=row["decision_ref"],
+                evidence_refs=tuple(json.loads(row["evidence_refs"])),
+                output_refs=tuple(json.loads(row["output_refs"])),
+                error_code=row["error_code"],
+                approval_ref=row["approval_ref"],
+                metadata=dict(json.loads(row["metadata"])),
+                schema_version=row["schema_version"],
+            )
+        except (ValueError, TypeError, json.JSONDecodeError) as exc:
+            raise DurableApprovalIntegrityError("malformed durable audit event") from exc
+        if row["integrity_digest"] != _digest(_audit_payload(event)):
+            raise DurableApprovalIntegrityError("durable audit integrity mismatch")
+        return event
+
+    def _transaction(self):
+        self._require_schema()
+        self._connection.execute("BEGIN IMMEDIATE")
+
+    def create_pending(
+        self,
+        *,
+        case_id: str,
+        run_id: str,
+        manifest_identity: str,
+        manifest_version: str,
+        manifest_reference: str,
+        preflight_identity: str,
+        preflight_reference: str,
+        preflight_result: str,
+        intended_operation: IntendedOperation,
+        actor: str,
+        requester_actor_type: ActorType = ActorType.HUMAN,
+        timestamp: datetime | None = None,
+    ) -> MigrationApproval:
+        with self._lock:
+            self._validate_common(
+                case_id=case_id,
+                run_id=run_id,
+                manifest_identity=manifest_identity,
+                manifest_version=manifest_version,
+                manifest_reference=manifest_reference,
+                preflight_identity=preflight_identity,
+                preflight_reference=preflight_reference,
+                preflight_result=preflight_result,
+                intended_operation=intended_operation,
+                actor=actor,
+            )
+            if requester_actor_type not in {ActorType.HUMAN, ActorType.AGENT}:
+                raise InvalidApprovalError("approval requester must be HUMAN or AGENT")
+            ts = timestamp or datetime.now(timezone.utc)
+            _utc_iso(ts)
+            try:
+                self._transaction()
+                approval_id = self._next_id("approval", "APP")
+                event_id = self._next_id("audit", "AUDIT")
+                event = self._event(
+                    event_id=event_id,
+                    case_id=case_id,
+                    run_id=run_id,
+                    event_type=AuditEventType.APPROVAL_REQUESTED,
+                    actor_type=requester_actor_type,
+                    actor_id=actor,
+                    operation="request_approval",
+                    status=AuditStatus.INFO,
+                    approval_ref=approval_id,
+                )
+                approval = MigrationApproval(
+                    approval_id=approval_id,
+                    case_id=case_id,
+                    run_id=run_id,
+                    manifest_identity=manifest_identity,
+                    manifest_version=manifest_version,
+                    manifest_reference=manifest_reference,
+                    preflight_identity=preflight_identity,
+                    preflight_reference=preflight_reference,
+                    preflight_result=preflight_result,
+                    intended_operation=intended_operation,
+                    approver="",
+                    actor=actor,
+                    approval_timestamp=ts,
+                    authorization_reference="",
+                    approval_status=ApprovalStatus.PENDING,
+                    audit_reference=event_id,
+                )
+                self._write_approval(approval)
+                self._write_event(event)
+                self._connection.execute("COMMIT")
+                return approval
+            except Exception:
+                if self._connection.in_transaction:
+                    self._connection.execute("ROLLBACK")
+                raise
+
+    def get(self, approval_id: str) -> MigrationApproval:
+        with self._lock:
+            self._require_schema()
+            row = self._connection.execute(
+                "SELECT * FROM durable_approvals WHERE approval_id = ?", (approval_id,)
+            ).fetchone()
+            if row is None:
+                raise ApprovalNotFoundError(approval_id)
+            approval = self._decode_approval(row)
+            self._require_scope(approval.case_id, approval.run_id)
+            return approval
+
+    def validate(self, approval_id: str, context: ApprovalExecutionContext) -> MigrationApproval:
+        with self._lock:
+            approval = self.get(approval_id)
+            ApprovalGate.validate_binding(approval, context)
+            return approval
+
+    def grant(
+        self,
+        approval_id: str,
+        *,
+        approver: str,
+        authorization_reference: str,
+        timestamp: datetime | None = None,
+    ) -> MigrationApproval:
+        ApprovalGate._required("approver", approver)
+        ApprovalGate._required("authorization_reference", authorization_reference)
+        ts = timestamp or datetime.now(timezone.utc)
+        _utc_iso(ts)
+        return self._transition_with_event(
+            approval_id,
+            expected=ApprovalStatus.PENDING,
+            target=ApprovalStatus.APPROVED,
+            event_type=AuditEventType.APPROVAL_GRANTED,
+            actor_type=ActorType.HUMAN,
+            actor_id=approver,
+            operation="grant_approval",
+            audit_status=AuditStatus.SUCCESS,
+            approval_changes={
+                "approver": approver,
+                "authorization_reference": authorization_reference,
+                "approval_timestamp": ts,
+            },
+            metadata={"authorization_reference": authorization_reference},
+        )
+
+    def reject(self, approval_id: str, *, actor: str) -> MigrationApproval:
+        return self._transition_with_event(
+            approval_id,
+            expected=ApprovalStatus.PENDING,
+            target=ApprovalStatus.REJECTED,
+            event_type=AuditEventType.APPROVAL_REJECTED,
+            actor_type=ActorType.HUMAN,
+            actor_id=actor,
+            operation="reject_approval",
+            audit_status=AuditStatus.INFO,
+        )
+
+    def revoke(self, approval_id: str, *, actor: str) -> MigrationApproval:
+        return self._transition_with_event(
+            approval_id,
+            expected=ApprovalStatus.APPROVED,
+            target=ApprovalStatus.REVOKED,
+            event_type=AuditEventType.APPROVAL_REVOKED,
+            actor_type=ActorType.HUMAN,
+            actor_id=actor,
+            operation="revoke_approval",
+            audit_status=AuditStatus.INFO,
+        )
+
+    def expire(self, approval_id: str, *, actor: str) -> MigrationApproval:
+        return self._transition_with_event(
+            approval_id,
+            expected=ApprovalStatus.APPROVED,
+            target=ApprovalStatus.EXPIRED,
+            event_type=AuditEventType.APPROVAL_EXPIRED,
+            actor_type=ActorType.HUMAN,
+            actor_id=actor,
+            operation="expire_approval",
+            audit_status=AuditStatus.INFO,
+        )
+
+    def _transition_with_event(
+        self,
+        approval_id: str,
+        *,
+        expected: ApprovalStatus,
+        target: ApprovalStatus,
+        event_type: AuditEventType,
+        actor_type: ActorType,
+        actor_id: str,
+        operation: str,
+        audit_status: AuditStatus,
+        approval_changes: Mapping[str, object] | None = None,
+        metadata: Mapping[str, str] | None = None,
+    ) -> MigrationApproval:
+        ApprovalGate._required("actor", actor_id)
+        with self._lock:
+            try:
+                self._transaction()
+                row = self._connection.execute(
+                    "SELECT * FROM durable_approvals WHERE approval_id = ?", (approval_id,)
+                ).fetchone()
+                if row is None:
+                    raise ApprovalNotFoundError(approval_id)
+                current = self._decode_approval(row)
+                self._require_scope(current.case_id, current.run_id)
+                if current.approval_status is not expected:
+                    raise ApprovalValidationError(
+                        f"only {expected.value} approval can transition to {target.value}"
+                    )
+                event_id = self._next_id("audit", "AUDIT")
+                event = self._event(
+                    event_id=event_id,
+                    case_id=current.case_id,
+                    run_id=current.run_id,
+                    event_type=event_type,
+                    actor_type=actor_type,
+                    actor_id=actor_id,
+                    operation=operation,
+                    status=audit_status,
+                    approval_ref=approval_id,
+                    metadata=metadata,
+                )
+                updated = replace(
+                    current,
+                    **dict(approval_changes or {}),
+                    approval_status=target,
+                    audit_reference=event_id,
+                )
+                self._write_approval(updated)
+                self._write_event(event)
+                self._connection.execute("COMMIT")
+                return updated
+            except Exception:
+                if self._connection.in_transaction:
+                    self._connection.execute("ROLLBACK")
+                raise
+
+    def consume(self, approval_id: str, context: ApprovalExecutionContext) -> MigrationApproval:
+        """Atomically consume exactly once across process restart/concurrent stores."""
+        with self._lock:
+            try:
+                self._transaction()
+                row = self._connection.execute(
+                    "SELECT * FROM durable_approvals WHERE approval_id = ?", (approval_id,)
+                ).fetchone()
+                if row is None:
+                    raise ApprovalNotFoundError(approval_id)
+                current = self._decode_approval(row)
+                self._require_scope(current.case_id, current.run_id)
+                if current.approval_status is ApprovalStatus.CONSUMED:
+                    raise ApprovalAlreadyConsumedError("APPROVAL_ALREADY_CONSUMED")
+                ApprovalGate.validate_binding(current, context)
+                event_id = self._next_id("audit", "AUDIT")
+                event = self._event(
+                    event_id=event_id,
+                    case_id=current.case_id,
+                    run_id=current.run_id,
+                    event_type=AuditEventType.APPROVAL_CONSUMED,
+                    actor_type=ActorType.SYSTEM,
+                    actor_id=context.actor,
+                    operation="consume_approval",
+                    status=AuditStatus.SUCCESS,
+                    approval_ref=approval_id,
+                    metadata={"intended_operation": context.intended_operation.value},
+                )
+                updated = replace(
+                    current,
+                    approval_status=ApprovalStatus.CONSUMED,
+                    audit_reference=event_id,
+                )
+                self._write_approval(updated)
+                self._write_event(event)
+                self._connection.execute("COMMIT")
+                return updated
+            except Exception:
+                if self._connection.in_transaction:
+                    self._connection.execute("ROLLBACK")
+                raise
+
+    def list_audit_events(self, case_id: str, run_id: str | None = None) -> tuple[AuditEvent, ...]:
+        with self._lock:
+            self._require_schema()
+            if self._case_registry.get(case_id) is None:
+                raise InvalidApprovalError(f"unknown case_id: {case_id}")
+            if run_id is not None:
+                self._require_scope(case_id, run_id)
+            if run_id is None:
+                rows = self._connection.execute(
+                    "SELECT * FROM durable_approval_audit WHERE case_id = ? ORDER BY event_id",
+                    (case_id,),
+                ).fetchall()
+            else:
+                rows = self._connection.execute(
+                    "SELECT * FROM durable_approval_audit WHERE case_id = ? AND run_id = ? ORDER BY event_id",
+                    (case_id, run_id),
+                ).fetchall()
+            return tuple(self._decode_event(row) for row in rows)

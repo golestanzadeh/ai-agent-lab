@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "package": "DR-01",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "status": "PASS",
+  "implementation_version": "1",
+  "capabilities": [
+    "case/run/registry/frozen-calculation/evidence identity binding",
+    "ESt1A income-tax-return filing basis E0100001",
+    "Person A and Person B Hauptvordruck identity contexts",
+    "joint-assessment election E0101201",
+    "taxpayer-favorable source-cent to whole-euro gross-wage transformation",
+    "existing Anlage N composition",
+    "exact official XSD validation",
+    "non-transmitting preview boundary"
+  ],
+  "authoritative_lineage": {
+    "annual_documentation_logical_id": "ELSTER_E10_2024_ANNUAL_DOCUMENTATION",
+    "annual_documentation_sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
+    "schema_logical_id": "ELSTER_E10_2024_XSD",
+    "schema_sha256": "86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272",
+    "official_fields": ["E0100001", "E0100081", "E0100401", "E0100201", "E0100301", "E0100402", "E0101104", "E0101206", "E0100601", "E0100602", "E0100701", "E0101201", "E0100082", "E0101001", "E0100901", "E0100801", "E0101002", "E0200201", "E0200301"],
+    "rounding_rule": "2024 official form instructions require Euro entries and taxpayer-favorable rounding where cents are not expressly accepted; E0200201 is GeldBetragOhneCent. Positive EUR 36,470.23 therefore maps to EUR 36,470."
+  },
+  "case_values": {
+    "source_gross_wage_eur": "36470.23",
+    "declared_gross_wage_eur": "36470",
+    "withheld_wage_tax_eur": "776.00",
+    "joint_assessment": true,
+    "frozen_refund_eur": "133.83"
+  },
+  "tests": {
+    "focused": "191 passed",
+    "official_xsd": "PASS",
+    "negative_fail_closed": "PASS",
+    "identity_isolation": "PASS"
+  },
+  "independent_acceptance": "PASS",
+  "capacity_after_package": {
+    "five_hour_remaining_percent": 80,
+    "weekly_remaining_percent": 21,
+    "decision": "TOKEN_PAUSED before DR-02 to preserve safe weekly checkpoint capacity"
+  },
+  "external_actions": {
+    "official_eric_execution": false,
+    "elster_or_finanzamt_transmission": false,
+    "signing_or_certificate_use": false,
+    "production_filing": false
+  },
+  "next_dependency_ready": ["DR-02", "DR-03", "DR-04"]
+}

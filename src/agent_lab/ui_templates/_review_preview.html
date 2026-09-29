@@ -1,0 +1,13 @@
+<section class="review-preview" aria-labelledby="review-title" data-classification="{{ review.data_classification }}">
+  <div class="section-heading">
+    <div><p class="eyebrow">بازبینی مصنوعی</p><h3 id="review-title">نتیجه و پیش‌نمایش فرم</h3></div>
+    <span class="status-chip">وضعیت محلی E10: {{ review.official_mapping_status|status_label }} · {{ review.official_mapping_status }}</span>
+  </div>
+  <div class="grid">
+    <article class="card"><h4>یافته‌ها</h4><ol>{% for finding in review.findings %}<li>{{ finding|status_label }} <code>{{ finding }}</code></li>{% endfor %}</ol></article>
+    <article class="card warning-card"><h4>شکاف شواهد</h4><ul>{% for gap in review.evidence_gaps %}<li>{{ gap|status_label }} <code>{{ gap }}</code></li>{% endfor %}</ul></article>
+    <article class="card"><h4>خلاصهٔ محاسبه</h4><p class="metric">{{ review.calculation_total }}</p><p>{{ review.currency }}</p></article>
+    <article class="card"><h4>مرجع پیش‌نمایش</h4><p class="mono">{{ review.preview_reference }}</p><p>فقط محلی؛ ارسال و رسید رسمی وجود ندارد.</p></article>
+    <article class="card"><h4>کنترل‌های محلی</h4><p>{{ review.local_plausibility_status|status_label }} <code>{{ review.local_plausibility_status }}</code></p><p>موتور رسمی ERiC اجرا نشده است.</p></article>
+  </div>
+</section>

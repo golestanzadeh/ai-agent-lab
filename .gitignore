@@ -28,3 +28,10 @@ Thumbs.db
 *.log
 outputs/
 artifacts/
+
+# Protected official source binaries must remain outside Git
+ERiC-*-Dokumentation.zip
+ERiC-*-Schemadokumentation.zip
+Vordrucke_archive_ERiC-*.zip
+Jahresdokumentation_E10_*.ods
+E10-*.xsd

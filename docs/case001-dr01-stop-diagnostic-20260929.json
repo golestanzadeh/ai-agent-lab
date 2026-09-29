@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "directive": "CASE-001 / 2024 DECLARATION REMEDIATION DR-01 THROUGH DR-05",
+  "status": "STOP_DIAGNOSTIC",
+  "package": "DR-01",
+  "recovered_checkpoint": "1dc6c6c7f5f31885301bf0dca89883f4f996b097",
+  "capacity": {
+    "start_five_hour_remaining_percent": 99,
+    "start_weekly_remaining_percent": 26,
+    "end_five_hour_remaining_percent": 89,
+    "end_weekly_remaining_percent": 24,
+    "five_hour_reset_unix": 1790667985,
+    "weekly_reset_unix": 1791139189
+  },
+  "failing_requirement": "Authoritative 2024 semantics and exact official fields for the CASE-001 Hauptvordruck/joint-assessment composition and the gross-wage cents-to-whole-euro declaration transformation are not recoverable in the current environment.",
+  "root_cause": "The previously hash-verified protected ERiC 44.3.6.0 documentation and schema packages are no longer present at any recorded or searched local location. The ELSTER developer area requires an interactive username/password login and the current browser session is unauthenticated.",
+  "attempted_bounded_remediation": [
+    "Verified clean synchronized branch and accepted readiness checkpoint.",
+    "Searched recorded user locations and available fixed drives for the exact annual documentation, E10 schema, and ERiC 44.3.6.0 package filenames.",
+    "Verified the public ELSTER developer entry point and attempted recovery through the existing browser session.",
+    "Stopped at the developer-login boundary without requesting, exposing, or using credentials."
+  ],
+  "available_evidence": {
+    "annual_documentation_filename": "Jahresdokumentation_E10_2024.ods",
+    "annual_documentation_sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
+    "schema_filename": "E10-2024.xsd",
+    "schema_sha256": "86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272",
+    "documentation_zip_filename": "ERiC-44.3.6.0-Dokumentation.zip",
+    "schema_zip_filename": "ERiC-44.3.6.0-Schemadokumentation.zip"
+  },
+  "automatic_remediation_remaining": false,
+  "smallest_owner_action": "Authenticate privately in the ELSTER developer area and make the same ERiC 44.3.6.0 documentation and schema-documentation packages available locally; no credential should be sent to the agent. The next run must verify the recorded hashes before resuming DR-01.",
+  "next_operation": "Verify the recovered package hashes, inspect only the DR-01-relevant E10/2024 fields and rules, then implement and test DR-01. DR-02 through DR-05 remain unstarted.",
+  "frozen_refund_eur": "133.83",
+  "external_actions": {
+    "official_eric_execution": false,
+    "elster_or_finanzamt_transmission": false,
+    "signing_or_certificate_use": false,
+    "drive_mutation": false,
+    "production_filing": false
+  }
+}
