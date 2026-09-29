@@ -2584,3 +2584,238 @@ It is **not** currently ready for frontend-enabled production ELSTER transmissio
 
 This is a desirable safety property, not a UI defect.
 
+
+
+## 31. Controlled Implementation Package Specification
+
+### 31.1 Execution model
+
+The UI implementation should be handed to the controlled project development path as sequential packages.
+
+The design branch is documentation/design authority only. Runtime/product code should not be developed directly on this branch.
+
+Each package requires:
+
+```text
+Recovery / baseline verification
+→ scoped implementation
+→ targeted tests
+→ full regression
+→ branch/commit
+→ PR
+→ review / acceptance
+```
+
+No package may silently broaden itself into the next package.
+
+### 31.2 UI-A — Shell, localization, and visual tokens
+
+**Goal:** establish the accepted bilingual responsive shell without changing domain capability.
+
+Allowed scope:
+
+- `src/agent_lab/ui_app.py` only for display-only routing/context needed by the shell;
+- `src/agent_lab/ui_templates/**`;
+- `src/agent_lab/ui_static/**`;
+- new UI-only localization/presentation modules under `src/agent_lab/`;
+- UI tests;
+- UI documentation.
+
+Expected outputs:
+
+- global shell;
+- desktop navigation;
+- mobile navigation;
+- Case/Tax-Year context header;
+- DE/FA language selection;
+- true RTL/LTR;
+- semantic CSS tokens;
+- shared status component;
+- accessibility baseline.
+
+Forbidden:
+
+- real data access;
+- persistent mutation;
+- approval mutation;
+- submission mutation;
+- network/external access;
+- credential handling;
+- Kernel/runtime changes.
+
+Acceptance:
+
+- existing UI safety tests pass;
+- DE/FA and RTL/LTR tests added;
+- no production capability flag changes.
+
+### 31.3 UI-B — Workflow pages
+
+**Goal:** implement accepted user-facing Tax-Year workflow using presentation adapters over existing synthetic contracts.
+
+Pages:
+
+- Tax-Year Overview;
+- Documents;
+- Document Detail shell where synthetic data permits;
+- Analysis;
+- Analysis Topic;
+- Issues;
+- Result;
+- Declaration;
+- Submission readiness.
+
+Rules:
+
+- map technical workflow stages to product vocabulary;
+- preserve Case/Tax-Year isolation;
+- Result never recalculates tax in frontend;
+- Declaration remains preview/review;
+- unavailable capability is explained, not hidden behind fake success.
+
+Forbidden:
+
+- fabricating domain fields absent from current contracts;
+- weakening `SYNTH-` restrictions;
+- enabling upload merely because Upload exists in mockup;
+- operational declaration edits;
+- operational submission.
+
+### 31.4 UI-C — Transparency layer
+
+**Goal:** expose understandable provenance without making infrastructure the main product.
+
+Implement:
+
+- Evidence lineage presentation;
+- Activity timeline;
+- Audit specialist view;
+- cross-links among Document, Fact, Decision, Declaration when underlying references exist.
+
+If current contracts do not expose a required link, render the link as unavailable/unsupported in synthetic mode or create a UI-only synthetic adapter. Do not invent production evidence relationships.
+
+### 31.5 UI-D — Human Gate review presentation
+
+**Goal:** implement dedicated review experiences for the two accepted gates while preserving non-operational current capability.
+
+Gate 1 screen:
+
+- content scope;
+- Case/Tax Year;
+- artifact/reference;
+- expiry/state where present;
+- explicit statement that transmission is not authorized.
+
+Gate 2 screen:
+
+- destination;
+- exact artifact/scope;
+- expiry/state;
+- explicit external-boundary warning.
+
+Current synthetic implementation:
+
+- review/display only;
+- operational approval/grant/consume actions remain disabled.
+
+No frontend route may manufacture durable approval authority.
+
+### 31.6 UI-E — Responsive, accessibility, and failure-state hardening
+
+Implement/test:
+
+- mobile parity;
+- keyboard/focus behavior;
+- screen-reader semantics;
+- long German labels;
+- Persian RTL/bidi;
+- stale state;
+- blocked state;
+- loading;
+- empty state;
+- system pause;
+- validation problem;
+- submission-disabled explanation;
+- cross-case state reset.
+
+### 31.7 Files outside normal UI implementation scope
+
+Unless a package explicitly proves a necessary contract change and obtains separate authorization, UI-A through UI-E must not modify:
+
+- Kernel/orchestrator execution logic;
+- Docker/runtime scheduling;
+- durable approval semantics;
+- ELSTER submission lifecycle semantics;
+- submission coordinator semantics;
+- tax calculation logic;
+- declaration calculation/mapping rules;
+- official-source protected store;
+- case migration/execution logic;
+- live case data;
+- GitHub/Work automations.
+
+### 31.8 Backend dependencies discovered during UI work
+
+When UI implementation needs missing domain information:
+
+1. stop only that dependent feature;
+2. record the missing contract;
+3. continue unrelated UI package work;
+4. create a separately scoped backend dependency proposal;
+5. do not solve the gap by embedding business logic in templates/JavaScript.
+
+This prevents one missing field from stopping the whole UI program while preserving architectural boundaries.
+
+### 31.9 Proposed implementation branch naming
+
+Suggested isolated development branches:
+
+- `ui-a-shell-localization`
+- `ui-b-tax-workflow`
+- `ui-c-transparency`
+- `ui-d-human-gates`
+- `ui-e-responsive-accessibility`
+
+Actual branch creation belongs to the controlled execution path.
+
+### 31.10 Required acceptance evidence per package
+
+Each package reports:
+
+- base commit;
+- changed files;
+- targeted test command/results;
+- full regression result;
+- security-boundary confirmation;
+- screenshots at representative desktop/mobile widths for DE and FA;
+- known gaps;
+- no-scope-expansion statement.
+
+### 31.11 Owner authorization interpretation
+
+The Owner has authorized continued design/UI-6 preparation.
+
+This document does not reinterpret that authorization as permission to:
+
+- transmit externally;
+- access credentials;
+- alter live tax data;
+- weaken Human Gates;
+- change Kernel/runtime;
+- merge/release automatically.
+
+Implementation execution should begin only through the controlled project execution mechanism with the package scope above, preserving existing Human Gate rules.
+
+## 32. UI Design Program Status
+
+As of 2026-09-29:
+
+- UI-1 Information Architecture: complete / accepted baseline.
+- UI-2 Workflow Design: complete / Owner approved.
+- UI-3 Screen Specification: complete.
+- UI-4 Visual System: complete.
+- UI-5 Conceptual Prototype: complete with canonical findings.
+- UI-6 Implementation Specification: complete enough to hand off UI-A through UI-E safely.
+
+Remaining product work is no longer an unresolved visual-design problem. It is controlled implementation plus separately governed production integration.
+
