@@ -1755,3 +1755,457 @@ before aesthetic expansion.
 This Visual System defines semantic design rules. Exact visual tokens such as final font family, color values, radii, spacing constants, and breakpoints will be selected/tested during prototype construction and then frozen into the implementation specification.
 
 No implementation authorization is implied by UI-4.
+
+
+## 28. UI-5 — Prototype Findings and Canonical Interaction Rules
+
+### 28.1 Prototype scope
+
+The conceptual prototype exercised the end-to-end experience across:
+
+- Workspace / Cases
+- Tax-Year Overview
+- Documents and Document Detail
+- Analysis and topic detail
+- Issues / Attention
+- Result
+- Declaration
+- Human Gate 1
+- Submission method selection
+- Human Gate 2
+- Print / Export
+- Evidence / Activity / Audit
+- Desktop and mobile
+- German LTR and Persian RTL
+
+CASE-001 / 2024 remains the reference fixture. Prototype-only visual examples must not be interpreted as new tax facts.
+
+### 28.2 Single-language runtime rule
+
+The production UI displays one selected interface language at a time.
+
+Prototype boards may show German and Persian together to validate terminology/layout, but production controls must not routinely duplicate every label in both languages.
+
+In Persian mode:
+
+- approved Persian UI text is primary;
+- official German tax/form identity remains visible where legally or semantically important;
+- technical/data identifiers preserve their natural direction.
+
+### 28.3 Prototype-data discipline
+
+Mockups must not accidentally introduce new personal facts, tax values, employers, addresses, dates, deductions, or declaration outcomes into the canonical case.
+
+Three data classes are permitted in design artifacts:
+
+1. accepted frozen CASE-001 fixture values;
+2. clearly marked synthetic/demo values;
+3. neutral placeholders.
+
+Synthetic values are never evidence and never become project truth merely because they appeared in a mockup.
+
+### 28.4 Extraction confidence is not tax confidence
+
+Any extraction/OCR confidence indicator refers only to extraction quality.
+
+The UI must distinguish:
+
+- source/document quality;
+- extraction confidence;
+- classification state;
+- evidence sufficiency;
+- tax decision state;
+- independent verification/acceptance state.
+
+A percentage produced by extraction must never be presented as “confidence that the tax treatment is correct.”
+
+### 28.5 Context persistence
+
+Case and Tax Year context remain visually persistent across deep workflow screens.
+
+The user should not need to infer which declaration/year is being reviewed from browser history or a hidden state.
+
+On mobile, compact context may replace full breadcrumbs but must preserve the same identity.
+
+### 28.6 Review-before-authority pattern
+
+Consequential actions follow:
+
+```text
+Inspect
+→ Understand scope
+→ Review consequences
+→ Explicit human action
+→ Authoritative backend transition
+→ Confirm resulting state
+```
+
+UI optimism is prohibited: the interface does not switch to “approved” or “submitted” merely because a button was pressed.
+
+### 28.7 Stale approval state
+
+When authoritative context changes after approval, the UI must represent the approval as stale/superseded rather than silently retaining a green approved state.
+
+Presentation pattern:
+
+- previous approval remains visible as history;
+- current declaration clearly says review/approval is required again;
+- submission actions requiring current approval remain unavailable;
+- user can inspect why re-review is required.
+
+Exact invalidation is backend-owned.
+
+### 28.8 Validation failure
+
+Validation problems appear at both:
+
+- the affected declaration field/section where useful;
+- Issues/Attention when human action is required.
+
+Blocking validation prevents Human Gate 1 readiness.
+
+The user receives a route back to the exact affected source/topic/field.
+
+### 28.9 Submission failure
+
+Submission has explicit attempt and outcome states.
+
+A failed or uncertain attempt:
+
+- does not become Submitted;
+- preserves the attempt in Activity/Audit;
+- shows whether retry is safe/allowed according to backend state;
+- does not reuse/assume approval authority unless the authoritative approval/submission contract permits it.
+
+### 28.10 System pause
+
+Execution-resource pause is visually separated from tax-content failure.
+
+The user sees:
+
+- work is paused;
+- existing completed work remains intact;
+- whether any user action is required;
+- last meaningful completed state.
+
+Raw token-budget mechanics need not dominate ordinary UX.
+
+### 28.11 Evidence / Activity / Audit triad
+
+Prototype validation confirms three distinct presentations are useful.
+
+**Evidence** answers:
+“Where did this value/decision come from?”
+
+**Activity** answers:
+“What happened in this Case?”
+
+**Audit** answers:
+“What exact authoritative event/artifact/actor/version proves it?”
+
+These views may cross-link but are not merged.
+
+### 28.12 Evidence interaction pattern
+
+Evidence lineage is navigable in both directions.
+
+Desktop:
+```text
+Document → Fact → Decision → Declaration Field
+```
+
+Mobile:
+vertical step chain with expandable detail.
+
+Each node visually indicates its type so a source fact cannot be confused with a tax decision.
+
+### 28.13 Document-detail interaction
+
+Desktop prefers split view:
+
+- original document
+- extracted/classified information
+
+Mobile uses stacked or switched panels.
+
+Editing extracted information is an explicit action and must preserve provenance/history rather than visually rewriting the original source.
+
+### 28.14 Result interaction
+
+The expected refund/payment is prominent but always paired with its readiness state.
+
+Prototype hierarchy:
+
+1. expected refund/payment;
+2. provisional/final-ready status;
+3. main contributing items;
+4. “Why?” / detailed calculation;
+5. links into Analysis/Evidence.
+
+The UI must not turn a favorable provisional amount into celebratory certainty.
+
+### 28.15 Declaration interaction
+
+Declaration supports two levels:
+
+- understandable summary/form navigation;
+- official field-level review.
+
+Official form names remain stable.
+
+Technical mappings are optional detail, not the default reading experience.
+
+### 28.16 Submission-choice interaction
+
+Submission methods are peer choices after valid Content Approval:
+
+- Electronic
+- Print and submit personally
+- Export only
+
+Each card states:
+
+- availability;
+- consequence;
+- whether external transmission occurs;
+- next gate/action.
+
+Selecting a method does not itself perform the method.
+
+### 28.17 Mobile Human Gates
+
+On mobile, Human Gate 1 and Human Gate 2 are full-screen review steps.
+
+The consequential action is placed after the review content, not floating above unseen warnings.
+
+Critical scope/destination information remains visible near the action.
+
+### 28.18 Prototype accessibility findings
+
+Prototype implementation must avoid:
+
+- tiny status text;
+- icon-only critical actions;
+- low-contrast pale status chips;
+- fixed-width bilingual buttons;
+- horizontal-only evidence relationships;
+- hover-dependent explanations.
+
+Long German and Persian labels are treated as normal content, not edge cases.
+
+### 28.19 UI-5 acceptance baseline
+
+The conceptual prototype validates that the accepted IA and workflow can be represented coherently across desktop/mobile and DE/FA without exposing infrastructure as the primary UX.
+
+UI-5 is considered design-complete when these interaction rules are treated as canonical and the remaining contract-dependent gaps are explicitly handed to UI-6.
+
+No production UI code is authorized by UI-5.
+
+## 29. UI-6 — Implementation Specification Preparation
+
+### 29.1 Purpose
+
+UI-6 translates the accepted design into an implementation-ready contract for Work/Codex without authorizing implementation.
+
+It must identify:
+
+- routes/screens;
+- reusable components;
+- presentation state;
+- backend-owned state;
+- required API/domain bindings;
+- localization resources;
+- accessibility requirements;
+- responsive behavior;
+- acceptance tests;
+- security invariants.
+
+### 29.2 Proposed route model
+
+Conceptual routes:
+
+```text
+/
+ /cases
+ /cases/:caseId
+ /cases/:caseId/:taxYear
+ /cases/:caseId/:taxYear/documents
+ /cases/:caseId/:taxYear/documents/:documentId
+ /cases/:caseId/:taxYear/analysis
+ /cases/:caseId/:taxYear/analysis/:topicId
+ /cases/:caseId/:taxYear/issues
+ /cases/:caseId/:taxYear/result
+ /cases/:caseId/:taxYear/declaration
+ /cases/:caseId/:taxYear/approval/content
+ /cases/:caseId/:taxYear/submission
+ /cases/:caseId/:taxYear/submission/authorize
+ /cases/:caseId/:taxYear/evidence
+ /cases/:caseId/:taxYear/activity
+ /cases/:caseId/:taxYear/audit
+ /attention
+ /administration
+```
+
+Final route names are implementation details, but Case/Tax-Year scoping is mandatory.
+
+### 29.3 Core reusable components
+
+Implementation should prefer a small stable component vocabulary:
+
+- AppShell
+- WorkspaceSwitcher
+- CaseContext
+- TaxYearContext
+- WorkflowProgress
+- Status
+- AttentionBadge
+- NextAction
+- CaseCard
+- TaxYearCard
+- DocumentList / DocumentCard
+- DocumentViewer
+- ExtractedFact
+- TaxTopicCard
+- IssueCard
+- ResultSummary
+- CalculationBreakdown
+- OfficialFormNavigator
+- DeclarationField
+- EvidenceLineage
+- ApprovalReview
+- SubmissionMethodCard
+- ExternalDestinationSummary
+- ActivityTimeline
+- AuditTable
+- EmptyState
+- ErrorState
+- StaleState
+
+Components must not embed independent tax/business logic that competes with backend authority.
+
+### 29.4 State ownership boundary
+
+Frontend owns:
+
+- local navigation;
+- display preferences;
+- language/direction;
+- transient UI expansion/collapse;
+- unsaved form interaction where explicitly supported.
+
+Authoritative backend/domain owns:
+
+- Case identity/state;
+- Tax-Year state;
+- document/evidence identity;
+- tax decisions;
+- result values;
+- declaration readiness/version;
+- approval lifecycle/authority;
+- submission eligibility;
+- transmission outcome/receipt;
+- audit truth.
+
+The frontend may derive presentation labels but not authoritative domain facts.
+
+### 29.5 Authority-sensitive action rule
+
+Before enabling/executing approval or submission actions, implementation must consume current authoritative state.
+
+Cached visual state is insufficient authority.
+
+After the action, the UI renders the returned/reloaded authoritative result rather than assuming success.
+
+### 29.6 Localization implementation contract
+
+All user-facing product strings are localization resources.
+
+Do not hard-code German/Persian strings into business logic.
+
+Localization keys represent semantic concepts, not word-by-word fragments.
+
+Official form names/identifiers may come from authoritative declaration metadata and are not casually translated.
+
+Locale selection is per-user.
+
+Direction is applied at application/layout level with isolated bidi handling for identifiers and mixed-direction fields.
+
+### 29.7 Terminology artifact required
+
+Before production implementation is accepted, create a versioned terminology resource containing the canonical German/Persian tax vocabulary described in UI-1.
+
+It should support:
+
+- canonical concept key;
+- DE official term;
+- FA approved translation;
+- short labels;
+- explanatory labels;
+- official-name preservation rule.
+
+### 29.8 Responsive implementation contract
+
+Responsive behavior is component-defined, not a separate reduced mobile application.
+
+Core feature parity is mandatory.
+
+Automated/UI acceptance should cover at minimum:
+
+- desktop DE;
+- desktop FA/RTL;
+- mobile DE;
+- mobile FA/RTL.
+
+### 29.9 Accessibility implementation contract
+
+Implementation acceptance must include automated and manual accessibility checks for:
+
+- keyboard navigation;
+- focus order;
+- focus visibility;
+- semantic landmarks/headings;
+- form labels/errors;
+- status announcements;
+- contrast;
+- zoom/reflow;
+- touch targets;
+- screen-reader naming;
+- RTL navigation/focus coherence.
+
+### 29.10 Security acceptance cases
+
+UI acceptance must prove at minimum:
+
+1. Human Gate 1 cannot be confused with external transmission.
+2. Human Gate 2 identifies destination and exact context.
+3. stale approval cannot authorize submission.
+4. cross-case state is not retained.
+5. changing Case/Tax Year clears incompatible presentation state.
+6. export/print cannot display Submitted.
+7. failed submission cannot display Submitted.
+8. backend denial cannot be overridden by client state.
+9. technical review/export data cannot become executable approval authority.
+10. synthetic/demo data cannot enter real case authority.
+
+### 29.11 Contract gaps to verify before coding
+
+Read-only repository verification is required for:
+
+- current Case/Tax-Year DTO/domain shape;
+- document/evidence references;
+- issue representation;
+- result representation;
+- declaration/version/readiness contract;
+- durable approval API/domain interface;
+- submission/receipt interface if implemented;
+- audit/activity event contracts;
+- permissions.
+
+If a required production contract does not yet exist, UI-6 must mark it as a backend dependency rather than inventing it inside the frontend.
+
+### 29.12 Implementation authorization boundary
+
+Completion of UI-6 documentation does not itself authorize code changes.
+
+Actual UI implementation requires a separate explicit Owner authorization and should be executed through the project’s controlled Work/Kernel/Codex development path.
+
