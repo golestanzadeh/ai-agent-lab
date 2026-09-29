@@ -1375,3 +1375,383 @@ Screen actions that depend on executable authority, declaration readiness, submi
 The Screen Specification defines presentation/interaction semantics; it does not create authority.
 
 No implementation authorization is implied by UI-3.
+
+
+## 27. UI-4 — Visual System
+
+### 27.1 Visual character
+
+The product should communicate:
+
+- trust
+- calm
+- precision
+- explainability
+- administrative professionalism without bureaucratic visual overload
+
+The interface should not imitate ELSTER visually. Official form identity is preserved where needed, but AI-Tax-Agent remains a distinct, more understandable product layer.
+
+Avoid “AI theater”: glowing agent avatars, animated neural motifs, chat bubbles as the universal interface, or decorative automation indicators that compete with tax information.
+
+### 27.2 Design-system principles
+
+1. **Information before decoration.**
+2. **Status must not depend on color alone.**
+3. **Consequential actions must be visually distinct from routine actions.**
+4. **Official identity and explanatory UI must be distinguishable.**
+5. **Progressive disclosure controls technical density.**
+6. **German and Persian receive equal design quality.**
+7. **Desktop density may increase without changing mobile semantics.**
+8. **Accessibility is structural, not a later skin.**
+
+### 27.3 Typography
+
+The implementation must choose a font stack with strong, legible German/Latin and Persian/Arabic-script support.
+
+Requirements:
+
+- clear distinction among headings, labels, values, helper text, and technical identifiers;
+- stable numerals and punctuation in mixed-direction content;
+- no font whose Persian glyph quality is visibly inferior to its Latin rendering;
+- sufficient weight range without relying on ultra-light text;
+- technical identifiers may use a suitable monospace fallback when beneficial.
+
+Typography roles:
+
+- Display / page title
+- Section heading
+- Card heading
+- Body
+- Label
+- Helper/secondary
+- Numeric/result emphasis
+- Technical/reference
+
+Exact font family is an implementation/design-selection decision for prototype validation, not hard-coded by this specification.
+
+### 27.4 Type hierarchy
+
+Large typography is reserved for:
+
+- page identity
+- expected refund/payment
+- major approval/submission state
+
+Ordinary tax values should not all compete for visual dominance.
+
+Result values use tabular/consistent numeric treatment where practical.
+
+Long Persian labels must be allowed to wrap naturally; German compound nouns must not force unusable fixed-width controls.
+
+### 27.5 Spacing and layout
+
+Use a consistent spacing scale rather than page-specific arbitrary gaps.
+
+Desktop content uses a readable maximum width for explanatory/review screens, while document/evidence/audit views may use wider work areas.
+
+Cards group meaningful concepts, not every field.
+
+Avoid excessive nested cards. A tax application can become a filing cabinet made of rounded rectangles remarkably quickly.
+
+Mobile uses one primary reading column, with contextual details progressively expanded.
+
+### 27.6 Surface hierarchy
+
+Recommended semantic surface levels:
+
+1. App background
+2. Primary content surface
+3. Grouped/secondary surface
+4. Elevated transient surface
+5. Consequential confirmation surface
+
+Elevation/shadow is restrained. Borders, spacing, and typography carry most hierarchy.
+
+### 27.7 Color semantics
+
+Exact palette values are selected during prototype work, but semantic roles are fixed:
+
+- Primary action / navigation
+- Neutral/informational
+- Success / complete / verified
+- Attention / warning / incomplete
+- Critical / blocking / failed
+- Approval-required
+- Paused/system-neutral
+- Excluded/not-applicable
+
+Rules:
+
+- color never carries meaning alone;
+- status includes icon/text/label;
+- “Approval required” must not look identical to “Error”;
+- “Paused” must not look like tax failure;
+- excluded/not-applicable use quiet neutral treatment rather than alarming colors;
+- successful submission is visually distinct from merely “ready to submit”.
+
+### 27.8 Status component
+
+A shared Status component should support:
+
+- icon
+- localized label
+- semantic tone
+- optional explanation
+- optional technical status reveal
+
+The same semantic state must render consistently across Overview, Documents, Analysis, Declaration, and Submission.
+
+### 27.9 Buttons and action hierarchy
+
+Action levels:
+
+- **Primary** — one clear next action within a context
+- **Secondary** — safe alternative/navigation action
+- **Tertiary/text** — low-emphasis supporting action
+- **Consequential** — approval/transmission/destructive domain action
+
+A page should generally avoid multiple competing primary actions.
+
+Consequential actions use explicit verbs.
+
+Bad:
+- Confirm
+- OK
+- Continue
+
+Preferred:
+- Approve declaration content
+- Authorize electronic transmission
+- Mark as sent by me
+
+The exact localized wording is finalized in the terminology/content pass.
+
+### 27.10 Human Gate visual pattern
+
+Human Gate screens use a dedicated review layout.
+
+They contain:
+
+- clear gate identity
+- scope/context
+- what the user is authorizing
+- what the user is **not** authorizing
+- material warnings
+- bound artifact/version information at an understandable level
+- explicit action
+
+Human Gate 1 and Human Gate 2 use related visual structure but different semantic emphasis.
+
+Human Gate 2 must visually emphasize the external destination/data-leaving boundary.
+
+No pre-checked authorization control.
+
+### 27.11 Forms
+
+Form design requirements:
+
+- persistent labels, not placeholder-only fields;
+- helper text only when it adds meaning;
+- validation next to the affected field and summarized when blocking;
+- locale-aware date/number input;
+- clear optional/required semantics;
+- safe handling of official identifiers;
+- preserve entered data on recoverable errors.
+
+RTL changes layout direction but not the semantic order required by an official identifier.
+
+### 27.12 Tables and lists
+
+Desktop tables are used when comparison across columns matters.
+
+Mobile converts tables to cards/stacked rows unless horizontal comparison is essential.
+
+Audit and evidence tables may remain horizontally scrollable when preserving exact technical columns is more useful than destructive reflow.
+
+Sticky headers may be used for long structured views.
+
+### 27.13 Cards
+
+Cards are appropriate for:
+
+- Case summaries
+- Tax-Year stages
+- tax topics
+- submission methods
+- result summary
+- Attention items
+
+Cards are not used merely to put a border around every paragraph.
+
+Clickable cards must have clear focus/hover/pressed states and not hide unrelated actions inside ambiguous hit areas.
+
+### 27.14 Icons
+
+Icons support labels; they do not replace critical text.
+
+Directional icons mirror in RTL only when their meaning is directional.
+
+Icons representing intrinsic objects/actions do not mirror merely because the language changes.
+
+Official/legal meaning must never depend on a culturally ambiguous icon.
+
+### 27.15 Evidence lineage visualization
+
+Desktop may present lineage horizontally when space permits:
+
+```text
+Document → Fact → Decision → Declaration
+```
+
+Mobile presents the same lineage vertically.
+
+Each node is navigable where permitted.
+
+The visual system distinguishes source evidence from system decisions and official declaration output.
+
+### 27.16 Result presentation
+
+Expected refund/payment is the primary numeric focal point.
+
+The UI must pair the amount with:
+
+- semantic label
+- readiness/provisional state
+- tax year
+- explanation access
+
+Positive visual styling must not imply legal certainty when the result is provisional.
+
+### 27.17 Official declaration presentation
+
+Official form sections use a restrained “official document” treatment distinct from ordinary product cards.
+
+The product may show:
+
+- official German form name
+- translated/explanatory Persian label
+- section/field identity
+- populated value
+- provenance link
+
+It must not visually forge a government-issued receipt or imply that an AI-generated review sheet is an official Finanzamt document.
+
+### 27.18 Document viewer
+
+Document Detail should support a split-view pattern on sufficiently large desktop screens:
+
+- source preview
+- extracted/used information
+
+On mobile, source and extracted information become switchable/stacked views.
+
+Highlighted extraction must not alter the original artifact.
+
+### 27.19 Empty states
+
+Empty states explain the next useful action.
+
+They do not use celebratory illustrations in contexts where “nothing here” may actually mean missing tax information.
+
+Examples:
+
+- No documents yet → explain upload.
+- No Attention items → calm confirmation that no action is currently required.
+- No submission yet → explain readiness rather than treating it as failure.
+
+### 27.20 Loading and progress
+
+Use determinate progress only when the backend provides meaningful progress.
+
+Otherwise use honest indeterminate processing state.
+
+Do not fabricate percentage completion for Agent work.
+
+Long-running processing allows the user to leave the screen safely and return later.
+
+### 27.21 Error design
+
+Errors answer:
+
+1. What happened?
+2. Did my data/action persist?
+3. What can I do now?
+4. Is this a tax/content problem or a system problem?
+
+Technical diagnostics are expandable/copyable but not the first thing shown to ordinary users.
+
+### 27.22 Accessibility baseline
+
+Target accessible interaction from the start:
+
+- keyboard-operable desktop controls
+- visible focus states
+- semantic headings/landmarks
+- meaningful control names
+- adequate contrast
+- non-color status cues
+- touch targets suitable for mobile
+- screen-reader-friendly status changes
+- no critical information available only on hover
+- zoom/reflow resilience
+- reduced-motion-safe behavior
+
+Formal implementation conformance target should be aligned with current applicable accessibility requirements before production release.
+
+### 27.23 Motion
+
+Motion is functional and restrained:
+
+- navigation transition
+- expand/collapse
+- state update
+- progress indication
+
+No decorative motion around tax results, approvals, or submission.
+
+Consequential state changes favor clarity over animation.
+
+### 27.24 Responsive breakpoints
+
+Breakpoints are implementation tokens rather than business logic.
+
+The design responds by available space, preserving semantic hierarchy.
+
+Typical transformations:
+
+- sidebar → compact mobile navigation
+- multi-column dashboard → single column
+- split document viewer → stacked/toggle
+- horizontal evidence lineage → vertical lineage
+- table → card list where comparison is not essential
+
+### 27.25 Localization resilience
+
+Components are designed against realistic long German strings and Persian RTL content from the beginning.
+
+No critical button has a fixed width based on English-length assumptions.
+
+Text truncation is avoided for legal/approval meaning. If truncation is unavoidable in dense lists, full text must be readily accessible.
+
+### 27.26 Visual prototype direction
+
+The first prototype should use a **light, neutral, professional interface** with strong content hierarchy and restrained accent use.
+
+Dark mode is not required for the first prototype and must not delay validation of core tax workflows.
+
+Prototype should first validate:
+
+- comprehension
+- workflow
+- trust
+- bilingual behavior
+- approval safety
+- mobile equivalence
+
+before aesthetic expansion.
+
+### 27.27 UI-4 status
+
+This Visual System defines semantic design rules. Exact visual tokens such as final font family, color values, radii, spacing constants, and breakpoints will be selected/tested during prototype construction and then frozen into the implementation specification.
+
+No implementation authorization is implied by UI-4.
