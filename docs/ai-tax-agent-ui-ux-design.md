@@ -3396,3 +3396,110 @@ Both journeys remain synthetic/inert in the Owner preview.
 
 The previous prototype is therefore a useful visual baseline, but it is not the complete product-structure acceptance artifact.
 
+
+
+## 35. UI-7 — Owner Visual Prototype v3 Validation Build
+
+### 35.1 Purpose
+
+The Owner Visual Prototype was revised without redesigning the already accepted visual baseline. The revision applies the identity, household, tax-year entry and controlled carry-forward decisions from Section 34 and makes them testable before Work/Codex implementation handoff.
+
+The design intent is strict visual/behavioral continuity:
+
+> What the Owner approves in the interactive specification must be the target Work and Codex implement. Implementation is not a second product-design phase.
+
+A later implementation may differ only where an explicit approved specification change, technical impossibility, accessibility requirement, or verified contract conflict requires a governed revision.
+
+### 35.2 Added interactive screens/states
+
+The prototype now includes the prior in-year workflow plus these additional entry/provisioning screens:
+
+1. Entry / Welcome;
+2. New User;
+3. Tax Profile;
+4. Household / Family;
+5. Tax Years;
+6. Create New Tax Year;
+7. Controlled Carry Forward;
+8. What Changed?;
+9. Assessment Setup;
+10. Case Provisioning;
+11. Ready for Document Intake.
+
+The complete preview now contains 29 screen states.
+
+### 35.3 Returning-family test journey
+
+The interactive Owner test path is:
+
+```text
+Entry
+→ Existing User / Tax Profile
+→ Household
+→ Tax Years
+→ Create 2025
+→ Use verified 2024 baseline
+→ Controlled Carry Forward
+→ What Changed in 2025?
+→ Assessment Setup
+→ Synthetic deterministic provisioning
+→ CASE-2025-SYNTH / CREATED
+→ Ready for Document Intake
+→ Documents
+→ existing in-year workflow
+```
+
+The prototype explicitly demonstrates that annual income/documents/expenses/results are not blindly copied from 2024.
+
+### 35.4 New-user/family test journey
+
+The interactive Owner test path is:
+
+```text
+Entry
+→ New User
+→ synthetic user account identity
+→ choose Single or Couple/Family
+→ Household / Family
+→ persistent person identities
+→ Tax Years / first year
+→ Assessment Setup
+→ Case Provisioning
+→ Ready for Document Intake
+```
+
+The prototype uses synthetic identifiers only.
+
+### 35.5 Handoff determinism rule
+
+All future UI documentation, diagrams, contracts, prototypes, implementation packages and code plans must be optimized for the final Work/Codex handoff.
+
+The handoff contract is:
+
+```text
+Owner-approved visual/behavioral specification
+→ canonical UI specification
+→ Work orchestration/governance
+→ Codex exact implementation
+→ automated acceptance evidence
+→ Work acceptance
+→ Owner gate where required
+```
+
+Work and Codex are not authorized to redesign an approved Owner interaction merely because an alternative implementation is aesthetically or technically preferred.
+
+If the specification is materially incomplete or contradictory, the required result is:
+
+```text
+BLOCKED / SPEC_GAP
+```
+
+rather than an invented product decision.
+
+### 35.6 Current acceptance state
+
+This revision is **ready for Owner testing**, but it is not yet `OWNER_UI_ACCEPTED`.
+
+No `UI-SPEC-v1.0` freeze is created by producing the prototype.
+
+Owner observations from testing must be incorporated into the canonical specification before final freeze and controlled Work/Codex implementation handoff.
