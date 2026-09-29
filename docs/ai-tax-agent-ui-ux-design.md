@@ -2819,3 +2819,129 @@ As of 2026-09-29:
 
 Remaining product work is no longer an unresolved visual-design problem. It is controlled implementation plus separately governed production integration.
 
+
+
+## 33. UI-7 — Design Freeze and Owner Interactive Acceptance
+
+### 33.1 Purpose
+
+UI-7 exists to eliminate discretionary product/design decisions from the later Work/Codex implementation handoff.
+
+Work and Codex implement the frozen specification. They do not redesign it.
+
+If implementation discovers a genuine contradiction or missing contract, the required outcome is:
+
+`BLOCKED / SPEC_GAP`
+
+rather than an invented product decision.
+
+### 33.2 Freeze sequence
+
+The accepted sequence is:
+
+```text
+Design decisions freeze
+→ Screen inventory freeze
+→ Component contract freeze
+→ State matrix
+→ Interaction/action matrix
+→ DE/FA terminology/content freeze
+→ Visual tokens
+→ Responsive + RTL/LTR blueprint
+→ Backend contract mapping
+→ Security/Human-Gate blueprint
+→ Acceptance/test matrix
+→ Interactive OWNER PREVIEW
+→ OWNER_UI_ACCEPTANCE
+→ UI-SPEC-v1.0 freeze
+→ controlled Work/Codex implementation handoff
+```
+
+### 33.3 Mandatory Owner preview gate
+
+Before production implementation handoff, the Owner must be able to inspect and interact with a realistic UI preview.
+
+The preview must exercise:
+
+- primary navigation;
+- CASE-001 / 2024 Tax-Year context;
+- Documents;
+- Analysis;
+- Issues/Attention;
+- Result;
+- Declaration;
+- Human Gate 1;
+- Submission method choice;
+- Human Gate 2 presentation;
+- Print path;
+- Evidence/Activity/Audit concepts;
+- German LTR;
+- Persian RTL;
+- responsive/mobile behavior.
+
+### 33.4 Preview safety boundary
+
+The Owner preview is intentionally inert/synthetic.
+
+It must not:
+
+- use real taxpayer data;
+- mutate the Case Registry;
+- create durable approval authority;
+- consume approval;
+- access credentials;
+- perform network transmission;
+- submit to ELSTER/Finanzamt;
+- claim an official receipt.
+
+The purpose is visual/interaction acceptance, not production execution.
+
+### 33.5 Preview fixture discipline
+
+The preview uses accepted CASE-001/2024 frozen design fixtures where tax values are shown:
+
+- expected refund: EUR 133.83;
+- Schulgeld deduction: EUR 144;
+- §35a bases: EUR 90 and EUR 69.13;
+- §35a credit: EUR 31.83;
+- lawyer expenses excluded by Owner decision;
+- medical/pharmacy excluded by Owner decision;
+- EUR 60 donation incomplete/excluded.
+
+No displayed fixture becomes new tax evidence.
+
+### 33.6 OWNER_UI_ACCEPTANCE
+
+The production implementation handoff is blocked until the Owner has visually reviewed the interactive preview.
+
+Owner review may result in:
+
+- `OWNER_UI_ACCEPTED`
+- `OWNER_UI_CHANGES_REQUIRED`
+
+If changes are required, the design specification and preview are revised before freeze.
+
+### 33.7 Post-acceptance change control
+
+After `UI-SPEC-v1.0` is frozen:
+
+- implementation must conform to the frozen spec;
+- Work/Codex cannot reinterpret design decisions;
+- product/design changes require an explicit spec revision;
+- a genuine missing/contradictory requirement returns `BLOCKED / SPEC_GAP`;
+- implementation optimizations are permitted only when externally observable behavior and safety contracts remain unchanged.
+
+### 33.8 Handoff philosophy
+
+The desired handoff is intentionally execution-heavy and decision-light:
+
+```text
+Read scope
+→ implement exactly
+→ run required tests
+→ report evidence
+→ stop at defined gate
+```
+
+The implementation worker is not expected to re-solve IA, workflow, visual hierarchy, localization semantics, Human-Gate meaning, or submission safety.
+
