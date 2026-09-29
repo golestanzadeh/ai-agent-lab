@@ -796,3 +796,582 @@ Before implementation, contract-sensitive details must be verified read-only aga
 - Case/Tax-Year state transitions
 
 No implementation authorization is implied by UI-2.
+
+
+## 25. Decision log — UI-2 approval
+
+### 2026-09-29 — UI-2 Workflow Design approved by Owner
+
+The Owner explicitly approved the UI-2 workflow design recorded in Section 24.
+
+UI-2 is therefore an accepted design baseline for subsequent Screen Specification work.
+
+This approval is a **design decision only**. It is not executable authority, does not grant a runtime approval, does not authorize implementation, and does not authorize external transmission.
+
+## 26. UI-3 — Screen Specification
+
+### 26.1 Screen architecture
+
+The product uses three screen scopes:
+
+1. **Workspace scope** — cross-case overview and attention.
+2. **Case / Tax-Year scope** — the primary tax workflow.
+3. **System / Administration scope** — settings, official-source/version information, integrations, security, and technical health.
+
+The default experience prioritizes tax work. Infrastructure detail remains progressively disclosed.
+
+### 26.2 Global application shell
+
+#### Desktop
+
+Persistent application shell:
+
+- product/workspace identity
+- primary navigation: Overview, Cases, Attention, Administration
+- current user/language control
+- contextual Tax-Year navigation when inside a Tax Year
+- visible but non-intrusive system/attention indicators
+
+The shell must not display raw Agent queues or Kernel internals as ordinary navigation.
+
+#### Mobile
+
+Core global destinations remain reachable with a compact navigation model.
+
+Target information architecture:
+
+- Home
+- Cases
+- Attention
+- More
+
+Tax-Year workflow navigation is presented contextually rather than attempting to fit every workflow stage into the global mobile navigation.
+
+Exact visual navigation component is deferred to UI-4/UI-5, but semantic destinations are fixed.
+
+### 26.3 Screen: Workspace Overview
+
+**Purpose:** answer “What needs my attention and where do my tax matters stand?”
+
+Primary content:
+
+- active/recent Cases
+- Tax-Year status
+- actionable Attention summary
+- next meaningful action
+- recent meaningful Activity
+- submission/readiness status where relevant
+
+Primary actions:
+
+- open Case
+- create Case, when authorized by the real Case contract
+- continue next meaningful action
+- open Attention
+
+Must not become a technical monitoring dashboard.
+
+Empty state explains how to begin without exposing implementation concepts.
+
+### 26.4 Screen: Cases
+
+**Purpose:** browse and select tax identities/contexts.
+
+Each Case item shows only useful summary data:
+
+- display identity/name
+- relevant participant summary
+- available Tax Years
+- latest Tax-Year status
+- Attention indicator
+
+Case creation/edit actions must use the real Case contract and permissions.
+
+The UI must not silently merge Case and Tax-Year identity.
+
+### 26.5 Screen: Case Overview
+
+**Purpose:** show persistent Case context across years.
+
+Content:
+
+- Case identity
+- participants
+- available Tax Years
+- per-year workflow/result/submission status
+- relevant Case-level Attention
+- permitted Case actions
+
+Selecting a Tax Year enters the Tax-Year workflow.
+
+### 26.6 Screen: Tax-Year Overview
+
+**Purpose:** provide the operational home for one tax year.
+
+Header/context:
+
+- Case identity
+- Tax Year
+- overall workflow status
+- Attention count
+- language-independent official identifiers where relevant
+
+Core cards/sections:
+
+- next meaningful action
+- Documents status
+- Analysis status
+- Issues status
+- Result readiness
+- Declaration readiness
+- Approval status
+- Submission status
+- recent Activity
+
+The “Continue” action routes according to authoritative state/readiness, not tab order.
+
+### 26.7 Screen: Documents
+
+**Purpose:** collect and understand source documents.
+
+Views/filters:
+
+- All
+- Needs attention
+- Missing
+- Duplicates
+
+Document row/card:
+
+- human-readable document name/type
+- source/upload date where appropriate
+- processing status
+- tax-topic linkage
+- attention indicator
+
+Primary actions:
+
+- upload/add document
+- open document
+- resolve a document issue when applicable
+
+Technical processing identity is hidden by default.
+
+#### Document Detail
+
+Sections:
+
+- Original
+- Classification
+- Extracted information
+- Used in
+- Issues
+- Provenance
+
+The page distinguishes source content from tax conclusions.
+
+A user can navigate from extracted information to its Evidence/Analysis use.
+
+### 26.8 Screen: Analysis
+
+**Purpose:** explain tax treatment by tax topic.
+
+Topic list/cards use understandable tax domains rather than Agent names.
+
+Each topic shows:
+
+- user-facing status
+- accepted/relevant amount where meaningful
+- number of unresolved Issues
+- concise explanation
+
+#### Analysis Topic Detail
+
+Contains:
+
+- topic summary
+- accepted items
+- excluded items
+- missing/incomplete items
+- evidence links
+- decision explanation
+- relevant legal/official-source reference when available
+- link to affected Result/Declaration values
+
+Excluded items remain visible enough to explain why they were not used.
+
+### 26.9 Screen: Issues
+
+**Purpose:** resolve human-actionable conditions for the current Tax Year.
+
+Filters:
+
+- Action required
+- Review required
+- Missing information
+- Missing evidence
+- Conflict
+- Approval required
+- Validation problem
+- System problem
+
+Each Issue includes:
+
+- what is wrong/needed
+- why it matters
+- affected stage/topic
+- exact requested user action
+- severity/blocking meaning
+- evidence/document context
+- status/history
+
+Resolving an Issue must use an explicit domain action. Cosmetic dismissal cannot bypass a blocking condition.
+
+### 26.10 Screen: Global Attention
+
+**Purpose:** cross-case actionable inbox.
+
+Each item identifies:
+
+- Case
+- Tax Year
+- issue/action type
+- concise requested action
+- urgency/dependency where authoritative
+- affected workflow location
+
+Opening an item deep-links into the exact Tax-Year context.
+
+Global Attention does not duplicate resolved history; resolved items remain discoverable through Activity/Audit as appropriate.
+
+### 26.11 Screen: Result
+
+**Purpose:** present the tax outcome without forcing the user to read declaration forms.
+
+Primary summary:
+
+- expected refund or payment
+- result status: provisional/final-ready as authoritative
+- calculation summary
+
+Breakdown may include:
+
+- taxable income
+- calculated tax
+- credits/reductions
+- tax already paid
+- expected refund/payment
+
+Each material value can expose “Why?” leading to Analysis/Evidence.
+
+For CASE-001/2024 prototype fixtures, expected refund is EUR 133.83.
+
+Provisional values must be unmistakably different from declaration-ready values.
+
+### 26.12 Screen: Declaration
+
+**Purpose:** let the user review the official declaration representation.
+
+Content hierarchy:
+
+1. declaration readiness/validation summary
+2. included official forms
+3. user-friendly section summary
+4. official fields/values
+5. evidence/provenance links
+6. technical mapping on demand
+
+Official German form identity remains visible in both languages.
+
+The user can navigate:
+
+```text
+Declaration field
+→ Tax decision
+→ Evidence
+→ Source document
+```
+
+and the reverse direction.
+
+Primary actions depend on authoritative readiness.
+
+A declaration with blocking validation errors cannot present Content Approval as safely available.
+
+### 26.13 Screen: Content Approval — Human Gate 1
+
+**Purpose:** obtain explicit human confirmation of a concrete declaration version.
+
+This is a dedicated checkpoint, not a generic modal attached to a vague “Approve” button.
+
+Review content:
+
+- Case
+- Tax Year
+- declaration/version identity
+- included forms
+- result summary
+- unresolved warnings permitted by the authoritative contract
+- statement of what is being approved
+- clear statement that no external transmission is authorized
+
+Actions:
+
+- return to review
+- approve content, only when authoritative approval request is valid
+- reject/request correction where supported by the real contract
+
+After approval, the UI displays the bound approval state/reference in user-friendly form, with technical details available progressively.
+
+### 26.14 Screen: Submission
+
+**Purpose:** choose what happens to an already reviewed/approved declaration.
+
+Top section:
+
+- declaration approval state
+- submission readiness
+- current submission status
+
+Method cards:
+
+- Electronic submission
+- Print and submit personally
+- Export only / submit later
+
+Each method displays:
+
+- availability
+- reason if unavailable
+- what the method does
+- whether data leaves AI-Tax-Agent
+- next required step
+
+No method may imply submission merely by being selected.
+
+### 26.15 Screen: External Transmission Approval — Human Gate 2
+
+**Purpose:** obtain explicit authorization for one external transmission action.
+
+Dedicated confirmation screen shows:
+
+- destination
+- Case
+- Tax Year
+- declaration/version
+- transmission method
+- data/action summary
+- approval expiry where authoritative
+- explicit external-data warning
+
+Primary destructive/consequential action wording must name the action, e.g. “Authorize electronic transmission”, rather than generic “Confirm”.
+
+Cancellation leaves the declaration not submitted.
+
+This screen must never be reused for ordinary internal review.
+
+### 26.16 Screen: Electronic Submission Outcome
+
+**Purpose:** report authoritative transmission outcome.
+
+Possible presentation states include:
+
+- preparing
+- authorization required
+- submitting
+- submitted successfully
+- failed
+- outcome uncertain / requires verification, if the backend contract can produce such a state
+
+Success is shown only from authoritative submission evidence/receipt.
+
+Where a receipt/reference exists, it is preserved and linked to Activity/Audit.
+
+A failed attempt must not visually become “Submitted”.
+
+### 26.17 Screen: Official Print Package
+
+**Purpose:** prepare a legally appropriate paper declaration when eligible.
+
+Content:
+
+- eligibility/status
+- official forms included
+- Tax Year
+- preview
+- signature instructions where applicable
+- print/download action
+- personal submission instructions
+
+Separate action/link:
+
+- generate/open Review & Evidence Package
+
+The UI must visually distinguish:
+
+**Official Declaration Print Package** from **AI-Tax-Agent Review/Evidence Package**.
+
+User status actions such as “Mark as sent by me” must state that this is a personal record, not confirmation of Finanzamt receipt.
+
+### 26.18 Screen: Export
+
+**Purpose:** obtain outputs without external submission.
+
+Possible output categories:
+
+- official declaration output where available
+- Review/Evidence Package
+- other future authorized export artifacts
+
+Export completion leaves submission state unchanged.
+
+### 26.19 Screen: Evidence
+
+**Purpose:** inspect traceability.
+
+Primary model:
+
+```text
+Source Document
+→ Extracted Fact
+→ Tax Decision
+→ Declaration Field
+```
+
+Evidence detail includes:
+
+- source reference
+- extracted fact/value
+- tax use/decision
+- affected result/declaration location
+- provenance
+- verification/acceptance state where authoritative
+
+Technical hashes/references are progressively disclosed.
+
+### 26.20 Screen: Activity
+
+**Purpose:** understandable chronological history.
+
+Examples:
+
+- document added
+- analysis completed
+- issue created/resolved
+- result changed
+- declaration prepared
+- content approved
+- print package prepared
+- transmission authorized/submitted
+
+Activity uses human-readable language and links back to affected objects.
+
+### 26.21 Screen: Audit
+
+**Purpose:** specialist/professional verification.
+
+May expose:
+
+- timestamp
+- actor
+- event type
+- artifact/version references
+- evidence references
+- approval lifecycle
+- acceptance/checkpoint references
+- integrity/hash data
+
+Audit is not optimized as the ordinary user's primary workflow.
+
+### 26.22 Screen: Administration
+
+Personal mode exposes only relevant areas.
+
+Potential sections:
+
+- Profile / Workspace
+- Language
+- Security
+- Official sources / declaration versions
+- Integrations
+- System health
+- Users & permissions when multi-user mode exists
+
+Dangerous/system actions are separated from routine tax workflow actions.
+
+### 26.23 Cross-screen loading, empty, error, and stale states
+
+Every primary screen specification includes:
+
+- loading
+- empty
+- ready
+- needs attention
+- error
+- stale/superseded where applicable
+
+A stale view must not retain an actionable approval/submission control whose authoritative context has changed.
+
+On authority-sensitive screens, state should be revalidated before consequential action.
+
+### 26.24 Mobile screen behavior
+
+On mobile:
+
+- cards replace wide summary tables where appropriate;
+- critical context (Case + Tax Year) remains visible;
+- long official identifiers can be copied/expanded without corrupting RTL layout;
+- primary action remains reachable without hiding warnings;
+- evidence lineage may use a vertical step presentation;
+- declaration sections collapse progressively;
+- Human Gate screens remain dedicated full screens rather than compressed dialogs.
+
+No consequential action is made easier to trigger merely to save screen space.
+
+### 26.25 RTL/LTR screen behavior
+
+Persian mode mirrors structural navigation where appropriate, while data with inherent direction remains isolated.
+
+Examples that retain controlled LTR/data formatting:
+
+- IBAN
+- Steuer-ID
+- Steuernummer where required for readability
+- filenames
+- URLs/references
+- hashes
+- ERiC/official field identifiers
+- numeric/monetary formatting according to locale rules
+
+Mixed German/Persian official labels must be visually stable and selectable/copyable.
+
+### 26.26 Screen priority for prototype
+
+The first prototype should demonstrate the complete product logic with a focused subset rather than drawing every administration screen.
+
+Priority prototype screens:
+
+1. Workspace Overview
+2. Tax-Year Overview
+3. Documents
+4. Document Detail
+5. Analysis
+6. Analysis Topic Detail
+7. Issues / Attention
+8. Result
+9. Declaration
+10. Human Gate 1
+11. Submission
+12. Human Gate 2
+13. Official Print Package
+14. Evidence
+
+CASE-001/2024 is the reference data fixture.
+
+### 26.27 UI-3 contract boundary
+
+Screen actions that depend on executable authority, declaration readiness, submission eligibility, receipts, or approval lifecycle must be wired to the real backend contracts during implementation.
+
+The Screen Specification defines presentation/interaction semantics; it does not create authority.
+
+No implementation authorization is implied by UI-3.
