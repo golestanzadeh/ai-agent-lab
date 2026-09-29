@@ -2945,3 +2945,454 @@ Read scope
 
 The implementation worker is not expected to re-solve IA, workflow, visual hierarchy, localization semantics, Human-Gate meaning, or submission safety.
 
+
+
+## 34. UI-7 — Identity, Household, Tax-Year Entry and Carry-Forward
+
+### 34.1 Status
+
+**FROZEN DESIGN DIRECTION — required before OWNER_UI_ACCEPTANCE**
+
+Owner review of the interactive preview identified a structural gap: the current preview adequately demonstrates the in-year workflow, but it does not yet expose the complete entry lifecycle for a new user, an existing user, a new taxpayer/family profile, or a new tax year.
+
+This section closes the design-level gap and aligns the UI with the existing repository contracts:
+
+- `docs/case-management.md`
+- `docs/case-registry.md`
+- `docs/case-creation-workflow.md`
+- `docs/case-party-model.md`
+
+### 34.2 Identity correction
+
+The UI must preserve the repository's existing identity model.
+
+A `case_id` is **not** the permanent identity of a taxpayer across years.
+
+The required model is:
+
+```text
+User Account
+   ↓
+Tax Profile
+   ↓
+Persistent Person / Entity Identity
+   ↓
+person_id / entity_id
+   ↓
+Tax-period-specific cases
+   ├── 2024 → CASE-2024-....
+   ├── 2025 → CASE-2025-....
+   └── 2026 → CASE-2026-....
+```
+
+Therefore:
+
+- `person_id` / `entity_id` persists across tax periods;
+- each tax-period case has its own isolated `case_id`;
+- `tax_period` is explicit and authoritative;
+- a later tax year must not be represented as merely changing the year field on an older case;
+- cross-year continuity is resolved through the persistent identity registry;
+- each case remains independently scoped for storage, processing, audit, evidence, calculation and execution.
+
+### 34.3 Account identity versus tax identity
+
+The product UI requires a user-facing account identity in addition to the tax-domain identities.
+
+Conceptually:
+
+```text
+user_id
+   ↓
+authorized Tax Profile(s)
+   ↓
+person_id / entity_id
+   ↓
+case_id per tax period
+```
+
+The user-facing account identifier is used for authentication/account retrieval and must not replace `person_id`, `entity_id`, Steuer-ID, Steuernummer or `case_id`.
+
+Authentication implementation remains a separately governed production dependency. The preview may represent this flow synthetically.
+
+### 34.4 New-user entry flow
+
+A first-time natural-person user must have a clear entry path:
+
+```text
+Welcome
+→ New user
+→ Create account / user identity
+→ Create Tax Profile
+→ Create primary persistent person identity
+→ Define household/family structure
+→ Select first tax year
+→ Tax-year setup
+→ Deterministic Case Creation Workflow
+→ case_id provisioned
+→ Document Intake
+→ Tax Workflow
+```
+
+The UI must not require the user to understand internal IDs in order to complete onboarding.
+
+Internal identifiers remain available where useful for support/audit but are not the primary human interaction model.
+
+### 34.5 Existing-user entry flow
+
+An existing user must be able to return through their account/user identity and recover the already-known profile without re-entering stable identity data.
+
+Conceptually:
+
+```text
+Welcome
+→ Existing user
+→ Authenticate / resolve user account
+→ Resolve authorized Tax Profile
+→ Resolve persistent person/entity identity
+→ Show existing tax years/cases
+→ Resume an existing year
+   OR
+→ Create a new tax year
+```
+
+Identity resolution must be deterministic and fail closed on ambiguity.
+
+### 34.6 Natural-person household model in the UI
+
+The product must support at minimum:
+
+#### Single taxpayer
+
+```text
+Tax Profile
+└── Primary taxpayer
+```
+
+#### Couple / family
+
+```text
+Tax Profile / Household
+├── Primary taxpayer
+├── Spouse / registered partner
+└── Children
+    ├── Child A
+    ├── Child B
+    └── ...
+```
+
+Each natural person remains a distinct person identity.
+
+A household/family is a relationship/context model, not a replacement for individual person identity.
+
+The UI must preserve the Case Party Model distinction between:
+
+- primary taxpayer;
+- spouse/partner;
+- child;
+- person-specific facts;
+- shared household facts;
+- shared versus individually borne expenses;
+- documents referring to one or multiple persons.
+
+### 34.7 Spouse/partner and assessment setup
+
+For tax years where legally applicable, the UI must represent assessment mode explicitly rather than infer it from marital status or Steuerklasse.
+
+Supported conceptual states remain:
+
+- `JOINT_ASSESSMENT` / Zusammenveranlagung;
+- `INDIVIDUAL_ASSESSMENT` / Einzelveranlagung;
+- `NOT_APPLICABLE`;
+- `UNKNOWN_PENDING_VERIFICATION`.
+
+The UI must not treat Steuerklasse as the final assessment mode.
+
+Each spouse/partner may have separate:
+
+- identity;
+- employment;
+- ELStAM / Steuerklasse history;
+- income;
+- withholding;
+- documents;
+- insurance;
+- expenses;
+- evidence.
+
+Shared household facts remain separately modeled.
+
+### 34.8 Children as first-class parties
+
+Children relevant to the tax case must be represented as first-class case parties, not as free-text household labels.
+
+The UI must support, when relevant:
+
+- persistent child identity/reference;
+- relationship to parent(s);
+- date of birth / age context;
+- residence / household membership;
+- tax-year-specific status;
+- education/training;
+- Kindergeld context;
+- Kinderfreibetrag-related facts;
+- childcare costs;
+- Schulgeld;
+- other child-related expenses/benefits;
+- evidence supporting material claims.
+
+The UI must not assume every child-related document or expense belongs to the primary taxpayer.
+
+### 34.9 Tax Years area
+
+The Tax Profile / Case entry experience requires a dedicated **Tax Years** view.
+
+Example:
+
+```text
+Tax Profile
+└── Tax Years
+    ├── 2024   Completed / existing case
+    ├── 2025   In progress / existing case
+    └── + Create new tax year
+```
+
+For each year the UI should expose:
+
+- year;
+- corresponding case;
+- lifecycle/readiness;
+- last meaningful activity;
+- result when available;
+- next meaningful action;
+- Resume/Open action.
+
+The user must never need to create a duplicate case merely to continue an existing tax year.
+
+### 34.10 Create New Tax Year
+
+The **Create new tax year** action is a product entry point into the existing deterministic Case Creation Workflow.
+
+Conceptually:
+
+```text
+Existing Tax Profile
+→ Create New Tax Year
+→ Select tax period
+→ Check existing case/idempotency
+→ Choose prior-year baseline when available
+→ Review carried-forward profile/household facts
+→ Confirm changes for new year
+→ Resolve assessment setup
+→ Provision new isolated case
+→ Initialize tax-year workflow
+→ Ready for Document Intake
+```
+
+Frontend presentation must not create case identity independently.
+
+The authoritative creation path remains the backend Case Creation Workflow and registries.
+
+### 34.11 Carry-forward principle
+
+The system must minimize repetitive data entry for returning users.
+
+However:
+
+**carry-forward is not blind copy.**
+
+Information is divided into three conceptual classes.
+
+#### A. Persistent identity / relationship information
+
+Examples:
+
+- persistent person identity;
+- spouse/partner identity;
+- child identity;
+- established family relationships.
+
+These may be reused as the starting baseline, subject to authorization and identity consistency.
+
+#### B. Tax-year-specific information
+
+Examples:
+
+- annual income;
+- Lohnsteuerbescheinigung;
+- annual expenses;
+- donations;
+- Schulgeld claim for that year;
+- §35a evidence for that year;
+- annual insurance/payment documents;
+- annual declaration fields/results.
+
+These must not be silently copied as current-year facts.
+
+#### C. Time-dependent facts requiring reconfirmation
+
+Examples:
+
+- address/residence;
+- marital status;
+- permanent separation;
+- household membership;
+- employment;
+- Steuerklasse / ELStAM;
+- child residence;
+- child education/training;
+- insurance coverage;
+- other material status changes.
+
+The UI must present prior-year values as a baseline and ask whether they changed during the new tax period.
+
+### 34.12 Prior-year review interaction
+
+When an existing profile creates 2025 after completing 2024, the product should offer:
+
+**Use verified 2024 profile information as the starting point for 2025**
+
+The next step must be a structured **What changed?** review rather than an opaque copy operation.
+
+Conceptually:
+
+```text
+2024 verified baseline
+        ↓
+2025 new tax year
+        ↓
+Review persistent household members
+        ↓
+Review time-dependent facts
+        ↓
+Changed?
+ ├── No → confirm prior value for new-year baseline where permitted
+ └── Yes → collect effective date/new value/evidence where relevant
+        ↓
+Create/provision 2025 case
+```
+
+The UI must make provenance clear:
+
+- carried from prior year;
+- confirmed for current year;
+- changed for current year;
+- unknown / requires evidence.
+
+### 34.13 No silent legal carry-over
+
+A prior-year fact must not become authoritative for the new tax year merely because it existed in the previous case.
+
+Where the fact is legally/materially time-dependent, the new-year workflow must obtain confirmation, evidence or authoritative derivation according to the applicable contract.
+
+The UI must distinguish:
+
+- `Carried forward as baseline`;
+- `Confirmed for this tax year`;
+- `Changed`;
+- `Needs verification`.
+
+### 34.14 Required entry/provisioning screens
+
+Before final OWNER_UI_ACCEPTANCE, the interactive prototype must include at least:
+
+1. Welcome / entry;
+2. New User / Existing User;
+3. Tax Profile;
+4. Household / Family;
+5. Person Detail;
+6. Children;
+7. Tax Years;
+8. Create New Tax Year;
+9. Carry Forward from Previous Year;
+10. What Changed Since Previous Year?;
+11. Assessment Setup;
+12. Case Provisioning;
+13. Ready for Document Intake;
+14. transition into the existing Documents → Analysis → Issues → Result → Declaration → Approval → Submission workflow.
+
+These screens are part of the product structure, not optional onboarding decoration.
+
+### 34.15 Provisioning boundary
+
+The provisioning UI is a presentation/orchestration boundary over deterministic backend contracts.
+
+Required conceptual flow:
+
+```text
+UI
+→ validated creation request
+→ identity resolution
+→ Person/Entity Registry
+→ Case Creation Workflow
+→ Case Registry
+→ exact case storage scope
+→ initial case state
+→ creation audit event
+→ Deterministic Orchestrator Kernel / subsequent workflow
+```
+
+The UI must not:
+
+- generate authoritative `case_id` by itself;
+- silently merge identities;
+- search broad storage to guess a case;
+- copy documents across case boundaries;
+- create current-year tax facts from prior-year facts without the appropriate confirmation;
+- bypass case isolation.
+
+### 34.16 Resume behavior
+
+If the requested tax year already has a valid case, the default product behavior is **Resume/Open**, not create another case.
+
+Duplicate creation must be prevented by the backend idempotency and registry contracts and represented clearly in the UI.
+
+### 34.17 UX principle — enter once, reconfirm only when necessary
+
+The accepted product principle is:
+
+> Stable identity and household information should be entered once. A new tax year should request only new annual information and meaningful confirmation of facts that can change over time.
+
+This principle must not weaken evidence, legal-year applicability, identity isolation or auditability.
+
+### 34.18 Preview requirement
+
+The next Owner Visual Prototype revision must make both of these journeys clickable:
+
+#### Journey A — returning family
+
+```text
+Existing user
+→ Tax Profile
+→ Household
+→ Tax Years
+→ + 2025
+→ Carry forward verified 2024 baseline
+→ What changed?
+→ Assessment setup
+→ Provision synthetic 2025 case
+→ Ready for Documents
+```
+
+#### Journey B — new taxpayer/family
+
+```text
+New user
+→ Account
+→ Primary taxpayer
+→ Single OR Couple/Family
+→ Spouse/partner if applicable
+→ Children if applicable
+→ First tax year
+→ Assessment setup
+→ Provision synthetic case
+→ Ready for Documents
+```
+
+Both journeys remain synthetic/inert in the Owner preview.
+
+### 34.19 OWNER_UI_ACCEPTANCE impact
+
+`OWNER_UI_ACCEPTANCE` remains blocked until this entry, identity, household, tax-year creation and carry-forward lifecycle is represented in the interactive prototype and reviewed by the Owner.
+
+The previous prototype is therefore a useful visual baseline, but it is not the complete product-structure acceptance artifact.
+
