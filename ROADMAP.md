@@ -12,6 +12,7 @@ Last reconciled: **2026-09-29**
 - Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
 - Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 is `STOP_DIAGNOSTIC` before implementation because the protected hash-pinned 2024 annual documentation/schema artifacts are unavailable locally and the ELSTER developer session requires private re-authentication. Resume by verifying the recovered 44.3.6.0 package hashes; do not restart the frozen tax analysis.
+- The DR-01 source blocker is resolved: the portable Protected Official Source Store and deterministic hash-verifying resolver are accepted. The previous STOP diagnostic is retained as history; DR-01 is the dependency-ready continuation.
 
 ## Track 1 — Autonomous project control
 
@@ -74,6 +75,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 - `docs/case001-donation-evidence-2024.md` records the bounded EUR 60 Bjorn Steiger Stiftung reconciliation. The PDF/payment match is exact, but the recipient-produced document lacks three explicit section 50(4) EStDV particulars; status is `DONATION_EVIDENCE_INCOMPLETE` and the accepted EUR 133.83 result is unchanged.
 - `docs/case001-declaration-readiness-2024.md` and its JSON companion freeze the accepted EUR 133.83 tax case and record 18 declaration requirements/decisions. Current profile v14 has source-backed Anlage N field semantics but no accepted real-case binding and lacks the gross-wage cent-to-whole-euro transformation; seven affirmative requirements need missing forms/sections. Queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05` is the bounded remediation plan and requires one future Owner implementation authority, not per-field approvals.
 - `docs/case001-dr01-stop-diagnostic-20260929.md` and its JSON companion record the authorized queue's fail-closed DR-01 stop, exact protected-artifact identities, exhausted bounded recovery, capacity observations, and precise continuation after private ELSTER developer re-authentication.
+- `docs/protected-official-source-store.md` records acceptance of the portable local ERiC 44.3.6.0 source store, registry/resolver, exact identities, minimal extraction, backup separation, and fail-closed tests.
 
 ## Cleanup rule
 

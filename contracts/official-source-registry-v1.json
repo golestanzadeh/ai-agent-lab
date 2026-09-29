@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "provider": "ELSTER",
+  "release": "44.3.6.0",
+  "protected_root_environment_variable": "AI_TAX_PROTECTED_SOURCE_ROOT",
+  "sources": [
+    {
+      "logical_source_id": "ELSTER_ERIC_44_3_6_0_DOCUMENTATION_PACKAGE",
+      "relative_path": "ELSTER/ERiC/44.3.6.0/packages/ERiC-44.3.6.0-Dokumentation.zip",
+      "sha256": "bad21c27ecce56d04fc04bccfd2dfa17b9ff2455aa878758100fc73a28492ad5",
+      "size_bytes": 123217775,
+      "tax_years": [2024],
+      "provenance": "Official ELSTER developer package; privately recovered by Owner and independently verified locally"
+    },
+    {
+      "logical_source_id": "ELSTER_ERIC_44_3_6_0_SCHEMA_DOCUMENTATION_PACKAGE",
+      "relative_path": "ELSTER/ERiC/44.3.6.0/packages/ERiC-44.3.6.0-Schemadokumentation.zip",
+      "sha256": "a77cca9e5a0ddb4eae9e2548f57fc3a064432c1b71c1ff1e53ca9085a8be779e",
+      "size_bytes": 35503440,
+      "tax_years": [2024],
+      "provenance": "Official ELSTER developer package; privately recovered by Owner and independently verified locally"
+    },
+    {
+      "logical_source_id": "ELSTER_ERIC_44_3_6_0_VORDRUCK_ARCHIVE",
+      "relative_path": "ELSTER/ERiC/44.3.6.0/packages/Vordrucke_archive_ERiC-44.3.6.0.zip",
+      "sha256": "488953db7d11385a09f2b1ab09a84b68be27321d6bf79078850032279823862b",
+      "size_bytes": 979804359,
+      "tax_years": [2024],
+      "provenance": "Official ELSTER developer package; privately recovered by Owner and independently verified locally"
+    },
+    {
+      "logical_source_id": "ELSTER_E10_2024_ANNUAL_DOCUMENTATION",
+      "relative_path": "ELSTER/ERiC/44.3.6.0/extracted/ESt/2024/Jahresdokumentation_E10_2024.ods",
+      "sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
+      "size_bytes": 960439,
+      "tax_years": [2024],
+      "provenance": "Exact artifact minimally extracted from the verified documentation package"
+    },
+    {
+      "logical_source_id": "ELSTER_E10_2024_XSD",
+      "relative_path": "ELSTER/ERiC/44.3.6.0/extracted/ESt/2024/E10-2024.xsd",
+      "sha256": "86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272",
+      "size_bytes": 1412558,
+      "tax_years": [2024],
+      "provenance": "Exact artifact minimally extracted from the verified documentation package"
+    }
+  ]
+}
