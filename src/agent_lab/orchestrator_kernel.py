@@ -1494,6 +1494,152 @@ class OrchestratorKernel:
             "snapshot": snapshot,
         }
 
+    def next_authorized_project_action(
+        self,
+        graph_path: Path | str,
+        *,
+        branch: str,
+        repository_safe: bool,
+        capacity: Any,
+        now: Any = None,
+    ) -> Any:
+        """Derive, but never dispatch, the next project-graph action.
+
+        The query is intentionally hosted by the existing Kernel so audit and
+        checkpoint integrity are verified first.  The graph is a planning
+        projection and cannot add a permission, task, authority, or scheduler.
+        """
+        from .project_execution_graph import load_graph, next_authorized_action
+
+        self.verify_audit_chain()
+        recovered = self.recover_latest_checkpoint()
+        return next_authorized_action(
+            load_graph(graph_path),
+            branch=branch,
+            repository_safe=repository_safe,
+            recovery_checkpoint=recovered["checkpoint_id"],
+            capacity=capacity,
+            now=now,
+        )
+
+    def record_governed_notification_audit(
+        self, *, contract: dict[str, Any], event_identity: str, event_class: str,
+        state: str, content_hash: str, actor_id: str, original_blocker: str,
+        approval_store: Any, content_approval_id: str, destination_approval_id: str,
+        artifact_version: str, case_id: str, run_id: str, purpose: str,
+        destination_identity: str, now: datetime,
+    ) -> str:
+        """Record privacy-minimized notification state in the existing audit chain.
+
+        This method does not deliver a message.  It supplies durable
+        deduplication and failure evidence without creating another store.
+        """
+        from .project_execution_graph import notification_decision
+
+        allowed_states = {"AUTHORIZED_SYNTHETIC", "DELIVERED", "DELIVERY_FAILED"}
+        if state not in allowed_states:
+            raise ContractError("unknown notification audit state")
+        for name, value in (("event_identity", event_identity), ("event_class", event_class), ("content_hash", content_hash), ("actor_id", actor_id), ("original_blocker", original_blocker)):
+            if not isinstance(value, str) or not value.strip():
+                raise ContractError(f"{name} must be non-empty")
+        prior = []
+        for row in self._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='NOTIFICATION_STATE'").fetchall():
+            payload = json.loads(row["payload_json"])
+            if payload.get("event_identity") == event_identity:
+                prior.append(payload)
+        if any(item.get("state") == "DELIVERED" for item in prior):
+            return "DEDUPLICATED"
+        content = approval_store.get_submission_approval(content_approval_id)
+        destination = approval_store.get_submission_approval(destination_approval_id)
+        from .elster_dry_run import ApprovalStatus as SubmissionApprovalStatus
+        if content.status is not SubmissionApprovalStatus.APPROVED or destination.status is not SubmissionApprovalStatus.APPROVED:
+            raise PermissionDenied("notification approval is not APPROVED")
+        if content.issued_at > now or content.expires_at <= now or destination.issued_at > now or destination.expires_at <= now:
+            raise PermissionDenied("notification approval is expired or not yet valid")
+        exact = (
+            destination.content_release_approval_id == content.approval_id
+            and content.artifact_reference == content_hash == destination.artifact_reference
+            and content.artifact_version == artifact_version == destination.artifact_version
+            and (content.case_id, content.run_id) == (case_id, run_id) == (destination.case_id, destination.run_id)
+            and content.purpose == purpose == destination.purpose
+            and destination.destination_identity == destination_identity
+            and destination.destination_identity == contract["destination_reference"]
+            and destination.channel == contract["channel"]
+        )
+        if not exact:
+            raise PermissionDenied("notification approval binding mismatch")
+        failed_count = sum(item.get("state") == "DELIVERY_FAILED" for item in prior)
+        if failed_count and not destination.single_retry_permitted:
+            return "FAILED_ATTEMPT_RECORDED_NO_RETRY_AUTHORITY"
+        if failed_count >= 2:
+            return "RETRY_BUDGET_EXHAUSTED"
+        delivered = tuple(item["event_identity"] for item in prior if item.get("state") == "DELIVERED")
+        decision = notification_decision(
+            contract, event=event_class, event_identity=event_identity,
+            stage_one=True, stage_two=True,
+            delivered_identities=delivered,
+        )
+        if decision != "AUTHORIZED_ONCE":
+            raise PermissionDenied(f"notification not authorized: {decision}")
+        approval_store.consume_submission_pair(
+            content_approval_id, destination_approval_id,
+            f"SYNTH-NOTIFICATION-{event_identity}",
+        )
+        with self._connection:
+            self._append_event(
+                "NOTIFICATION_STATE", "OWNER_EXCEPTION_NOTIFICATION", event_identity,
+                actor_id,
+                {"event_identity": event_identity, "event_class": event_class, "state": state,
+                 "content_hash": content_hash, "original_blocker": original_blocker},
+            )
+        return state
+
+    def record_continuation_capsule(
+        self, *, action_id: str, capacity_state: str, cost_class: str,
+        reset_timestamp: str, checkpoint_id: str,
+    ) -> None:
+        """Persist the exact pause capsule in the existing audit chain."""
+        if capacity_state not in {"TOKEN_PAUSED", "CAPACITY_DEFERRED"}:
+            raise ContractError("continuation capsule requires a capacity stop")
+        if cost_class not in {"CHEAP", "BOUNDED", "EXPENSIVE"}:
+            raise ContractError("continuation capsule requires a closed cost class")
+        for name, value in (("action_id", action_id), ("reset_timestamp", reset_timestamp), ("checkpoint_id", checkpoint_id)):
+            if not isinstance(value, str) or not value.strip():
+                raise ContractError(f"{name} must be non-empty")
+        _parse_timestamp(reset_timestamp, "reset_timestamp")
+        with self._connection:
+            self._append_event(
+                "CONTINUATION_CAPSULE", "PROJECT_ACTION", action_id,
+                "PLAN_LIMIT_CONTROLLER",
+                {"action_id": action_id, "capacity_state": capacity_state,
+                 "cost_class": cost_class, "reset_timestamp": reset_timestamp,
+                 "checkpoint_id": checkpoint_id},
+            )
+
+    def record_scheduler_arm_failure(self, *, action_id: str, checkpoint_id: str, technical_cause: str) -> None:
+        for name, value in (("action_id", action_id), ("checkpoint_id", checkpoint_id), ("technical_cause", technical_cause)):
+            if not isinstance(value, str) or not value.strip():
+                raise ContractError(f"{name} must be non-empty")
+        with self._connection:
+            self._append_event(
+                "SCHEDULER_ARM_FAILURE", "PROJECT_ACTION", action_id,
+                "PLAN_LIMIT_CONTROLLER",
+                {"action_id": action_id, "checkpoint_id": checkpoint_id,
+                 "technical_cause": technical_cause},
+            )
+
+    def record_unknown_capacity_pause(self, *, action_id: str, checkpoint_id: str) -> None:
+        for name, value in (("action_id", action_id), ("checkpoint_id", checkpoint_id)):
+            if not isinstance(value, str) or not value.strip():
+                raise ContractError(f"{name} must be non-empty")
+        with self._connection:
+            self._append_event(
+                "UNKNOWN_CAPACITY_PAUSE", "PROJECT_ACTION", action_id,
+                "PLAN_LIMIT_CONTROLLER",
+                {"action_id": action_id, "checkpoint_id": checkpoint_id,
+                 "retry_policy": "BOUNDED_FRESH_OBSERVATION_ONLY"},
+            )
+
     @staticmethod
     def inspect_read_only(database_path: Path | str) -> dict[str, Any]:
         path = Path(database_path).resolve()

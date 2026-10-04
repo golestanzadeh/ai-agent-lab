@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "logical_identity": "plan-limit-continuation-guard",
+  "kind": "heartbeat",
+  "duplicate_count": 0,
+  "active_execution_policy": "PACKAGE_OR_STAGE_BOUNDARY_CAPACITY_CHECKS",
+  "capacity_pause_policy": "ONE_RESET_ALIGNED_WAKE_USING_ACTUAL_SERVICE_TIMESTAMP",
+  "current_state": "PAUSED_NO_CAPACITY_PAUSE",
+  "current_schedule": "EXPIRED_HISTORICAL_ONE_SHOT",
+  "arm_preconditions": ["durable checkpoint", "exact next action", "closed cost class", "actual reset timestamp"],
+  "wake_preconditions": ["fresh entitlement", "fresh live capacity", "safe repository recovery", "valid authority", "satisfied dependencies"],
+  "host_prerequisites": ["host powered on", "Codex desktop available", "repository available"],
+  "missed_wake_recovery": "RECOVER_FROM_DURABLE_CHECKPOINT_ON_NEXT_LEGITIMATE_WAKE",
+  "separate_non_quota_workers": ["AI-Tax-Agent Local Sync", "AI-Tax-Agent Windows Relay"]
+}
