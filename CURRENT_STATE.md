@@ -1,8 +1,10 @@
 # Current State
 
+The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The sole reset-aligned continuation guard is reconciled and remains paused because execution is active rather than capacity-paused. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. Exact next authorized action is DR-03.
+
 ## 2026-10-04 — infrastructure repair boundary
 
-DR-01 and DR-02 are `PASS`. DR-03 remains `HUMAN_GATE`: all six Owner-declared facts, including the responsible Familienkasse, are `SUPPLIED_NOT_REGISTERED`; their sensitive values are not reproduced in Git. DR-04 remains `INDEPENDENT_ACCEPTANCE_FAIL` on exactly three defects: unexecuted plausibility rules, the EUR 31.83 versus whole-euro EUR 32.00 representation contradiction, and substitution-prone lineage. DR-05 is `NOT_STARTED`. The frozen refund remains EUR 133.83. This infrastructure run does not advance any DR package.
+DR-01 and DR-02 are `PASS`. DR-03 is `READY`: all six Owner-declared facts, including the responsible Familienkasse, are `SUPPLIED_NOT_REGISTERED`; their sensitive values are not reproduced in Git and no new Owner input is required unless protected recovery fails. DR-04 remains `INDEPENDENT_ACCEPTANCE_FAIL` on exactly three defects: unexecuted plausibility rules, the EUR 31.83 versus whole-euro EUR 32.00 representation contradiction, and substitution-prone lineage. DR-05 is `NOT_STARTED`. The frozen refund remains EUR 133.83.
 
 Limit governance distinguishes hard-threshold `TOKEN_PAUSED` from deterministic proactive `CAPACITY_DEFERRED`; a healthy 50/92 observation is `RUN`, not a token pause.
 Authorized bounded packages may continue sequentially while the deterministic capacity state, prerequisites, repository safety, and Human Gates permit it; routine heartbeat-start checks are disabled when a current live observation remains valid.
@@ -84,7 +86,7 @@ Last reconciled: **2026-10-04**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution governance remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, while scheduler `plan-limit-continuation-guard` is intentionally `PAUSED` under terminal condition (3). The latest end-of-package observation reported five-hour `66%` and weekly `95%` remaining after proof commit `adbba53d284fe38aa3ccb5af0a38df0a7972b921`; capacity is not the stopping reason.
+- Execution governance remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`. The sole scheduler is `plan-limit-continuation-guard`; it is not a periodic quota poller and is armed only as one economical reset-aligned wake after a durable capacity pause. Its prior one-shot is expired/paused and cannot be cited as current continuation evidence. Windows Local Sync and Relay tasks are separate bounded workers, not duplicate quota schedulers.
 - Capacity checks are economical and reset-aligned: a valid live observation is reused for cheap operations, with a fresh check after bounded packages and before genuinely broad work. No five-minute polling policy is current.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.

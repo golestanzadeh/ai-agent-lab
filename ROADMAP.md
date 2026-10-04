@@ -6,10 +6,12 @@ Last reconciled: **2026-10-04**
 
 ## Current position
 
+- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. Exact next action is DR-03; no external notification or transmission is active.
+
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
-- Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` after the 2026-09-27 reset-aligned wake verified five-hour `99%` and weekly `100%` remaining and the clean synchronized repository recovery gate passed; this changes no project scope or Human Gate.
+- Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`. Live capacity values are execution evidence, not roadmap state; each legitimate wake reads fresh service values. The sole continuation guard is reset-aligned when a durable pause exists and never polls every five minutes.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
 - Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 and DR-02 are `PASS`; DR-03 has six Owner facts `SUPPLIED_NOT_REGISTERED`; DR-04 remediation remains pending after Independent Acceptance `FAIL`; DR-05 is `NOT_STARTED`. Exact post-infrastructure continuation is DR-03 completion, DR-04 repair/acceptance, then DR-05.
 - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
@@ -67,6 +69,8 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 - Target: complete before 2026-10-05 where external dependencies and Human Gates permit.
 
 ## Future-file register
+
+- `contracts/project-execution/v1/master-execution-graph.json`, `contracts/project-execution/v1/notification-contract.json`, `src/agent_lab/project_execution_graph.py`, `docs/master-execution-graph.md`, and `docs/repository-audit-20261004.json` form the authorized R1-R6 reconciliation surface. They project over the existing Kernel and controller and do not create another orchestrator, scheduler, authority store, or transmission channel.
 
 - `docs/case001-reproduction-2024.md` is the privacy-safe durable execution record for Owner-authorized `RUN-CASE001-REPRO-20260928-001`. The 15-document Gemini run completed, but the formal Specialist/Chief result is `BLOCKED` by material source-evidence gaps; the historical refund cannot be numerically reproduced. Independent acceptance is `PASS`; sensitive source/provider artifacts remain outside Git.
 - `docs/case001-independent-real-document-execution-2024.md` records completed corrected Owner run `RUN-CASE001-INDEPENDENT-20260928-002`: recursive discovery froze 16 taxpayer-source PDFs and excluded one official D026 form package; Gemini completed 16/16; all final Specialist roles, Chief, non-transmitting preview, and Independent Acceptance passed. The independent current result is z.v.E. EUR 27,928, Einkommensteuer EUR 700, and refund EUR 76; no historical target was used.
