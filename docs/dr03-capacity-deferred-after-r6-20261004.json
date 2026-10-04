@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "state": "CAPACITY_DEFERRED",
+  "action_id": "DR-03-REGISTER-AND-COMPLETE",
+  "cost_class": "BOUNDED",
+  "estimate_basis_version": 1,
+  "estimated_five_hour_cost_percent": 15,
+  "estimated_weekly_cost_percent": 5,
+  "live_five_hour_remaining_percent": 28,
+  "live_weekly_remaining_percent": 63,
+  "projected_five_hour_remaining_percent": 13,
+  "projected_weekly_remaining_percent": 58,
+  "reason": "PROJECTED_HARD_THRESHOLD_CROSSING",
+  "continuation_checkpoint": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
+  "five_hour_reset_epoch": 1791164376,
+  "weekly_reset_epoch": 1791715052,
+  "selected_reset": "2026-10-05T01:39:36Z",
+  "scheduler_id": "plan-limit-continuation-guard",
+  "scheduler_policy": "ONE_RESET_ALIGNED_WAKE",
+  "human_gate": "NONE",
+  "completed_packages_replayed": false
+}

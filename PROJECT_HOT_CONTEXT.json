@@ -1,15 +1,15 @@
 {
   "branch": "d021-agent-case-provisioning",
   "capacity": {
-    "five_hour_remaining_percent": 32,
+    "five_hour_remaining_percent": 28,
     "five_hour_resets_at": "2026-10-05T01:39:36+00:00",
-    "observed_at": "2026-10-04T21:11:15.331734+00:00",
-    "weekly_remaining_percent": 64,
+    "observed_at": "2026-10-04T21:12:24.668764+00:00",
+    "weekly_remaining_percent": 63,
     "weekly_resets_at": "2026-10-11T10:37:32+00:00"
   },
-  "context_digest": "sha256:eb8e31ed7d7322b065c17618c32c34e6f85e31cfda096063359fabd479fd8f49",
+  "context_digest": "sha256:eedd78359a694479583281c673efd5bc8b1f4cb86fa8c9d88addb002e3702547",
   "graph_digest": "sha256:9f815a7a3af447e228d586b2e1142ca807d94d74ad953aea9cd6802ce5c31423",
-  "head": "9355f81",
+  "head": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
   "next_authorized_action": {
     "action_id": "DR-03-REGISTER-AND-COMPLETE",
     "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
@@ -17,12 +17,12 @@
     "dependencies": "SATISFIED",
     "graph_digest": "sha256:9f815a7a3af447e228d586b2e1142ca807d94d74ad953aea9cd6802ce5c31423",
     "human_gate": "NONE",
-    "outcome": "READY_PACKAGE",
-    "recovery_checkpoint": "9355f81",
-    "reset_timestamp": null
+    "outcome": "CAPACITY_DEFERRED",
+    "recovery_checkpoint": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
+    "reset_timestamp": "2026-10-05T01:39:36+00:00"
   },
   "project": "AI-Tax-Agent",
-  "recovery_checkpoint": "9355f81",
+  "recovery_checkpoint": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
   "repository": "golestanzadeh/ai-agent-lab",
   "schema_version": 1,
   "supporting_contract": "contracts/project-execution/v1/master-execution-graph.json"

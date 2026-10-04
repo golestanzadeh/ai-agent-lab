@@ -51,6 +51,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Notification delivery remains inactive. The contract stores only a protected logical destination reference; any message requires exact durable Stage One and Stage Two approvals bound to content, destination, channel, purpose, case/run, expiry, and retry. No email was sent.
 - R6 Independent Acceptance required five review cycles. Four FAIL cycles exposed and repaired cost bypass, stale-capacity acceptance, shallow graph/inventory proof, fake closed-loop integration, notification authority/destination/retry weaknesses, reset selection, and UNKNOWN handling. Final Independent Acceptance is `PASS`; independent focused run `80 passed`, post-transition focused run `81 passed`, and the pre-transition complete unit regression passed `1003 passed, 1 warning`.
 - Exact next authorized action is `DR-03-REGISTER-AND-COMPLETE`; DR-01 and DR-02 remain accepted, DR-04 remains pending its three bounded repairs, and DR-05 remains dependency-blocked. The frozen refund remains EUR 133.83.
+- Post-push capacity gate at synchronized HEAD `6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539` observed 28 percent five-hour and 63 percent weekly remaining. The closed `BOUNDED` estimate projects 13/58 and therefore deterministically returns `CAPACITY_DEFERRED`. DR-03 was not started. The exact continuation is recorded in `docs/dr03-capacity-deferred-after-r6-20261004.json` for one wake at the actual five-hour reset `2026-10-05T01:39:36Z`.
 
 ### Authoritative current snapshot — 2026-09-20
 
