@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "package": "DR-04",
+  "status": "INDEPENDENT_ACCEPTANCE_FAIL",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "contract_version": "1",
+  "official_source_sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
+  "official_xsd_sha256": "86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272",
+  "exact_accepted_values": {
+    "craftsman_invoice_eur": "90.00",
+    "craftsman_eligible_basis_eur": "90.00",
+    "tenant_eligible_basis_eur": "69.13",
+    "section_35a_credit_eur": "31.83"
+  },
+  "official_fields": {
+    "E0107206": "tenant household-service description",
+    "E0107207": "70",
+    "E0107208": "70",
+    "E0111217": "craftsman description",
+    "E0170601": "90",
+    "E0111214": "90",
+    "E0111215": "90"
+  },
+  "representation_note": "Exact cent-denominated accepted bases remain identity-bound calculation lineage. Official GeldBetragOhneCent fields use the separately recorded taxpayer-favorable whole-euro representation; the form representation is not substituted into the frozen deterministic calculation.",
+  "reviewed_local_rules": ["101100088", "101100089", "101100090", "101100091", "10817", "12204", "101100079", "101170002", "10821", "101170007"],
+  "lineage": {
+    "craftsman_document": "DOC-CASE-001-00000011",
+    "craftsman_payment": "TX-330dcf5dcbed94319cc0d4a1",
+    "tenant_document": "DOC-CASE-001-00000006",
+    "tenant_payment_relationship_sha256": "a3861e76dc79ddd4acd1fe8a9db956d3be6c2a17e0f90f4a8073814c1efdb821"
+  },
+  "focused_tests": "5 passed",
+  "exact_xsd": "PASS",
+  "local_plausibility": "FAIL_NOT_EXECUTED",
+  "independent_acceptance": "FAIL",
+  "frozen_refund_eur": "133.83",
+  "preview_type": "NON_TRANSMITTING_PREVIEW",
+  "official_eric_executed": false,
+  "external_transmission": false
+}
