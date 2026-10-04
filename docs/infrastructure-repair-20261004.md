@@ -2,7 +2,7 @@
 
 Status: **INFRASTRUCTURE_REPAIR_COMPLETE**
 
-Starting checkpoint was `12069bcc26ed02a1e6cfb33b4e9ad7f937d8f97c7`. Starting live capacity was 99 percent five-hour and 86 percent weekly; ending capacity was 34 percent and 76 percent. Service reset epochs were `1791146339` and `1791715052`.
+Starting checkpoint was `12069bcc26ed02a1e6cfb33b4e9ad7f937d8f97c7`. Starting live capacity was 99 percent five-hour and 86 percent weekly; the final post-push observation was 31 percent and 76 percent. Service reset epochs were `1791146339` and `1791715052`.
 
 Repair A introduces an executable deterministic Limit Controller. `RUN`, `CAUTION`, `TOKEN_PAUSED`, `UNKNOWN_PAUSED`, and `CAPACITY_DEFERRED` are distinct. A healthy 50/92 observation is `RUN`; hard pause thresholds remain inclusive at 15/10. Service reset timestamps are mandatory and never inferred. Proactive deferral uses a closed versioned cost catalog, records the exact operation/reason/checkpoint, and does not inherit genuine token-pause resume semantics. Only the existing reset-aligned economical continuation guard is retained.
 
