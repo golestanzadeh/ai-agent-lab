@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "state": "TOKEN_PAUSED",
+  "accepted_commit": "ff90456",
+  "completed_packages": ["DR-01", "DR-02"],
+  "five_hour_remaining_percent": 50,
+  "weekly_remaining_percent": 92,
+  "five_hour_reset_epoch": 1791128252,
+  "weekly_reset_epoch": 1791715052,
+  "next_operations": [
+    "Recover DR-03 mandatory child/form facts from already authorized case-scoped evidence without inference",
+    "Implement and independently accept dependency-ready DR-04",
+    "Start DR-05 only after DR-03 and DR-04 both pass"
+  ],
+  "repeat_prohibited": ["Protected Official Source Store", "DR-01", "DR-02"],
+  "frozen_refund_eur": "133.83",
+  "external_transmission": false
+}
