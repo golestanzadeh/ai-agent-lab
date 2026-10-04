@@ -14,7 +14,7 @@ Use the Codex account usage-limit service exposed by the desktop app. For each a
 
 `remaining_percent = max(0, 100 - used_percent)`
 
-UI percentages may be rounded. Decisions use the service value and its actual `resetsAt` timestamp, not an assumed five-hour delay or a screenshot. If the service is unavailable or a required value is unknown, fail closed and start no new work package.
+UI percentages may be rounded. Decisions use the service value and both actual `resetsAt` timestamps, not an assumed delay or a screenshot. Each reset timestamp is mandatory, timezone-aware, later than the observation, and cannot fall inside the observation's validity interval. If the service is unavailable or a required value is unknown, fail closed and start no new work package.
 
 ## Control states
 
@@ -24,8 +24,11 @@ UI percentages may be rounded. Decisions use the service value and its actual `r
 | `CAUTION` | 16–25% | 11–20% | Start no large package; finish only the current atomic step, verify it, and prepare a checkpoint. |
 | `TOKEN_PAUSED` | 15% or less | 10% or less | Start no project work; record the stop reason, exact continuation point, branch/HEAD, dirty-state ownership, next authorized action, and relevant Human Gates. |
 | `UNKNOWN_PAUSED` | unknown | unknown | Fail closed until usage can be read reliably. |
+| `CAPACITY_DEFERRED` | above the hard thresholds | above the hard thresholds | Defer one exact operation only when its explicit bounded cost estimate would leave either window at or below the hard threshold. Record the live values, estimate/reason, operation, and continuation checkpoint. This state does not claim a hard threshold was reached. |
 
-The lower weekly threshold avoids permanently stranding the acceptance/checkpoint write near the weekly boundary. A task may choose to pause earlier when the next atomic operation cannot safely complete inside the remaining allowance.
+The lower weekly threshold avoids permanently stranding the acceptance/checkpoint write near the weekly boundary. A healthy `RUN` observation must never be labelled `TOKEN_PAUSED` merely because the next package may be expensive. Early deferral is `CAPACITY_DEFERRED` and is permitted only when a closed, versioned operation-cost class deterministically projects that the operation would leave five-hour capacity at or below 15% or weekly capacity at or below 10%. Callers cannot supply arbitrary percentages. An unspecified concern or qualitative package size is not sufficient.
+
+The executable contract is `agent_lab.plan_limit_controller`. A live observation carries an explicit validity interval. Missing or stale required percentages produce `UNKNOWN_PAUSED`; they are not silently converted to `TOKEN_PAUSED`.
 
 ## Required observations
 
@@ -44,9 +47,9 @@ An individual tool call cannot be interrupted midway. Therefore work packages mu
 
 Before ending for a limit, update the governed project state with:
 
-- status `TOKEN_PAUSED` or `UNKNOWN_PAUSED`;
+- status `TOKEN_PAUSED`, `UNKNOWN_PAUSED`, or `CAPACITY_DEFERRED`;
 - the limiting window and observed remaining percentage;
-- the service-provided reset timestamp;
+- both service-provided reset timestamps;
 - exact branch, HEAD, and local/remote synchronization state;
 - any user-owned or incomplete working-tree changes;
 - the last completed verification;
@@ -57,12 +60,12 @@ Commit and push this checkpoint only when those Git actions remain safe and auth
 
 ## Scheduled continuation guard
 
-Use one hourly heartbeat attached to the current task. On each run it must:
+Use only the existing same-task continuation guard. Schedule a single economical wake aligned to the relevant service-provided reset when work is paused; do not create periodic polling. On each run it must:
 
 1. read live five-hour and weekly limits;
 2. remain quiet if another turn is active, the repository is not safely recoverable, or no exact next action is already authorized;
 3. remain quiet and make no project changes while either resume threshold is unmet;
-4. resume from a durable `TOKEN_PAUSED` checkpoint only when five-hour remaining is at least 80% and weekly remaining is above 10%;
+4. resume from a durable `TOKEN_PAUSED` checkpoint only when five-hour remaining is at least 80% and weekly remaining is above 10%; resume `CAPACITY_DEFERRED` as soon as the same recorded operation estimate fits above both hard thresholds, without inheriting the 80% rule;
 5. while continuous authority is active, reread `PROJECT_CHECKPOINT.md` and required references, verify branch/HEAD/working tree, then perform a recorded local synthetic non-production package that certainly requires no Human Gate;
 6. after each completed and pushed package, reread live limits and use that observation as the precondition for the next package; continue package by package in the same heartbeat while limits, repository safety, prerequisites, and Human Gates allow;
 7. stop before the next package when a threshold, unsafe repository state, unclear ownership, missing prerequisite, or Human Gate is reached;
@@ -72,11 +75,11 @@ Use one hourly heartbeat attached to the current task. On each run it must:
 
 After every completed, verified, committed, and pushed package, the live limit check is mandatory. When limits remain above the applicable stop thresholds and repository safety, prerequisites, authorization, and Human Gates permit another package, the same execution must immediately begin the next highest-value authorized bounded package. Routine success, a clean synchronized repository, and healthy limits are not terminal conditions and must not return control or produce a routine report.
 
-Execution may terminate only when a token threshold requires `TOKEN_PAUSED`, a genuine Human Gate is reached, no authorized prerequisite-ready independent package remains, repository ownership or synchronization is unsafe, required live limits cannot be obtained, a material failure/conflict prevents safe continuation, or another governance rule explicitly requires stopping. The exact terminal condition must be evaluated and recorded before control is returned. No fixed package-count limit applies.
+Execution may terminate only when a token threshold requires `TOKEN_PAUSED`, a deterministic operation estimate requires `CAPACITY_DEFERRED`, a genuine Human Gate is reached, no authorized prerequisite-ready independent package remains, repository ownership or synchronization is unsafe, required live limits cannot be obtained, a material failure/conflict prevents safe continuation, or another governance rule explicitly requires stopping. The exact terminal condition must be evaluated and recorded before control is returned. No fixed package-count limit applies.
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The same-task heartbeat is named `Plan Limit Continuation Guard`, has automation id `plan-limit-continuation-guard`, and uses a five-minute cadence while active. It was paused on 2026-09-15 when package 7 reached a genuine Human Gate. The Project Owner later granted continuous local synthetic non-production authority and explicitly reactivated autonomous progression with exception-only reporting. The guard is therefore active and may perform sequential bounded packages in one heartbeat, provided every package is followed by a fresh limit and repository-safety check before the next begins. A new execution first performs the recovery gate, resumes from the last pushed checkpoint, and does not repeat a completed package; an earlier hard execution-window boundary is not itself a Human Gate.
+The same-task guard is named `Plan Limit Continuation Guard` and has automation id `plan-limit-continuation-guard`. It is the only scheduler. While execution is active, package-boundary observations govern continuation; while paused, at most one reset-aligned wake is scheduled for the relevant reset rather than periodic polling. The Project Owner granted continuous local synthetic non-production authority with exception-only reporting. The guard may perform sequential bounded packages in one execution, provided every package is followed by a fresh limit and repository-safety check before the next begins. A new execution first performs the recovery gate, resumes from the last pushed checkpoint, and does not repeat a completed package; an earlier hard execution-window boundary is not itself a Human Gate.
 
 ## Host and scheduler limitation
 

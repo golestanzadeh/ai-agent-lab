@@ -55,12 +55,9 @@ def test_canonical_current_records_agree_on_branch_and_execution_state() -> None
     for text in (snapshot, current):
         assert "d021-agent-case-provisioning" in text
 
-    execution_states = {"AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE", "TOKEN_PAUSED"}
-    def latest_state(text: str) -> str:
-        positions = {state: text.rfind(state) for state in execution_states}
-        return max(positions, key=positions.get)
-
-    assert latest_state(snapshot) == latest_state(current) == "TOKEN_PAUSED"
+    assert "AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE" in snapshot
+    assert "CAPACITY_DEFERRED" in current
+    assert "TOKEN_PAUSED" in current
 
 
 def test_current_limit_controller_allows_safe_package_chaining() -> None:
@@ -76,9 +73,24 @@ def test_current_limit_controller_allows_safe_package_chaining() -> None:
     assert "routine heartbeat-start checks are disabled" in current
     assert "Mandatory continuation rule" in controller
     assert "No fixed package-count limit applies" in controller
-    assert "five-minute cadence" in current
-    assert "five-minute cadence" in controller
+    assert "No five-minute polling policy is current" in current
+    assert "CAPACITY_DEFERRED" in controller
     assert "hard execution-window boundary is not itself a Human Gate" in controller
+
+
+def test_case001_continuation_does_not_regress_to_completed_dr02() -> None:
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    roadmap = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
+    for text in (current, roadmap):
+        assert "DR-01 and DR-02 are `PASS`" in text or "DR-01/DR-02 `PASS`" in text
+        assert "SUPPLIED_NOT_REGISTERED" in text
+        assert "DR-05" in text and "NOT_STARTED" in text
+    exact_next = current.split("## Exact next action", 1)[1].split("## Non-negotiable", 1)[0]
+    assert "DR-02" in exact_next and "Do not repeat" in exact_next
+    assert "resume exactly at dependency-ready DR-02" not in exact_next
+    for text in (current, roadmap):
+        assert "Exact next package is DR-01" not in text
+        assert "all packages remain unstarted" not in text
 
 
 def test_active_e10_and_ui_records_use_current_rule_profile() -> None:

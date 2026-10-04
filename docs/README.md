@@ -14,6 +14,9 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `agent-runtime-activation-layer.md` — local synthetic Planning/Implementation/QE/Independent Acceptance runtime layer.
 - `agent-runtime-recovery-inspector.md` — read-only runtime recovery classification and automatic-replay boundary.
 - `plan-limit-continuation-controller.md` — live plan-limit inspection, pause thresholds, and guarded continuation.
+- `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
+- `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
+- `case001-dr04-acceptance-2024.md` — recoverable DR-04 implementation record and independent-acceptance defects.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.

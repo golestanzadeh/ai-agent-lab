@@ -534,6 +534,10 @@ At this checkpoint, the evaluator verified both Windows scheduled components and
 
 **Authority boundary:** The controller preserves and resumes existing authority; it cannot grant Phase P1, production, permission, protected-main, merge, release, destructive, tax-submission, ELSTER/Finanzamt, or external-transfer authority.
 
+### Deterministic state clarification — 2026-10-04
+
+`TOKEN_PAUSED` is reserved for five-hour remaining at or below 15% or weekly remaining at or below 10%. Missing, stale, or reset-incoherent authoritative observations fail closed as `UNKNOWN_PAUSED` or invalid evidence. A healthy `RUN` observation cannot become `TOKEN_PAUSED` from a qualitative package-cost concern. An operation from the closed, versioned estimate catalog that would cross a hard threshold is instead `CAPACITY_DEFERRED`, records its exact reason/operation/checkpoint, and may resume when that same catalog estimate fits; callers cannot invent percentages and the state does not inherit the 80% five-hour resume floor used for a genuine token pause. The existing single continuation guard uses economical reset-aligned wakes rather than five-minute polling. The executable evaluator and boundary tests make this clarification deterministic.
+
 
 ## D-046 — Phase P1 authorization and first non-production ERiC boundary
 
