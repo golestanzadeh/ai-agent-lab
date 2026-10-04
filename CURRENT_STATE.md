@@ -1,5 +1,9 @@
 # Current State
 
+## 2026-10-04 — CASE-001 declaration DR-02 accepted
+
+DR-02 adds a versioned, case-scoped Anlage Vorsorgeaufwand composition over the accepted DR-01 result. Exact protected 2024 ODS/XSD semantics map the accepted pension, health, care, and unemployment facts, preserve original-cent lineage, apply official whole-euro declaration representation, omit derived assessment-only cap/adjustment values, validate against the hash-pinned official XSD, and retain a non-transmitting boundary. Focused DR-01/DR-02 tests pass (`12 passed`). The frozen refund remains EUR 133.83. DR-03 requires recovery of official-form factual prerequisites without inference; DR-04 remains dependency-ready.
+
 Last reconciled: **2026-09-29**
 
 ## Authoritative status
