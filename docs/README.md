@@ -16,6 +16,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `plan-limit-continuation-controller.md` — live plan-limit inspection, pause thresholds, and guarded continuation.
 - `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
 - `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
+- `case001-dr03-capacity-deferred-20261004.json` — deterministic non-token deferral and exact DR-03 continuation.
 - `case001-dr04-acceptance-2024.md` — recoverable DR-04 implementation record and independent-acceptance defects.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
