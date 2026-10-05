@@ -1,12 +1,12 @@
 {
   "branch": "d021-agent-case-provisioning",
-  "capacity": {"five_hour_remaining_percent":22,"five_hour_resets_at":"2026-10-05T06:40:04+00:00","observed_at":"2026-10-05T05:22:50.453710+00:00","weekly_remaining_percent":51,"weekly_resets_at":"2026-10-11T10:37:32+00:00"},
-  "context_digest": "sha256:0c0ac3bbda3da6b421d82bffe6babf7f63475026eeaf86b5c9011b65f9a615f2",
+  "capacity": {"five_hour_remaining_percent":9,"five_hour_resets_at":"2026-10-05T11:40:44+00:00","observed_at":"2026-10-05T09:13:04+00:00","weekly_remaining_percent":34,"weekly_resets_at":"2026-10-11T10:37:32+00:00"},
+  "context_digest": "sha256:81b670681a35bf426df6109f686f30a1297d86e09ec261c36543daa6e5c5a513",
   "graph_digest": "sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee",
-  "head": "1eb620dc1978877481f9445a6dc471ab26805d09",
-  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"CAPACITY_DEFERRED","recovery_checkpoint":"1eb620dc1978877481f9445a6dc471ab26805d09","reset_timestamp":"2026-10-05T06:40:04+00:00"},
+  "head": "580d87514907395e4054272e244bf246351e4172",
+  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"TOKEN_PAUSED","recovery_checkpoint":"580d87514907395e4054272e244bf246351e4172","reset_timestamp":"2026-10-05T11:42:44+00:00"},
   "project": "AI-Tax-Agent",
-  "recovery_checkpoint": "1eb620dc1978877481f9445a6dc471ab26805d09",
+  "recovery_checkpoint": "580d87514907395e4054272e244bf246351e4172",
   "repository": "golestanzadeh/ai-agent-lab",
   "schema_version": 1,
   "supporting_contract": "contracts/project-execution/v1/master-execution-graph.json"

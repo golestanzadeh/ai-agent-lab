@@ -71,6 +71,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 ## Future-file register
 
 - `src/agent_lab/owner_exception_notification.py`, `tests/unit/test_owner_exception_notification.py`, and `docs/owner-exception-notification-activation-20261005.json` are the authorized Constitution-v3 operational-exception sender boundary, deterministic validation tests, and privacy-minimized activation evidence. The sender accepts no arbitrary recipient, attachment, or free-form activation content.
+- `docs/dr04-token-paused-after-owner-notification-repair-20261005.json` is the governed hard-threshold continuation capsule created after the accepted relay/notification repair; it preserves DR-04 as the exact next action and arms only the sole reset-aligned guard.
 
 - `contracts/project-execution/v1/master-execution-graph.json`, `contracts/project-execution/v1/notification-contract.json`, `src/agent_lab/project_execution_graph.py`, `docs/master-execution-graph.md`, and `docs/repository-audit-20261004.json` form the authorized R1-R6 reconciliation surface. They project over the existing Kernel and controller and do not create another orchestrator, scheduler, authority store, or transmission channel.
 

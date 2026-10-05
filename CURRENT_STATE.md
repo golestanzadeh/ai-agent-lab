@@ -4,6 +4,8 @@
 
 Constitution v3 and `OWNER-EXCEPTION-NOTIFICATION-V2` establish the narrow operational exception channel. The Windows Relay continuation lifecycle is bound to exact repository/branch/HEAD, verified HOT CONTEXT digest, graph digest, checkpoint, action, and reset timestamp. Focused verification is `79 passed`; final Independent Acceptance is `PASS`. The one authorized activation attempt is `FAILED` because no approved provider credential/configuration is available to the runtime; no email, sensitive data, or attachment left the project boundary. This isolated provider Human Gate does not block unrelated authorized project work.
 
+Post-repair capacity is `TOKEN_PAUSED`: five-hour remaining `9%`, weekly remaining `34%`, with exact DR-04 preserved. The sole continuation guard is to wake once at the five-hour reset plus the governed two-minute buffer, `2026-10-05T11:42:44Z`; no five-minute polling or duplicate scheduler is authorized.
+
 The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The sole reset-aligned continuation guard is reconciled and remains paused because execution is active rather than capacity-paused. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. DR-03 is independently accepted; exact next authorized action is DR-04 remediation.
 
 ## 2026-10-04 — infrastructure repair boundary
