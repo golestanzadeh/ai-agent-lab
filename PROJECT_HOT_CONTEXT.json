@@ -1,12 +1,12 @@
 {
   "branch": "d021-agent-case-provisioning",
   "capacity": {"five_hour_remaining_percent":22,"five_hour_resets_at":"2026-10-05T06:40:04+00:00","observed_at":"2026-10-05T05:22:50.453710+00:00","weekly_remaining_percent":51,"weekly_resets_at":"2026-10-11T10:37:32+00:00"},
-  "context_digest": "sha256:8d8d9f3d705d56bdae6962ca96d00711b681a8fc6b9d8178ea795d321bf21420",
+  "context_digest": "sha256:0c0ac3bbda3da6b421d82bffe6babf7f63475026eeaf86b5c9011b65f9a615f2",
   "graph_digest": "sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee",
-  "head": "a9b2cecd24566ee9c4de446fda5f4615501aedc9",
-  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"CAUTION","recovery_checkpoint":"a9b2cecd24566ee9c4de446fda5f4615501aedc9","reset_timestamp":"2026-10-05T06:40:04+00:00"},
+  "head": "1eb620dc1978877481f9445a6dc471ab26805d09",
+  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"CAPACITY_DEFERRED","recovery_checkpoint":"1eb620dc1978877481f9445a6dc471ab26805d09","reset_timestamp":"2026-10-05T06:40:04+00:00"},
   "project": "AI-Tax-Agent",
-  "recovery_checkpoint": "a9b2cecd24566ee9c4de446fda5f4615501aedc9",
+  "recovery_checkpoint": "1eb620dc1978877481f9445a6dc471ab26805d09",
   "repository": "golestanzadeh/ai-agent-lab",
   "schema_version": 1,
   "supporting_contract": "contracts/project-execution/v1/master-execution-graph.json"

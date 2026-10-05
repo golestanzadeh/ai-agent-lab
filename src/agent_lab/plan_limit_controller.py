@@ -135,9 +135,9 @@ def evaluate_capacity(
         return CapacityDecision(state, False, "USAGE_UNAVAILABLE_OR_STALE", observation)
     if state is CapacityState.TOKEN_PAUSED:
         return CapacityDecision(state, False, "HARD_THRESHOLD_REACHED", observation)
-    if state is CapacityState.CAUTION:
-        return CapacityDecision(state, False, "CAUTION_CHECKPOINT_ONLY", observation)
     if next_operation is None:
+        if state is CapacityState.CAUTION:
+            return CapacityDecision(state, False, "CAUTION_CHECKPOINT_ONLY", observation)
         return CapacityDecision(state, True, "RUN_CAPACITY_AVAILABLE", observation)
 
     next_operation.validate()
@@ -153,6 +153,8 @@ def evaluate_capacity(
             observation,
             next_operation,
         )
+    if state is CapacityState.CAUTION:
+        return CapacityDecision(state, False, "CAUTION_CHECKPOINT_ONLY", observation, next_operation)
     return CapacityDecision(state, True, "RUN_OPERATION_FITS", observation)
 
 

@@ -58,6 +58,13 @@ def test_explicit_projected_crossing_is_capacity_deferred_not_token_paused():
     assert decision.deferred_operation == operation(OperationCostClass.EXPENSIVE)
 
 
+def test_caution_observation_with_explicit_package_becomes_reset_resumable_deferral():
+    decision = evaluate_capacity(observation(22, 51), now=NOW, next_operation=operation())
+    assert decision.state is CapacityState.CAPACITY_DEFERRED
+    assert decision.reason_code == "PROJECTED_HARD_THRESHOLD_CROSSING"
+    assert decision.deferred_operation == operation()
+
+
 def test_operation_that_fits_remains_run():
     assert evaluate_capacity(observation(), now=NOW, next_operation=operation()).state is CapacityState.RUN
 
