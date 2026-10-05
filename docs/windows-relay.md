@@ -104,3 +104,24 @@ The relay never converts uncertainty into PASS.
 Successful execution produces a compact response containing only non-sensitive facts such as task ID, PASS/BLOCKED, local test result, Local Sync smoke status, and scheduled-task status. Provider IDs, credentials, private paths beyond the already-approved repository root, tax data, and shell output that may contain secrets are excluded.
 
 The Windows scheduled task runs hidden through `pythonw.exe`. On Windows, Relay and Local Sync subprocesses use `CREATE_NO_WINDOW`, preventing their one-minute Git and PowerShell checks from opening transient command windows.
+
+
+## Local host-control extension
+
+The relay also exposes a host-local inbox at `.windows-relay-local/request.json`. The directory is excluded through the checkout-local `.git/info/exclude`; it is never a Git transport and never stores credentials.
+
+This inbox exists specifically for operations that a Codex workspace sandbox cannot safely perform itself. It is processed by the same existing `AI-Tax-Agent Windows Relay` scheduled task and does not create a second scheduler or orchestrator.
+
+Allowlisted operations are:
+
+- `GIT_PUBLISH`: stage exactly the requested repository-relative paths, require the expected local HEAD to equal `origin/d021-agent-case-provisioning`, create one bounded commit, push normally to that branch, and verify the remote ref.
+- `SCHEDULER_ARM`: arm only `plan-limit-continuation-guard` with a strict future one-shot reset-aligned RRULE.
+- `SCHEDULER_PAUSE_CONSUME`: pause only that exact guard.
+- `SCHEDULER_RECONCILE`: verify the exact expected guard state without mutation.
+- `SCHEDULER_VERIFY`: verify the exact guard identity and return a privacy-minimized configuration digest.
+
+The local contract rejects arbitrary commands, arbitrary repositories, `main`, alternate branches, arbitrary automation identities, arbitrary filesystem paths, protected repository paths, malformed or stale scheduler timestamps, unknown operations, duplicate/replayed request IDs, and unexpected staged paths.
+
+Git credentials remain on the Windows host. They are consumed only by the host Git process through the existing credential helper and are never copied into the sandbox, request, response, repository, or audit output.
+
+Responses are written to `.windows-relay-local/response.json`. Terminal request identity is retained in `.windows-relay-local/state.json` for deterministic replay handling.

@@ -19,6 +19,7 @@ from agent_lab.windows_relay import (  # noqa: E402
     RelayStatus,
     WindowsRelay,
 )
+from agent_lab.host_control import HostControlError, process_local_request  # noqa: E402
 
 
 DEFAULT_REPO = Path(r"C:\Users\rezag\ai-agent-lab")
@@ -52,6 +53,10 @@ def main(argv: list[str] | None = None) -> int:
     lock: Path | None = None
     try:
         lock = _acquire_lock(repo)
+        local_result = process_local_request(repo)
+        if local_result is not None:
+            print(json.dumps(local_result, sort_keys=True))
+            return 0 if local_result.get("status") in {"PASS", "ALREADY_PROCESSED"} else 2
         relay = WindowsRelay(repo_path=repo, repository=args.repository, branch=args.branch)
         result = relay.run_once()
         if result.status in {RelayStatus.PASS, RelayStatus.BLOCKED}:
@@ -62,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
             RelayStatus.NO_REQUEST,
             RelayStatus.ALREADY_PROCESSED,
         } else 2
-    except RelayError as exc:
+    except (RelayError, HostControlError) as exc:
         print(json.dumps({"status": "BLOCKED", "detail": str(exc)}, sort_keys=True))
         return 2
     finally:
