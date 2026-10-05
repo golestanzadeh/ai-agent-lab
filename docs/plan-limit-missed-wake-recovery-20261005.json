@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "event": "MISSED_WAKE_RECOVERED",
+  "scheduler_id": "plan-limit-continuation-guard",
+  "scheduled_reset": "2026-10-05T01:39:36Z",
+  "recovery_checkpoint": "b765ba15d4d08689257d6d20c79d961e002ffded",
+  "recovered_action": "DR-03-REGISTER-AND-COMPLETE",
+  "cost_class": "BOUNDED",
+  "live_five_hour_remaining_percent": 97,
+  "live_weekly_remaining_percent": 62,
+  "new_five_hour_reset_epoch": 1791182404,
+  "weekly_reset_epoch": 1791715052,
+  "repository_recovery": "PASS_CLEAN_LOCAL_REMOTE_EQUAL",
+  "continuation_validation": "PASS_OPERATION_NOW_FITS",
+  "scheduler_after_recovery": "PAUSED_CONSUMED_ONE_SHOT",
+  "duplicate_scheduler_count": 0,
+  "polling_created": false,
+  "owner_prompt_required": false
+}
