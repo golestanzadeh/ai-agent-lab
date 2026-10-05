@@ -1,4 +1,4 @@
-# Project Constitution v2
+# Project Constitution v3
 
 Status: **RATIFIED / IN FORCE**  
 Ratified: **2026-09-13**  
@@ -22,6 +22,9 @@ This exact version was explicitly approved and ratified by the Project Owner / H
 12. A validation, preview, dry run, test, retry, queue operation, recovery action, Agent decision, Master decision, or technical success must never be interpreted as transmission approval.
 13. Successful or failed transmission must produce a privacy-minimized, durable audit record and, where the recipient provides one, a verifiable receipt. A failed or uncertain attempt must never silently retry unless the exact Stage Two authorization explicitly permits that bounded retry.
 14. No Agent, Master Orchestrator, workflow, tool, administrator, developer, or external service may bypass, collapse, pre-authorize, or weaken this two-stage rule.
+15. **Owner Operational Exception Notification Channel.** A pre-registered Owner-controlled protected destination may receive, without per-message Stage One and Stage Two approval, only privacy-minimized operational notifications in these closed event classes: `HUMAN_REQUIRED`, `GOVERNANCE_OR_SAFETY_CONFLICT`, `PLAN_OR_ENTITLEMENT_BLOCKED`, `SCHEDULER_ARM_FAILURE`, `UNRECOVERABLE_HOST_RUNTIME_FAILURE`, `LONG_LIVED_OWNER_BLOCKER`, `CURRENT_SUPPORTED_PRODUCT_COMPLETE`, and `PROJECT_COMPLETE`. Agents may neither select nor change the recipient or channel. Destination/channel changes, additional event classes, expanded content, or additional destinations remain Human Gates.
+16. This exception never applies to taxpayer identity, Steuer-ID, bank data, tax-document content, protected evidence, credentials, secrets, declarations, tax forms, attachments, unnecessary tax amounts, sensitive tax details, arbitrary messages, third-party communication, ELSTER/Finanzamt contact, submission, or any other external transfer. It creates no authority for those actions.
+17. Eligible messages must use durable event/gate identity, deterministic deduplication, strictly bounded retry, and privacy-minimized delivery audit without message content. Delivery or failure never approves, resolves, weakens, or bypasses the underlying gate or blocker. Routine events including `PACKAGE_PASS`, `CHECKPOINT`, `AUTONOMOUS_REMEDIATION_PASS`, `TOKEN_PAUSED_CONTINUATION_ARMED`, and `CAPACITY_DEFERRED_CONTINUATION_ARMED` are ineligible.
 
 ## Article 2 — Supreme authority
 
@@ -210,4 +213,4 @@ A lower authority must never silently override a higher one.
 
 ## Ratification record
 
-The Project Owner / Human explicitly ratified **Project Constitution v2**, including Article 1 and all 20 Articles, on 2026-09-13. This document became effective through the dedicated ratification change set on branch `d021-agent-case-provisioning`. All subsequent Agent, role, permission, and Orchestrator design is subordinate to this Constitution. Future changes are governed exclusively by Article 3.
+The Project Owner / Human explicitly ratified **Project Constitution v2**, including Article 1 and all 20 Articles, on 2026-09-13. On 2026-10-05 the Owner explicitly approved the narrow Article 1 Owner Operational Exception Notification Channel amendment recorded in `DECISIONS.md`; Constitution v3 became effective through its dedicated traceable governance change set. All subsequent Agent, role, permission, and Orchestrator design is subordinate to this Constitution. Future changes are governed exclusively by Article 3.

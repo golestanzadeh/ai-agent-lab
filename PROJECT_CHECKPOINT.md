@@ -39,6 +39,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### Owner operational exception notification amendment — 2026-10-05
+
+- The Owner explicitly approved Constitution v3 Article 1 clauses 15–17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.
+- The exact decision, risks, controls, and migration consequence are recorded in `DECISIONS.md`. Runtime notification remains fail-closed until the versioned successor contract, sender path, bounded audit/retry behavior, and Independent Acceptance are complete.
+- The same authorization permits a bounded extension of the existing Windows Relay for lifecycle management of only `plan-limit-continuation-guard`; it does not permit a second scheduler, arbitrary command/path, or project execution authority.
+
 ### Autonomous infrastructure reconciliation — 2026-10-04
 
 - Owner directive `FINAL-INFRASTRUCTURE-DIRECTIVE` completed R1 through R6 on branch `d021-agent-case-provisioning`; implementation commit is `9355f81` and the starting accepted checkpoint was `ad4f69fa1ae1d6ea06d138d7ca969e061a918dec`.
