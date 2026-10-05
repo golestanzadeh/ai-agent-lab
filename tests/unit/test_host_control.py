@@ -39,6 +39,11 @@ def test_unknown_operation_fails_closed():
         _validate_common(request(operation="RUN_SHELL"))
 
 
+def test_retired_codex_scheduler_arm_fails_closed():
+    with pytest.raises(HostControlError, match="operation not allowlisted"):
+        _validate_common(request(operation="SCHEDULER_ARM"))
+
+
 @pytest.mark.parametrize("path", [
     ".git/config",
     ".codex/config.toml",

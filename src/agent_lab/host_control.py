@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 import re
 import subprocess
-from datetime import datetime, timezone
 
 PROTOCOL_VERSION = 1
 REPOSITORY = "golestanzadeh/ai-agent-lab"
@@ -19,7 +18,7 @@ RESPONSE_FILE = "response.json"
 STATE_FILE = "state.json"
 AUTOMATION_PATH = Path.home() / ".codex" / "automations" / GUARD_ID / "automation.toml"
 _ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9._-]{2,79}$")
-_ALLOWED_OPS = {"GIT_PUBLISH", "SCHEDULER_ARM", "SCHEDULER_PAUSE_CONSUME", "SCHEDULER_RECONCILE", "SCHEDULER_VERIFY"}
+_ALLOWED_OPS = {"GIT_PUBLISH", "SCHEDULER_PAUSE_CONSUME", "SCHEDULER_RECONCILE", "SCHEDULER_VERIFY"}
 _FORBIDDEN_PREFIXES = (".git/", ".codex/", LOCAL_DIR + "/")
 
 
@@ -176,23 +175,7 @@ def _scheduler(repo: Path, op: str, payload: dict) -> dict:
         if payload:
             raise HostControlError("verify payload must be empty")
         return {"status": "PASS", "operation": op, "guard_id": GUARD_ID, "automation_sha256": before_hash}
-    if op == "SCHEDULER_ARM":
-        hot, rrule = _continuation_binding(repo, payload, include_rrule=True)
-        if not isinstance(rrule, str):
-            raise HostControlError("arm payload mismatch")
-        m = re.fullmatch(r"DTSTART:(\d{8}T\d{6}Z)\nRRULE:FREQ=DAILY;COUNT=1", rrule)
-        if not m:
-            raise HostControlError("unsafe scheduler rrule")
-        wake = datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
-        if wake <= datetime.now(timezone.utc):
-            raise HostControlError("scheduler wake is stale")
-        reset = hot.get("next_authorized_action", {}).get("reset_timestamp")
-        if not isinstance(reset, str) or datetime.fromisoformat(reset.replace("Z", "+00:00")) != wake:
-            raise HostControlError("scheduler wake does not match durable reset")
-        text = _replace_scalar(text, "status", "ACTIVE")
-        escaped = rrule.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
-        text = _replace_scalar(text, "rrule", escaped)
-    elif op == "SCHEDULER_PAUSE_CONSUME":
+    if op == "SCHEDULER_PAUSE_CONSUME":
         _continuation_binding(repo, payload, include_rrule=False)
         text = _replace_scalar(text, "status", "PAUSED")
     elif op == "SCHEDULER_RECONCILE":

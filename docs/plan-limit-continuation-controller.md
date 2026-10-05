@@ -79,7 +79,9 @@ Execution may terminate only when a token threshold requires `TOKEN_PAUSED`, a d
 
 If the pause was caused by the weekly window, five-hour resets alone cannot authorize resumption; the weekly threshold must also recover.
 
-The same-task guard is named `Plan Limit Continuation Guard` and has automation id `plan-limit-continuation-guard`. It is the only scheduler. While execution is active, package-boundary observations govern continuation; while paused, at most one reset-aligned wake is scheduled for the relevant reset rather than periodic polling. The Project Owner granted continuous local synthetic non-production authority with exception-only reporting. The guard may perform sequential bounded packages in one execution, provided every package is followed by a fresh limit and repository-safety check before the next begins. A new execution first performs the recovery gate, resumes from the last pushed checkpoint, and does not repeat a completed package; an earlier hard execution-window boundary is not itself a Human Gate.
+The logical guard identity is `plan-limit-continuation-guard`. Its former Codex automation trigger is retired and paused after `MISSED_WAKE / CODEX_AUTOMATION_TRIGGER_FAILURE`; it is not authoritative and cannot be re-armed through Windows Relay. The required successor is exactly one ChatGPT Work Scheduled Task bound to the local project and reset-aligned capsule. Until a short real autonomous wake produces independently accepted `WAKE_TEST_PASS`, state is `NO_AUTHORITATIVE_SCHEDULER` and no project package may resume.
+
+After that gate is proven, the unchanged execution rule resumes: authorized dependency-ready packages continue sequentially, with a fresh capacity and repository-safety decision after each accepted package. A hard execution-window boundary is not itself a Human Gate.
 
 ## Host and scheduler limitation
 

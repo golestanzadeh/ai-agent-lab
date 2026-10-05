@@ -177,6 +177,12 @@ def test_closed_loop_executes_repairs_accepts_checkpoints_reopens_and_arms(tmp_p
 def test_scheduler_binding_is_single_and_reset_aligned():
     binding = json.loads((ROOT / "contracts/project-execution/v1/scheduler-binding.json").read_text(encoding="utf-8-sig"))
     assert binding["logical_identity"] == "plan-limit-continuation-guard"
+    assert binding["schema_version"] == 2
+    assert binding["authoritative_scheduler"] == "CHATGPT_WORK_SCHEDULED_TASK"
+    assert binding["current_state"] == "NO_AUTHORITATIVE_SCHEDULER"
+    assert binding["codex_automation"]["authority"] == "NON_AUTHORITATIVE_RETIRED_TRIGGER"
+    assert binding["work_scheduled_task"]["status"] == "NOT_CREATED"
+    assert binding["wake_test"]["status"] == "NOT_RUN"
     assert binding["duplicate_count"] == 0
     assert binding["capacity_pause_policy"].startswith("ONE_RESET_ALIGNED_WAKE")
     assert "actual reset timestamp" in binding["arm_preconditions"]

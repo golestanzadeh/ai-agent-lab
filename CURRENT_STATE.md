@@ -6,7 +6,9 @@ Constitution v3 and `OWNER-EXCEPTION-NOTIFICATION-V2` establish the narrow opera
 
 Post-repair capacity is `TOKEN_PAUSED`: five-hour remaining `9%`, weekly remaining `34%`, with exact DR-04 preserved. The sole continuation guard is to wake once at the five-hour reset plus the governed two-minute buffer, `2026-10-05T11:42:44Z`; no five-minute polling or duplicate scheduler is authorized.
 
-The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The sole reset-aligned continuation guard is reconciled and remains paused because execution is active rather than capacity-paused. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. DR-03 is independently accepted; exact next authorized action is DR-04 remediation.
+That wake was missed while the host, desktop app, Windows Relay, repository and branch were healthy. Classification is `MISSED_WAKE / CODEX_AUTOMATION_TRIGGER_FAILURE`. The Codex automation is now paused and non-authoritative, and Relay re-arming is disabled. The intended authoritative scheduler is one local-project ChatGPT Work Scheduled Task, but no callable control for creating that object is available in this session; web Scheduled Tasks cannot access the local folder. State is therefore `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`; the required short real wake test is `NOT_RUN`, and DR-04 remains unstarted.
+
+The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The former Codex continuation trigger is paused because it is retired and non-authoritative; no authoritative scheduler currently exists. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. DR-03 is independently accepted; exact next authorized action is DR-04 remediation after the Work scheduler wake-test gate passes.
 
 ## 2026-10-04 — infrastructure repair boundary
 
@@ -17,7 +19,7 @@ Authorized bounded packages may continue sequentially while the deterministic ca
 
 The bounded infrastructure repair is independently accepted: Limit Controller repair `PASS`, indexed Official Source Knowledge repair `PASS`, and canonical continuation preservation `PASS`. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`).
 
-Last reconciled: **2026-10-04**
+Last reconciled: **2026-10-05**
 
 ## Authoritative status
 
@@ -92,7 +94,7 @@ Last reconciled: **2026-10-04**
 - Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
 - Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
 - Plan-limit continuation must stop at its documented thresholds.
-- Execution governance remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`. The sole scheduler is `plan-limit-continuation-guard`; it is not a periodic quota poller and is armed only as one economical reset-aligned wake after a durable capacity pause. Its prior one-shot is expired/paused and cannot be cited as current continuation evidence. Windows Local Sync and Relay tasks are separate bounded workers, not duplicate quota schedulers.
+- Execution governance authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but current execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one future local-project ChatGPT Work Scheduled Task. The Codex trigger is paused and non-authoritative; no Work task object or current schedule exists. Windows Local Sync and Relay remain bounded operational workers, not continuation schedulers.
 - Capacity checks are economical and reset-aligned: a valid live observation is reused for cheap operations, with a fresh check after bounded packages and before genuinely broad work. No five-minute polling policy is current.
 - The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
 - The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.

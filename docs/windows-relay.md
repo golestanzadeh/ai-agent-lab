@@ -115,14 +115,13 @@ This inbox exists specifically for operations that a Codex workspace sandbox can
 Allowlisted operations are:
 
 - `GIT_PUBLISH`: stage exactly the requested repository-relative paths, require the expected local HEAD to equal `origin/d021-agent-case-provisioning`, create one bounded commit, push normally to that branch, and verify the remote ref.
-- `SCHEDULER_ARM`: arm only `plan-limit-continuation-guard` with a strict future one-shot reset-aligned RRULE.
 - `SCHEDULER_PAUSE_CONSUME`: pause only that exact guard.
 - `SCHEDULER_RECONCILE`: verify the exact expected guard state without mutation.
 - `SCHEDULER_VERIFY`: verify the exact guard identity and return a privacy-minimized configuration digest.
 
 The local contract rejects arbitrary commands, arbitrary repositories, `main`, alternate branches, arbitrary automation identities, arbitrary filesystem paths, protected repository paths, malformed or stale scheduler timestamps, unknown operations, duplicate/replayed request IDs, and unexpected staged paths.
 
-Scheduler mutation additionally requires an exact `action_id`, recovery checkpoint, and graph digest match against the fixed `PROJECT_HOT_CONTEXT.json`. `SCHEDULER_ARM` also requires its UTC one-shot timestamp to equal the durable reset timestamp. Scheduler lifecycle mutation never grants package authority; execution still performs the independent Recovery Gate, capacity, dependency, authority, and Human-Gate checks.
+The former `SCHEDULER_ARM` operation is retired and no longer allowlisted after the Codex automation trigger missed its reset-aligned wake. The Relay may pause or inspect that obsolete trigger only; it is not the authoritative Work scheduler and cannot launch ChatGPT, Work, or Codex. Scheduler lifecycle mutation never grants package authority.
 
 Git credentials remain on the Windows host. They are consumed only by the host Git process through the existing credential helper and are never copied into the sandbox, request, response, repository, or audit output.
 
