@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -6,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from agent_lab.plan_limit_controller import CapacityState, evaluate_capacity, fresh_observation
-from agent_lab.orchestrator_kernel import OrchestratorKernel
+from agent_lab.orchestrator_kernel import ContractError, OrchestratorKernel
 from agent_lab.project_execution_graph import NextAuthorizedAction, ProjectGraphError, TechnicalRecoverable, arm_capacity_continuation, build_hot_context, load_graph, next_authorized_action, notification_decision, run_closed_loop_action, run_until_boundary
 from agent_lab.elster_dry_run import ApprovalStatus, ContentReleaseApproval, DestinationTransmissionApproval
 from test_durable_approval import make_store
@@ -85,15 +86,64 @@ def test_hot_context_is_deterministic_and_hash_bound():
     assert changed["context_digest"] != first["context_digest"]
 
 
-def test_notification_requires_ordered_article_one_approvals_and_deduplicates():
+def test_notification_operational_exception_authorizes_only_allowlisted_and_deduplicates():
     contract = json.loads(NOTIFICATION.read_text(encoding="utf-8"))
-    assert notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-1", stage_one=False, stage_two=False, delivered_identities=()) == "ARTICLE_1_STAGE_ONE_REQUIRED"
-    assert notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-1", stage_one=True, stage_two=False, delivered_identities=()) == "ARTICLE_1_STAGE_TWO_REQUIRED"
-    assert notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-1", stage_one=True, stage_two=True, delivered_identities=()) == "AUTHORIZED_ONCE"
+    assert notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-1", stage_one=False, stage_two=False, delivered_identities=()) == "AUTHORIZED_ONCE"
     assert notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-1", stage_one=True, stage_two=True, delivered_identities=("GATE-1",)) == "DEDUPLICATED"
     assert notification_decision(contract, event="PACKAGE_PASS", event_identity="P-1", stage_one=True, stage_two=True, delivered_identities=()) == "NOT_ELIGIBLE"
+    assert notification_decision(contract, event="NOTIFICATION_CHANNEL_ACTIVATION_TEST", event_identity="ACT-1", stage_one=False, stage_two=False, delivered_identities=()) == "AUTHORIZED_ONCE"
     with pytest.raises(ProjectGraphError, match="exact booleans"):
         notification_decision(contract, event="HUMAN_REQUIRED", event_identity="GATE-2", stage_one=1, stage_two=True, delivered_identities=())
+    forged={**contract,"eligible_events":[*contract["eligible_events"],"ARBITRARY"]}
+    with pytest.raises(ProjectGraphError,match="contract v2 mismatch"):
+        notification_decision(forged,event="ARBITRARY",event_identity="X",stage_one=False,stage_two=False,delivered_identities=())
+    forged={**contract,"deduplication":{"key":"anything","repeat_policy":"UNLIMITED"}}
+    with pytest.raises(ProjectGraphError,match="contract v2 mismatch"):
+        notification_decision(forged,event="HUMAN_REQUIRED",event_identity="X",stage_one=False,stage_two=False,delivered_identities=())
+    forged={**contract,"unexpected":True}
+    with pytest.raises(ProjectGraphError,match="contract v2 mismatch"):
+        notification_decision(forged,event="HUMAN_REQUIRED",event_identity="X",stage_one=False,stage_two=False,delivered_identities=())
+
+def test_kernel_notification_attempt_reservation_is_durable_and_fail_closed(tmp_path):
+    with OrchestratorKernel(tmp_path/"k.sqlite3",ROOT/"contracts/orchestrator/v1") as kernel:
+        args=dict(event_identity="E1",event="NOTIFICATION_CHANNEL_ACTIVATION_TEST",content_sha256="sha256:x")
+        assert kernel.reserve_notification_attempt(**args)=="RESERVED"
+        assert kernel.reserve_notification_attempt(**args)=="DEDUPLICATED"
+        kernel.complete_notification_attempt(event_identity="E1",result="FAILED",provider_receipt_id=None)
+        assert kernel.reserve_notification_attempt(**args)=="RETRY_BUDGET_EXHAUSTED"
+
+def test_kernel_notification_allows_exactly_one_bounded_retry(tmp_path):
+    with OrchestratorKernel(tmp_path/"k.sqlite3",ROOT/"contracts/orchestrator/v1") as kernel:
+        args=dict(event_identity="E2",event="HUMAN_REQUIRED",content_sha256="sha256:x")
+        assert kernel.reserve_notification_attempt(**args)=="RESERVED"
+        kernel.complete_notification_attempt(event_identity="E2",result="FAILED",provider_receipt_id=None)
+        assert kernel.reserve_notification_attempt(**args)=="RESERVED"
+        kernel.complete_notification_attempt(event_identity="E2",result="FAILED",provider_receipt_id=None)
+        assert kernel.reserve_notification_attempt(**args)=="RETRY_BUDGET_EXHAUSTED"
+
+def test_kernel_notification_retry_is_bound_to_original_event_and_content(tmp_path):
+    with OrchestratorKernel(tmp_path/"k.sqlite3",ROOT/"contracts/orchestrator/v1") as kernel:
+        args=dict(event_identity="E3",event="HUMAN_REQUIRED",content_sha256="sha256:a")
+        assert kernel.reserve_notification_attempt(**args)=="RESERVED"
+        kernel.complete_notification_attempt(event_identity="E3",result="FAILED",provider_receipt_id=None)
+        with pytest.raises(ContractError, match="identity binding mismatch"):
+            kernel.reserve_notification_attempt(event_identity="E3",event="PROJECT_COMPLETE",content_sha256="sha256:b")
+
+def test_kernel_notification_reservation_is_atomic_across_connections(tmp_path):
+    database=tmp_path/"k.sqlite3"
+    with OrchestratorKernel(database,ROOT/"contracts/orchestrator/v1"):
+        pass
+    def reserve():
+        with OrchestratorKernel(database,ROOT/"contracts/orchestrator/v1") as kernel:
+            return kernel.reserve_notification_attempt(event_identity="E4",event="HUMAN_REQUIRED",content_sha256="sha256:e")
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results=list(pool.map(lambda _: reserve(), range(2)))
+    assert sorted(results)==["DEDUPLICATED","RESERVED"]
+
+def test_kernel_notification_completion_requires_open_reservation(tmp_path):
+    with OrchestratorKernel(tmp_path/"k.sqlite3",ROOT/"contracts/orchestrator/v1") as kernel:
+        with pytest.raises(ContractError,match="exactly one open reservation"):
+            kernel.complete_notification_attempt(event_identity="E5",result="FAILED",provider_receipt_id=None)
 
 
 def test_selected_node_cost_class_cannot_be_bypassed():
@@ -149,9 +199,7 @@ def test_notification_audit_enforces_approvals_uses_kernel_chain_and_deduplicate
     destination=DestinationTransmissionApproval("SYNTH-NOTIFY-DEST","SYNTH-HUMAN-2",content.approval_id,content.case_id,content.run_id,content.artifact_reference,"1",contract["destination_reference"],"EMAIL",content.purpose,NOW,NOW+timedelta(hours=1),False,ApprovalStatus.APPROVED)
     approval_store.register_submission_approval(content); approval_store.register_submission_approval(destination)
     with OrchestratorKernel(tmp_path / "kernel.sqlite3", ROOT / "contracts/orchestrator/v1") as kernel:
-        from agent_lab.orchestrator_kernel import PermissionDenied
-        with pytest.raises(PermissionDenied):
-            kernel.record_governed_notification_audit(contract=contract,event_identity="GATE-0",event_class="HUMAN_REQUIRED",state="DELIVERED",content_hash="sha256:no",actor_id="SYNTHETIC_TEST",original_blocker="GATE-0",approval_store=approval_store,content_approval_id=content.approval_id,destination_approval_id=destination.approval_id,artifact_version="1",case_id=content.case_id,run_id=content.run_id,purpose=content.purpose,destination_identity=destination.destination_identity,now=NOW)
+        assert kernel.record_governed_notification_audit(contract=contract,event_identity="GATE-0",event_class="HUMAN_REQUIRED",state="DELIVERED",content_hash="sha256:no",actor_id="SYNTHETIC_TEST",original_blocker="GATE-0",approval_store=approval_store,content_approval_id=content.approval_id,destination_approval_id=destination.approval_id,artifact_version="1",case_id=content.case_id,run_id=content.run_id,purpose=content.purpose,destination_identity=destination.destination_identity,now=NOW) == "DELIVERED"
         args=dict(contract=contract,event_identity="GATE-1",event_class="HUMAN_REQUIRED",state="DELIVERED",content_hash="sha256:test",actor_id="SYNTHETIC_TEST",original_blocker="GATE-1",approval_store=approval_store,content_approval_id=content.approval_id,destination_approval_id=destination.approval_id,artifact_version="1",case_id=content.case_id,run_id=content.run_id,purpose=content.purpose,destination_identity=destination.destination_identity,now=NOW)
         assert kernel.record_governed_notification_audit(**args) == "DELIVERED"
         assert kernel.record_governed_notification_audit(**args) == "DEDUPLICATED"

@@ -8,7 +8,7 @@ The hot context is a hash-bound generated projection containing project/reposito
 
 The current graph distinguishes `CURRENT_SUPPORTED_PRODUCT_COMPLETE` from `MASTER_PLAN_FUTURE_SCOPE_REMAINING`. Additional years, taxpayer categories, legal entities, and generalized production workflows are not claimed as implemented.
 
-The notification contract uses a protected logical destination reference rather than storing the Owner's address in Git. It only evaluates eligibility. It cannot send email. Any real or synthetic external email requires separate ordered Constitution Article 1 Stage One and Stage Two approvals for the exact immutable message and exact destination/channel. Delivery failures never weaken the original gate, and durable event identity prevents unchanged duplicates.
+The notification contract uses a protected logical destination reference rather than storing the Owner's address in Git. Constitution v3 authorizes only the closed operational-exception allowlist without per-message Article 1 approvals. Every other external message remains under the two-stage rule. The sender boundary accepts only fixed privacy-minimized templates, forbids attachments and arbitrary recipients/content, durably reserves event identity before transport, and never changes project authority or resolves the underlying gate.
 
 The only continuation automation is `plan-limit-continuation-guard`. During active work, capacity is checked at meaningful package boundaries. On a genuine capacity pause, the durable checkpoint, exact action, closed cost class, and actual service reset timestamps must be written before that same automation is armed once at the reset. Windows Local Sync and Relay tasks are operational workers, not quota schedulers.
 

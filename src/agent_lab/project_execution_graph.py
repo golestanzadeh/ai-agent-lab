@@ -195,19 +195,49 @@ def build_hot_context(graph: dict[str, Any], action: NextAuthorizedAction, *, he
 
 def notification_decision(contract: dict[str, Any], *, event: str, event_identity: str, stage_one: bool, stage_two: bool, delivered_identities: Iterable[str]) -> str:
     """Authorize only a deduplicated, two-stage-approved notification attempt."""
+    validate_notification_contract(contract)
     if type(stage_one) is not bool or type(stage_two) is not bool:
         raise ProjectGraphError("notification approvals must be exact booleans")
     if not event_identity or not isinstance(event_identity, str):
         raise ProjectGraphError("notification event identity is required")
-    if event not in contract["eligible_events"]:
+    activation_event = contract.get("activation_test", {}).get("event")
+    if event not in contract["eligible_events"] and event != activation_event:
         return "NOT_ELIGIBLE"
     if event_identity in set(delivered_identities):
         return "DEDUPLICATED"
+    authorization = contract.get("authorization", {})
+    if authorization.get("standing_authority") is True:
+        if contract.get("status") != "OWNER_OPERATIONAL_EXCEPTION_ACTIVE":
+            raise ProjectGraphError("notification standing authority is inconsistent")
+        return "AUTHORIZED_ONCE"
     if not stage_one:
         return "ARTICLE_1_STAGE_ONE_REQUIRED"
     if not stage_two:
         return "ARTICLE_1_STAGE_TWO_REQUIRED"
     return "AUTHORIZED_ONCE"
+
+
+def validate_notification_contract(contract: dict[str, Any]) -> None:
+    eligible = {"HUMAN_REQUIRED","GOVERNANCE_OR_SAFETY_CONFLICT","PLAN_OR_ENTITLEMENT_BLOCKED","SCHEDULER_ARM_FAILURE","UNRECOVERABLE_HOST_RUNTIME_FAILURE","LONG_LIVED_OWNER_BLOCKER","CURRENT_SUPPORTED_PRODUCT_COMPLETE","PROJECT_COMPLETE"}
+    ineligible = {"PACKAGE_PASS","CHECKPOINT","AUTONOMOUS_REMEDIATION_PASS","TOKEN_PAUSED_CONTINUATION_ARMED","CAPACITY_DEFERRED_CONTINUATION_ARMED"}
+    expected_keys = {"schema_version", "contract_id", "destination_reference", "channel", "status", "eligible_events", "ineligible_events", "privacy", "authorization", "deduplication", "failure", "activation_test"}
+    exact = (
+        set(contract) == expected_keys
+        and contract.get("schema_version") == 2
+        and contract.get("contract_id") == "OWNER-EXCEPTION-NOTIFICATION-V2"
+        and contract.get("destination_reference") == "OWNER_CONTROLLED_EXCEPTION_EMAIL_PROTECTED_CONFIG"
+        and contract.get("channel") == "EMAIL"
+        and contract.get("status") == "OWNER_OPERATIONAL_EXCEPTION_ACTIVE"
+        and set(contract.get("eligible_events", ())) == eligible
+        and set(contract.get("ineligible_events", ())) == ineligible
+        and contract.get("privacy") == {"operational_metadata_only":True,"attachments":False,"taxpayer_data":False,"credentials":False,"protected_evidence":False}
+        and contract.get("authorization") == {"stage_one_required":False,"stage_two_required":False,"standing_authority":True,"authority":"CONSTITUTION_V3_ARTICLE_1_CLAUSES_15_17"}
+        and contract.get("deduplication") == {"key":"durable_event_or_gate_identity","repeat_policy":"MATERIAL_CHANGE_AND_NEW_EXACT_AUTHORITY_ONLY"}
+        and contract.get("failure") == {"preserve_original_gate":True,"weaken_gate":False,"retry":"ONE_BOUNDED_RETRY"}
+        and contract.get("activation_test") == {"event":"NOTIFICATION_CHANNEL_ACTIVATION_TEST","single_owner_authorization":"2026-10-05","maximum_attempts":1}
+    )
+    if not exact:
+        raise ProjectGraphError("notification contract v2 mismatch")
 
 
 def _validate_graph_payload(payload: dict[str, Any]) -> None:

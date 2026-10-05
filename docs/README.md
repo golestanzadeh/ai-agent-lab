@@ -17,6 +17,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
 - `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
 - `master-execution-graph.md` — versioned project graph, deterministic next-action projection, hot context, scheduler, and notification boundary.
+- `owner-exception-notification-activation-20261005.json` — privacy-minimized evidence for the single authorized activation attempt.
 - `repository-audit-20261004.json` — complete tracked-repository classification and safe cleanup disposition.
 - `dr03-capacity-deferred-after-r6-20261004.json` — exact post-R6 DR-03 continuation capsule and reset-aligned wake evidence.
 - `plan-limit-missed-wake-recovery-20261005.json` — durable recovery of the missed reset-aligned wake and verified scheduler invariant.

@@ -131,7 +131,45 @@ def _replace_scalar(text: str, key: str, value: str) -> str:
     return pattern.sub(f'{key} = "{value}"', text)
 
 
-def _scheduler(op: str, payload: dict) -> dict:
+def _continuation_binding(repo: Path, payload: dict, *, include_rrule: bool) -> tuple[dict, str | None]:
+    required = {"action_id", "checkpoint", "graph_digest", "expected_head"} | ({"rrule"} if include_rrule else set())
+    if set(payload) != required:
+        raise HostControlError("scheduler continuation payload mismatch")
+    try:
+        hot = json.loads(_git(repo, "show", "HEAD:PROJECT_HOT_CONTEXT.json"))
+    except (HostControlError, json.JSONDecodeError) as exc:
+        raise HostControlError("committed hot context unavailable") from exc
+    stored_digest = hot.pop("context_digest", None)
+    canonical = json.dumps(hot, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+    actual_digest = "sha256:" + __import__("hashlib").sha256(canonical).hexdigest()
+    if stored_digest != actual_digest:
+        raise HostControlError("hot context digest mismatch")
+    if hot.get("repository") != REPOSITORY or hot.get("branch") != BRANCH:
+        raise HostControlError("hot context repository binding mismatch")
+    current_head = _verify_repo(repo)
+    if payload["expected_head"] != current_head:
+        raise HostControlError("scheduler expected head is stale")
+    checkpoint = hot.get("recovery_checkpoint")
+    try:
+        _git(repo, "merge-base", "--is-ancestor", str(checkpoint), current_head)
+    except HostControlError as exc:
+        raise HostControlError("hot context checkpoint is not an ancestor") from exc
+    action = hot.get("next_authorized_action")
+    if not isinstance(action, dict):
+        raise HostControlError("durable continuation action unavailable")
+    exact = (
+        payload["action_id"] == action.get("action_id")
+        and payload["checkpoint"] == hot.get("recovery_checkpoint")
+        and payload["graph_digest"] == hot.get("graph_digest") == action.get("graph_digest")
+        and action.get("outcome") in {"CAPACITY_DEFERRED", "TOKEN_PAUSED", "READY_PACKAGE"}
+        and action.get("human_gate") in {None, "NONE"}
+    )
+    if not exact:
+        raise HostControlError("scheduler request is not bound to durable continuation")
+    return hot, payload.get("rrule")
+
+
+def _scheduler(repo: Path, op: str, payload: dict) -> dict:
     text = _read_automation()
     before_hash = __import__("hashlib").sha256(text.encode()).hexdigest()
     if op == "SCHEDULER_VERIFY":
@@ -139,25 +177,28 @@ def _scheduler(op: str, payload: dict) -> dict:
             raise HostControlError("verify payload must be empty")
         return {"status": "PASS", "operation": op, "guard_id": GUARD_ID, "automation_sha256": before_hash}
     if op == "SCHEDULER_ARM":
-        if set(payload) != {"rrule"} or not isinstance(payload["rrule"], str):
+        hot, rrule = _continuation_binding(repo, payload, include_rrule=True)
+        if not isinstance(rrule, str):
             raise HostControlError("arm payload mismatch")
-        rrule = payload["rrule"]
         m = re.fullmatch(r"DTSTART:(\d{8}T\d{6}Z)\nRRULE:FREQ=DAILY;COUNT=1", rrule)
         if not m:
             raise HostControlError("unsafe scheduler rrule")
         wake = datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
         if wake <= datetime.now(timezone.utc):
             raise HostControlError("scheduler wake is stale")
+        reset = hot.get("next_authorized_action", {}).get("reset_timestamp")
+        if not isinstance(reset, str) or datetime.fromisoformat(reset.replace("Z", "+00:00")) != wake:
+            raise HostControlError("scheduler wake does not match durable reset")
         text = _replace_scalar(text, "status", "ACTIVE")
         escaped = rrule.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
         text = _replace_scalar(text, "rrule", escaped)
     elif op == "SCHEDULER_PAUSE_CONSUME":
-        if payload:
-            raise HostControlError("pause payload must be empty")
+        _continuation_binding(repo, payload, include_rrule=False)
         text = _replace_scalar(text, "status", "PAUSED")
     elif op == "SCHEDULER_RECONCILE":
-        if set(payload) != {"expected_status"} or payload["expected_status"] not in {"ACTIVE", "PAUSED"}:
+        if set(payload) != {"expected_status", "action_id", "checkpoint", "graph_digest", "expected_head"} or payload["expected_status"] not in {"ACTIVE", "PAUSED"}:
             raise HostControlError("reconcile payload mismatch")
+        _continuation_binding(repo, {k: payload[k] for k in ("action_id", "checkpoint", "graph_digest", "expected_head")}, include_rrule=False)
         current = re.search(r'(?m)^status\s*=\s*"([^"]+)"$', text)
         if not current or current.group(1) != payload["expected_status"]:
             raise HostControlError("scheduler state mismatch")
@@ -187,7 +228,7 @@ def process_local_request(repo: Path) -> dict | None:
         return result
     _atomic_json(state_path, {"request_id": rid, "operation": op, "terminal": False})
     try:
-        result = _git_publish(repo, p["payload"]) if op == "GIT_PUBLISH" else _scheduler(op, p["payload"])
+        result = _git_publish(repo, p["payload"]) if op == "GIT_PUBLISH" else _scheduler(repo, op, p["payload"])
         result["request_id"] = rid
     except HostControlError as exc:
         result = {"status": "BLOCKED", "request_id": rid, "operation": op, "detail": str(exc)}

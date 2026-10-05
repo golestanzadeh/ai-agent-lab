@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "notification_contract": "OWNER-EXCEPTION-NOTIFICATION-V2",
+  "event_type": "NOTIFICATION_CHANNEL_ACTIVATION_TEST",
+  "event_identity": "NOTIFICATION-ACTIVATION-20261005-001",
+  "destination_reference": "OWNER_CONTROLLED_EXCEPTION_EMAIL_PROTECTED_CONFIG",
+  "attempted_at": "2026-10-05T10:55:00+02:00",
+  "result": "FAILED",
+  "failure_class": "PROTECTED_PROVIDER_CONFIGURATION_UNAVAILABLE",
+  "provider_receipt_identifier": null,
+  "sensitive_data_transmitted": false,
+  "attachment_transmitted": false,
+  "message_content_persisted": false,
+  "retry_authorized": false,
+  "project_authority_changed": false,
+  "underlying_gate_resolved": false
+}

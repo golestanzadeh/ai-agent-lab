@@ -1549,6 +1549,29 @@ class OrchestratorKernel:
                 prior.append(payload)
         if any(item.get("state") == "DELIVERED" for item in prior):
             return "DEDUPLICATED"
+        standing = contract.get("authorization", {}).get("standing_authority") is True
+        if standing:
+            if destination_identity != contract.get("destination_reference"):
+                raise PermissionDenied("notification destination binding mismatch")
+            failed_count = sum(item.get("state") == "DELIVERY_FAILED" for item in prior)
+            maximum_attempts = 1 if event_class == contract.get("activation_test", {}).get("event") else 2
+            if failed_count >= maximum_attempts:
+                return "RETRY_BUDGET_EXHAUSTED"
+            decision = notification_decision(
+                contract, event=event_class, event_identity=event_identity,
+                stage_one=False, stage_two=False,
+                delivered_identities=tuple(item["event_identity"] for item in prior if item.get("state") == "DELIVERED"),
+            )
+            if decision != "AUTHORIZED_ONCE":
+                raise PermissionDenied(f"notification not authorized: {decision}")
+            with self._connection:
+                self._append_event(
+                    "NOTIFICATION_STATE", "OWNER_EXCEPTION_NOTIFICATION", event_identity,
+                    actor_id,
+                    {"event_identity": event_identity, "event_class": event_class, "state": state,
+                     "content_hash": content_hash, "original_blocker": original_blocker},
+                )
+            return state
         content = approval_store.get_submission_approval(content_approval_id)
         destination = approval_store.get_submission_approval(destination_approval_id)
         from .elster_dry_run import ApprovalStatus as SubmissionApprovalStatus
@@ -1593,6 +1616,60 @@ class OrchestratorKernel:
                  "content_hash": content_hash, "original_blocker": original_blocker},
             )
         return state
+
+    def reserve_notification_attempt(self, *, event_identity: str, event: str, content_sha256: str) -> str:
+        maximum_attempts = 1 if event == "NOTIFICATION_CHANNEL_ACTIVATION_TEST" else 2
+        self._connection.execute("BEGIN IMMEDIATE")
+        try:
+            prior=[]
+            for row in self._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='NOTIFICATION_ATTEMPT'").fetchall():
+                payload=json.loads(row["payload_json"])
+                if payload.get("event_identity")==event_identity: prior.append(payload)
+            reservations_payload = [p for p in prior if p.get("state") == "RESERVED"]
+            if any(
+                p.get("event") != event
+                or p.get("content_sha256") != content_sha256
+                or p.get("maximum_attempts") != maximum_attempts
+                for p in reservations_payload
+            ):
+                raise ContractError("notification retry identity binding mismatch")
+            if any(p.get("state") in {"SENT_AND_CONFIRMED","SENT_DELIVERY_UNCONFIRMED"} for p in prior):
+                self._connection.commit()
+                return "DEDUPLICATED"
+            reservations=len(reservations_payload)
+            completions=sum(p.get("state") in {"FAILED","SENT_AND_CONFIRMED","SENT_DELIVERY_UNCONFIRMED"} for p in prior)
+            if reservations > completions:
+                self._connection.commit()
+                return "DEDUPLICATED"
+            if reservations >= maximum_attempts:
+                self._connection.commit()
+                return "RETRY_BUDGET_EXHAUSTED"
+            self._append_event("NOTIFICATION_ATTEMPT","OWNER_EXCEPTION_NOTIFICATION",event_identity,"OWNER_EXCEPTION_SENDER",{"event_identity":event_identity,"event":event,"content_sha256":content_sha256,"maximum_attempts":maximum_attempts,"state":"RESERVED","attempt":reservations+1})
+            self._connection.commit()
+            return "RESERVED"
+        except Exception:
+            self._connection.rollback()
+            raise
+
+    def complete_notification_attempt(self, *, event_identity: str, result: str, provider_receipt_id: str | None) -> None:
+        if result not in {"SENT_AND_CONFIRMED","SENT_DELIVERY_UNCONFIRMED","FAILED"}:
+            raise ContractError("notification completion result invalid")
+        self._connection.execute("BEGIN IMMEDIATE")
+        try:
+            prior=[]
+            for row in self._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='NOTIFICATION_ATTEMPT'").fetchall():
+                payload=json.loads(row["payload_json"])
+                if payload.get("event_identity")==event_identity: prior.append(payload)
+            reservations=[p for p in prior if p.get("state")=="RESERVED"]
+            completions=[p for p in prior if p.get("state") in {"FAILED","SENT_AND_CONFIRMED","SENT_DELIVERY_UNCONFIRMED"}]
+            if len(reservations) != len(completions) + 1:
+                raise ContractError("notification completion requires exactly one open reservation")
+            binding=reservations[-1]
+            self._append_event("NOTIFICATION_ATTEMPT","OWNER_EXCEPTION_NOTIFICATION",event_identity,"OWNER_EXCEPTION_SENDER",{"event_identity":event_identity,"event":binding["event"],"content_sha256":binding["content_sha256"],"maximum_attempts":binding["maximum_attempts"],"attempt":binding["attempt"],"state":result,"provider_receipt_id":provider_receipt_id})
+            self._connection.commit()
+        except Exception:
+            self._connection.rollback()
+            raise
 
     def record_continuation_capsule(
         self, *, action_id: str, capacity_state: str, cost_class: str,

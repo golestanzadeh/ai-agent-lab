@@ -122,6 +122,8 @@ Allowlisted operations are:
 
 The local contract rejects arbitrary commands, arbitrary repositories, `main`, alternate branches, arbitrary automation identities, arbitrary filesystem paths, protected repository paths, malformed or stale scheduler timestamps, unknown operations, duplicate/replayed request IDs, and unexpected staged paths.
 
+Scheduler mutation additionally requires an exact `action_id`, recovery checkpoint, and graph digest match against the fixed `PROJECT_HOT_CONTEXT.json`. `SCHEDULER_ARM` also requires its UTC one-shot timestamp to equal the durable reset timestamp. Scheduler lifecycle mutation never grants package authority; execution still performs the independent Recovery Gate, capacity, dependency, authority, and Human-Gate checks.
+
 Git credentials remain on the Windows host. They are consumed only by the host Git process through the existing credential helper and are never copied into the sandbox, request, response, repository, or audit output.
 
 Responses are written to `.windows-relay-local/response.json`. Terminal request identity is retained in `.windows-relay-local/state.json` for deterministic replay handling.
