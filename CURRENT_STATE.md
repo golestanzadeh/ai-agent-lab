@@ -1,10 +1,10 @@
 # Current State
 
-The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The sole reset-aligned continuation guard is reconciled and remains paused because execution is active rather than capacity-paused. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. Exact next authorized action is DR-03.
+The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The sole reset-aligned continuation guard is reconciled and remains paused because execution is active rather than capacity-paused. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. DR-03 is independently accepted; exact next authorized action is DR-04 remediation.
 
 ## 2026-10-04 — infrastructure repair boundary
 
-DR-01 and DR-02 are `PASS`. DR-03 is `READY`: all six Owner-declared facts, including the responsible Familienkasse, are `SUPPLIED_NOT_REGISTERED`; their sensitive values are not reproduced in Git and no new Owner input is required unless protected recovery fails. DR-04 remains `INDEPENDENT_ACCEPTANCE_FAIL` on exactly three defects: unexecuted plausibility rules, the EUR 31.83 versus whole-euro EUR 32.00 representation contradiction, and substitution-prone lineage. DR-05 is `NOT_STARTED`. The frozen refund remains EUR 133.83.
+DR-01, DR-02 and DR-03 are `PASS`. DR-03 registers all six Owner-declared facts in the protected case boundary, validates exact XSD and five official plausibility rules, and commits no sensitive values. DR-04 remains `INDEPENDENT_ACCEPTANCE_FAIL` on exactly three defects: unexecuted plausibility rules, the EUR 31.83 versus whole-euro EUR 32.00 representation contradiction, and substitution-prone lineage. DR-05 is `NOT_STARTED`. The frozen refund remains EUR 133.83.
 
 Limit governance distinguishes hard-threshold `TOKEN_PAUSED` from deterministic proactive `CAPACITY_DEFERRED`; a healthy 50/92 observation is `RUN`, not a token pause.
 Authorized bounded packages may continue sequentially while the deterministic capacity state, prerequisites, repository safety, and Human Gates permit it; routine heartbeat-start checks are disabled when a current live observation remains valid.
@@ -102,7 +102,7 @@ Last reconciled: **2026-10-04**
 
 ## Exact next action
 
-After this infrastructure repair, register the six already supplied Owner Human Declarations, complete DR-03, repair and independently accept the three recorded DR-04 defects, and start DR-05 only after DR-03 and DR-04 both pass. Do not repeat source ingestion, DR-01, or DR-02. All external-action gates remain closed.
+Repair and independently accept the three recorded DR-04 defects, then start DR-05. Do not repeat source ingestion or DR-01 through DR-03. All external-action gates remain closed.
 
 ## Non-negotiable constraints
 

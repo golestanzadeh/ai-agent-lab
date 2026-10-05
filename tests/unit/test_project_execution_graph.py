@@ -22,11 +22,11 @@ def capacity(five=98, weekly=74):
     return evaluate_capacity(obs, now=NOW)
 
 
-def test_graph_selects_exact_dr03_without_dispatching():
+def test_graph_selects_exact_dr04_without_dispatching():
     graph = load_graph(GRAPH)
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="ad4f69f", capacity=capacity(), now=NOW)
     assert action.outcome == "READY_PACKAGE"
-    assert action.action_id == "DR-03-REGISTER-AND-COMPLETE"
+    assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
     assert action.cost_class == "BOUNDED"
 
 
@@ -52,7 +52,7 @@ def test_capacity_stop_precedes_selection(five, weekly, expected):
     graph = load_graph(GRAPH)
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(five, weekly), now=NOW)
     assert action.outcome == expected
-    assert action.action_id == "DR-03-REGISTER-AND-COMPLETE"
+    assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
     assert action.cost_class == "BOUNDED"
     assert action.reset_timestamp is not None
 
@@ -70,7 +70,7 @@ def test_existing_kernel_hosts_read_only_next_action_query(tmp_path):
         before = kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]
         action = kernel.next_authorized_project_action(GRAPH, branch="d021-agent-case-provisioning", repository_safe=True, capacity=capacity(), now=NOW)
         after = kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]
-    assert action.action_id == "DR-03-REGISTER-AND-COMPLETE"
+    assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
     assert before == after
 
 
@@ -100,7 +100,7 @@ def test_selected_node_cost_class_cannot_be_bypassed():
     graph = load_graph(GRAPH)
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(30, 30), now=NOW)
     assert action.outcome == "CAPACITY_DEFERRED"
-    assert action.action_id == "DR-03-REGISTER-AND-COMPLETE"
+    assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
 
 
 def test_closed_loop_executes_repairs_accepts_checkpoints_reopens_and_arms(tmp_path):
@@ -190,7 +190,7 @@ def test_stale_capacity_fails_closed():
 
 def test_both_window_deferral_uses_later_relevant_reset():
     graph=load_graph(GRAPH)
-    next(node for node in graph["nodes"] if node["id"]=="DR-03-REGISTER-AND-COMPLETE")["cost_class"]="EXPENSIVE"
+    next(node for node in graph["nodes"] if node["id"]=="DR-04-REMEDIATE-AND-ACCEPT")["cost_class"]="EXPENSIVE"
     action=next_authorized_action(graph,branch=graph["branch"],repository_safe=True,recovery_checkpoint="x",capacity=capacity(50,25),now=NOW)
     assert action.outcome == "CAPACITY_DEFERRED"
     assert action.reset_timestamp == (NOW+timedelta(days=4)).isoformat()

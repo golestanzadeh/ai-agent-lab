@@ -6,14 +6,14 @@ Last reconciled: **2026-10-04**
 
 ## Current position
 
-- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. Exact next action is DR-03; no external notification or transmission is active.
+- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted; exact next action is DR-04 remediation. No external notification or transmission is active.
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution is `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`. Live capacity values are execution evidence, not roadmap state; each legitimate wake reads fresh service values. The sole continuation guard is reset-aligned when a durable pause exists and never polls every five minutes.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
-- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 and DR-02 are `PASS`; DR-03 has six Owner facts `SUPPLIED_NOT_REGISTERED`; DR-04 remediation remains pending after Independent Acceptance `FAIL`; DR-05 is `NOT_STARTED`. Exact post-infrastructure continuation is DR-03 completion, DR-04 repair/acceptance, then DR-05.
+- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`; DR-04 remediation remains pending after Independent Acceptance `FAIL`; DR-05 is `NOT_STARTED`. Exact continuation is DR-04 repair/acceptance, then DR-05.
 - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
 
 ## Track 1 — Autonomous project control

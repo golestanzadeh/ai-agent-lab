@@ -59,12 +59,16 @@ class DR02Request:
 
 @dataclass(frozen=True, slots=True)
 class DR02Result:
+    case_id: str
+    tax_year: int
+    run_id: str
     request_reference: str
     prior_result_reference: str
     declaration_xml: str
     declared_values: tuple[tuple[str, str], ...]
     source_documentation_reference: str
     source_schema_reference: str
+    official_xsd_validated: bool = True
     frozen_refund_eur: str = "133.83"
     non_transmitting_preview: bool = True
     official_eric_executed: bool = False
@@ -126,6 +130,9 @@ def compose_and_validate_dr02(request: DR02Request, *, resolver: OfficialSourceR
     except xmlschema.XMLSchemaException as exc:
         raise DR02Error("DR-02 failed exact official XSD validation") from exc
     return DR02Result(
+        case_id=request.case_id,
+        tax_year=request.tax_year,
+        run_id=request.run_id,
         request_reference=request.artifact_identity.reference,
         prior_result_reference=request.dr01_result.artifact_identity.reference,
         declaration_xml=xml,

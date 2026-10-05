@@ -21,6 +21,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `dr03-capacity-deferred-after-r6-20261004.json` — exact post-R6 DR-03 continuation capsule and reset-aligned wake evidence.
 - `plan-limit-missed-wake-recovery-20261005.json` — durable recovery of the missed reset-aligned wake and verified scheduler invariant.
 - `case001-dr03-capacity-deferred-20261004.json` — deterministic non-token deferral and exact DR-03 continuation.
+- `case001-dr03-acceptance-2024.md` / `.json` — accepted protected-fact, Anlage Kind, XSD, plausibility and lineage evidence.
 - `case001-dr04-acceptance-2024.md` — recoverable DR-04 implementation record and independent-acceptance defects.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.

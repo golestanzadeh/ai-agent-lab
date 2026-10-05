@@ -242,7 +242,7 @@
       "depends_on": [
         "R6-AUTONOMY-PROOF"
       ],
-      "status": "READY",
+      "status": "ACCEPTED",
       "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
       "available_authority": "ACTIVE",
       "inputs": [
@@ -275,7 +275,7 @@
         "DR-04-REMEDIATE-AND-ACCEPT"
       ],
       "terminal_semantics": "PACKAGE_COMPLETE",
-      "execution_eligibility": "ELIGIBLE"
+      "execution_eligibility": "COMPLETED"
     },
     {
       "id": "DR-04-REMEDIATE-AND-ACCEPT",
@@ -283,7 +283,7 @@
       "depends_on": [
         "DR-03-REGISTER-AND-COMPLETE"
       ],
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "READY",
       "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
       "available_authority": "ACTIVE",
       "inputs": [

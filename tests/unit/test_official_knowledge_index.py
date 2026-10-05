@@ -48,7 +48,9 @@ def test_missing_and_unresolved_entries_are_not_resolvable():
     with pytest.raises(OfficialKnowledgeUnresolved) as caught: resolve(OfficialKnowledgeIndex(), DR04)
     assert caught.value.audit_record.reason == "ENTRY_UNRESOLVED"
     assert caught.value.audit_record.source_locator == "HA_35a - Felder; HA_35a - Regeln"
-    with pytest.raises(OfficialKnowledgeUnresolved): resolve(OfficialKnowledgeIndex(), DR03)
+    dr03 = resolve(OfficialKnowledgeIndex(), DR03)
+    assert dr03.status == "VERIFIED_ACCEPTED" and dr03.independent_acceptance == "PASS"
+    assert "E0500706" in dr03.field_ids and "501150" in dr03.rule_ids
 
 def test_reopen_completion_requires_actual_section_change_and_acceptance():
     with pytest.raises(OfficialKnowledgeUnresolved) as caught: resolve(OfficialKnowledgeIndex(), DR04)

@@ -1,28 +1,12 @@
 {
   "branch": "d021-agent-case-provisioning",
-  "capacity": {
-    "five_hour_remaining_percent": 28,
-    "five_hour_resets_at": "2026-10-05T01:39:36+00:00",
-    "observed_at": "2026-10-04T21:12:24.668764+00:00",
-    "weekly_remaining_percent": 63,
-    "weekly_resets_at": "2026-10-11T10:37:32+00:00"
-  },
-  "context_digest": "sha256:eedd78359a694479583281c673efd5bc8b1f4cb86fa8c9d88addb002e3702547",
-  "graph_digest": "sha256:9f815a7a3af447e228d586b2e1142ca807d94d74ad953aea9cd6802ce5c31423",
-  "head": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
-  "next_authorized_action": {
-    "action_id": "DR-03-REGISTER-AND-COMPLETE",
-    "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
-    "cost_class": "BOUNDED",
-    "dependencies": "SATISFIED",
-    "graph_digest": "sha256:9f815a7a3af447e228d586b2e1142ca807d94d74ad953aea9cd6802ce5c31423",
-    "human_gate": "NONE",
-    "outcome": "CAPACITY_DEFERRED",
-    "recovery_checkpoint": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
-    "reset_timestamp": "2026-10-05T01:39:36+00:00"
-  },
+  "capacity": {"five_hour_remaining_percent":22,"five_hour_resets_at":"2026-10-05T06:40:04+00:00","observed_at":"2026-10-05T05:22:50.453710+00:00","weekly_remaining_percent":51,"weekly_resets_at":"2026-10-11T10:37:32+00:00"},
+  "context_digest": "sha256:8d8d9f3d705d56bdae6962ca96d00711b681a8fc6b9d8178ea795d321bf21420",
+  "graph_digest": "sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee",
+  "head": "a9b2cecd24566ee9c4de446fda5f4615501aedc9",
+  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"CAUTION","recovery_checkpoint":"a9b2cecd24566ee9c4de446fda5f4615501aedc9","reset_timestamp":"2026-10-05T06:40:04+00:00"},
   "project": "AI-Tax-Agent",
-  "recovery_checkpoint": "6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539",
+  "recovery_checkpoint": "a9b2cecd24566ee9c4de446fda5f4615501aedc9",
   "repository": "golestanzadeh/ai-agent-lab",
   "schema_version": 1,
   "supporting_contract": "contracts/project-execution/v1/master-execution-graph.json"

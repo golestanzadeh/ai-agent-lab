@@ -29,7 +29,7 @@ The comparison API classifies stable IDs as `UNCHANGED`, `CHANGED`, `NEW` or
 structural validation.
 
 The initial seed is intentionally limited to DR-01 through DR-04 E10/2024 extracts.
-Only DR-01 and DR-02 are consumable; DR-03 and DR-04 remain unresolved. Adding or changing an entry requires a new bounded
+DR-01, DR-02 and DR-03 are consumable; DR-04 remains unresolved. Adding or changing an entry requires a new bounded
 official-source review, a version/identity update, focused tests and acceptance.
 The index contains no taxpayer data and authorizes no ERiC execution or external
 transmission. The Git-reviewed manifest plus committed checkpoint is the trust root;
