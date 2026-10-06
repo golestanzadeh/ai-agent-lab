@@ -283,7 +283,7 @@
       "depends_on": [
         "DR-03-REGISTER-AND-COMPLETE"
       ],
-      "status": "READY",
+      "status": "HUMAN_GATE",
       "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
       "available_authority": "ACTIVE",
       "inputs": [
@@ -314,7 +314,7 @@
         "DR-05-INTEGRATED-ACCEPTANCE"
       ],
       "terminal_semantics": "PACKAGE_COMPLETE",
-      "execution_eligibility": "BLOCKED"
+      "execution_eligibility": "HUMAN_GATE"
     },
     {
       "id": "DR-05-INTEGRATED-ACCEPTANCE",

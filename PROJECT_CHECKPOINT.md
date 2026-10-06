@@ -39,6 +39,13 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### DR-04 authoritative rounding Human Gate — 2026-10-06
+
+- A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`. Live authoritative Codex capacity was five-hour `82%` remaining (reset `2026-10-06T21:08:11+02:00`) and weekly `23%` remaining (reset `2026-10-11T12:37:32+02:00`); the closed `BOUNDED` estimate permitted DR-04 investigation without using Full Reset.
+- Before code change, authoritative reconciliation confirmed that the accepted taxpayer-favorable whole-euro transformation maps the EUR 69.13 tenant basis to `70` and the EUR 90.00 craftsman basis to `90`. Those declaration inputs imply a section-35a credit of EUR 32.00, not the frozen EUR 31.83.
+- Changing this component alone projects a successor refund of EUR 134.00. Because the Owner required the accepted EUR 133.83 result to remain frozen unless an exact material-result change is explicitly approved, status is `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. No tax code, accepted result, external boundary, or protected artifact was changed. Focused control verification passed (`42 passed`: project execution graph plus bounded host control).
+- DR-05 remains dependency-blocked. Exact next action is `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE`; after approval, repair the two remaining defects (execute/bind the ten reviewed plausibility rules and reject valid-but-unrelated lineage), run focused/regression tests, and repeat Independent Acceptance. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
+
 ### Owner operational exception notification amendment — 2026-10-05
 
 - The Owner explicitly approved Constitution v3 Article 1 clauses 15–17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.

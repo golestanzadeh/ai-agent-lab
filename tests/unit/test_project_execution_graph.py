@@ -23,16 +23,25 @@ def capacity(five=98, weekly=74):
     return evaluate_capacity(obs, now=NOW)
 
 
-def test_graph_selects_exact_dr04_without_dispatching():
+def ready_graph():
+    graph = load_graph(GRAPH)
+    node = next(node for node in graph["nodes"] if node["id"] == "DR-04-REMEDIATE-AND-ACCEPT")
+    node["status"] = "READY"
+    node["execution_eligibility"] = "BLOCKED"
+    return graph
+
+
+def test_graph_selects_exact_dr04_human_gate_without_dispatching():
     graph = load_graph(GRAPH)
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="ad4f69f", capacity=capacity(), now=NOW)
-    assert action.outcome == "READY_PACKAGE"
+    assert action.outcome == "HUMAN_GATE"
     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
+    assert action.human_gate == "HUMAN_GATE"
     assert action.cost_class == "BOUNDED"
 
 
 def test_graph_fails_closed_on_ambiguous_ready_action():
-    graph = load_graph(GRAPH)
+    graph = ready_graph()
     graph["nodes"][5]["status"] = "READY"
     graph["nodes"][6]["depends_on"] = ["R5-CLOSED-LOOP"]
     with pytest.raises(ProjectGraphError, match="ambiguous"):
@@ -50,7 +59,7 @@ def test_graph_rejects_forward_or_unknown_dependency(tmp_path):
 
 @pytest.mark.parametrize("five,weekly,expected", [(15, 74, CapacityState.TOKEN_PAUSED.value), (98, 10, CapacityState.TOKEN_PAUSED.value)])
 def test_capacity_stop_precedes_selection(five, weekly, expected):
-    graph = load_graph(GRAPH)
+    graph = ready_graph()
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(five, weekly), now=NOW)
     assert action.outcome == expected
     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
@@ -147,7 +156,7 @@ def test_kernel_notification_completion_requires_open_reservation(tmp_path):
 
 
 def test_selected_node_cost_class_cannot_be_bypassed():
-    graph = load_graph(GRAPH)
+    graph = ready_graph()
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(30, 30), now=NOW)
     assert action.outcome == "CAPACITY_DEFERRED"
     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
@@ -236,14 +245,14 @@ def test_notification_binds_contract_destination_and_limits_one_retry(tmp_path):
 
 
 def test_stale_capacity_fails_closed():
-    graph = load_graph(GRAPH)
+    graph = ready_graph()
     stale_now = NOW + timedelta(hours=1)
     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(), now=stale_now)
     assert action.outcome == "UNKNOWN_PAUSED"
 
 
 def test_both_window_deferral_uses_later_relevant_reset():
-    graph=load_graph(GRAPH)
+    graph=ready_graph()
     next(node for node in graph["nodes"] if node["id"]=="DR-04-REMEDIATE-AND-ACCEPT")["cost_class"]="EXPENSIVE"
     action=next_authorized_action(graph,branch=graph["branch"],repository_safe=True,recovery_checkpoint="x",capacity=capacity(50,25),now=NOW)
     assert action.outcome == "CAPACITY_DEFERRED"

@@ -1,0 +1,213 @@
+﻿diff --git a/CURRENT_STATE.md b/CURRENT_STATE.md
+index c161c50..217ab75 100644
+--- a/CURRENT_STATE.md
++++ b/CURRENT_STATE.md
+@@ -1,5 +1,9 @@
+ # Current State
+ 
++## DR-04 Human Gate ΓÇö 2026-10-06
++
++A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`; live capacity was five-hour `82%` and weekly `23%`. Authoritative reconciliation confirms the accepted whole-euro transformation yields declared section-35a bases `70 + 90` and therefore EUR 32.00 credit, not the frozen EUR 31.83. A EUR 0.17 result change would project the successor refund to EUR 134.00, so execution stopped before code or accepted-result change at `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. DR-05 remains blocked. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
++
+ ## Owner operational exception infrastructure ΓÇö 2026-10-05
+ 
+ Constitution v3 and `OWNER-EXCEPTION-NOTIFICATION-V2` establish the narrow operational exception channel. The Windows Relay continuation lifecycle is bound to exact repository/branch/HEAD, verified HOT CONTEXT digest, graph digest, checkpoint, action, and reset timestamp. Focused verification is `79 passed`; final Independent Acceptance is `PASS`. The one authorized activation attempt is `FAILED` because no approved provider credential/configuration is available to the runtime; no email, sensitive data, or attachment left the project boundary. This isolated provider Human Gate does not block unrelated authorized project work.
+@@ -19,7 +23,7 @@ Authorized bounded packages may continue sequentially while the deterministic ca
+ 
+ The bounded infrastructure repair is independently accepted: Limit Controller repair `PASS`, indexed Official Source Knowledge repair `PASS`, and canonical continuation preservation `PASS`. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`).
+ 
+-Last reconciled: **2026-10-05**
++Last reconciled: **2026-10-06**
+ 
+ ## Authoritative status
+ 
+@@ -110,7 +114,7 @@ Last reconciled: **2026-10-05**
+ 
+ ## Exact next action
+ 
+-Repair and independently accept the three recorded DR-04 defects, then start DR-05. Do not repeat source ingestion, DR-01, DR-02, or DR-03. All external-action gates remain closed.
++Obtain the Project Owner's exact decision on `DR04-ROUNDING-RESULT-CHANGE-20261006`. Until then, keep the accepted refund at EUR 133.83, do not mark DR-04 accepted, and do not start DR-05. If the successor result is approved, update the versioned result to section-35a credit EUR 32.00 / projected refund EUR 134.00, repair the remaining plausibility and exact-lineage defects, run focused/regression tests, and repeat Independent Acceptance. All external-action gates remain closed.
+ 
+ ## Non-negotiable constraints
+ 
+diff --git a/PROJECT_CHECKPOINT.md b/PROJECT_CHECKPOINT.md
+index f8df22b..f09ccdb 100644
+--- a/PROJECT_CHECKPOINT.md
++++ b/PROJECT_CHECKPOINT.md
+@@ -39,6 +39,13 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and
+ 
+ ## Current continuation point
+ 
++### DR-04 authoritative rounding Human Gate ΓÇö 2026-10-06
++
++- A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`. Live authoritative Codex capacity was five-hour `82%` remaining (reset `2026-10-06T21:08:11+02:00`) and weekly `23%` remaining (reset `2026-10-11T12:37:32+02:00`); the closed `BOUNDED` estimate permitted DR-04 investigation without using Full Reset.
++- Before code change, authoritative reconciliation confirmed that the accepted taxpayer-favorable whole-euro transformation maps the EUR 69.13 tenant basis to `70` and the EUR 90.00 craftsman basis to `90`. Those declaration inputs imply a section-35a credit of EUR 32.00, not the frozen EUR 31.83.
++- Changing this component alone projects a successor refund of EUR 134.00. Because the Owner required the accepted EUR 133.83 result to remain frozen unless an exact material-result change is explicitly approved, status is `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. No tax code, accepted result, external boundary, or protected artifact was changed. Focused control verification passed (`42 passed`: project execution graph plus bounded host control).
++- DR-05 remains dependency-blocked. Exact next action is `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE`; after approval, repair the two remaining defects (execute/bind the ten reviewed plausibility rules and reject valid-but-unrelated lineage), run focused/regression tests, and repeat Independent Acceptance. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
++
+ ### Owner operational exception notification amendment ΓÇö 2026-10-05
+ 
+ - The Owner explicitly approved Constitution v3 Article 1 clauses 15ΓÇô17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.
+diff --git a/PROJECT_HOT_CONTEXT.json b/PROJECT_HOT_CONTEXT.json
+index dbc35e2..e80c262 100644
+--- a/PROJECT_HOT_CONTEXT.json
++++ b/PROJECT_HOT_CONTEXT.json
+@@ -1,12 +1,28 @@
+ {
+   "branch": "d021-agent-case-provisioning",
+-  "capacity": {"five_hour_remaining_percent":9,"five_hour_resets_at":"2026-10-05T11:40:44+00:00","observed_at":"2026-10-05T09:13:04+00:00","weekly_remaining_percent":34,"weekly_resets_at":"2026-10-11T10:37:32+00:00"},
+-  "context_digest": "sha256:81b670681a35bf426df6109f686f30a1297d86e09ec261c36543daa6e5c5a513",
+-  "graph_digest": "sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee",
+-  "head": "580d87514907395e4054272e244bf246351e4172",
+-  "next_authorized_action": {"action_id":"DR-04-REMEDIATE-AND-ACCEPT","authority":"CASE-001-DR01-DR05-OWNER-AUTHORIZATION","cost_class":"BOUNDED","dependencies":"SATISFIED","graph_digest":"sha256:1d95df52b0c1191f9ea7f7c83da45fa30711f8f19c9d2d04a91228a77753f0ee","human_gate":"NONE","outcome":"TOKEN_PAUSED","recovery_checkpoint":"580d87514907395e4054272e244bf246351e4172","reset_timestamp":"2026-10-05T11:42:44+00:00"},
++  "capacity": {
++    "five_hour_remaining_percent": 82,
++    "five_hour_resets_at": "2026-10-06T21:08:11+02:00",
++    "observed_at": "2026-10-06T16:12:41.418+02:00",
++    "weekly_remaining_percent": 23,
++    "weekly_resets_at": "2026-10-11T12:37:32+02:00"
++  },
++  "context_digest": "sha256:8ee5b86d1425ee295ba68ffcc547d1259a0499593f777657495efe9f3b8c5271",
++  "graph_digest": "sha256:00ed8d0940ae3827e0cda657a763d41a962dd9b1370a445f9010bc3d253e3e97",
++  "head": "0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb",
++  "next_authorized_action": {
++    "action_id": "DR-04-REMEDIATE-AND-ACCEPT",
++    "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
++    "cost_class": "BOUNDED",
++    "dependencies": "SATISFIED",
++    "graph_digest": "sha256:00ed8d0940ae3827e0cda657a763d41a962dd9b1370a445f9010bc3d253e3e97",
++    "human_gate": "HUMAN_GATE",
++    "outcome": "HUMAN_GATE",
++    "recovery_checkpoint": "0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb",
++    "reset_timestamp": null
++  },
+   "project": "AI-Tax-Agent",
+-  "recovery_checkpoint": "580d87514907395e4054272e244bf246351e4172",
++  "recovery_checkpoint": "0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb",
+   "repository": "golestanzadeh/ai-agent-lab",
+   "schema_version": 1,
+   "supporting_contract": "contracts/project-execution/v1/master-execution-graph.json"
+diff --git a/ROADMAP.md b/ROADMAP.md
+index c54eee5..8a5c1a0 100644
+--- a/ROADMAP.md
++++ b/ROADMAP.md
+@@ -2,18 +2,18 @@
+ 
+ This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
+ 
+-Last reconciled: **2026-10-05**
++Last reconciled: **2026-10-06**
+ 
+ ## Current position
+ 
+-- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted; exact next action is DR-04 remediation. No external notification or transmission is active.
++- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted. DR-04 remediation reached `HUMAN_REQUIRED` on 2026-10-06 before code change: the accepted taxpayer-favorable whole-euro rule makes the declared EUR 70 plus EUR 90 bases imply a EUR 32.00 section-35a credit, not the frozen EUR 31.83. The frozen EUR 133.83 refund remains unchanged pending the Owner's exact decision; DR-05 stays blocked. No external notification or transmission is active.
+ 
+ - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
+ - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
+ - No real ELSTER/Finanzamt submission has occurred.
+ - Autonomous execution authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one local-project ChatGPT Work Scheduled Task; the Codex trigger is paused/non-authoritative and no current schedule or Work object exists. Migration requires a real wake test and never uses five-minute polling.
+ - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
+-- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 and DR-02 are `PASS`; DR-03 is also `PASS` after its historical `SUPPLIED_NOT_REGISTERED` prerequisite state was resolved; DR-04 remediation remains pending after Independent Acceptance `FAIL`; DR-05 is `NOT_STARTED`. Exact continuation is DR-04 repair/acceptance, then DR-05.
++- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`. DR-04 is `HUMAN_REQUIRED` because its authoritative whole-euro representation implies a EUR 0.17 tax-result change; the exact Owner decision is now required before changing the accepted result or completing remediation. DR-05 is dependency-blocked.
+ - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
+ 
+ ## Track 1 ΓÇö Autonomous project control
+@@ -70,6 +70,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
+ 
+ ## Future-file register
+ 
++- `docs/dr04-rounding-human-gate-20261006.json` records the fail-closed DR-04 Owner gate: authoritative taxpayer-favorable whole-euro declaration inputs imply a EUR 32.00 section-35a credit and a projected EUR 134.00 successor refund, while the accepted EUR 133.83 result remains frozen until an exact Owner decision.
+ - `src/agent_lab/owner_exception_notification.py`, `tests/unit/test_owner_exception_notification.py`, and `docs/owner-exception-notification-activation-20261005.json` are the authorized Constitution-v3 operational-exception sender boundary, deterministic validation tests, and privacy-minimized activation evidence. The sender accepts no arbitrary recipient, attachment, or free-form activation content.
+ - `docs/dr04-token-paused-after-owner-notification-repair-20261005.json` is the governed hard-threshold continuation capsule created after the accepted relay/notification repair; it preserves DR-04 as the exact next action and arms only the sole reset-aligned guard.
+ - `docs/work-scheduler-migration-stop-20261005.json` records the second missed wake, retirement of the non-authoritative Codex trigger, and the exact tooling prerequisite for a real local-project Work Scheduled Task wake test.
+diff --git a/contracts/project-execution/v1/master-execution-graph.json b/contracts/project-execution/v1/master-execution-graph.json
+index dcd9999..51f1cdb 100644
+--- a/contracts/project-execution/v1/master-execution-graph.json
++++ b/contracts/project-execution/v1/master-execution-graph.json
+@@ -283,7 +283,7 @@
+       "depends_on": [
+         "DR-03-REGISTER-AND-COMPLETE"
+       ],
+-      "status": "READY",
++      "status": "HUMAN_GATE",
+       "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+       "available_authority": "ACTIVE",
+       "inputs": [
+@@ -314,7 +314,7 @@
+         "DR-05-INTEGRATED-ACCEPTANCE"
+       ],
+       "terminal_semantics": "PACKAGE_COMPLETE",
+-      "execution_eligibility": "BLOCKED"
++      "execution_eligibility": "HUMAN_GATE"
+     },
+     {
+       "id": "DR-05-INTEGRATED-ACCEPTANCE",
+diff --git a/tests/unit/test_project_execution_graph.py b/tests/unit/test_project_execution_graph.py
+index 6b0e74e..33ad5aa 100644
+--- a/tests/unit/test_project_execution_graph.py
++++ b/tests/unit/test_project_execution_graph.py
+@@ -23,16 +23,25 @@ def capacity(five=98, weekly=74):
+     return evaluate_capacity(obs, now=NOW)
+ 
+ 
+-def test_graph_selects_exact_dr04_without_dispatching():
++def ready_graph():
++    graph = load_graph(GRAPH)
++    node = next(node for node in graph["nodes"] if node["id"] == "DR-04-REMEDIATE-AND-ACCEPT")
++    node["status"] = "READY"
++    node["execution_eligibility"] = "BLOCKED"
++    return graph
++
++
++def test_graph_selects_exact_dr04_human_gate_without_dispatching():
+     graph = load_graph(GRAPH)
+     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="ad4f69f", capacity=capacity(), now=NOW)
+-    assert action.outcome == "READY_PACKAGE"
++    assert action.outcome == "HUMAN_GATE"
+     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
++    assert action.human_gate == "HUMAN_GATE"
+     assert action.cost_class == "BOUNDED"
+ 
+ 
+ def test_graph_fails_closed_on_ambiguous_ready_action():
+-    graph = load_graph(GRAPH)
++    graph = ready_graph()
+     graph["nodes"][5]["status"] = "READY"
+     graph["nodes"][6]["depends_on"] = ["R5-CLOSED-LOOP"]
+     with pytest.raises(ProjectGraphError, match="ambiguous"):
+@@ -50,7 +59,7 @@ def test_graph_rejects_forward_or_unknown_dependency(tmp_path):
+ 
+ @pytest.mark.parametrize("five,weekly,expected", [(15, 74, CapacityState.TOKEN_PAUSED.value), (98, 10, CapacityState.TOKEN_PAUSED.value)])
+ def test_capacity_stop_precedes_selection(five, weekly, expected):
+-    graph = load_graph(GRAPH)
++    graph = ready_graph()
+     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(five, weekly), now=NOW)
+     assert action.outcome == expected
+     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
+@@ -147,7 +156,7 @@ def test_kernel_notification_completion_requires_open_reservation(tmp_path):
+ 
+ 
+ def test_selected_node_cost_class_cannot_be_bypassed():
+-    graph = load_graph(GRAPH)
++    graph = ready_graph()
+     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(30, 30), now=NOW)
+     assert action.outcome == "CAPACITY_DEFERRED"
+     assert action.action_id == "DR-04-REMEDIATE-AND-ACCEPT"
+@@ -236,14 +245,14 @@ def test_notification_binds_contract_destination_and_limits_one_retry(tmp_path):
+ 
+ 
+ def test_stale_capacity_fails_closed():
+-    graph = load_graph(GRAPH)
++    graph = ready_graph()
+     stale_now = NOW + timedelta(hours=1)
+     action = next_authorized_action(graph, branch=graph["branch"], repository_safe=True, recovery_checkpoint="x", capacity=capacity(), now=stale_now)
+     assert action.outcome == "UNKNOWN_PAUSED"
+ 
+ 
+ def test_both_window_deferral_uses_later_relevant_reset():
+-    graph=load_graph(GRAPH)
++    graph=ready_graph()
+     next(node for node in graph["nodes"] if node["id"]=="DR-04-REMEDIATE-AND-ACCEPT")["cost_class"]="EXPENSIVE"
+     action=next_authorized_action(graph,branch=graph["branch"],repository_safe=True,recovery_checkpoint="x",capacity=capacity(50,25),now=NOW)
+     assert action.outcome == "CAPACITY_DEFERRED"

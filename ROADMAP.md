@@ -2,18 +2,18 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-10-05**
+Last reconciled: **2026-10-06**
 
 ## Current position
 
-- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted; exact next action is DR-04 remediation. No external notification or transmission is active.
+- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted. DR-04 remediation reached `HUMAN_REQUIRED` on 2026-10-06 before code change: the accepted taxpayer-favorable whole-euro rule makes the declared EUR 70 plus EUR 90 bases imply a EUR 32.00 section-35a credit, not the frozen EUR 31.83. The frozen EUR 133.83 refund remains unchanged pending the Owner's exact decision; DR-05 stays blocked. No external notification or transmission is active.
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one local-project ChatGPT Work Scheduled Task; the Codex trigger is paused/non-authoritative and no current schedule or Work object exists. Migration requires a real wake test and never uses five-minute polling.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
-- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01 and DR-02 are `PASS`; DR-03 is also `PASS` after its historical `SUPPLIED_NOT_REGISTERED` prerequisite state was resolved; DR-04 remediation remains pending after Independent Acceptance `FAIL`; DR-05 is `NOT_STARTED`. Exact continuation is DR-04 repair/acceptance, then DR-05.
+- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`. DR-04 is `HUMAN_REQUIRED` because its authoritative whole-euro representation implies a EUR 0.17 tax-result change; the exact Owner decision is now required before changing the accepted result or completing remediation. DR-05 is dependency-blocked.
 - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
 
 ## Track 1 — Autonomous project control
@@ -70,6 +70,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Future-file register
 
+- `docs/dr04-rounding-human-gate-20261006.json` records the fail-closed DR-04 Owner gate: authoritative taxpayer-favorable whole-euro declaration inputs imply a EUR 32.00 section-35a credit and a projected EUR 134.00 successor refund, while the accepted EUR 133.83 result remains frozen until an exact Owner decision.
 - `src/agent_lab/owner_exception_notification.py`, `tests/unit/test_owner_exception_notification.py`, and `docs/owner-exception-notification-activation-20261005.json` are the authorized Constitution-v3 operational-exception sender boundary, deterministic validation tests, and privacy-minimized activation evidence. The sender accepts no arbitrary recipient, attachment, or free-form activation content.
 - `docs/dr04-token-paused-after-owner-notification-repair-20261005.json` is the governed hard-threshold continuation capsule created after the accepted relay/notification repair; it preserves DR-04 as the exact next action and arms only the sole reset-aligned guard.
 - `docs/work-scheduler-migration-stop-20261005.json` records the second missed wake, retirement of the non-authoritative Codex trigger, and the exact tooling prerequisite for a real local-project Work Scheduled Task wake test.
