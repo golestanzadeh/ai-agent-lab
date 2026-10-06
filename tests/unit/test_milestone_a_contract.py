@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -35,7 +36,10 @@ def test_golden_journey_rejects_unknown_fields_and_capability_weakening():
             validate_golden_journey(mutated)
 
 
-def test_authority_registers_five_dependency_ordered_packages(tmp_path: Path):
+def test_authority_registers_five_dependency_ordered_packages(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    # Prove historical bounded registration inside the authority window. Kernel
+    # expiry behavior is tested separately; this regression must not expire with wall time.
+    monkeypatch.setattr("agent_lab.orchestrator_kernel._utc_now", lambda: datetime(2026, 9, 28, tzinfo=timezone.utc))
     authority = load_json(AUTHORITY_PATH)
     with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
         result = register_queue(kernel, authority)
