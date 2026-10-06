@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "decision_id": "OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE-20261006",
+  "gate_id": "DR04-ROUNDING-RESULT-CHANGE-20261006",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "package": "DR-04",
+  "decision": "APPROVED",
+  "owner_approved_change": {
+    "section_35a_credit_from_eur": "31.83",
+    "section_35a_credit_to_eur": "32.00",
+    "refund_from_eur": "133.83",
+    "refund_to_eur": "134.00"
+  },
+  "scope": "Approve the versioned successor CASE-001/2024 result required by the authoritative whole-euro reconciliation.",
+  "continuation": {
+    "resume_from_commit": "a614599b88f6f5c7bd676d995af47173e30016d9",
+    "do_not_repeat": ["DR-01", "DR-02", "DR-03", "DR-04 rounding investigation"],
+    "remaining_dr04_work": [
+      "apply the approved successor result",
+      "execute and bind the ten reviewed local plausibility rules",
+      "pin lineage to the exact accepted DR-04 artifacts and reject valid-but-unrelated hashes",
+      "run focused and regression tests",
+      "perform Independent Acceptance"
+    ],
+    "dr05": "BLOCKED_UNTIL_DR04_PASS"
+  },
+  "authority_not_granted": [
+    "ELSTER submission",
+    "Finanzamt transmission",
+    "arbitrary external transmission",
+    "protected main merge or release",
+    "Full Reset consumption",
+    "retry of the consumed owner-exception activation email"
+  ]
+}
