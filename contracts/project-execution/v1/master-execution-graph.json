@@ -1,0 +1,934 @@
+{
+  "schema_version": 1,
+  "graph_id": "AI-TAX-AGENT-MASTER-EXECUTION-GRAPH-V1",
+  "project": "AI-Tax-Agent",
+  "repository": "golestanzadeh/ai-agent-lab",
+  "branch": "d021-agent-case-provisioning",
+  "completion_boundary": "CURRENT_SUPPORTED_PRODUCT_COMPLETE",
+  "nodes": [
+    {
+      "id": "R1-REPOSITORY-AUDIT",
+      "goal": "Classify the tracked repository and cleanup safety",
+      "depends_on": [],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "tracked repository"
+      ],
+      "outputs": [
+        "repository inventory"
+      ],
+      "definition_of_done": "complete classification and safe disposition",
+      "required_tests": [
+        "reference integrity"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "BOUNDED",
+      "allowed_remediation": [
+        "classification correction"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "destructive consequential deletion"
+      ],
+      "external_boundary": [
+        "no external transfer"
+      ],
+      "next_states": [
+        "R2-HOT-CONTEXT"
+      ],
+      "terminal_semantics": "PACKAGE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "R2-HOT-CONTEXT",
+      "goal": "Consolidate canonical current truth",
+      "depends_on": [
+        "R1-REPOSITORY-AUDIT"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "canonical documents"
+      ],
+      "outputs": [
+        "hash-bound hot context"
+      ],
+      "definition_of_done": "routine recovery needs no historical full scan",
+      "required_tests": [
+        "canonical consistency"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "BOUNDED",
+      "allowed_remediation": [
+        "canonical reconciliation"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "authority conflict"
+      ],
+      "external_boundary": [
+        "no external transfer"
+      ],
+      "next_states": [
+        "R3-MASTER-GRAPH"
+      ],
+      "terminal_semantics": "PACKAGE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "R3-MASTER-GRAPH",
+      "goal": "Compile remaining lifecycle into a versioned graph",
+      "depends_on": [
+        "R2-HOT-CONTEXT"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "MASTER_PLAN",
+        "ROADMAP"
+      ],
+      "outputs": [
+        "master execution graph"
+      ],
+      "definition_of_done": "closed schema and deterministic next action",
+      "required_tests": [
+        "graph validation",
+        "authority gating"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "graph correction"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "scope expansion"
+      ],
+      "external_boundary": [
+        "no authority amplification"
+      ],
+      "next_states": [
+        "R4-SAFE-CLEANUP"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "R4-SAFE-CLEANUP",
+      "goal": "Remove only proven disposable repository artifacts",
+      "depends_on": [
+        "R3-MASTER-GRAPH"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "repository inventory"
+      ],
+      "outputs": [
+        "cleanup disposition"
+      ],
+      "definition_of_done": "no consequential evidence removed",
+      "required_tests": [
+        "reference integrity"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "CHEAP",
+      "allowed_remediation": [
+        "reference repair"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "irreversible deletion"
+      ],
+      "external_boundary": [
+        "no protected source mutation"
+      ],
+      "next_states": [
+        "R5-CLOSED-LOOP"
+      ],
+      "terminal_semantics": "PACKAGE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "R5-CLOSED-LOOP",
+      "goal": "Wire deterministic continuation and governed exception eligibility",
+      "depends_on": [
+        "R4-SAFE-CLEANUP"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "existing Kernel",
+        "existing limit controller",
+        "existing scheduler"
+      ],
+      "outputs": [
+        "next action contract",
+        "notification contract"
+      ],
+      "definition_of_done": "ordinary transitions require no Owner prompt",
+      "required_tests": [
+        "capacity defer/resume",
+        "notification authorization",
+        "deduplication"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "notification transmission approval"
+      ],
+      "external_boundary": [
+        "no email without Article 1 approvals"
+      ],
+      "next_states": [
+        "R6-AUTONOMY-PROOF"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "R6-AUTONOMY-PROOF",
+      "goal": "Independently prove closed-loop recovery semantics",
+      "depends_on": [
+        "R5-CLOSED-LOOP"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "FINAL-INFRASTRUCTURE-DIRECTIVE",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "synthetic proof"
+      ],
+      "outputs": [
+        "independent acceptance"
+      ],
+      "definition_of_done": "closed loop and all gates independently pass",
+      "required_tests": [
+        "restart",
+        "scheduler binding",
+        "no duplicate scheduler",
+        "human gate preservation"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded test repair"
+      ],
+      "retry_boundary": "bounded",
+      "human_gate_conditions": [
+        "new governance conflict"
+      ],
+      "external_boundary": [
+        "synthetic only"
+      ],
+      "next_states": [
+        "DR-03-REGISTER-AND-COMPLETE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "DR-03-REGISTER-AND-COMPLETE",
+      "goal": "Complete CASE-001 Anlage Kind declaration slice",
+      "depends_on": [
+        "R6-AUTONOMY-PROOF"
+      ],
+      "status": "ACCEPTED",
+      "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "protected supplied declarations",
+        "accepted DR-01"
+      ],
+      "outputs": [
+        "accepted DR-03"
+      ],
+      "definition_of_done": "source-bound mapping, tests, independent acceptance and checkpoint",
+      "required_tests": [
+        "mapping",
+        "XSD",
+        "lineage",
+        "cross-case isolation"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "BOUNDED",
+      "allowed_remediation": [
+        "bounded implementation repair"
+      ],
+      "retry_boundary": "existing policy",
+      "human_gate_conditions": [
+        "unrecoverable protected input"
+      ],
+      "external_boundary": [
+        "non-transmitting preview only"
+      ],
+      "next_states": [
+        "DR-04-REMEDIATE-AND-ACCEPT"
+      ],
+      "terminal_semantics": "PACKAGE_COMPLETE",
+      "execution_eligibility": "COMPLETED"
+    },
+    {
+      "id": "DR-04-REMEDIATE-AND-ACCEPT",
+      "goal": "Repair the three recorded DR-04 acceptance defects",
+      "depends_on": [
+        "DR-03-REGISTER-AND-COMPLETE"
+      ],
+      "status": "HUMAN_GATE",
+      "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "DR-04 failed acceptance"
+      ],
+      "outputs": [
+        "accepted DR-04"
+      ],
+      "definition_of_done": "plausibility executed, exact lineage enforced, rounding semantics resolved",
+      "required_tests": [
+        "plausibility",
+        "lineage rejection",
+        "rounding"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "BOUNDED",
+      "allowed_remediation": [
+        "bounded implementation repair"
+      ],
+      "retry_boundary": "existing policy",
+      "human_gate_conditions": [
+        "material tax-result change"
+      ],
+      "external_boundary": [
+        "non-transmitting preview only"
+      ],
+      "next_states": [
+        "DR-05-INTEGRATED-ACCEPTANCE"
+      ],
+      "terminal_semantics": "PACKAGE_COMPLETE",
+      "execution_eligibility": "HUMAN_GATE"
+    },
+    {
+      "id": "DR-05-INTEGRATED-ACCEPTANCE",
+      "goal": "Produce complete CASE-001 non-transmitting declaration preview",
+      "depends_on": [
+        "DR-04-REMEDIATE-AND-ACCEPT"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+      "available_authority": "ACTIVE",
+      "inputs": [
+        "accepted DR-01 through DR-04"
+      ],
+      "outputs": [
+        "NON_TRANSMITTING_PREVIEW"
+      ],
+      "definition_of_done": "manifest complete, XSD/local plausibility/regression and independent acceptance pass",
+      "required_tests": [
+        "integration",
+        "XSD",
+        "plausibility",
+        "restart",
+        "full regression"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded integration repair"
+      ],
+      "retry_boundary": "existing policy",
+      "human_gate_conditions": [
+        "official ERiC or external action"
+      ],
+      "external_boundary": [
+        "no official ERiC or transmission"
+      ],
+      "next_states": [
+        "GOVERNED-REAL-CASE-WORKFLOW"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE",
+      "execution_eligibility": "BLOCKED"
+    },
+    {
+      "id": "GOVERNED-REAL-CASE-WORKFLOW",
+      "goal": "Governed real case, document, and persistence workflow",
+      "depends_on": [
+        "DR-05-INTEGRATED-ACCEPTANCE"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "EXISTING-REAL-CASE-AUTHORITIES",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_DR05",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "case workflow acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "new data/provider scope"
+      ],
+      "external_boundary": [
+        "case isolation and approved provider boundary only"
+      ],
+      "next_states": [
+        "REAL-UI-INTEGRATION"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "REAL-UI-INTEGRATION",
+      "goal": "Integrate governed real workflow into ordinary-user UI",
+      "depends_on": [
+        "GOVERNED-REAL-CASE-WORKFLOW"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "UI-INTEGRATION-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_REAL_WORKFLOW",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "real UI acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "credential or security-model change"
+      ],
+      "external_boundary": [
+        "no submission"
+      ],
+      "next_states": [
+        "OFFICIAL-ERIC-RUNTIME-VALIDATION"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "OFFICIAL-ERIC-RUNTIME-VALIDATION",
+      "goal": "Execute separately authorized official ERiC validation boundary",
+      "depends_on": [
+        "REAL-UI-INTEGRATION"
+      ],
+      "status": "AUTHORITY_REQUIRED",
+      "required_authority": "OFFICIAL-ERIC-EXECUTION-AUTHORITY",
+      "available_authority": "NOT_APPROVED",
+      "execution_eligibility": "HUMAN_GATE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "official validation evidence"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "official ERiC execution"
+      ],
+      "external_boundary": [
+        "no transmission"
+      ],
+      "next_states": [
+        "DECLARATION-APPROVAL-LIFECYCLE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "DECLARATION-APPROVAL-LIFECYCLE",
+      "goal": "Complete controlled content and destination approval lifecycle",
+      "depends_on": [
+        "OFFICIAL-ERIC-RUNTIME-VALIDATION"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "ARTICLE-1-APPROVAL-CONTRACT",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_OFFICIAL_VALIDATION",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "approval lifecycle evidence"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "Article 1 stage approvals"
+      ],
+      "external_boundary": [
+        "two stages remain separate"
+      ],
+      "next_states": [
+        "CONTROLLED-SUBMISSION-READINESS"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "CONTROLLED-SUBMISSION-READINESS",
+      "goal": "Prove controlled submission readiness without transmitting",
+      "depends_on": [
+        "DECLARATION-APPROVAL-LIFECYCLE"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "SUBMISSION-READINESS-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_APPROVAL_LIFECYCLE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "readiness dossier"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "release or signing"
+      ],
+      "external_boundary": [
+        "no transmission"
+      ],
+      "next_states": [
+        "OFFICIAL-TRANSMISSION-GATE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "OFFICIAL-TRANSMISSION-GATE",
+      "goal": "Transmit only after exact content and destination approvals",
+      "depends_on": [
+        "CONTROLLED-SUBMISSION-READINESS"
+      ],
+      "status": "AUTHORITY_REQUIRED",
+      "required_authority": "ARTICLE-1-STAGES-AND-APPLICABLE-RELEASE-AUTHORITY",
+      "available_authority": "NOT_APPROVED",
+      "execution_eligibility": "HUMAN_GATE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "transmission audit"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "content release; destination transmission; signing"
+      ],
+      "external_boundary": [
+        "ELSTER/Finanzamt external transfer"
+      ],
+      "next_states": [
+        "RECEIPT-RECOVERY"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "RECEIPT-RECOVERY",
+      "goal": "Bind official receipt and uncertain-outcome recovery",
+      "depends_on": [
+        "OFFICIAL-TRANSMISSION-GATE"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "RECEIPT-RECOVERY-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_AUTHORIZED_TRANSMISSION",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "receipt recovery evidence"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "external retry"
+      ],
+      "external_boundary": [
+        "no retry without approval"
+      ],
+      "next_states": [
+        "END-TO-END-REAL-FILING-ACCEPTANCE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "END-TO-END-REAL-FILING-ACCEPTANCE",
+      "goal": "Accept the real filing journey end to end",
+      "depends_on": [
+        "RECEIPT-RECOVERY"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "PRODUCT-ACCEPTANCE-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_RECEIPT",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "end-to-end acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "material discrepancy"
+      ],
+      "external_boundary": [
+        "no scope expansion"
+      ],
+      "next_states": [
+        "SECURITY-PRIVACY-RECOVERY-ACCEPTANCE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "SECURITY-PRIVACY-RECOVERY-ACCEPTANCE",
+      "goal": "Prove isolation, privacy, crash, duplicate, restart, and audit recovery",
+      "depends_on": [
+        "END-TO-END-REAL-FILING-ACCEPTANCE"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "SECURITY-ACCEPTANCE-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_E2E",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "security acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "security-model change"
+      ],
+      "external_boundary": [
+        "no production"
+      ],
+      "next_states": [
+        "DEPLOYMENT-MONITORING-ROLLBACK-READINESS"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "DEPLOYMENT-MONITORING-ROLLBACK-READINESS",
+      "goal": "Prove deployment, monitoring, rollback, and kill-switch readiness",
+      "depends_on": [
+        "SECURITY-PRIVACY-RECOVERY-ACCEPTANCE"
+      ],
+      "status": "AUTHORITY_REQUIRED",
+      "required_authority": "DEPLOYMENT-READINESS-AUTHORITY",
+      "available_authority": "NOT_APPROVED",
+      "execution_eligibility": "HUMAN_GATE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "deployment readiness"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "production deployment"
+      ],
+      "external_boundary": [
+        "no production or release"
+      ],
+      "next_states": [
+        "PRODUCT-USER-ACCEPTANCE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "PRODUCT-USER-ACCEPTANCE",
+      "goal": "Complete ordinary-user and product acceptance",
+      "depends_on": [
+        "DEPLOYMENT-MONITORING-ROLLBACK-READINESS"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "PRODUCT-ACCEPTANCE-AUTHORITY",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_DEPLOYMENT_READINESS",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "user acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "scope change"
+      ],
+      "external_boundary": [
+        "no release"
+      ],
+      "next_states": [
+        "GOVERNED-RELEASE-ACCEPTANCE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "GOVERNED-RELEASE-ACCEPTANCE",
+      "goal": "Apply protected-main and release governance",
+      "depends_on": [
+        "PRODUCT-USER-ACCEPTANCE"
+      ],
+      "status": "AUTHORITY_REQUIRED",
+      "required_authority": "PROTECTED-MAIN-AND-RELEASE-AUTHORITY",
+      "available_authority": "NOT_APPROVED",
+      "execution_eligibility": "HUMAN_GATE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "release acceptance"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "protected-main merge; production release"
+      ],
+      "external_boundary": [
+        "no merge or release without exact authority"
+      ],
+      "next_states": [
+        "CURRENT-SUPPORTED-PRODUCT-COMPLETE"
+      ],
+      "terminal_semantics": "MILESTONE_COMPLETE"
+    },
+    {
+      "id": "CURRENT-SUPPORTED-PRODUCT-COMPLETE",
+      "goal": "Record completion of the accepted supported personal workflow",
+      "depends_on": [
+        "GOVERNED-RELEASE-ACCEPTANCE"
+      ],
+      "status": "BLOCKED_DEPENDENCY",
+      "required_authority": "COMPLETION-ACCEPTANCE",
+      "available_authority": "CONDITIONAL",
+      "execution_eligibility": "AFTER_RELEASE_ACCEPTANCE",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "supported product completion"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "completion acceptance"
+      ],
+      "external_boundary": [
+        "does not claim future scope"
+      ],
+      "next_states": [
+        "MASTER-PLAN-FUTURE-SCOPE"
+      ],
+      "terminal_semantics": "CURRENT_SUPPORTED_PRODUCT_COMPLETE"
+    },
+    {
+      "id": "MASTER-PLAN-FUTURE-SCOPE",
+      "goal": "Represent longer-term unsupported Master Plan expansion",
+      "depends_on": [
+        "CURRENT-SUPPORTED-PRODUCT-COMPLETE"
+      ],
+      "status": "AUTHORITY_REQUIRED",
+      "required_authority": "FUTURE-SCOPE-SPECIFIC-AUTHORITY",
+      "available_authority": "NOT_APPROVED",
+      "execution_eligibility": "FUTURE_ONLY",
+      "inputs": [
+        "accepted predecessor evidence"
+      ],
+      "outputs": [
+        "future scoped graph revisions"
+      ],
+      "definition_of_done": "Exact package contract, required tests, independent acceptance, and durable checkpoint pass",
+      "required_tests": [
+        "focused",
+        "integration",
+        "fail-closed",
+        "restart/recovery"
+      ],
+      "independent_acceptance": true,
+      "cost_class": "EXPENSIVE",
+      "allowed_remediation": [
+        "bounded technical repair inside active authority"
+      ],
+      "retry_boundary": "closed policy budget; no unbounded retry",
+      "human_gate_conditions": [
+        "scope expansion"
+      ],
+      "external_boundary": [
+        "not current product completion"
+      ],
+      "next_states": [],
+      "terminal_semantics": "MASTER_PLAN_FUTURE_SCOPE_REMAINING"
+    }
+  ],
+  "future_scope": [
+    "additional tax years",
+    "additional taxpayer categories",
+    "legal entities",
+    "generalized production workflows"
+  ],
+  "forbidden_actions": [
+    "authority amplification",
+    "second orchestrator",
+    "duplicate scheduler",
+    "five-minute polling",
+    "protected-main merge",
+    "production release",
+    "external transfer without exact approvals"
+  ]
+}

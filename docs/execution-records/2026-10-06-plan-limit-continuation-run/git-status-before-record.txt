@@ -1,0 +1,8 @@
+﻿ M CURRENT_STATE.md
+ M PROJECT_CHECKPOINT.md
+ M PROJECT_HOT_CONTEXT.json
+ M ROADMAP.md
+ M contracts/project-execution/v1/master-execution-graph.json
+ M tests/unit/test_project_execution_graph.py
+?? docs/dr04-rounding-human-gate-20261006.json
+?? docs/execution-records/

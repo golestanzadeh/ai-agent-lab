@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "policy_id": "BOUNDED_EXECUTION_POLICY_V1",
+  "default_limits": {
+    "token_limit": 100000,
+    "tool_call_limit": 100,
+    "cost_limit_usd": 25.0,
+    "timeout_seconds": 3600,
+    "max_retries": 2,
+    "max_child_tasks": 20,
+    "max_concurrency": 4
+  },
+  "hard_limits": {
+    "token_limit": 1000000,
+    "tool_call_limit": 1000,
+    "cost_limit_usd": 250.0,
+    "timeout_seconds": 86400,
+    "max_retries": 5,
+    "max_child_tasks": 100,
+    "max_concurrency": 8
+  },
+  "required_budget_fields": ["token_limit", "tool_call_limit", "cost_limit_usd", "timeout_seconds", "max_retries", "max_child_tasks", "max_concurrency"],
+  "budget_exhaustion_outcome": "BLOCKED",
+  "budget_increase_requires": "REVALIDATED_MANIFEST_OR_HUMAN_GATE_WHEN_RISK_INCREASES",
+  "retry_policy": {
+    "same_attempt_replay": "PROHIBITED",
+    "retry_requires": ["classified_failure", "retryable_failure", "budget_available", "not_expired", "kill_switch_running", "audit_event"],
+    "retryable_failures": ["transient_network", "rate_limit_within_deadline", "temporary_tool_unavailability", "retriable_process_error"],
+    "non_retryable_failures": ["authority_failure", "permission_denied", "case_scope_mismatch", "schema_mismatch", "conflict_of_interest", "human_gate", "destructive_ambiguity", "external_transfer_uncertainty"],
+    "backoff": "bounded_exponential_with_jitter",
+    "new_attempt_id_required": true
+  },
+  "loop_control": {
+    "duplicate_task_execution": "PROHIBITED",
+    "task_lineage_required": true,
+    "progress_evidence_required_before_retry": true,
+    "repeated_identical_failure_limit": 2,
+    "limit_outcome": "BLOCKED"
+  },
+  "kill_switch": {
+    "states": ["RUNNING", "PAUSED", "HALTED"],
+    "initial_state": "HALTED",
+    "fail_closed_on_unknown_state": true,
+    "pause_blocks_new_dispatch": true,
+    "halt_blocks_new_dispatch": true,
+    "halt_stops_active_continuation": true,
+    "halt_revokes_temporary_permissions": true,
+    "halt_preserves_audit_and_evidence": true,
+    "resume_requires": ["authorized_actor", "resolved_reason", "state_revalidation", "audit_event"],
+    "human_can_halt": true,
+    "control_office_can_request_halt": true,
+    "master_can_halt": true,
+    "agent_can_resume_without_authority": false
+  },
+  "reporting": {
+    "milestone_report_required": true,
+    "blocked_report_required": true,
+    "final_report_required": true,
+    "cost_report_required": true,
+    "routine_internal_chatter_required": false
+  },
+  "activation_boundary": "POLICY_ONLY_NO_RUNTIME_ACTIVATION"
+}

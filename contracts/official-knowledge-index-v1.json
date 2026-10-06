@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "index_id": "ELSTER_E10_OFFICIAL_KNOWLEDGE_2024_V1",
+  "source_family": "ESt", "authority": "ELSTER", "provider": "ELSTER",
+  "release": "44.3.6.0", "tax_year": 2024, "extraction_version": "1",
+  "source": {"logical_source_id":"ELSTER_E10_2024_ANNUAL_DOCUMENTATION","sha256":"6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"},
+  "entries": [
+    {
+      "stable_id":"ELSTER.E10.2024.DR01.FILING_AND_WAGE_V1","status":"VERIFIED_ACCEPTED","independent_acceptance":"PASS","verification_reference":"docs/case001-dr01-acceptance-2024.json","tax_year":2024,"release":"44.3.6.0","source":{"logical_source_id":"ELSTER_E10_2024_ANNUAL_DOCUMENTATION","sha256":"6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"},
+      "form":"ESt1A; Anlage N","topic":"filing basis, joint assessment and wage representation","source_locator":"ESt1A - Felder; N - Felder","field_ids":["E0100001","E0101201","E0200201"],"rule_ids":[],"datatype":"mixed marker and GeldBetragOhneCent","transformation":"positive gross wage cents are dropped under the accepted official whole-euro rule","dependencies":["DR-01"],"semantics":{"E0100001":"income-tax-return filing basis marker","E0101201":"joint-assessment election marker","E0200201":"gross wage amount without cents"}
+    },
+    {
+      "stable_id":"ELSTER.E10.2024.DR02.VORSORGEAUFWAND_V1","status":"VERIFIED_ACCEPTED","independent_acceptance":"PASS","verification_reference":"docs/case001-dr02-acceptance-2024.json","tax_year":2024,"release":"44.3.6.0","source":{"logical_source_id":"ELSTER_E10_2024_ANNUAL_DOCUMENTATION","sha256":"6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"},
+      "form":"Anlage Vorsorgeaufwand","topic":"pension, health, care and unemployment contributions","source_locator":"VOR - Felder","field_ids":["E2000401","E2000601","E2000801","E2001203","E2001505","E2004403"],"rule_ids":["950020","100240001","100240002"],"datatype":"GeldBetragOhneCent","transformation":"taxpayer-favorable whole-euro input; reducing employer share rounds down","dependencies":["DR-01","DEC-006","DEC-007"],"semantics":{"E2000401":"employee pension contribution","E2000601":"other statutory pension contribution","E2000801":"employer pension share","E2001203":"employee health contribution","E2001505":"employee care contribution","E2004403":"employee unemployment contribution"}
+    },
+    {
+      "stable_id":"ELSTER.E10.2024.DR03.CHILD_AND_SCHOOL_FEES_V1","status":"VERIFIED_ACCEPTED","independent_acceptance":"PASS","verification_reference":"docs/case001-dr03-acceptance-2024.json","tax_year":2024,"release":"44.3.6.0","source":{"logical_source_id":"ELSTER_E10_2024_ANNUAL_DOCUMENTATION","sha256":"6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"},
+      "form":"Anlage Kind","topic":"child identity, residence, relationships, Kindergeld and school-fee inputs","source_locator":"Kind - Felder; Kind - Regeln","field_ids":["E0500406","E0500701","E0500702","E0500706","E0500703","E0500807","E0500601","E0500808","E0500805","E0504405","E0505606","E0505607"],"rule_ids":["501130","100500043","501150","501162","100500044"],"datatype":"mixed identity, date, period, text and GeldBetragOhneCent","transformation":"full-year periods use DD.MM-DD.MM; biological-child relationships use code 1; eligible school expenditure is declared and the 30-percent deduction remains assessment-only","dependencies":["DR-01","DR-02","DEC-008","DEC-018"],"semantics":{"E0500406":"child tax identification number","E0500701":"child date of birth","E0500702":"child-benefit entitlement","E0500706":"responsible Familienkasse","E0500703":"German residence period","E0500807":"relationship to Person A","E0500601":"Person A relationship period","E0500808":"relationship to Person B","E0500805":"Person B relationship period","E0504405":"eligible school-fee expenditure","E0505606":"school/provider description","E0505607":"eligible school-fee total"}
+    },
+    {
+      "stable_id":"ELSTER.E10.2024.DR04.SECTION_35A_V1","status":"EXTRACTED_UNRESOLVED","independent_acceptance":"FAIL","verification_reference":"docs/case001-dr04-acceptance-2024.json","tax_year":2024,"release":"44.3.6.0","source":{"logical_source_id":"ELSTER_E10_2024_ANNUAL_DOCUMENTATION","sha256":"6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5"},
+      "form":"Anlage Haushaltsnahe Aufwendungen","topic":"section 35a expenditure fields; rounding unresolved","source_locator":"HA_35a - Felder; HA_35a - Regeln","field_ids":["E0107206","E0107207","E0107208","E0111217","E0170601","E0111214","E0111215"],"rule_ids":["101100088","101100089","101100090","101100091","10817","12204","101100079","101170002","10821","101170007"],"datatype":"text and GeldBetragOhneCent","transformation":"UNRESOLVED: exact-cent accepted credit conflicts with whole-euro declaration representation","dependencies":["DR-01","DEC-009","DEC-010"],"semantics":{"boundary":"field identities and locators extracted; mapping is not consumable until independent acceptance passes"}
+    }
+  ]
+}

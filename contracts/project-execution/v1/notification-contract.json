@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "contract_id": "OWNER-EXCEPTION-NOTIFICATION-V2",
+  "destination_reference": "OWNER_CONTROLLED_EXCEPTION_EMAIL_PROTECTED_CONFIG",
+  "channel": "EMAIL",
+  "status": "OWNER_OPERATIONAL_EXCEPTION_ACTIVE",
+  "eligible_events": ["HUMAN_REQUIRED", "GOVERNANCE_OR_SAFETY_CONFLICT", "PLAN_OR_ENTITLEMENT_BLOCKED", "SCHEDULER_ARM_FAILURE", "UNRECOVERABLE_HOST_RUNTIME_FAILURE", "LONG_LIVED_OWNER_BLOCKER", "CURRENT_SUPPORTED_PRODUCT_COMPLETE", "PROJECT_COMPLETE"],
+  "ineligible_events": ["PACKAGE_PASS", "CHECKPOINT", "AUTONOMOUS_REMEDIATION_PASS", "TOKEN_PAUSED_CONTINUATION_ARMED", "CAPACITY_DEFERRED_CONTINUATION_ARMED"],
+  "privacy": {"operational_metadata_only": true, "attachments": false, "taxpayer_data": false, "credentials": false, "protected_evidence": false},
+  "authorization": {"stage_one_required": false, "stage_two_required": false, "standing_authority": true, "authority":"CONSTITUTION_V3_ARTICLE_1_CLAUSES_15_17"},
+  "deduplication": {"key": "durable_event_or_gate_identity", "repeat_policy": "MATERIAL_CHANGE_AND_NEW_EXACT_AUTHORITY_ONLY"},
+  "failure": {"preserve_original_gate": true, "weaken_gate": false, "retry": "ONE_BOUNDED_RETRY"},
+  "activation_test": {"event":"NOTIFICATION_CHANNEL_ACTIVATION_TEST","single_owner_authorization":"2026-10-05","maximum_attempts":1}
+}

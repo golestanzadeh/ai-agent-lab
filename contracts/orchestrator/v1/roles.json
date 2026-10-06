@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "catalog_id": "AGENT_ROLE_CATALOG_V1",
+  "permanent_role_count": 20,
+  "template_role_count": 3,
+  "human_authority_id": "HUMAN_PROJECT_OWNER",
+  "roles": [
+    {
+      "role_id": "GOVERNANCE_GUARD_AGENT",
+      "authority_level": "C1",
+      "division": "INDEPENDENT_CONTROL_OFFICE",
+      "reports_to": "HUMAN_PROJECT_OWNER",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["governance_review", "record_control_finding", "request_human_gate"],
+      "forbidden_actions": ["implement_reviewed_change", "grant_approval", "merge", "release", "external_transfer"]
+    },
+    {
+      "role_id": "SECURITY_PRIVACY_AGENT",
+      "authority_level": "C1",
+      "division": "INDEPENDENT_CONTROL_OFFICE",
+      "reports_to": "HUMAN_PROJECT_OWNER",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["security_review", "privacy_review", "record_control_finding", "request_human_gate"],
+      "forbidden_actions": ["implement_reviewed_change", "grant_credentials", "expand_permissions", "external_transfer"]
+    },
+    {
+      "role_id": "INDEPENDENT_ACCEPTANCE_AGENT",
+      "authority_level": "C1",
+      "division": "INDEPENDENT_CONTROL_OFFICE",
+      "reports_to": "HUMAN_PROJECT_OWNER",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["acceptance_review", "read_test_evidence", "record_control_finding", "request_human_gate"],
+      "forbidden_actions": ["implement_reviewed_change", "rewrite_failure_evidence", "merge", "release"]
+    },
+    {
+      "role_id": "AUDIT_CONTINUITY_AGENT",
+      "authority_level": "C1",
+      "division": "INDEPENDENT_CONTROL_OFFICE",
+      "reports_to": "HUMAN_PROJECT_OWNER",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["audit_review", "checkpoint_review", "record_control_finding", "request_human_gate"],
+      "forbidden_actions": ["fabricate_history", "erase_failures", "grant_approval", "mutate_source_evidence"]
+    },
+    {
+      "role_id": "MASTER_PROJECT_ORCHESTRATOR",
+      "authority_level": "M2",
+      "division": "EXECUTIVE",
+      "reports_to": "HUMAN_PROJECT_OWNER",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["plan_tasks", "dispatch_registered_task", "monitor_tasks", "request_retry", "request_human_gate"],
+      "forbidden_actions": ["self_approve", "grant_credentials", "expand_permissions", "merge", "release", "external_transfer"]
+    },
+    {
+      "role_id": "PLANNING_DEPENDENCY_AGENT",
+      "authority_level": "D3",
+      "division": "PROJECT_MANAGEMENT_OFFICE",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": false,
+      "requires_independent_review": true,
+      "capabilities": ["plan_tasks", "propose_acceptance_criteria"],
+      "forbidden_actions": ["activate_agent", "grant_approval", "change_architecture"]
+    },
+    {
+      "role_id": "AGENT_FACTORY_SUPERVISOR",
+      "authority_level": "D3",
+      "division": "PROJECT_MANAGEMENT_OFFICE",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": false,
+      "requires_independent_review": true,
+      "capabilities": ["propose_manifest", "select_validated_role", "request_human_gate"],
+      "forbidden_actions": ["activate_agent", "grant_credentials", "expand_permissions", "bypass_manifest_validation"]
+    },
+    {
+      "role_id": "DOCUMENTATION_STATE_AGENT",
+      "authority_level": "S4",
+      "division": "PROJECT_MANAGEMENT_OFFICE",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A2"],
+      "can_block": false,
+      "requires_independent_review": true,
+      "capabilities": ["write_bounded_branch", "update_documentation", "propose_checkpoint"],
+      "forbidden_actions": ["manufacture_acceptance", "change_constitution", "expose_private_data"]
+    },
+    {
+      "role_id": "OPERATIONS_INTEGRATION_AGENT",
+      "authority_level": "D3",
+      "division": "PROJECT_MANAGEMENT_OFFICE",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["inspect_operational_metadata", "reversible_service_control", "request_human_gate"],
+      "forbidden_actions": ["expand_connector_scope", "grant_credentials", "external_transfer", "replace_agent_bridge"]
+    },
+    {
+      "role_id": "ARCHITECTURE_AGENT",
+      "authority_level": "D3",
+      "division": "ENGINEERING",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": false,
+      "requires_independent_review": true,
+      "capabilities": ["design_contract", "propose_acceptance_criteria", "request_human_gate"],
+      "forbidden_actions": ["activate_permissions", "silently_replace_architecture", "self_approve"]
+    },
+    {
+      "role_id": "IMPLEMENTATION_AGENT",
+      "authority_level": "S4",
+      "division": "ENGINEERING",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A0", "A1"],
+      "can_block": false,
+      "requires_independent_review": true,
+      "capabilities": ["write_bounded_branch", "run_tests", "report_evidence"],
+      "forbidden_actions": ["write_protected_main", "self_approve", "expand_scope", "external_transfer"]
+    },
+    {
+      "role_id": "QUALITY_ENGINEERING_AGENT",
+      "authority_level": "S4",
+      "division": "ENGINEERING",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A1", "A2"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["write_tests", "run_tests", "report_evidence"],
+      "forbidden_actions": ["hide_failure_evidence", "change_acceptance_criteria", "approve_human_gate"]
+    },
+    {
+      "role_id": "CASE_ORCHESTRATOR_AGENT",
+      "authority_level": "D3",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "MASTER_PROJECT_ORCHESTRATOR",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["resolve_case_scope", "dispatch_case_chain", "write_derived_case_artifact", "request_human_gate"],
+      "forbidden_actions": ["broad_case_search", "cross_case_access", "mutate_source_evidence", "external_transfer"]
+    },
+    {
+      "role_id": "CHIEF_TAX_AUDITOR_AGENT",
+      "authority_level": "D3",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CASE_ORCHESTRATOR_AGENT",
+      "default_access_tiers": ["A3"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_case_packet", "read_derived_case_artifact", "direct_tax_recheck", "record_tax_analysis_decision"],
+      "forbidden_actions": ["sign_tax_return", "external_transfer", "mutate_source_evidence", "merge"]
+    },
+    {
+      "role_id": "EVIDENCE_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_case_packet", "write_derived_case_artifact", "report_evidence_gap"],
+      "forbidden_actions": ["broad_case_search", "cross_case_access", "invent_evidence", "mutate_source_evidence", "external_transfer"]
+    },
+    {
+      "role_id": "TAX_LAW_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_derived_case_artifact", "research_authoritative_law", "write_derived_case_artifact"],
+      "forbidden_actions": ["use_model_memory_as_authority", "invent_evidence", "external_transfer"]
+    },
+    {
+      "role_id": "OPPORTUNITY_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_derived_case_artifact", "propose_tax_opportunity", "write_derived_case_artifact"],
+      "forbidden_actions": ["claim_without_source", "conceal_obligation", "external_transfer"]
+    },
+    {
+      "role_id": "CALCULATION_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_derived_case_artifact", "run_deterministic_calculator", "write_derived_case_artifact"],
+      "forbidden_actions": ["invent_input", "resolve_legal_ambiguity", "external_transfer"]
+    },
+    {
+      "role_id": "ADVERSARIAL_REVIEWER_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_derived_case_artifact", "challenge_tax_analysis", "record_control_finding"],
+      "forbidden_actions": ["implement_reviewed_finding", "alter_evidence", "approve_human_gate", "external_transfer"]
+    },
+    {
+      "role_id": "ELSTER_FORM_AGENT",
+      "authority_level": "S4",
+      "division": "TAX_OPERATIONS",
+      "reports_to": "CHIEF_TAX_AUDITOR_AGENT",
+      "default_access_tiers": ["A3", "A4"],
+      "can_block": true,
+      "requires_independent_review": true,
+      "capabilities": ["read_derived_case_artifact", "map_official_form", "write_derived_case_artifact"],
+      "forbidden_actions": ["invent_form_mapping", "sign_tax_return", "authenticate_submission", "external_transfer"]
+    }
+  ],
+  "inactive_templates": [
+    {"role_id": "PERSONAL_TAX_SPECIALIST_AGENT", "status": "INACTIVE", "reports_to": "CHIEF_TAX_AUDITOR_AGENT", "activation_requires": ["accepted_workflow", "accepted_sources", "accepted_tests", "accepted_permissions"]},
+    {"role_id": "BUSINESS_TAX_SPECIALIST_AGENT", "status": "INACTIVE", "reports_to": "CHIEF_TAX_AUDITOR_AGENT", "activation_requires": ["accepted_workflow", "accepted_sources", "accepted_tests", "accepted_permissions"]},
+    {"role_id": "CORPORATE_TAX_SPECIALIST_AGENT", "status": "INACTIVE", "reports_to": "CHIEF_TAX_AUDITOR_AGENT", "activation_requires": ["accepted_workflow", "accepted_sources", "accepted_tests", "accepted_permissions"]}
+  ]
+}

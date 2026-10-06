@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "state": "STOP_DIAGNOSTIC",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "dr03": {
+    "status": "HUMAN_GATE",
+    "evidence_backed": ["child identity label", "school identity", "EUR 480 payments", "EUR 144 deduction", "EUR 3000 Kindergeld context"],
+    "human_input_required": ["child tax ID", "child date of birth", "2024 residence country and period", "relationship to Person A and period", "relationship to Person B and period"]
+  },
+  "dr04": {
+    "status": "INDEPENDENT_ACCEPTANCE_FAIL",
+    "focused_tests": "5 passed",
+    "blockers": [
+      "local plausibility PASS is asserted but no evaluator executes the recorded rules",
+      "official whole-euro declaration bases 90 + 70 imply EUR 32.00 while the frozen exact-cent credit is EUR 31.83",
+      "canonical but unrelated SHA-256 evidence references are not rejected"
+    ]
+  },
+  "capacity_remaining": {"five_hour_percent": 17, "weekly_percent": 87},
+  "next_operation": "Resolve DR-04 rounding/calculation semantics from authoritative material, execute and bind plausibility rules, and pin exact accepted lineage; then repeat independent acceptance. Preserve the DR-03 Human Gate for the five missing facts.",
+  "dr05_started": false,
+  "external_transmission": false
+}

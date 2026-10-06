@@ -1,2 +1,0 @@
-GitHub file rewrite test: the first line was replaced successfully.
-Second write test: UPDATE WORKS.

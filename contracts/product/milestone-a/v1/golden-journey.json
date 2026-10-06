@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "contract_id": "MILESTONE_A_GOLDEN_JOURNEY_V1",
+  "authority_reference": "MILESTONE-A-20260927-001",
+  "data_class": "SYNTHETIC_LOCAL_ONLY",
+  "stages": [
+    {"stage_id": "CREATE_CASE", "sequence": 1, "component": "agent_lab.case_creation_workflow.CaseCreationWorkflow", "status": "REUSE", "depends_on": []},
+    {"stage_id": "INTAKE", "sequence": 2, "component": "agent_lab.document_inventory.DocumentInventoryService", "status": "COMPOSE", "depends_on": ["CREATE_CASE"]},
+    {"stage_id": "PROCESS", "sequence": 3, "component": "agent_lab.document_extraction.choose_extraction_method", "status": "COMPOSE", "depends_on": ["INTAKE"]},
+    {"stage_id": "SPECIALIST_REVIEW", "sequence": 4, "component": "agent_lab.tax_agent_runtime.TaxAgentOrchestrator", "status": "COMPOSE", "depends_on": ["PROCESS"]},
+    {"stage_id": "CHIEF_REVIEW", "sequence": 5, "component": "agent_lab.tax_agent_runtime.ChiefTaxAuditOrchestrator", "status": "COMPOSE", "depends_on": ["SPECIALIST_REVIEW"]},
+    {"stage_id": "CALCULATION", "sequence": 6, "component": "agent_lab.tax_dataset.serialize_dataset", "status": "COMPOSE", "depends_on": ["CHIEF_REVIEW"]},
+    {"stage_id": "FORM_PREVIEW", "sequence": 7, "component": "agent_lab.elster_preview.build_synthetic_elster_preview", "status": "COMPOSE", "depends_on": ["CALCULATION"]},
+    {"stage_id": "APPROVAL_STAGE_1", "sequence": 8, "component": "agent_lab.durable_approval.DurableApprovalStore", "status": "COMPOSE", "depends_on": ["FORM_PREVIEW"]},
+    {"stage_id": "APPROVAL_STAGE_2", "sequence": 9, "component": "agent_lab.durable_approval.DurableApprovalStore", "status": "COMPOSE", "depends_on": ["APPROVAL_STAGE_1"]},
+    {"stage_id": "SYNTHETIC_SUBMISSION", "sequence": 10, "component": "agent_lab.elster_submission_lifecycle.evaluate_synthetic_submission_lifecycle", "status": "COMPOSE", "depends_on": ["APPROVAL_STAGE_2"]},
+    {"stage_id": "RECEIPT", "sequence": 11, "component": "agent_lab.elster_submission_lifecycle.SyntheticReceiptPlaceholder", "status": "COMPOSE", "depends_on": ["SYNTHETIC_SUBMISSION"]},
+    {"stage_id": "RECOVERY", "sequence": 12, "component": "agent_lab.elster_submission_audit.restore_synthetic_lifecycle_audit", "status": "COMPOSE", "depends_on": ["RECEIPT"]}
+  ],
+  "required_identities": ["case_id", "tax_year", "run_id", "artifact_identity"],
+  "blocked_capabilities": ["real_data", "provider_credentials", "manufacturer_id", "certificates", "protected_document_copying", "official_eric_execution", "signing", "networking", "elster_finanzamt_contact", "external_transfer", "production", "protected_main", "release", "destructive_action", "duplicate_orchestrator_bridge_scheduler", "general_purpose_shell"],
+  "acceptance": ["closed_stage_catalog", "exact_component_reuse", "dependency_order", "unknown_field_rejected", "unsupported_capability_rejected"]
+}

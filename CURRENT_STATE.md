@@ -1,326 +1,125 @@
 # Current State
 
-## Project status
+## DR-04 Human Gate — 2026-10-06
+
+A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`; live capacity was five-hour `82%` and weekly `23%`. Authoritative reconciliation confirms the accepted whole-euro transformation yields declared section-35a bases `70 + 90` and therefore EUR 32.00 credit, not the frozen EUR 31.83. A EUR 0.17 result change would project the successor refund to EUR 134.00, so execution stopped before code or accepted-result change at `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. DR-05 remains blocked. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
+
+## Owner operational exception infrastructure — 2026-10-05
+
+Constitution v3 and `OWNER-EXCEPTION-NOTIFICATION-V2` establish the narrow operational exception channel. The Windows Relay continuation lifecycle is bound to exact repository/branch/HEAD, verified HOT CONTEXT digest, graph digest, checkpoint, action, and reset timestamp. Focused verification is `79 passed`; final Independent Acceptance is `PASS`. The one authorized activation attempt is `FAILED` because no approved provider credential/configuration is available to the runtime; no email, sensitive data, or attachment left the project boundary. This isolated provider Human Gate does not block unrelated authorized project work.
+
+Post-repair capacity is `TOKEN_PAUSED`: five-hour remaining `9%`, weekly remaining `34%`, with exact DR-04 preserved. The sole continuation guard is to wake once at the five-hour reset plus the governed two-minute buffer, `2026-10-05T11:42:44Z`; no five-minute polling or duplicate scheduler is authorized.
+
+That wake was missed while the host, desktop app, Windows Relay, repository and branch were healthy. Classification is `MISSED_WAKE / CODEX_AUTOMATION_TRIGGER_FAILURE`. The Codex automation is now paused and non-authoritative, and Relay re-arming is disabled. The intended authoritative scheduler is one local-project ChatGPT Work Scheduled Task, but no callable control for creating that object is available in this session; web Scheduled Tasks cannot access the local folder. State is therefore `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`; the required short real wake test is `NOT_RUN`, and DR-04 remains unstarted.
+
+The final infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The versioned Master Execution Graph and hash-bound HOT CONTEXT now drive the existing Kernel's exact next-action query. The former Codex continuation trigger is paused because it is retired and non-authoritative; no authoritative scheduler currently exists. Exception email is contract-ready but inactive behind exact Article 1 approvals; no notification was sent. DR-03 is independently accepted; exact next authorized action is DR-04 remediation after the Work scheduler wake-test gate passes.
+
+## 2026-10-04 — infrastructure repair boundary
+
+DR-01, DR-02 and DR-03 are `PASS`. DR-03 registers all six Owner-declared facts in the protected case boundary, validates exact XSD and five official plausibility rules, and commits no sensitive values. DR-04 remains `INDEPENDENT_ACCEPTANCE_FAIL` on exactly three defects: unexecuted plausibility rules, the EUR 31.83 versus whole-euro EUR 32.00 representation contradiction, and substitution-prone lineage. DR-05 is `NOT_STARTED`. The frozen refund remains EUR 133.83.
+
+Limit governance distinguishes hard-threshold `TOKEN_PAUSED` from deterministic proactive `CAPACITY_DEFERRED`; a healthy 50/92 observation is `RUN`, not a token pause.
+Authorized bounded packages may continue sequentially while the deterministic capacity state, prerequisites, repository safety, and Human Gates permit it; routine heartbeat-start checks are disabled when a current live observation remains valid.
+
+The bounded infrastructure repair is independently accepted: Limit Controller repair `PASS`, indexed Official Source Knowledge repair `PASS`, and canonical continuation preservation `PASS`. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`).
+
+Last reconciled: **2026-10-06**
+
+## Authoritative status
+
+- CASE-001 / tax year 2024 analytical preparation is complete and Chief-approved by explicit Human recovery confirmation.
+- No ELSTER submission or Finanzamt transmission has occurred.
+- Unrecovered post-D-028 details remain `NOT_RECOVERED` and must not be fabricated.
+- `PROJECT_CHECKPOINT.md` is the mandatory cross-session entry point.
+
+## Completed foundations
+
+- Deterministic case/person/tax-period identity, case isolation, scoped storage, evidence, audit, and durable approval boundaries.
+- Controlled CASE-001 migration, document processing, six-role tax runtime, and Chief review.
+- Agent Bridge, Local Sync, Windows Relay, and Orchestrator phases O1-O5; O5 was Human-accepted at `d64da2588b18f548c877aed6044f8884e7644cdc`.
+- Owner approval `ORCH-CONT-20260927-001` is active. Milestone-authority contract v1 and its Kernel controls now fail closed on authority amplification, select ready packages in durable dependency order, permit only bounded queue-exhaustion replanning, and persist complete non-token STOP diagnostics. Contract validation and the focused Kernel suite pass (`41 passed`).
+- Owner authority `MILESTONE-A-20260927-001` is active. The exact five-package envelope is pinned to `sha256:2a6d89b6c350b5a1b653bfb7b8b1ddf472188785104389967786e23d97249d09`. MA-01 implements the closed twelve-stage golden-journey coverage manifest and is independently accepted; full unit regression passes (`876 passed, 1 warning`). Kernel checkpoint `sha256:9c7f5a28521d82ac70ffd2dd8c9d5de74b8c9e6512ac977380508ac50656625b` makes MA-02 ready.
+- MA-02 adds a case-registry-composed, SQLite-backed synthetic workflow journal with exact scope, atomic/idempotent transitions, hash-chain integrity, crash rollback, restart recovery, and cross-case rejection. Independent acceptance passes; focused verification `39 passed`; full unit regression `883 passed, 1 warning`; checkpoint `sha256:7434e9ef9fc227ddb6a808629c647644d637d225ecf5524b49f0d5ebb8071663` makes MA-03 ready.
+- MA-03 adds six closed, role-bound local actions from intake through form preview. Exact prior state, durable write-once attempts, deterministic recoverable lineage, exact-active correction invalidation, sequence enforcement, and negative isolation are verified. Independent acceptance passes; focused verification `16 passed`; full unit regression `892 passed, 1 warning`; checkpoint `sha256:c90bbe7a41bf1ade4e491c4abdec8ac11473da2f782ef7e9b7f759a5434dd2d3` makes MA-04 ready.
+- MA-04 implements the Owner-approved option B as a versioned durable coordinator/saga inside the existing `DurableApprovalStore`, composed with the existing workflow store. Exact intent/scope, one-time approval consumption, ordered commit markers, closed synthetic result/receipt payloads, deterministic replay, and fail-closed ambiguity are independently accepted. Crash/restart coverage spans intent, approval consumption, every workflow commit, and every coordinator marker; focused verification passes (`32 passed`) and full unit regression passes (`913 passed, 1 warning`). No cross-database atomicity is claimed and no store, Orchestrator, scheduler, network, credential, or external receipt capability was added.
+- MA-05 completes the local synthetic Milestone A envelope with a twelve-stage golden-journey/reopen proof, full failure/recovery matrix, clean temporary-environment reproduction, and a read-only hash-pinned CI workflow. CI failure records an actionable STOP diagnostic/checkpoint through the existing Kernel and uploads only non-authoritative recovery evidence. Focused verification `62 passed`; full unit regression `915 passed, 1 warning`; independent acceptance `PASS`. MA-01 through MA-05 are complete; any real-data/provider, official ERiC, external submission, production, or release continuation requires its existing separate Human Gate.
+- Owner-authorized real `CASE-001` / 2024 reproduction run `RUN-CASE001-REPRO-20260928-001` resolved and Gemini-processed all 15 exact source identities read-only. The independent packet excluded the historical baseline, the result was frozen before comparison, and both the formal Specialist gate and Chief returned `BLOCKED` because material filing-status, spouse-income, travel/absence, payment, and reimbursement evidence is absent. No numerical z.v.E., Einkommensteuer, or refund is defensible; no external submission occurred. Independent acceptance is `PASS`; focused verification is `20 passed`, and full unit regression is `915 passed, 1 warning`.
+- A post-reset, exact-folder recovery continuation found no additional CASE-001 taxpayer source evidence: `Documents`, `Evidence`, and `Reports` are empty; `Tax_Categories` contains the same 15 processed PDFs; `Calculations` and `Audit` contain only historical analysis/organization records. D-024 confirms the same unresolved driver/absence/payment questions and supplies no new source identity. The reproduction therefore remains safely `BLOCKED`.
+- The Owner-corrected recursive CASE-001 execution supersedes that incomplete discovery conclusion for the new run: exact root recursion found 17 PDFs, comprising 16 taxpayer-source PDFs plus one excluded official D026 form package. The missed spouse payroll PDF was freshly processed with all other sources. Gemini completed 16/16 with zero failures/skips; two calculation defects were rejected through correction loops; final six-role Specialist review and Chief are `PASS`. The independent result is z.v.E. EUR 27,928, Einkommensteuer EUR 700, withheld wage tax EUR 776, and refund EUR 76. Independent Acceptance is `PASS`; no historical target or external action was used.
+- The Owner-directed comparative audit preserves that frozen run and explains the nominal EUR 5.17 refund difference at the endpoint: EUR 76.00 minus the reported EUR 37.00 historical tariff increase plus the historical EUR 31.83 section 35a credit equals EUR 70.83. The underlying historical z.v.E. path remains unresolved because EUR 28,128.41 is approximate, pension/other-insurance intermediates are absent, and the current 2024 formula at z.v.E. EUR 28,128 yields EUR 736 rather than the reported EUR 737. A first independent review rejected one Gemini-lineage attribution; after correction, Independent Acceptance is `PASS_WITH_UNRESOLVED_DIFFERENCE`. No current implementation defect is proven; current state is `AUDIT_UNRESOLVED` and no tax logic was changed.
+- Owner-authorized structured-financial intake registered one immutable canonical CASE-001 CSV separately from the frozen 16 PDFs. Deterministic parsing preserved all 946 rows; exact row-level lineage closes the first Independent Acceptance defect with 946 classified, zero unclassified, one retained duplicate group and two retained reversal pairs. School payment evidence now supports EUR 144 of deduction and matched section 35a payments support a EUR 159.13 basis/EUR 31.83 credit. Successor z.v.E. is EUR 27,784, final tax after section 35a is EUR 642.17, and refund is EUR 133.83. Six Specialists, Chief and final Independent Acceptance are `PASS`; the frozen EUR 76 predecessor remains unchanged.
+- The bounded EUR 60 Bjorn Steiger Stiftung reconciliation links frozen PDF `DOC-CASE-001-00000007` exactly to accepted debit `TX-c67f3a594d3273589c5a9ce3`. The form proves recurring support and charitable/benevolent recognition, while the bank record proves execution, but the recipient-produced form lacks the exact tax-privileged use purpose, corporation-tax exemption particulars, and deterministic donation-versus-membership designation required by section 50(4) EStDV. Status is `DONATION_EVIDENCE_INCOMPLETE`; the EUR 133.83 successor remains unchanged and no unrelated case work was reopened.
+- CASE-001 tax analysis is frozen at the accepted EUR 133.83 refund. The Owner-authorized declaration queue has DR-01/DR-02 `PASS`, DR-03 facts `SUPPLIED_NOT_REGISTERED`, DR-04 remediation pending after Independent Acceptance `FAIL`, and DR-05 `NOT_STARTED`; external ERiC/filing remains separately gated.
+- Superseded historical event: the Owner granted the bounded DR-01 through DR-05 authority on 2026-09-29, and DR-01 initially stopped on unavailable protected material. That blocker and its former “all packages unstarted” continuation are no longer current.
+- The Owner resolved that historical source blocker without sharing credentials. The permanent Protected Official Source Store is accepted: three ERiC 44.3.6.0 packages were copied non-destructively from `E:\ERic`, source/destination/expected hashes agree, and exact E10/2024 ODS/XSD artifacts were minimally extracted and hash-verified. A portable `AI_TAX_PROTECTED_SOURCE_ROOT` resolver uses the Git metadata registry and fails closed on missing, corrupt, ambiguous, or escaping sources. Google Drive is backup only; Git contains no protected binary.
+- DR-01 is accepted `PASS`. Versioned case-scoped composition binds exact case/run/registry/frozen-calculation/evidence identities, represents the income-tax filing basis, both Hauptvordruck person contexts and `Zusammenveranlagung`, and composes the existing Anlage N. The official taxpayer-favorable whole-euro rule maps positive source wage EUR 36,470.23 to declaration value EUR 36,470; exact XSD validation passes. Focused/relevant regression is `191 passed`; Independent Acceptance is `PASS`. Frozen refund EUR 133.83 is unchanged. The post-package capacity gate was 80 percent five-hour and 21 percent weekly, so execution is `TOKEN_PAUSED` before DR-02.
+- The bounded `SYNTHETIC_LOCAL_V1` continuity proof passed with two dependency-ordered packages, three dispatch attempts, one recoverable failure, two independent acceptances, one bounded replan, durable close/reopen checkpoint recovery, simulated capacity pause, audit integrity `PASS`, and final kill switch `HALTED`. Focused verification passes (`31 passed`); the complete unit regression passes (`863 passed, 1 warning`).
+- Phase P1 local synthetic ERiC boundary through package 7.
+- Local E10/2024 mapping profile version 14 for the bounded Anlage N employment subset, including the reviewed wage-tax, professional-association, work-equipment, home-office workroom/day, training, ferry-or-flight, domestic-travel, single business-travel transport-cost item, employer-reimbursement, commuting-benefit/subsidy, and other-expense fields; omitted optional values remain absent and are never inferred.
+- Complete synthetic E10/2024 declaration assembly and local validation against the exact hash-pinned official `E10-2024.xsd`; protected schema contents remain outside Git and official ERiC plausibility execution remains blocked.
+- Source-evidenced local plausibility profile version 11 evaluates thirty-nine official Anlage N rules, including bounded single-item professional-association, work-equipment, home-office workroom, training, home-office-day, ferry-or-flight, domestic-travel, and other-expense completeness contracts.
+- A fresh complete unit regression, including the formerly order-sensitive Windows Google Drive provisioning tests, passes: `693 passed, 1 warning`. This verifies the current local unit surface; it does not prove the earlier intermittent environment behavior permanently resolved.
+- Historical package-2 adapter and synthetic-preview documentation now explicitly defer current mapping/XSD/plausibility claims to the separately versioned E10 readiness pipeline; immutable upstream status names are no longer presented as current blockers.
+- A current-state readiness artifact now binds the exact mapping, official-XSD declaration, and passing local plausibility identities. Historical package blockers remain historical; the live residual boundary is official ERiC-engine execution, real-data authority, both Article 1 approvals, and a transmitter.
+- Local four-role Agent Runtime Activation Layer at `cb41d13`; verification: `537 passed, 1 skipped`.
+- Read-only Agent Runtime recovery inspection classifies intact planned/completed boundaries and interrupted mid-resume state with exact durable completed-stage evidence; automatic replay remains forbidden.
+- The Human-authorized local synthetic repair/replay policy, versioned evaluator, and bounded continuation executor are implemented. Every permitted remaining-stage boundary is covered; completed stages are not replayed, and partial/extra traces fail closed. Targeted runtime verification: `34 passed`.
+- The complete local unit regression after runtime repair integration passes: `712 passed, 1 warning`.
+- The profile-v3 E10 expansion passes its targeted suite (`109 passed`), both exact official-XSD probes, and the complete local regression (`718 passed, 1 skipped, 1 warning`).
+- The profile-v4 professional-association expansion passes its focused suite (`122 passed`), exact official-XSD probe, and complete local regression (`733 passed, 1 skipped, 1 warning`).
+- The profile-v5 work-equipment expansion passes its focused E10/UI/documentation suite (`166 passed, 1 warning`), exact official-XSD probe, and complete local regression (`748 passed, 1 skipped, 1 warning`).
+- The profile-v6 home-office workroom expansion passes its focused E10/UI/documentation suite (`181 passed, 1 warning`), exact official-XSD probe, and complete local regression (`763 passed, 1 skipped, 1 warning`).
+- The profile-v7 training expansion passes its focused E10/UI/documentation suite (`196 passed, 1 warning`), exact official-XSD probe, and complete local regression (`778 passed, 1 skipped, 1 warning`).
+- The profile-v8 home-office-day expansion passes its focused E10/UI/documentation suite (`208 passed, 1 warning`), exact official-XSD probe, and complete local regression (`790 passed, 1 skipped, 1 warning`).
+- Plausibility profile v9 adds the two reviewed other-expense completeness rules without changing mapping profile v8. Its focused E10/UI/documentation suite passes (`209 passed, 1 warning`), and the complete local unit regression passes (`795 passed, 1 warning`).
+- Mapping profile v9 and plausibility profile v10 add one paired synthetic ferry-or-flight item and reviewed rule `121361`. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`218 passed, 1 warning`), and the complete local unit regression passes (`804 passed, 1 warning`).
+- Combined other-expense boundary hardening proves that the derived aggregate rejects twelve-digit overflow and that rule `100200002` uses the combined `Sonst` plus ferry-or-flight total at the exact tolerance boundary. Focused verification passes (`155 passed`), and the complete local unit regression passes (`807 passed, 1 warning`).
+- Ferry-or-flight omission and identity hardening proves explicit zero is distinct from omission, preserves the derived aggregate, and changes the cryptographic lineage. Focused mapping verification passes (`86 passed`), and the documentation guard passes (`8 passed`).
+- Mapping profile v10 and plausibility profile v11 add the domestic travel day/reduction subset and three reviewed rules. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`232 passed, 1 warning`), and the complete local unit regression passes (`818 passed, 1 warning`).
+- Domestic-travel hardening covers the exact `366/367` combined-day boundary, both `14`-euro partial-day categories, and cryptographic lineage changes. Focused verification passes (`178 passed`).
+- Mapping profile v11 adds the official employer tax-free travel reimbursement field `E0205108` with whole-euro, non-negative, twelve-digit fail-closed validation. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`240 passed, 1 warning`), and the complete local unit regression passes (`826 passed, 1 warning`).
+- Employer-reimbursement hardening proves explicit zero is distinct from omission, accepts the exact twelve-digit maximum, binds the field into request/result identity, and rejects every superseded mapping profile. Focused mapping/documentation verification passes (`110 passed`).
+- Mapping profile v12 adds the official optional Jobcenter/Agentur travel-cost subsidy field `E0204004` with non-negative whole-euro twelve-digit validation, explicit-zero preservation, identity binding, and exact `N/Wk/EP/Fahrtk_Ersatz` placement. The generated declaration passes the exact official XSD and the focused E10/documentation suite passes (`228 passed`).
+- Mapping profile v13 adds official tax-free and flat-taxed employer commuting-benefit fields `E0204103` and `E0203901`, preserving the official field order alongside `E0204004`, with the same whole-euro, omission, boundary, and identity guarantees. The generated declaration passes the exact official XSD and the focused E10/documentation suite passes (`238 passed`).
+- Mapping profile v14 adds one synthetic business-travel transport-cost item with exact official fields `E0205003` and `E0205004`, enforcing reviewed pairing rule `100200074`, lexical boundaries, official order, omission/explicit-zero distinction, and identity binding. The generated declaration passes the exact official XSD and the focused E10/readiness/UI/documentation suite passes (`287 passed`).
+- Local FastAPI + Jinja/HTMX Persian UI through UI-19; closed Persian labels are joined by semantic accessibility, concise dynamic case announcements, and fail-closed startup when no scoped synthetic case exists.
+
+## Live external status
+
+- The ELSTER developer-access email was received and the Human authenticated privately on 2026-09-16.
+- After explicit Human acceptance, the official ERiC Release 44 software-manufacturer license was accepted.
+- Official `44.3.6.0` documentation and schema-documentation ZIPs were retrieved locally and hash-verified. They remain outside Git.
+- The official page states ERiC 41 and 42 can no longer transmit after the 2026-04-27 minimum-version increase. The Project Owner authorized the local non-production migration, and adapter contract version `2` now binds ERiC `44.3.6.0`, procedure `UFA10`, tax year `2024`, and the E10/2024 material categories. The adapter itself remains inert; the separate local E10 pipeline provides mapping profile v14, exact official-XSD validation, and a thirty-nine-rule local plausibility subset while official ERiC-engine execution remains fail-closed.
+
+## Active boundaries
+
+- Development remains on `d021-agent-case-provisioning`; `main` is behind and protected.
+- Current work is limited to authorized local, synthetic, non-production, architecture-compatible changes.
+- Real data, credentials, protected access before Human login, provider/network activation, external transfer, production, ELSTER/Finanzamt action, merge/release, and destructive action remain Human Gates.
+- Article 1 exact-content and exact-recipient/channel approvals are separate and both remain `NOT_APPROVED`.
+- Plan-limit continuation must stop at its documented thresholds.
+- Execution governance authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but current execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one future local-project ChatGPT Work Scheduled Task. The Codex trigger is paused and non-authoritative; no Work task object or current schedule exists. Windows Local Sync and Relay remain bounded operational workers, not continuation schedulers.
+- Capacity checks are economical and reset-aligned: a valid live observation is reused for cheap operations, with a fresh check after bounded packages and before genuinely broad work. No five-minute polling policy is current.
+- The plan-limit controller document is reconciled with that active state; its former package-7 Human-Gate pause is retained only as history, not current status.
+- The guard checks limits after every completed/pushed package and must immediately start the next bounded authorized package while safe. A pre-first-package check is only a fallback when the current execution window has no reliable live observation; routine heartbeat-start checks are disabled.
+- The focused documentation index now includes the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI records through UI-19; a deterministic test prevents future silent index drift.
+- Canonical-state tests also require the checkpoint, current state, and roadmap to agree on the latest UI package, active branch, and continuous-execution state.
+- Canonical-state tests now also require every active record to retain mapping profile v14 and reject superseded current-profile summaries.
 
-The project is in the foundational architecture and Phase 2 implementation stage. CASE-001 is the first real validation case, but the architecture is being built for long-term multi-case, multi-year operation for natural persons and legal entities.
+## Remaining product work
 
-## Established architecture
+1. Verify and obtain the exact real-data/Gemini authority boundary before any controlled CASE-001 reproduction operation.
+2. Expand official E10/2024 field mapping only from separately reviewed exact source evidence and explicit synthetic semantics.
+3. Keep external submission, official ERiC execution, product release, and production controls behind their existing Human Gates.
 
-- GitHub is the source of truth for code, docs, tests, decisions, and verified state.
-- Google Drive is private source-document storage and working-case storage; it is not the system brain.
-- Local Python/Docker runtime is the execution environment.
-- Source documents under a case's `Documents/` boundary are immutable.
-- Tax categories are a dynamic retrieval/organizational layer, not the source of truth.
-- Evidence, provenance, calculations, reports, and audit data are case-scoped.
-- Party/household context is explicit and ambiguity must not be silently guessed.
-- Document processing is deterministic-first.
+## Exact next action
 
-## Foundational multi-case architecture
+Obtain the Project Owner's exact decision on `DR04-ROUNDING-RESULT-CHANGE-20261006`. Until then, keep the accepted refund at EUR 133.83, do not mark DR-04 accepted, and do not start DR-05. If the successor result is approved, update the versioned result to section-35a credit EUR 32.00 / projected refund EUR 134.00, repair the remaining plausibility and exact-lineage defects, run focused/regression tests, and repeat Independent Acceptance. All external-action gates remain closed.
 
-The system is designed around three identities:
+## Non-negotiable constraints
 
-- `case_id`: identity of one tax case for one tax period and mandatory processing scope.
-- `person_id` / `entity_id`: persistent taxpayer/entity identity across years.
-- `tax_period`: explicit tax period, initially supporting calendar years and designed to support future fiscal-period variants.
-
-Target Drive organization:
-
-```text
-AI-Tax-Agent/
-├── Tax_Years/
-│   ├── 2020/Cases/
-│   ├── 2021/Cases/
-│   ├── ...
-│   ├── 2024/Cases/
-│   ├── 2025/Cases/
-│   └── 2026/Cases/
-├── Case_Registry/
-├── Person_Registry/
-├── Entity_Registry/
-├── Templates/
-└── System/
-```
-
-Each case is internally isolated with:
-
-```text
-CASE-YYYY-NNNN/
-├── Documents/
-├── Evidence/
-├── Tax_Categories/
-├── Calculations/
-├── Reports/
-└── Audit/
-```
-
-## Mandatory isolation rule
-
-No Agent, pipeline component, model, or data-access tool may access case data without a validated `case_id`. Access must resolve through the Case Registry to the exact case folder reference. Unscoped broad Drive searches for case data are prohibited.
-
-Case isolation is a deterministic security/correctness boundary, not merely an Agent prompt instruction. Failure to resolve a case or an out-of-scope object must fail closed.
-
-Cross-year summaries resolve cases through persistent `person_id`/`entity_id` and the Case Registry, then access each case separately. They must not scan unrelated Drive content and guess ownership.
-
-## Case Registry implementation
-
-`docs/case-registry.md` remains the authoritative contract. The deterministic runtime model is implemented at `src/agent_lab/case_registry.py`, with acceptance-oriented unit tests at `tests/unit/test_case_registry.py`.
-
-Local verification passed: `tests/unit/test_case_registry.py` completed with 10 passed tests.
-
-## Person/Entity Registry foundation and runtime
-
-`docs/person-entity-registry.md` defines the persistent identity model for natural persons and legal entities. The deterministic runtime implementation is at `src/agent_lab/person_entity_registry.py`, with tests at `tests/unit/test_person_entity_registry.py`.
-
-Local verification passed: `tests/unit/test_person_entity_registry.py` completed with 11 passed tests.
-
-## Case ↔ Identity Association runtime
-
-The deterministic association boundary is implemented at `src/agent_lab/case_identity_association.py`, with tests at `tests/unit/test_case_identity_association.py`.
-
-It enforces identity-type compatibility, exact owner-ID matching, existence of both identity and case, idempotent association, and registry consistency. It introduces no document or Drive access.
-
-Local verification passed: `tests/unit/test_case_identity_association.py` completed with 9 passed tests.
-
-## Case Creation Workflow
-
-`docs/case-creation-workflow.md` defines the foundational creation contract. The deterministic runtime is implemented at `src/agent_lab/case_creation_workflow.py`, with tests at `tests/unit/test_case_creation_workflow.py`.
-
-Local verification passed: `tests/unit/test_case_creation_workflow.py completed with 9 passed tests.`
-
-The runtime remains storage-provider-neutral and does not migrate CASE-001 or perform document processing.
-
-## Case-Scoped Drive Resolver and Access Boundary
-
-`docs/case-scoped-drive-resolver.md` defines the mandatory boundary between validated case identity and storage access.
-
-The deterministic runtime is implemented at `src/agent_lab/case_scoped_drive.py`, with tests at `tests/unit/test_case_scoped_drive.py`.
-
-The resolver requires a validated `case_id`, resolves storage only through the Case Registry, returns the exact registered `StorageScopeReference`, fails closed for unknown cases, rejects out-of-scope objects, and does not scan Drive or infer ownership.
-
-Local verification passed: `tests/unit/test_case_scoped_drive.py` completed with 8 passed tests.
-
-## Case State + Run ID Model and Runtime
-
-`docs/state-and-memory.md` defines the foundational case-state and execution identity contract.
-
-The deterministic runtime is implemented at `src/agent_lab/case_state.py`, with acceptance-oriented tests at `tests/unit/test_case_state.py`.
-
-The runtime establishes structured case-scoped operational state, unique deterministic `run_id` generation, exactly one `case_id` per run, request-ID idempotency, case-scoped run lookup, explicit run lifecycle transitions, immutable terminal status, state references, registry validation, and fail-closed cross-case access protection.
-
-The current runtime is intentionally in-memory. Durable persistence, workflow queues, checkpoint/resume, durable audit storage, and full tax-domain state schemas remain separate future layers.
-
-Local verification passed: `tests/unit/test_case_state.py` completed with 12 passed tests.
-
-## Durable Audit / Observability Boundary
-
-`docs/audit-observability.md` defines the foundational audit contract. The deterministic runtime is implemented at `src/agent_lab/audit.py`, with acceptance-oriented tests at `tests/unit/test_audit.py`.
-
-The audit layer establishes exactly one validated `case_id` per event, validated `run_id` for execution-bound events, explicit event type/actor/operation/timestamp, reference-based links, append-only semantics, case-scoped retrieval, fail-closed cross-case protection, independence from LLM conversation context, and minimization of sensitive/raw payload storage.
-
-The first runtime is intentionally in-memory. Durable database storage, distributed ordering, cryptographic tamper evidence, retention policy, and OpenTelemetry integration remain future layers.
-
-Local verification passed: `tests/unit/test_audit.py` completed with 9 passed tests in 0.20s.
-
-## Isolation and Cross-Case Contamination Tests
-
-`docs/case-isolation-tests.md` defines the foundational isolation acceptance contract. The acceptance suite is implemented at `tests/unit/test_case_isolation.py`.
-
-The suite verifies the deterministic chain across Case Registry, Case State/Run ID, Case-Scoped Storage Resolver, and Audit Boundary.
-
-Local verification passed: `tests/unit/test_case_isolation.py` completed with 10 passed tests in 0.14s.
-
-## Google Drive Storage Adapter — six-stage rollout
-
-`docs/google-drive-storage-adapter.md` is the authoritative implementation contract for Decision D-013.
-
-The six stages are complete and verified as defined by D-013. The adapter is metadata-only and case-scoped. The live A/B scope-isolation harness was read-only and did not modify CASE-001.
-
-Verification evidence:
-
-- adapter unit suite: **8 passed in 0.25s**;
-- live Google Drive scope-isolation harness: **1 passed in 4.55s**.
-
-This does not verify CASE-001 document processing, PDF extraction, tax calculations, production authorization, durable storage security, or electronic filing.
-
-## CASE-001 Metadata-Only Document Inventory
-
-The metadata-only inventory implementation is present and has been live-verified against the CASE-001 `Documents` scope.
-
-- `src/agent_lab/document_inventory.py` provides deterministic metadata-only inventory;
-- `tests/unit/test_document_inventory.py` provides the unit contract;
-- `scripts/case001_metadata_inventory.py` is the local live execution harness;
-- `docs/document-inventory.md` is the inventory/intake contract.
-
-The live inventory produced **15 documents and 0 folders**. All 15 observed items were PDFs and direct children of the selected CASE-001 Documents scope. No source-document mutation was performed.
-
-Private Drive object IDs are not recorded in GitHub.
-
-## Document Identity
-
-`docs/document-identity.md` and `src/agent_lab/document_identity.py` define the stable logical identity layer between source-object observations and downstream evidence/processing.
-
-The runtime is metadata-only and case-scoped. It preserves logical identity across repeated observations and renames while keeping different provider objects distinct.
-
-Local verification passed: the combined Document Identity + Inventory Evidence unit suites completed with **13 passed tests in 0.28s**.
-
-A versioned local JSON snapshot boundary is implemented through `export_snapshot()`, `save_snapshot()`, `load_snapshot()`, and `import_snapshot()`. The snapshot is intended for local use only because it may contain private provider object IDs. `docs/document-identity-persistence.md` defines this boundary.
-
-## Inventory Evidence
-
-`src/agent_lab/inventory_evidence.py` records an immutable, case-scoped metadata inventory snapshot and can link inventory items to stable logical Document Identity references. It also updates case state and emits a case/run-bound audit event.
-
-## CASE-001 Migration / Compatibility Layer
-
-`docs/case001-migration-compatibility.md` defines the compatibility contract between the legacy CASE-001 layout and the target 2024 case layout.
-
-`src/agent_lab/case001_migration.py` implements non-mutating deterministic migration preparation and validation.
-
-The migration layer is connected to Document Identity and Inventory Evidence. Source scope is authoritative: the migration plan must use the exact registered CASE-001 storage scope. Provider, source object ID, source scope, and logical document ID must match exactly; supplied Inventory Evidence must match source-object and logical-document sequences exactly; cross-case, cross-scope, unknown-identity, and identity-mismatch conditions fail closed.
-
-Local verification passed: the latest combined persistence + migration + authoritative source-scope suite completed with **18 passed tests in 0.29s**.
-
-## CASE-001 Migration Manifest Generator
-
-`src/agent_lab/case001_migration_manifest.py` defines the deterministic manifest-generation boundary.
-
-The generator derives one migration mapping for each non-folder inventory item by resolving the logical `document_id` from `DocumentIdentityRegistry`. It rejects missing identity, source-scope mismatch, and inactive identity records, and can bind the manifest to matching `InventoryEvidence` before passing the result through migration compatibility validation.
-
-`tests/unit/test_case001_migration_manifest.py` has been executed by the user: **6 passed in 0.17s**.
-
-No physical Drive migration has occurred. The manifest generator does not create, move, rename, delete, overwrite, or copy Drive objects.
-
-## Live CASE-001 Document Identity Bootstrap
-
-The read-only live bootstrap has now been executed successfully against the real CASE-001 Documents scope.
-
-Verified output:
-
-- `inventory_document_count`: **15**
-- `inventory_folder_count`: **0**
-- `identity_count`: **15**
-- `run_id`: `RUN-00000001`
-- local identity snapshot: `artifacts\\case001\\document_identity.json`
-- `drive_mutation`: **false**
-
-All 15 observed PDF source objects received a stable logical `document_id`. The bootstrap performed no Google Drive mutation. The local snapshot remains local and must not be committed because it may contain private provider object IDs.
-
-The bootstrap initially exposed a constructor-call mismatch in the harness: `GoogleDriveMetadataAdapter` requires keyword-only constructor arguments. The harness was corrected in commit `771db7b1d7de895d05bc2e4c745414a60efbc8ef` and then executed successfully.
-
-## Pre-Manifest Safety Gate
-
-The pre-manifest gate is now satisfied for the live CASE-001 inventory:
-
-- local restart-safe Document Identity snapshot persistence;
-- authoritative registered-source-scope enforcement;
-- deterministic migration manifest generator;
-- live metadata-only inventory of 15 documents;
-- live identity bootstrap resolving all 15 documents to logical identities;
-- no physical Drive mutation.
-
-## D-017 Human Approval Gate
-
-D-017 is now implemented at `src/agent_lab/approval.py` with unit coverage at `tests/unit/test_approval.py` and implementation documentation at `docs/approval-gate.md`.
-
-The implementation establishes:
-
-- immutable `MigrationApproval` values with controlled lifecycle states;
-- `ApprovalStore` as the lifecycle and one-time consumption owner;
-- `ApprovalGate` as the deterministic fail-closed binding validator;
-- exact case/run, manifest identity/version/reference, preflight identity/reference/result, intended-operation, actor, approver, authorization, timestamp, and audit bindings;
-- explicit `APPROVAL_CONSUMED` audit evidence through the existing `AuditStore`;
-- process-local atomic consistency for state transition plus audit publication;
-- rollback of approval state and audit sequence/event publication on failure;
-- exactly one successful concurrent consumption and deterministic `APPROVAL_ALREADY_CONSUMED` on reuse;
-- no Drive mutation, manifest generation, preflight generation, or physical migration execution.
-
-`CaseState.approvals_ref` remains only a case-state reference. Approval lifecycle authority is not moved into CaseState.
-
-The atomicity guarantee is intentionally limited to process-local consistency. The implementation makes no claim of crash durability, persistent transactional durability, or distributed atomicity.
-
-The D-017 unit suite was expanded to **13 tests**. The assistant also performed a separate local deterministic reconstruction of the D-017 implementation boundary with **13 passed tests in 0.20s**. Repository-hosted GitHub Actions execution was attempted through a temporary verification workflow, but the repository reported **zero workflow runs**, so no GitHub-hosted execution result is claimed.
-
-## D-018 Deterministic Migration Artifact Identity
-
-D-018 is accepted and implemented at `src/agent_lab/artifact_identity.py`, with artifact identity exposure added to the CASE-001 migration Manifest and Preflight result.
-
-The identity contract is:
-
-- controlled artifact `kind`;
-- explicit identity/schema `version`;
-- `sha256:<digest>` reference over deterministic canonical payload;
-- identity payload excludes the identity itself, avoiding circular hashing;
-- equivalent payloads produce the same reference;
-- changing a hashed field produces a different reference.
-
-Current artifact kinds are `CASE001_MIGRATION_MANIFEST` and `CASE001_MIGRATION_PREFLIGHT`, both version `1`.
-
-The Manifest identity covers its case, tax period, provider, source/target scopes, mapping sequence, and optional Inventory Evidence reference. The Preflight identity covers the complete deterministic preflight result.
-
-Documentation: `docs/artifact-identity.md`.
-
-Test suite: `tests/unit/test_artifact_identity.py` contains **8 tests** covering canonicalization, deterministic identity, content-change invalidation, Manifest identity, and Preflight identity.
-
-D-018 performs no Drive mutation and does not authorize or execute migration. The next boundary is to construct the D-017 approval context from the exact real Manifest and successful Live Target Preflight artifact identities.
-
-## D-019 Controlled Agent-Assisted Development Workflow
-
-D-019 is accepted and documented. Controlled agent-assisted development is now part of project governance: Codex remains optional, is not a runtime dependency, and does not replace required human authority for architecture, contracts, stage acceptance, migration authorization, destructive operations, or governance decisions. Passing tests does not itself constitute architectural or stage acceptance.
-
-D-017 is implemented/completed and D-018 is accepted and implemented. No physical Google Drive migration has occurred. The next implementation boundary remains construction of the D-017 approval context from the exact real migration manifest and successful live-target-preflight artifact identities.
-
-### D-019 integration validation
-
-The authorized D-019 documentation was merged into main with a non-fast-forward merge. The first complete local suite reported 167 passed, 4 failed, and 1 skipped. These failures were pre-existing: the merge changed no runtime source or tests. Manifest-generator fixtures used an unqualified source scope, and the live-preflight test attempted to construct a wrong-case manifest that the existing constructor already rejects.
-
-Test-only repairs use the registered `google_drive:legacy` scope and separately verify wrong-case constructor rejection and empty-manifest preflight rejection. No runtime contracts or governance were changed. A targeted run initially failed collection because `agent_lab` was not on the import path; process-local `PYTHONPATH=src` resolved it.
-
-Verification using the existing project-local environment, with `$env:PYTHONPATH="src"`:
-- `.\.venv\Scripts\python.exe -m pytest -q tests/unit/test_case001_migration_manifest.py tests/unit/test_case001_live_target_preflight.py`: **13 passed**.
-- `.\.venv\Scripts\python.exe -m pytest`: **172 passed, 1 skipped**.
-
-The live Drive integration harness skipped because its explicit test-root environment variables were absent. No live Drive verification or mutation occurred. These results establish local test success, not human stage acceptance. D-020 was not started.
-
-## D-020 Approval Context Composition — accepted and integrated
-
-The human accepted D-020 at `e6f28e89acf45541e4cfaa55c9efd8db35fc7909`; it is now integrated into main through a non-fast-forward merge. The integrated-main full suite passed: **223 passed, 1 skipped in 2.29s** with `PYTHONPATH=src` and `.\.venv\Scripts\python.exe -m pytest -q`. D-020 is closed; this acceptance does not authorize approval consumption or physical migration. `src/agent_lab/case001_approval_context.py` composes the generic D-017 execution context from an exact manifest and successful live preflight, preserving their existing D-018 references. Live preflight now records the manifest's exact `ArtifactIdentity`; missing or mismatched provenance fails closed. Identical manifest contents remain the same artifact identity; no attempt/run provenance was added.
-
-The focused suite passed **51 tests**, required regression suites passed **104 tests**, and the complete suite passed **223 tests with 1 opt-in live test skipped**, using the project-local Python environment with `PYTHONPATH=src`. See `docs/case001-approval-context.md` for commands and semantics. D-017 lifecycle and D-018 structural identity payloads remain unchanged. No approval was granted or consumed by composition, no Drive mutation occurred, and no migration executor was created. Tests do not constitute stage acceptance.
-
-## Completed environment work
-
-- Google Drive API enabled.
-- Desktop OAuth client configured.
-- Metadata-only Drive smoke test passed against the AI-Tax-Agent root.
-- Python environment and Google Drive libraries verified.
-- Docker Desktop verified.
-- CASE-001 `Tax_Categories` default directories created in private Drive.
-- Document Processing Contract created.
-- Case Party / Household Model created.
-- Foundational Case Management and Isolation architecture created.
-- Case Registry contract, runtime, and tests created and verified.
-- Person/Entity Registry model, runtime, and tests created and verified.
-- Case ↔ Identity Association runtime and tests created and verified.
-- Case Creation Workflow contract, runtime, and tests created and verified.
-- Case-Scoped Drive Resolver contract, runtime, and tests created and verified.
-- Case State + Run ID contract, runtime, and tests created and verified.
-- Durable Audit / Observability contract, runtime, and tests created and verified.
-- Case Isolation and Cross-Case Contamination acceptance tests created and verified.
-- Six-stage Google Drive Storage Adapter rollout completed and live scope gate verified.
-- CASE-001 metadata-only inventory implemented and live-verified: 15 documents, 0 folders.
-- Document Identity and Inventory Evidence foundations implemented and unit-verified.
-- Document Identity local persistence baseline implemented and live-verified against 15 CASE-001 documents.
-- CASE-001 Migration/Compatibility baseline implemented and unit-verified.
-- Migration validation connected to Document Identity and Inventory Evidence.
-- CASE-001 Migration Manifest Generator implemented and unit-verified: 6 passed in 0.17s.
-- Live CASE-001 identity bootstrap completed successfully with 15/15 identity coverage and no Drive mutation.
-- D-017 Human Approval Gate implemented with deterministic lifecycle, exact binding, one-time consumption, rollback semantics, and existing AuditStore integration.
-- D-018 deterministic artifact identity implemented for CASE-001 Manifest and Preflight outputs.
-
-## Next implementation priorities
-
-1. Generate the real CASE-001 migration manifest from the live inventory and persisted logical identities.
-2. Validate the generated manifest against the authoritative source scope and Inventory Evidence.
-3. Run the read-only live target preflight and bind its exact artifact identity to the exact Manifest identity.
-4. Construct and validate a D-017 approval record from those exact artifact identities before any physical migration design/execution.
-5. Design the controlled physical migration executor, rollback, and post-migration verification. No physical Drive migration yet.
-6. Continue toward controlled document-content access and evidence extraction.
+- Never reopen completed CASE-001 questions solely from superseded historical reports.
+- Require `case_id` for every tax-case operation; never mix cases or tax years.
+- Never store credentials, private Drive IDs, private tax documents, or protected material in GitHub.
+- Never treat tests as Human acceptance or a displayed approval state as authority.
+- Never submit, sign, transmit, release, merge protected `main`, or expand permissions without the applicable explicit Human Gate.

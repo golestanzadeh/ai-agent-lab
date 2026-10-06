@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "state": "CAPACITY_DEFERRED",
+  "observed_at": "2026-10-05T05:22:50.453710+00:00",
+  "capacity": {"five_hour_remaining_percent":22,"weekly_remaining_percent":51,"five_hour_resets_at":"2026-10-05T06:40:04+00:00","weekly_resets_at":"2026-10-11T10:37:32+00:00"},
+  "completed_package": "DR-03",
+  "completed_checkpoint": "1eb620dc1978877481f9445a6dc471ab26805d09",
+  "next_operation": {"operation_id":"DR-04-REMEDIATE-AND-ACCEPT","cost_class":"BOUNDED","estimated_five_hour_cost_percent":15,"estimated_weekly_cost_percent":5,"reason":"PROJECTED_HARD_THRESHOLD_CROSSING"},
+  "continuation_guard": {"id":"plan-limit-continuation-guard","duplicate_created":false,"status":"ACTIVE","one_shot_wake":"2026-10-05T06:40:04+00:00"},
+  "exact_continuation": "Recover synchronized checkpoint, re-read live capacity, consume/pause the one-shot, repair the three recorded DR-04 defects, obtain independent acceptance, and do not repeat DR-01 through DR-03."
+}

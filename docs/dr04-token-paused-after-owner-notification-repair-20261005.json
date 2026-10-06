@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "state": "TOKEN_PAUSED",
+  "limiting_window": "FIVE_HOUR",
+  "observed_at": "2026-10-05T09:13:04+00:00",
+  "five_hour_remaining_percent": 9,
+  "weekly_remaining_percent": 34,
+  "five_hour_resets_at": "2026-10-05T11:40:44+00:00",
+  "weekly_resets_at": "2026-10-11T10:37:32+00:00",
+  "resume_not_before": "2026-10-05T11:42:44+00:00",
+  "continuation_commit": "580d87514907395e4054272e244bf246351e4172",
+  "exact_next_action": "DR-04-REMEDIATE-AND-ACCEPT",
+  "cost_class": "BOUNDED",
+  "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+  "dependencies": "SATISFIED",
+  "human_gate": "NONE",
+  "continuation_guard": {
+    "id": "plan-limit-continuation-guard",
+    "duplicate_created": false,
+    "polling": false,
+    "one_shot_wake": "2026-10-05T11:42:44+00:00"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "package": "DR-03",
+  "status": "PASS",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "protected_human_declarations": {
+    "count": 6,
+    "registration_reference": "sha256:fc1fc151c14561b21b113d3a0e6e88f20faf27debae0ef695f485e73f9e035d4",
+    "values_committed_to_git": false
+  },
+  "official_source_sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
+  "official_xsd_sha256": "86c735c6a3070aad1ccd90e5bdc8a0999099f44ed76b5752e74d8dfa5cd7d272",
+  "fields": ["E0500406", "E0500701", "E0500702", "E0500706", "E0500703", "E0500807", "E0500601", "E0500808", "E0500805", "E0505606", "E0504405", "E0505607"],
+  "local_plausibility_rules": ["501130", "100500043", "501150", "501162", "100500044"],
+  "accepted_amounts": {"school_fee_paid_eur":"480.00", "assessment_only_deduction_eur":"144.00", "kindergeld_entitlement_eur":"3000.00"},
+  "lineage": {
+    "school_documents": ["DOC-CASE-001-00000014", "DOC-CASE-001-00000015"],
+    "payment_rows": ["TX-6ab4508354f25e43fd19f212", "TX-de313fcd2268cdea5f78e0f8"],
+    "frozen_calculation_reference": "sha256:56fcb1c476e87a8bed3e9821ff12f83c784a07efc3138e18bb30a9aca2b20540"
+  },
+  "focused_tests": "6 passed",
+  "relevant_regression": "14 passed",
+  "independent_acceptance": "PASS",
+  "frozen_refund_eur": "133.83",
+  "official_eric_executed": false,
+  "external_transmission": false,
+  "next_dependency_ready": "DR-04-REMEDIATE-AND-ACCEPT"
+}

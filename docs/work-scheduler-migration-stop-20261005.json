@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "event": "MISSED_WAKE",
+  "classification": "CODEX_AUTOMATION_TRIGGER_FAILURE",
+  "logical_identity": "plan-limit-continuation-guard",
+  "scheduled_wake": "2026-10-05T11:42:44+00:00",
+  "observed_outcome": "NO_TRIGGER_NO_RELAY_REQUEST_NO_CONTINUATION_EXECUTION",
+  "repository": {
+    "branch": "d021-agent-case-provisioning",
+    "head": "1c25b83a06b65023514f9f7f5a7585bd0998f6f7",
+    "working_tree": "CLEAN",
+    "remote_synchronized": true
+  },
+  "host": {
+    "awake": true,
+    "desktop_app_running": true,
+    "windows_relay": "HEALTHY_MINUTE_EXECUTIONS"
+  },
+  "continuation": {
+    "capacity_state": "TOKEN_PAUSED_AT_RECORDED_OBSERVATION",
+    "exact_next_action": "DR-04-REMEDIATE-AND-ACCEPT",
+    "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+    "dependencies": "SATISFIED",
+    "human_gate": "NONE_FOR_DR04"
+  },
+  "migration": {
+    "authoritative_scheduler": "CHATGPT_WORK_SCHEDULED_TASK",
+    "authoritative_object_id": null,
+    "state": "MIGRATION_BLOCKED_TOOLING_BOUNDARY",
+    "codex_automation": "PAUSED_NON_AUTHORITATIVE_RETIRED_TRIGGER",
+    "relay_scheduler_arm": "DISABLED",
+    "duplicate_scheduler_created": false
+  },
+  "wake_test": {
+    "status": "NOT_RUN",
+    "wake_test_pass": false,
+    "reason": "NO_CALLABLE_LOCAL_PROJECT_WORK_SCHEDULED_TASK_CONTROL_IN_CURRENT_SESSION"
+  },
+  "project_execution_started": false,
+  "external_transmission": false
+}

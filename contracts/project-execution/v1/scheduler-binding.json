@@ -1,0 +1,33 @@
+{
+  "schema_version": 2,
+  "logical_identity": "plan-limit-continuation-guard",
+  "authoritative_scheduler": "CHATGPT_WORK_SCHEDULED_TASK",
+  "authoritative_object_id": null,
+  "migration_state": "MIGRATION_BLOCKED_TOOLING_BOUNDARY",
+  "duplicate_count": 0,
+  "active_execution_policy": "PACKAGE_OR_STAGE_BOUNDARY_CAPACITY_CHECKS",
+  "capacity_pause_policy": "ONE_RESET_ALIGNED_WAKE_USING_ACTUAL_SERVICE_TIMESTAMP",
+  "current_state": "NO_AUTHORITATIVE_SCHEDULER",
+  "current_schedule": null,
+  "codex_automation": {
+    "id": "plan-limit-continuation-guard",
+    "status": "PAUSED",
+    "authority": "NON_AUTHORITATIVE_RETIRED_TRIGGER",
+    "failure": "MISSED_WAKE_CODEX_AUTOMATION_TRIGGER_FAILURE"
+  },
+  "work_scheduled_task": {
+    "logical_identity": "plan-limit-continuation-guard",
+    "object_id": null,
+    "status": "NOT_CREATED",
+    "reason": "NO_CALLABLE_LOCAL_PROJECT_WORK_SCHEDULED_TASK_CONTROL_IN_CURRENT_SESSION"
+  },
+  "wake_test": {
+    "status": "NOT_RUN",
+    "result": null
+  },
+  "arm_preconditions": ["durable checkpoint", "exact next action", "closed cost class", "actual reset timestamp"],
+  "wake_preconditions": ["fresh entitlement", "fresh live capacity", "safe repository recovery", "valid authority", "satisfied dependencies"],
+  "host_prerequisites": ["host powered on", "ChatGPT desktop app running", "repository available"],
+  "missed_wake_recovery": "BLOCK_PROJECT_EXECUTION_UNTIL_AUTHORITATIVE_WORK_WAKE_TEST_PASSES",
+  "separate_non_quota_workers": ["AI-Tax-Agent Local Sync", "AI-Tax-Agent Windows Relay"]
+}

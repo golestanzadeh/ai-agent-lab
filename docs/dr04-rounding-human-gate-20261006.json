@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "state": "HUMAN_REQUIRED",
+  "gate_id": "DR04-ROUNDING-RESULT-CHANGE-20261006",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "package": "DR-04",
+  "recovery_head": "0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb",
+  "authority": "CASE-001-DR01-DR05-OWNER-AUTHORIZATION",
+  "live_capacity": {
+    "observed_at": "2026-10-06T16:12:41.418+02:00",
+    "five_hour_remaining_percent": 82,
+    "five_hour_resets_at": "2026-10-06T21:08:11+02:00",
+    "weekly_remaining_percent": 23,
+    "weekly_resets_at": "2026-10-11T12:37:32+02:00"
+  },
+  "capacity_decision": {
+    "cost_class": "BOUNDED",
+    "estimated_five_hour_cost_percent": 15,
+    "estimated_weekly_cost_percent": 5,
+    "outcome": "RUN_ALLOWED_BEFORE_HUMAN_GATE"
+  },
+  "authoritative_resolution": {
+    "official_datatype": "GeldBetragOhneCent",
+    "accepted_rounding_rule": "taxpayer-favorable whole-euro transformation",
+    "tenant_exact_basis_eur": "69.13",
+    "tenant_declared_basis_eur": "70",
+    "craftsman_exact_basis_eur": "90.00",
+    "craftsman_declared_basis_eur": "90",
+    "frozen_section_35a_credit_eur": "31.83",
+    "declaration_implied_section_35a_credit_eur": "32.00",
+    "difference_eur": "0.17"
+  },
+  "protected_result": {
+    "currently_accepted_refund_eur": "133.83",
+    "projected_successor_refund_eur_if_only_this_credit_changes": "134.00",
+    "status": "UNCHANGED_PENDING_OWNER_DECISION"
+  },
+  "remaining_dr04_defects": [
+    "execute and bind the ten reviewed local plausibility rules",
+    "pin every lineage reference to the exact accepted DR-04 artifacts and reject valid-but-unrelated hashes"
+  ],
+  "human_gate": {
+    "reason": "Completing DR-04 requires changing the accepted tax result after authoritative whole-euro reconciliation.",
+    "required_decision": "Approve or reject a versioned successor CASE-001/2024 result using section-35a credit EUR 32.00 and projected refund EUR 134.00.",
+    "forbidden_until_decision": [
+      "change the accepted EUR 133.83 refund",
+      "mark DR-04 accepted",
+      "start DR-05"
+    ]
+  },
+  "exact_next_authorized_action": {
+    "action_id": "OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE",
+    "dependencies": "DR-01_DR-02_DR-03_PASS",
+    "cost_class": "HUMAN_GATE",
+    "reset_timestamp": null
+  },
+  "code_changed": false,
+  "tests_executed": {
+    "command": "python -m pytest tests/unit/test_project_execution_graph.py tests/unit/test_host_control.py -q",
+    "result": "42 passed"
+  },
+  "external_transmission": false
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "state": "CAPACITY_DEFERRED",
+  "case_id": "CASE-001",
+  "tax_year": 2024,
+  "base_state": "RUN",
+  "live_capacity": {
+    "five_hour_remaining_percent": 28,
+    "weekly_remaining_percent": 75,
+    "five_hour_reset_epoch": 1791146339,
+    "weekly_reset_epoch": 1791715052
+  },
+  "deferred_operation": {
+    "operation_id": "DR-03-REGISTER-AND-COMPLETE",
+    "estimate_class": "BOUNDED",
+    "estimate_basis_version": 1,
+    "catalog_cost": {"five_hour_percent": 15, "weekly_percent": 5},
+    "reason_code": "PROJECTED_HARD_THRESHOLD_CROSSING",
+    "projected_remaining": {"five_hour_percent": 13, "weekly_percent": 70}
+  },
+  "continuation_checkpoint": "5e5394b27f069fbe4e3d17a743ad4d4826d9f046",
+  "exact_next_action": "After a fresh live observation makes the same BOUNDED operation fit, register the six already supplied Human Declarations in the protected case boundary and complete DR-03 without repeating DR-01, DR-02, source ingestion, Gemini, or financial intake.",
+  "human_declaration_values_registered": false,
+  "dr03_advanced": false,
+  "dr04_advanced": false,
+  "dr05_started": false,
+  "frozen_refund_eur": "133.83",
+  "external_action": false
+}
