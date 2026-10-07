@@ -4,6 +4,15 @@ This file contains remaining work only. Completed evidence belongs in `PROJECT_C
 
 Last reconciled: **2026-10-06**
 
+
+## Supervisor loop validation — 2026-10-07
+
+- Design contract: `docs/supervisor-loop-design.md`.
+- Status: `DESIGN-ONLY / LOCAL VALIDATION REQUIRED`.
+- Validate in order: G1 Codex usage telemetry, G2 MCP event delivery to one designated Work chat, G3 one-shot Work wake, then G4 synthetic end-to-end loop.
+- No production reader, MCP callback server, scheduler binding, credentials, Telegram adapter, or autonomous continuation is authorized before the corresponding smoke test passes.
+- The existing Deterministic Orchestrator Kernel remains execution authority; this work may close the recorded `NO_AUTHORITATIVE_SCHEDULER` boundary but must not introduce a second orchestrator.
+
 ## Current position
 
 - Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted. DR-04 remediation reached `HUMAN_REQUIRED` on 2026-10-06 before code change: the accepted taxpayer-favorable whole-euro rule makes the declared EUR 70 plus EUR 90 bases imply a EUR 32.00 section-35a credit, not the frozen EUR 31.83. The frozen EUR 133.83 refund remains unchanged pending the Owner's exact decision; DR-05 stays blocked. No external notification or transmission is active.
