@@ -1,6 +1,6 @@
 # Supervisor Loop Design
 
-Status: DESIGN-ONLY / LOCAL VALIDATION REQUIRED
+Status: G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED
 Date: 2026-10-07
 Branch: `d022-supervisor-loop-design`
 
@@ -228,8 +228,9 @@ The first E2E proof must use synthetic/non-sensitive data and must not perform a
 
 ## Deferred implementation
 
-The following are intentionally NOT implemented on GitHub before local validation:
-- a Codex usage reader that assumes an unverified local app-server invocation;
+G1 was locally validated on 2026-10-07 and the strict Codex usage reader is now implemented. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
+
+The following remain intentionally NOT implemented before their local validation:
 - an MCP callback server requiring account-specific subscription details;
 - a Work scheduler binding;
 - credentials/secrets;

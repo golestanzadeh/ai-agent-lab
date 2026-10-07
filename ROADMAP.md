@@ -8,9 +8,10 @@ Last reconciled: **2026-10-06**
 ## Supervisor loop validation — 2026-10-07
 
 - Design contract: `docs/supervisor-loop-design.md`.
-- Status: `DESIGN-ONLY / LOCAL VALIDATION REQUIRED`.
-- Validate in order: G1 Codex usage telemetry, G2 MCP event delivery to one designated Work chat, G3 one-shot Work wake, then G4 synthetic end-to-end loop.
-- No production reader, MCP callback server, scheduler binding, credentials, Telegram adapter, or autonomous continuation is authorized before the corresponding smoke test passes.
+- Status: `G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED`.
+- G1 passed on the real Windows/ChatGPT account: authenticated `codex app-server` exposed unambiguous 300-minute and 10080-minute windows through `account/rateLimits/read`; the read-only normalized reader and ignored runtime snapshot are implemented and focused verification passes. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
+- Validate next in order: G2 MCP event delivery to one designated Work chat, G3 one-shot Work wake, then G4 synthetic end-to-end loop.
+- No MCP callback server, scheduler binding, credentials, Telegram adapter, or autonomous continuation is authorized before the corresponding smoke test passes.
 - The existing Deterministic Orchestrator Kernel remains execution authority; this work may close the recorded `NO_AUTHORITATIVE_SCHEDULER` boundary but must not introduce a second orchestrator.
 
 ## Current position

@@ -39,6 +39,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### Supervisor-loop G1 usage telemetry — 2026-10-07
+
+- G1 is `PASS` on the actual Windows/ChatGPT account. Codex CLI `0.160.1` authenticated with the existing ChatGPT login, and local `codex app-server` returned unambiguous 300-minute and 10080-minute rate-limit windows through `account/rateLimits/read` without creating a model thread or project task.
+- A strict read-only normalizer now writes only non-secret usage telemetry to ignored `.runtime/usage/CODEX_USAGE.json` and adapts it to the existing deterministic `CapacityObservation`; no second Limit Guard or execution authority was created. Focused verification passed (`33 passed`) and the real local smoke created the ignored snapshot successfully. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
+- G2 MCP Event delivery remains unproven and is the next infrastructure gate. This infrastructure validation does not resolve or bypass the separate DR-04 Owner Human Gate below.
+
 ### DR-04 authoritative rounding Human Gate — 2026-10-06
 
 - A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`. Live authoritative Codex capacity was five-hour `82%` remaining (reset `2026-10-06T21:08:11+02:00`) and weekly `23%` remaining (reset `2026-10-11T12:37:32+02:00`); the closed `BOUNDED` estimate permitted DR-04 investigation without using Full Reset.
