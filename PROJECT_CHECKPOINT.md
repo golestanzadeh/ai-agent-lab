@@ -1047,3 +1047,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The supervisor reads the preceding Codex task's verified `BRIDGE_STATE.json` snapshot including five-hour/weekly reset timestamps, calculates remaining capacity and next eligible dispatch time, and supplies the computed capacity to the next Codex prompt. Codex does not perform a redundant initial quota read.
 - A reset means that window's quota becomes available again; never assume exactly 100% *currently remaining* if intervening use is unknown. Resolve stale/ambiguous evidence before dispatch. Codex only estimates package cost against supervisor-provided values and records verified END capacity and reset timestamps.
 - Standing protocol and current DR-02/DR-04 prompts amended accordingly; no Codex dispatched.
+
+
+### Supervisor direct initial audit — 2026-10-08
+
+- Supervisor directly inspected authorized local worktree, DR-02 acceptance and the actual Work bridge state/contract. Evidence and findings: `docs/dr02-lineage-supervisor-initial-audit-20261008.md`.
+- DR-02 original accepted request/prior-result/XML/result identities remain unrecovered; owner-authorized bounded re-acceptance is pending, not PASS. Existing `BRIDGE_STATE.json` v1 has no Codex quota fields and is Work report transport; do not overwrite with invented telemetry. Proposed additive capacity extension needs writer/consumer compatibility checks.
+- Preserved intentionally deleted local checkpoint and pre-existing untracked files. No Codex dispatched or ERiC/external action. DR-04 OPEN; DR-05 BLOCKED.
