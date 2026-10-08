@@ -43,6 +43,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 **Supersession notice:** Earlier historical statements here or in the recovery plan that DOC-INDEX-CI-REPAIR was `NOT EXECUTED` are outdated. Its index and Constitution v3 compatibility fixes are committed; 68 relevant tests PASS and two inspected GitHub Actions runs succeeded. Owner observed no further GitHub notification emails after repairs began. Formal independent acceptance remains open as `OI-0001`; see `docs/doc-index-ci-repair-plan-20261008.md`. Earlier DR-04 rounding Human Gate and historical ERiC access pending are also superseded; do not resurrect them.
 
+**OI-0001 CLOSED — 2026-10-08:** Owner explicitly accepted DOC-INDEX-CI-REPAIR on verified technical evidence (68 tests PASS, Actions runs `37792324906` / `37792372732` SUCCESS, Owner-observed email quiet). Status `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, not a fabricated independent-review PASS. `OI-0001` was removed from active `OPEN_ITEMS.md` at commit `848ff06c14d8524c399d5c3f36c275dbe10a47d3`; full closure evidence in `docs/doc-index-ci-repair-plan-20261008.md` at commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. The seven-stage CASE-001 execution order is unchanged; next primary stage remains `OI-0002`.
+
 ## Mandatory active recovery plan — Owner-approved 2026-10-08
 
 **Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
