@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 architecture decision gate — 2026-10-08
+
+Review-02 left F02/F03/F05/F06/F07 unresolved. Architecture analysis now defines the minimum corrections but requires three Owner decisions before implementation: dedicated identity capabilities/service role, authoritative protected evidence-resolution composition, and Kernel-owned independent monotonic continuity/restore authority. F05 and F07 remain bounded implementation corrections after those dependencies. State is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`; OI-0002 remains OPEN and OI-0003 remains blocked.
+
 ## OI-0002 second independent review FAIL — 2026-10-08
 
 Independent review of exact remediation head `ad263284ff211d6d7d75234c03c3005d43b7d2df` returned `FAIL`. F01 manifest expiry and F04 ACTIVE lifecycle enforcement pass, but F02/F03/F05/F06/F07 remain open: generic derived-artifact capability over-authorizes identity lifecycle, lineage/evidence references are not resolved, open-ended role history has no governed correction path, an older valid database-plus-anchor pair can be replayed, and the v1 migration has a destructive committed gap. T01-T12 are 8 PASS / 4 FAIL; full regression remains green (`1084 passed, 5 skipped`). OI-0002 remains OPEN; OI-0003 and downstream stages remain blocked pending bounded remediation and another separate review.

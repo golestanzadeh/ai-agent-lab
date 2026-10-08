@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 architecture decision gate — 2026-10-08
+
+- Architecture review of exact implementation `ad263284ff211d6d7d75234c03c3005d43b7d2df` determined that F02, F03 and F06 cannot be remediated safely under unmodified frozen authority. Three explicit Owner decisions are required: dedicated identity permissions/service role; designation of the composite protected evidence resolver and metadata index; and the existing Kernel store as independent monotonic continuity/restore authority.
+- F05 immutable effective-dated role correction and F07 atomic migration are within the existing frozen design once their F02/F03/F06 dependencies are approved. Exact contracts, tests and the bounded remediation-02 sequence are in `docs/oi-0002-architecture-decision-gate-20261008.md`.
+- Status is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`. No implementation or frozen contract changed. OI-0002 remains OPEN; OI-0003 and all downstream stages remain blocked. Exact next action is Owner disposition of ODR-OI0002-02-PERMISSIONS, ODR-OI0002-03-EVIDENCE and ODR-OI0002-06-CONTINUITY.
+
 ### OI-0002 second independent review FAIL — 2026-10-08
 
 - A separate independent review inspected exact published remediation head `ad263284ff211d6d7d75234c03c3005d43b7d2df` from a clean isolated worktree. Focused (`52`), relevant (`102`), complete unit (`1084 passed, 5 skipped`) and documentation (`15`) regressions pass, but adversarial review reproduced five unresolved security/integrity defects.
