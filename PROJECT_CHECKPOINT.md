@@ -984,3 +984,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted mapping, declaration, and local-plausibility suite `67 passed`.
 - Status: **E10_MAPPING_PROFILE_V2_COMPLETE / OFFICIAL_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
+
+
+### DR-04 official plausibility rule extraction — 2026-10-08
+
+- Verified the protected ELSTER E10/2024 ODS SHA-256 and extracted all ten HA_35a rule predicates, field references and severity from rows 7–16. See `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Stage 1 source extraction PASS; precise `UngleichMitToleranz2` operator semantics still require authoritative verification before an evaluator can be accepted. Stages 2–4 structural/data/evaluator audits complete; stage 5 contract remains proposed, not frozen.
+- No local plausibility execution, full regression, independent acceptance, external transmission, Wake, scheduling or DR-05 authorization occurred. DR-04 OPEN; DR-05 BLOCKED. Preserve the existing authoritative execution checkpoint and next action until an independently authorized implementation slice is ready.
