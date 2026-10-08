@@ -1033,3 +1033,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 - Owner requires every current and future Codex prompt to measure LIVE authenticated five-hour and weekly capacity before and after each package and persist exact timestamped remaining values in the existing authoritative `BRIDGE_STATE.json`, then read back to verify. Repeat before next task/wake; fail closed on missing/stale telemetry, schema uncertainty, or persistence mismatch. Never substitute the historical snapshot or confuse Work and Codex quotas.
 - Applied to `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`, `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`, and standing protocol `docs/codex-agent-workflow.md`. This records a requirement, not a claim that `BRIDGE_STATE.json` was already written or that Codex was dispatched.
+
+
+### Corrected Codex quota handoff — Owner clarification 2026-10-08
+
+- This decision **supersedes** the earlier same-day instruction to measure Codex quota before each task. The supervisor supplies starting remaining percentages in the prompt: FIRST task Owner-provided five-hour 23%, weekly 86%; later tasks use the preceding Codex task's verified END snapshot from `BRIDGE_STATE.json`.
+- Codex's pre-execution duty is only conservative full-package capacity estimation plus deterministic Limit Guard against supplied values; it must not redundantly query live quota at task start. If stale/reset-ambiguous or insufficient, stop fail-closed.
+- AFTER execution or safe stop, Codex measures actual ending quota, persists timestamped exact values and reset times in existing `BRIDGE_STATE.json` and verifies by readback. That is the sole next-task quota handoff. Updated `docs/codex-agent-workflow.md` and DR-02/DR-04 prompts. This change does not claim a bridge-state measurement or Codex execution.
