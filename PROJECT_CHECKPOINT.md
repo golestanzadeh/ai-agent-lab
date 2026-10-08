@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 remediation REVIEW_READY — 2026-10-08
+
+- `OI-0002-REMEDIATION-01` remediates F01-F07 in implementation code commit `ad30cee664b2ca002014adb0c9b3c46daca7ca82`: decision-time manifest expiry; Kernel-authorized lifecycle operations; ACTIVE enforcement; complete immutable fact lineage; cross-subject family cardinality; HMAC row/audit continuity with external anchor; and migration, crash, backup/restore and deployment controls.
+- Worker verification passed focused (`50`), relevant (`102`) and the five original adversarial classes (`9`). The final complete regression and exact published head are recorded in `docs/oi-0002-remediation-01-report-20261008.md`.
+- Status is `REVIEW_READY`, not accepted. No real CASE-001 identities or private data were created; no external action, merge, release, OI-0003, scheduler or parallel authority occurred. OI-0002 remains OPEN pending a separate independent review of the exact published head; OI-0003 and downstream stages remain blocked.
+
 ### OI-0002 independent security review FAIL — 2026-10-08
 
 - An independent read-only review established exact candidate SHA `90d44a8b0a40ad5a29ffa6d5d7d63db7c3caa10a` and returned `FAIL`. Focused regression passed `88`; complete unit regression passed `1080` with `5 skipped`, but independent adversarial probes reproduced post-expiry manifest authorization, unauthenticated raw identity access, overlapping spouse roles, archived-identity readback and deletable audit history.

@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 remediation review handoff — 2026-10-08
+
+All seven findings from the independent review of `90d44a8` have a bounded implementation correction in code commit `ad30cee664b2ca002014adb0c9b3c46daca7ca82`. Focused, relevant and adversarial verification passes. State is `REVIEW_READY`, not accepted: a separate reviewer must inspect the exact final branch head and independently execute T01-T12. No real CASE-001 identity was created; OI-0003 and every downstream recovery stage remain blocked.
+
 ## CASE-001 Owner Facts Package A schema stop — 2026-10-08
 
 The protected CASE-001/2024 Owner Declaration passed exact SHA-256, scope, confirmation, and no-transmission validation, but Package A is `HUMAN_REQUIRED / INDEPENDENT_ACCEPTANCE_FAIL`. The authoritative Case Registry has only one case-owner reference; no durable CASE-001 Person A/Person B identity records or associations exist. `PersonEntityRegistry` is in-memory, and `HumanDeclaredFact` v1 has no subject identity or generic durable store. Registration was therefore not attempted: it would require identity inference or an unapproved persistence schema. The next permitted action is a governed identity-resolution/schema decision that durably establishes Person A and Person B identities and CASE-001 roles, plus subject-bound protected fact persistence, before Package A is rerun.

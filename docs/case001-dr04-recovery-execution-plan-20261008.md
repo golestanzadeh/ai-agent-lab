@@ -13,7 +13,7 @@ Use CASE-001/2024 to discover and resolve foundational structural defects before
 
 | Order | Stage | Current baseline | Exit gate |
 |---|---|---|---|
-| 1 | Identity & Family Persistence | BLOCKED / not implemented durably | Approved compatible schema, persistent person identities, effective-dated family/case roles, subject-bound immutable protected facts, deterministic readback, tests, independent acceptance PASS |
+| 1 | Identity & Family Persistence | F01-F07 remediation REVIEW_READY at `ad30cee`; independent acceptance pending | Approved compatible schema, persistent person identities, effective-dated family/case roles, subject-bound immutable protected facts, deterministic readback, tests, independent acceptance PASS |
 | 2 | Package A — Owner Facts Registration | BLOCKED / HUMAN_REQUIRED at f9a4b99 | Verify existing protected owner declaration integrity, bind confirmed 2024 facts to authoritative subjects, idempotent protected persistence, independent acceptance PASS |
 | 3 | DR-01 — Lineage Reacceptance | Historical PASS but successor independent acceptance FAIL | Recover or safely reconstruct exact request/result/XML identities from authoritative evidence, detect substitution, validate official XSD and identity bindings, independent acceptance PASS |
 | 4 | DR-02 — Independent Reacceptance | BLOCKED pending DR-01 | Independent lineage and substitution-resistant validation based on accepted DR-01, independent acceptance PASS |
@@ -22,6 +22,8 @@ Use CASE-001/2024 to discover and resolve foundational structural defects before
 | 7 | DR-04 — Rounding & Declaration Acceptance | Part 1 implemented; full acceptance pending | Reconcile accepted successor rounding and precise artifacts, bind ten official plausibility rules, full tests, independent acceptance PASS |
 
 Execution order is 1→2→3→4→5→6→7. Packages B/C are OWNER-CHOSEN schedule order, not technical prerequisites for DR-04. DR-03 has historical acceptance; verify compatibility without gratuitous replay. DR-05 remains blocked until its own prerequisites are satisfied.
+
+Stage 1 remediation note (2026-10-08): the implementation worker corrected all seven findings from the first independent review and produced `docs/oi-0002-remediation-01-report-20261008.md`. This is a review handoff only, not stage acceptance. The next permitted action is a separate independent review of the exact published remediation head; stage 2 remains blocked.
 
 ## Known evidence and cautions
 - CASE-001/2024 frozen historical analytical refund EUR 133.83; DR-04 Part 1 versioned rounding successor refund EUR 134.00. Preserve both identities; do not silently overwrite or conflate.
