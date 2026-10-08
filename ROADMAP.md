@@ -16,7 +16,7 @@ Last reconciled: **2026-10-08**
 
 ## Current position
 
-- OI-0002 F01-F07 remediation is `REVIEW_READY` at implementation code `ad30cee`; its remediation report and protected-persistence operations guide are registered in `docs/README.md`. A separate independent review of the exact published head is the next gate. OI-0002 remains OPEN and OI-0003 remains blocked.
+- OI-0002 second independent review of `ad263284` is `FAIL`: F01/F04 pass, while F02/F03/F05/F06/F07 require bounded second remediation and another independent review. OI-0002 remains OPEN and OI-0003 remains blocked.
 - Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. DR-03 is independently accepted. DR-04 Part 1 preserves the Owner-approved EUR 32.00 credit / EUR 134.00 refund successor. The ten-rule candidate passed focused and relevant tests but failed Independent Acceptance because the exact accepted DR-02 predecessor identity was never durably recorded and cannot be safely invented. DR-04 is `HUMAN_REQUIRED`; DR-05 stays blocked. No external notification or transmission is active.
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.

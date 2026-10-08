@@ -138,6 +138,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 
 - `oi-0002-review-candidate.md` - Implementation review candidate and outstanding independent acceptance boundaries.
 - `oi-0002-independent-security-acceptance-review-20261008.md` - independent read-only security review of commit `90d44a8`; recommendation FAIL with T01-T12 evidence and ordered remediation.
+- `oi-0002-independent-security-acceptance-review-02-20261008.md` - second independent review of remediation head `ad263284`; recommendation FAIL with residual F02/F03/F05/F06/F07 evidence and T01-T12 matrix.
 - `oi-0002-remediation-01-report-20261008.md` - F01-F07 remediation mapping, T01-T12 implementation evidence, regression record and independent-review handoff.
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
 

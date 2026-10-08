@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 second independent review FAIL — 2026-10-08
+
+Independent review of exact remediation head `ad263284ff211d6d7d75234c03c3005d43b7d2df` returned `FAIL`. F01 manifest expiry and F04 ACTIVE lifecycle enforcement pass, but F02/F03/F05/F06/F07 remain open: generic derived-artifact capability over-authorizes identity lifecycle, lineage/evidence references are not resolved, open-ended role history has no governed correction path, an older valid database-plus-anchor pair can be replayed, and the v1 migration has a destructive committed gap. T01-T12 are 8 PASS / 4 FAIL; full regression remains green (`1084 passed, 5 skipped`). OI-0002 remains OPEN; OI-0003 and downstream stages remain blocked pending bounded remediation and another separate review.
+
 ## OI-0002 remediation review handoff — 2026-10-08
 
 All seven findings from the independent review of `90d44a8` have a bounded implementation correction in code commit `ad30cee664b2ca002014adb0c9b3c46daca7ca82`. Focused, relevant and adversarial verification passes. State is `REVIEW_READY`, not accepted: a separate reviewer must inspect the exact final branch head and independently execute T01-T12. No real CASE-001 identity was created; OI-0003 and every downstream recovery stage remain blocked.

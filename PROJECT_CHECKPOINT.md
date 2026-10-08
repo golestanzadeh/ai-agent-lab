@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 second independent review FAIL — 2026-10-08
+
+- A separate independent review inspected exact published remediation head `ad263284ff211d6d7d75234c03c3005d43b7d2df` from a clean isolated worktree. Focused (`52`), relevant (`102`), complete unit (`1084 passed, 5 skipped`) and documentation (`15`) regressions pass, but adversarial review reproduced five unresolved security/integrity defects.
+- F01 manifest expiry and F04 ACTIVE lifecycle enforcement are corrected. F02 remains over-authorized because generic tax-agent derived-artifact capability grants identity lifecycle operations; F03 accepts unresolved declaration/confirmation references; F05 lacks verified evidence and an effective-dated correction path; F06 accepts rollback of an older valid database-plus-same-directory-anchor pair; F07 commits destructive v1 table deletion before schema recreation/insertion.
+- T01-T12 disposition is 8 PASS, 4 FAIL, 0 BLOCKED. Recommendation is `FAIL`; OI-0002 remains OPEN, OI-0003 and every downstream stage remain blocked. Exact evidence and required corrections are in `docs/oi-0002-independent-security-acceptance-review-02-20261008.md`. No implementation, real identity, protected evidence, frozen contract, external action, merge or release changed.
+
 ### OI-0002 remediation REVIEW_READY — 2026-10-08
 
 - `OI-0002-REMEDIATION-01` remediates F01-F07 in implementation code commit `ad30cee664b2ca002014adb0c9b3c46daca7ca82`: decision-time manifest expiry; Kernel-authorized lifecycle operations; ACTIVE enforcement; complete immutable fact lineage; cross-subject family cardinality; HMAC row/audit continuity with external anchor; and migration, crash, backup/restore and deployment controls.
