@@ -1020,3 +1020,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Owner reports remaining five-hour 23% and weekly 86%; these values supersede stale app-server snapshot for planning but are not independently verified. Five-hour headroom is binding; no long Codex dispatch authorized solely from historical telemetry.
 - New bounded plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. Next gate: owner/independent-authority confirmation of canonical accepted DR-02 identities OR explicit authorization for bounded DR-02 lineage re-acceptance. The plan does not grant this authority.
 - Once authorized and capacity-checked, recover/re-accept DR-02 identity, pin negative substitution tests, rerun DR-04 regression and independent acceptance; keep DR-04 OPEN / DR-05 BLOCKED until independent PASS. No Codex dispatched by this planning update.
+
+
+### Owner Human Gate decision: DR-02 bounded lineage re-acceptance APPROVED — 2026-10-08
+
+- The Owner explicitly approved option B, a bounded DR-02 lineage re-acceptance, in the current project conversation. This resolves the Owner-authorization portion of `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`, but does NOT itself provide recovered identities or independent acceptance.
+- Authorized scope and guarded Codex handoff: `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`; prerequisite plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. First obtain fresh actual Codex telemetry and honor the Limit Guard; owner last reported 23% five-hour and 86% weekly remaining.
+- New canonical DR-02 identities require reproducible evidence and independent review. Until accepted, DR-04 OPEN / DR-05 BLOCKED. No external transfer, signing, release, or Wake. Codex dispatch is not claimed by this checkpoint update.
