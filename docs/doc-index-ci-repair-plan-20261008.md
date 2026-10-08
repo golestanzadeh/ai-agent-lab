@@ -47,3 +47,11 @@ Required reference from PROJECT_CHECKPOINT.md and the CASE-001 recovery plan. Ke
 - Narrowly changed only the obsolete Constitution title marker in `src/agent_lab/orchestrator_pilot.py`; retained Article 10 marker and other allowlisted governance requirements. Commit `b6731183afc634d8eac4a4818b34a827f95a09ed`.
 - Isolated clean worktree at that commit: `PYTHONPATH=src python -m pytest -q tests/unit/test_documentation_index.py tests/unit/test_orchestrator_pilot.py` → **15 passed in 3.73s**. All three previously failing pilot tests now PASS.
 - Local targeted verification PASS; **live GitHub Actions status, broader regression, and independent acceptance not yet verified**. Do not infer that all notification emails have stopped.
+
+## CI evidence and bounded independent acceptance review — 2026-10-08
+
+- GitHub Actions, directly queried by commit: `b6731183afc634d8eac4a4818b34a827f95a09ed` → run `37792324906`, `Milestone A synthetic acceptance`, completed/success; `299f40e9fd8a1035e8e3879cb1bc89876dafab5c` → run `37792372732`, completed/success.
+- Both runs have job `synthetic-local-only` completed/success, including successful `Prove complete synthetic journey`, `Prove failure and recovery matrix`, and `Prove governance and documentation contracts` steps. Failure-diagnostic steps were skipped because there was no workflow failure.
+- Separate clean-worktree regression at commit `299f40e`: documentation-index, orchestrator-pilot, milestone-A golden journey, synthetic workflow, durable submission approval, milestone-A contract and stop diagnostic tests → **68 passed in 16.56s**. No test files modified.
+- Independent evidence review within this conversation: independently cross-checked remote CI job/step results against isolated local regression and verified that changes were limited to two index entries and one governance-validator version marker; ratified Constitution v3 and Article 10 remain intact. **This is not a separate independently authorized reviewer/agent acceptance record.**
+- Status: `IMPLEMENTATION_VERIFIED / CI_GREEN / FORMAL_INDEPENDENT_ACCEPTANCE_PENDING`. Do not claim formal independent acceptance PASS or all email notifications stopped without the designated independent acceptance authority and inbox/workflow coverage. No unrelated GitHub workflow runs were exhaustively checked.
