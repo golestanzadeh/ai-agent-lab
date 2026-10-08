@@ -1,5 +1,9 @@
 # Current State
 
+## DR-04 ten-rule execution safe stop — 2026-10-08
+
+The bounded ten-rule candidate passed focused (`26 passed`) and relevant (`83 passed, 5 skipped`) verification, but two actual independent reviews withheld acceptance. The remaining blocker is not evaluator semantics: DR-02 acceptance did not durably record its exact request reference, prior-result reference, complete XML digest, or result identity, so a canonical-hash predecessor substitution cannot yet be excluded. No identity was fabricated and no candidate code was pushed. State is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.
+
 ## DR-04 Part 1 — 2026-10-08
 
 The Owner-approved rounding successor is implemented as DR-04 contract version 2. Exact source bases EUR 69.13 and EUR 90.00 remain distinct from whole-euro declaration values EUR 70 and EUR 90. The successor records section-35a credit EUR 32.00 and refund EUR 134.00 while preserving historical EUR 31.83 / EUR 133.83 predecessor values. Part 1 preserves case isolation, provenance inputs and the non-transmitting boundary. DR-04 remains open pending executable plausibility binding, exact accepted-lineage pinning, full regression and Independent Acceptance; DR-05 remains blocked.
@@ -114,7 +118,7 @@ Last reconciled: **2026-10-08**
 
 ## Exact next action
 
-Continue DR-04 only with the separately dispatched next slice: execute and bind the ten reviewed plausibility rules and pin lineage to the exact accepted artifacts, then run the full required regression and Independent Acceptance. Part 1's versioned EUR 32.00 credit / EUR 134.00 refund successor remains provisional to the still-open DR-04 package; DR-05 remains blocked. All external-action gates remain closed.
+Obtain the Owner/independent-authority decision to provide or establish the canonical accepted DR-02 request reference, prior-result reference, complete XML digest, and result identity. Then resume bounded DR-04 implementation from the recorded findings: pin lineage to the exact accepted artifacts, execute the ten reviewed plausibility rules, add request/prior/non-VOR substitution tests, rerun focused/relevant/full regression, and repeat Independent Acceptance. Part 1's EUR 32.00 credit / EUR 134.00 refund successor remains provisional; DR-05 remains blocked. All external-action gates remain closed.
 
 ## Non-negotiable constraints
 

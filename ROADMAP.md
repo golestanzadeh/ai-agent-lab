@@ -16,14 +16,14 @@ Last reconciled: **2026-10-08**
 
 ## Current position
 
-- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted. DR-04 Part 1 implements the Owner-approved versioned successor: whole-euro declaration bases EUR 70 plus EUR 90 yield section-35a credit EUR 32.00 and refund EUR 134.00, while historical EUR 31.83 / EUR 133.83 values remain preserved. DR-04 stays open for plausibility execution, exact-lineage pinning, full regression and Independent Acceptance; DR-05 stays blocked. No external notification or transmission is active.
+- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. DR-03 is independently accepted. DR-04 Part 1 preserves the Owner-approved EUR 32.00 credit / EUR 134.00 refund successor. The ten-rule candidate passed focused and relevant tests but failed Independent Acceptance because the exact accepted DR-02 predecessor identity was never durably recorded and cannot be safely invented. DR-04 is `HUMAN_REQUIRED`; DR-05 stays blocked. No external notification or transmission is active.
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one local-project ChatGPT Work Scheduled Task; the Codex trigger is paused/non-authoritative and no current schedule or Work object exists. Migration requires a real wake test and never uses five-minute polling.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
-- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`. DR-04 Part 1 is complete, but overall DR-04 remains open for its two deferred technical defects and final acceptance. DR-05 is dependency-blocked.
+- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`, but DR-02's exact accepted package identity was not durably captured. DR-04 is open at the resulting Human Gate after two independent-review failures. DR-05 is dependency-blocked.
 - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
 
 ## Track 1 — Autonomous project control

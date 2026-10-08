@@ -27,7 +27,9 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `case001-dr03-capacity-deferred-20261004.json` — deterministic non-token deferral and exact DR-03 continuation.
 - `case001-dr03-acceptance-2024.md` / `.json` — accepted protected-fact, Anlage Kind, XSD, plausibility and lineage evidence.
 - `dr04-capacity-deferred-after-dr03-20261005.json` — exact reset-aligned DR-04 continuation capsule after accepted DR-03.
-- `case001-dr04-acceptance-2024.md` — DR-04 Part 1 versioned-successor record and remaining independent-acceptance defects.
+- `case001-dr04-acceptance-2024.md` — DR-04 ten-rule attempt, two independent-review failures, unrecovered DR-02 identity Human Gate, and exact continuation.
+- `dr04-plausibility-source-extraction-20261008.md` — reviewed ten-rule predicates and authoritative strict tolerance-2 semantics.
+- `codex-dr04-ten-rule-execution-prompt-20261008.md` — bounded DR-04 execution authority and acceptance contract.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.
