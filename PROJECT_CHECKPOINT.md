@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 independent security review FAIL — 2026-10-08
+
+- An independent read-only review established exact candidate SHA `90d44a8b0a40ad5a29ffa6d5d7d63db7c3caa10a` and returned `FAIL`. Focused regression passed `88`; complete unit regression passed `1080` with `5 skipped`, but independent adversarial probes reproduced post-expiry manifest authorization, unauthenticated raw identity access, overlapping spouse roles, archived-identity readback and deletable audit history.
+- T01–T12 disposition is 6 PASS, 5 FAIL, 1 BLOCKED. The incomplete subject-fact lineage envelope, lifecycle enforcement, role conflict model, audit integrity, migration and crash evidence also prevent acceptance. No real CASE-001 identity, protected evidence, implementation code, external action, merge, release or downstream package changed.
+- OI-0002 remains OPEN. Exact continuation: remediate the ordered findings in `docs/oi-0002-independent-security-acceptance-review-20261008.md`, produce a new exact commit, then obtain a separate independent review. OI-0003 and all downstream recovery stages remain blocked.
+
 ### DR-04 Part 1 approved successor — 2026-10-08
 
 - Owner decision `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE-20261006` is implemented as DR-04 contract version 2. The exact source bases remain EUR 69.13 and EUR 90.00, while their separately bound whole-euro declaration representations remain EUR 70 and EUR 90.
