@@ -45,6 +45,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 **Verified current stop:** Identity/Persistence foundational blocker; Package A `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`. DR-01 historical acceptance is not sufficient for current lineage reacceptance. DR-02 and DR-04 cannot be called complete. DR-04 rounding successor EUR 134.00 and historical analytical EUR 133.83 must remain separately versioned.
 
+**Parallel email workstream:** The recovery plan now separately tracks (a) the previously requested email scan/review workflow, scope/authority pending reconciliation, and (b) the governed operational email notification provider blocker. Neither is a DR-04 prerequisite, nor does tracking authorize mailbox access or sending. Read the plan's `Parallel email workstream` section before claiming email work is complete.
+
 **Next permitted work:** separately governed design/implementation/independent acceptance of compatible durable identity, effective-dated family roles and subject-bound protected persistence. No automatic execution or external transmission is authorized by this documentation.
 
 **Checkpoint hygiene:** after every stage or blocker, update this checkpoint and the plan together with evidence and exact continuation; preserve local intentional deletion of `PROJECT_CHECKPOINT.md` and unrelated untracked files. No parallel checkpoint, database, scheduler or orchestrator.
