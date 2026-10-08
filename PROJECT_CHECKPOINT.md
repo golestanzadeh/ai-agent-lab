@@ -1027,3 +1027,9 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - The Owner explicitly approved option B, a bounded DR-02 lineage re-acceptance, in the current project conversation. This resolves the Owner-authorization portion of `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`, but does NOT itself provide recovered identities or independent acceptance.
 - Authorized scope and guarded Codex handoff: `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`; prerequisite plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. First obtain fresh actual Codex telemetry and honor the Limit Guard; owner last reported 23% five-hour and 86% weekly remaining.
 - New canonical DR-02 identities require reproducible evidence and independent review. Until accepted, DR-04 OPEN / DR-05 BLOCKED. No external transfer, signing, release, or Wake. Codex dispatch is not claimed by this checkpoint update.
+
+
+### Mandatory Codex bridge capacity evidence — Owner directive 2026-10-08
+
+- Owner requires every current and future Codex prompt to measure LIVE authenticated five-hour and weekly capacity before and after each package and persist exact timestamped remaining values in the existing authoritative `BRIDGE_STATE.json`, then read back to verify. Repeat before next task/wake; fail closed on missing/stale telemetry, schema uncertainty, or persistence mismatch. Never substitute the historical snapshot or confuse Work and Codex quotas.
+- Applied to `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`, `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`, and standing protocol `docs/codex-agent-workflow.md`. This records a requirement, not a claim that `BRIDGE_STATE.json` was already written or that Codex was dispatched.
