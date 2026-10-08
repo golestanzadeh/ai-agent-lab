@@ -1013,3 +1013,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Independent Acceptance returned `FAIL` twice. The first defect (unrelated DR-02 scope/semantics) was repaired. The remaining defect is substitution of the accepted DR-02 request/prior-result identities or unrelated non-VOR XML: the DR-02 acceptance record never durably stored its exact request reference, prior-result reference, complete XML digest, or result identity.
 - Bounded recovery checked the checkpoint, DR-02 acceptance dossier, Git history, and authorized CASE-001 runtime artifacts; the missing identity was not recovered. It must not be invented. Candidate code was not committed or pushed; the official-knowledge index remains `EXTRACTED_UNRESOLVED`.
 - Status is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`. The Owner and independent acceptance authority must provide/confirm the canonical DR-02 identities or authorize bounded DR-02 lineage re-acceptance. Then pin that identity, add request/prior/non-VOR substitution tests, rerun focused/relevant/full regression, and repeat independent review. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred. Evidence: `docs/case001-dr04-acceptance-2024.md` and JSON companion.
+
+
+### Next bounded execution plan / owner-reported capacity — 2026-10-08
+
+- Owner reports remaining five-hour 23% and weekly 86%; these values supersede stale app-server snapshot for planning but are not independently verified. Five-hour headroom is binding; no long Codex dispatch authorized solely from historical telemetry.
+- New bounded plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. Next gate: owner/independent-authority confirmation of canonical accepted DR-02 identities OR explicit authorization for bounded DR-02 lineage re-acceptance. The plan does not grant this authority.
+- Once authorized and capacity-checked, recover/re-accept DR-02 identity, pin negative substitution tests, rerun DR-04 regression and independent acceptance; keep DR-04 OPEN / DR-05 BLOCKED until independent PASS. No Codex dispatched by this planning update.
