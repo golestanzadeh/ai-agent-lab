@@ -17,6 +17,8 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
 - `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
 - `master-execution-graph.md` — versioned project graph, deterministic next-action projection, hot context, scheduler, and notification boundary.
+- `supervisor-loop-design.md` — bounded supervisor-loop design and G1–G4 validation gates.
+- `supervisor-loop-g1-validation-20261007.md` — accepted read-only usage-telemetry validation evidence.
 - `owner-exception-notification-activation-20261005.json` — privacy-minimized evidence for the single authorized activation attempt.
 - `work-scheduler-migration-stop-20261005.json` — privacy-minimized missed-wake evidence and fail-closed Work Scheduled Task migration stop.
 - `repository-audit-20261004.json` — complete tracked-repository classification and safe cleanup disposition.
@@ -25,7 +27,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `case001-dr03-capacity-deferred-20261004.json` — deterministic non-token deferral and exact DR-03 continuation.
 - `case001-dr03-acceptance-2024.md` / `.json` — accepted protected-fact, Anlage Kind, XSD, plausibility and lineage evidence.
 - `dr04-capacity-deferred-after-dr03-20261005.json` — exact reset-aligned DR-04 continuation capsule after accepted DR-03.
-- `case001-dr04-acceptance-2024.md` — recoverable DR-04 implementation record and independent-acceptance defects.
+- `case001-dr04-acceptance-2024.md` — DR-04 Part 1 versioned-successor record and remaining independent-acceptance defects.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.

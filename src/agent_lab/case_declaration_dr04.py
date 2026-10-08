@@ -16,7 +16,7 @@ from agent_lab.eric_e10_2024_mapping import E10_NAMESPACE
 from agent_lab.official_source_resolver import OfficialSourceResolver
 
 
-DR04_VERSION = "1"
+DR04_VERSION = "2"
 SHA_REFERENCE = re.compile(r"^sha256:[0-9a-f]{64}$")
 ANNUAL_SOURCE_ID = "ELSTER_E10_2024_ANNUAL_DOCUMENTATION"
 XSD_SOURCE_ID = "ELSTER_E10_2024_XSD"
@@ -73,11 +73,13 @@ class DR04Request:
         credit = _amount(self.accepted_section_35a_credit_eur, "accepted section-35a credit")
         if craftsman > invoice:
             raise DR04Error("craftsman eligible basis cannot exceed the source invoice")
-        expected_credit = ((craftsman + tenant) * Decimal("0.20")).quantize(
+        declared_craftsman = craftsman.to_integral_value(rounding=ROUND_CEILING)
+        declared_tenant = tenant.to_integral_value(rounding=ROUND_CEILING)
+        expected_credit = ((declared_craftsman + declared_tenant) * Decimal("0.20")).quantize(
             Decimal("0.01"), rounding=ROUND_HALF_UP
         )
         if credit != expected_credit:
-            raise DR04Error("accepted section-35a credit does not match the exact accepted bases")
+            raise DR04Error("accepted section-35a credit does not match the whole-euro declaration bases")
 
     @property
     def artifact_identity(self) -> ArtifactIdentity:
@@ -94,13 +96,15 @@ class DR04Result:
     calculated_section_35a_credit_eur: str
     source_documentation_reference: str
     source_schema_reference: str
+    historical_section_35a_credit_eur: str = "31.83"
+    historical_refund_eur: str = "133.83"
+    successor_refund_eur: str = "134.00"
     official_xsd_validated: bool = True
     local_plausibility_rules: tuple[str, ...] = (
         "101100088", "101100089", "101100090", "101100091", "10817", "12204",
         "101100079", "101170002", "10821", "101170007",
     )
-    local_plausibility_passed: bool = True
-    frozen_refund_eur: str = "133.83"
+    local_plausibility_passed: bool = False
     non_transmitting_preview: bool = True
     official_eric_executed: bool = False
     transmission_permitted: bool = False

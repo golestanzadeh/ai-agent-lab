@@ -1,8 +1,8 @@
 # Current State
 
-## DR-04 Human Gate — 2026-10-06
+## DR-04 Part 1 — 2026-10-08
 
-A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`; live capacity was five-hour `82%` and weekly `23%`. Authoritative reconciliation confirms the accepted whole-euro transformation yields declared section-35a bases `70 + 90` and therefore EUR 32.00 credit, not the frozen EUR 31.83. A EUR 0.17 result change would project the successor refund to EUR 134.00, so execution stopped before code or accepted-result change at `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. DR-05 remains blocked. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
+The Owner-approved rounding successor is implemented as DR-04 contract version 2. Exact source bases EUR 69.13 and EUR 90.00 remain distinct from whole-euro declaration values EUR 70 and EUR 90. The successor records section-35a credit EUR 32.00 and refund EUR 134.00 while preserving historical EUR 31.83 / EUR 133.83 predecessor values. Part 1 preserves case isolation, provenance inputs and the non-transmitting boundary. DR-04 remains open pending executable plausibility binding, exact accepted-lineage pinning, full regression and Independent Acceptance; DR-05 remains blocked.
 
 ## Owner operational exception infrastructure — 2026-10-05
 
@@ -23,7 +23,7 @@ Authorized bounded packages may continue sequentially while the deterministic ca
 
 The bounded infrastructure repair is independently accepted: Limit Controller repair `PASS`, indexed Official Source Knowledge repair `PASS`, and canonical continuation preservation `PASS`. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`).
 
-Last reconciled: **2026-10-06**
+Last reconciled: **2026-10-08**
 
 ## Authoritative status
 
@@ -114,7 +114,7 @@ Last reconciled: **2026-10-06**
 
 ## Exact next action
 
-Obtain the Project Owner's exact decision on `DR04-ROUNDING-RESULT-CHANGE-20261006`. Until then, keep the accepted refund at EUR 133.83, do not mark DR-04 accepted, and do not start DR-05. If the successor result is approved, update the versioned result to section-35a credit EUR 32.00 / projected refund EUR 134.00, repair the remaining plausibility and exact-lineage defects, run focused/regression tests, and repeat Independent Acceptance. All external-action gates remain closed.
+Continue DR-04 only with the separately dispatched next slice: execute and bind the ten reviewed plausibility rules and pin lineage to the exact accepted artifacts, then run the full required regression and Independent Acceptance. Part 1's versioned EUR 32.00 credit / EUR 134.00 refund successor remains provisional to the still-open DR-04 package; DR-05 remains blocked. All external-action gates remain closed.
 
 ## Non-negotiable constraints
 

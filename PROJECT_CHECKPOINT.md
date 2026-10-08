@@ -39,6 +39,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### DR-04 Part 1 approved successor — 2026-10-08
+
+- Owner decision `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE-20261006` is implemented as DR-04 contract version 2. The exact source bases remain EUR 69.13 and EUR 90.00, while their separately bound whole-euro declaration representations remain EUR 70 and EUR 90.
+- The versioned successor records section-35a credit EUR 32.00 and refund EUR 134.00. Historical section-35a credit EUR 31.83 and refund EUR 133.83 remain explicit predecessor values and were not silently overwritten. Case isolation, provenance inputs and the `NON_TRANSMITTING_PREVIEW` boundary remain fail-closed.
+- Focused and bounded regression verification passed (`26 passed, 5 skipped`); the DR-04 exact official-XSD path executed and passed. Part 1 does not accept or close DR-04. Execution/binding of the ten reviewed plausibility rules, exact accepted-artifact lineage pinning, full regression and Independent Acceptance remain deferred; DR-05 remains blocked. Evidence: `docs/case001-dr04-acceptance-2024.md` and its JSON companion.
+
 ### Supervisor-loop G1 usage telemetry — 2026-10-07
 
 - G1 is `PASS` on the actual Windows/ChatGPT account. Codex CLI `0.160.1` authenticated with the existing ChatGPT login, and local `codex app-server` returned unambiguous 300-minute and 10080-minute rate-limit windows through `account/rateLimits/read` without creating a model thread or project task.
