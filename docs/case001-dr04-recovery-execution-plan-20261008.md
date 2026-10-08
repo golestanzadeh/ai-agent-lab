@@ -47,12 +47,10 @@ Before every project task or status claim:
 ## Change control
 Only explicit Owner approval can reorder or remove a stage or expand scope. Record the change with rationale in DECISIONS.md and update checkpoint/plan together. This documentation records the approved order; it does not authorize implementation, external action, or automated continuation.
 
-## Parallel email workstream — tracked, not a DR-04 dependency
+## Parallel GitHub CI email-notification repair — tracked independently
 
-Status: OPEN / SCOPE RECONCILIATION REQUIRED. This workstream must not be lost while the seven-stage recovery sequence proceeds. It is **not** an eighth prerequisite for DR-04 and must not consume the protected critical-path capacity without a separately approved bounded task.
+**Priority:** Owner reports excessive GitHub Inbox emails. Required reference: [DOC-INDEX-CI-REPAIR six-step plan](doc-index-ci-repair-plan-20261008.md). Status: OWNER-PRIORITIZED / NOT EXECUTED. This is an independent bounded CI/documentation-maintenance workstream, not a prerequisite for DR-04.
 
-Two distinct email-related matters appear in project history and must not be conflated:
-1. **Project email scanning/review workflow**: previously requested, but exact mailbox, filters, processing scope, privacy boundaries and execution authority require confirmation from authoritative task/evidence records before any implementation or mailbox access. Status: TRACKED / NOT DISPATCHED.
-2. **Governed operational email notification channel**: Constitution v3 exception and notification v2 controls are documented; the one real provider activation attempt FAILED due to protected provider configuration/permission. No email was sent. Status: PROVIDER_BLOCKED / NO SEND AUTHORIZATION. Preserve existing two-stage external authorization and the strict exception allowlist.
+Reported failing test: `test_every_focused_document_is_registered_in_the_index`. The exact root cause and which notifications correspond to this test must be verified against live GitHub Actions evidence. Six steps: identify failing documents/workflows → determine index eligibility → minimally repair index → rerun exact test → run related CI regression → independent acceptance and checkpoint evidence. Do not disable tests or blanket-mute notifications.
 
-For each, inspect existing authoritative implementation/task documentation before planning a change. Record its own decision, blocker, next authorized action and independent acceptance separately. Do not claim these are the same feature; do not access or send email solely because this tracking entry exists.
+**Separate, unrelated topic:** governed operational email notification sender remains PROVIDER_BLOCKED after a failed real activation attempt. Do not conflate the project's outbound notification provider with incoming GitHub CI emails. This tracking does not authorize mailbox access or email sending.
