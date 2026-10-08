@@ -1054,3 +1054,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Supervisor directly inspected authorized local worktree, DR-02 acceptance and the actual Work bridge state/contract. Evidence and findings: `docs/dr02-lineage-supervisor-initial-audit-20261008.md`.
 - DR-02 original accepted request/prior-result/XML/result identities remain unrecovered; owner-authorized bounded re-acceptance is pending, not PASS. Existing `BRIDGE_STATE.json` v1 has no Codex quota fields and is Work report transport; do not overwrite with invented telemetry. Proposed additive capacity extension needs writer/consumer compatibility checks.
 - Preserved intentionally deleted local checkpoint and pre-existing untracked files. No Codex dispatched or ERiC/external action. DR-04 OPEN; DR-05 BLOCKED.
+
+### DR-02 lineage re-acceptance independent FAIL — 2026-10-08
+
+- Owner-authorized bounded re-acceptance ran after a `RUN` capacity admission. Original DR-02 request/prior/XML/result identities remained unrecovered. A clearly new candidate mechanism bound request, prior result, complete XML digest, result identity, official source/XSD and the non-transmitting boundary; focused verification passed `9 passed` and relevant DR-01/02/03/source regression passed `33 passed, 5 skipped`.
+- Independent Acceptance returned `FAIL`: the replay still depended on placeholder evidence references and a preconstructed DR-02 result, so an arbitrary canonical request reference or unrelated XSD-valid non-VOR XML could become the initial candidate. The candidate source was not committed or pushed.
+- Scoped CASE-001 recovery confirmed exact source documents exist, but no immutable accepted DR-01 declaration result/request identity was durably recovered to recompute DR-02 end to end. Status is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`.
+- Exact continuation: an independent authority must provide/confirm the accepted DR-01 request/result/full-XML identities, or the Owner must separately authorize bounded DR-01 lineage re-acceptance before DR-02 can be re-accepted. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred.

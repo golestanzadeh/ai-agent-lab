@@ -1,5 +1,9 @@
 # Current State
 
+## DR-02 lineage re-acceptance stop — 2026-10-08
+
+The Owner-authorized DR-02 lineage re-acceptance candidate passed focused and relevant tests but failed genuine Independent Acceptance because its initial replay was not anchored to a durably recovered accepted DR-01 request/result/full-XML identity and exact evidence references. Candidate code was not pushed. State is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.
+
 ## DR-04 ten-rule execution safe stop — 2026-10-08
 
 The bounded ten-rule candidate passed focused (`26 passed`) and relevant (`83 passed, 5 skipped`) verification, but two actual independent reviews withheld acceptance. The remaining blocker is not evaluator semantics: DR-02 acceptance did not durably record its exact request reference, prior-result reference, complete XML digest, or result identity, so a canonical-hash predecessor substitution cannot yet be excluded. No identity was fabricated and no candidate code was pushed. State is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.

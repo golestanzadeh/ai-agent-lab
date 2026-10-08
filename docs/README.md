@@ -28,6 +28,9 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `case001-dr03-acceptance-2024.md` / `.json` — accepted protected-fact, Anlage Kind, XSD, plausibility and lineage evidence.
 - `dr04-capacity-deferred-after-dr03-20261005.json` — exact reset-aligned DR-04 continuation capsule after accepted DR-03.
 - `case001-dr04-acceptance-2024.md` — DR-04 ten-rule attempt, two independent-review failures, unrecovered DR-02 identity Human Gate, and exact continuation.
+- `dr02-lineage-reacceptance-plan-20261008.md` — bounded DR-02 identity-recovery and re-acceptance plan.
+- `codex-dr02-lineage-reacceptance-prompt-20261008.md` — Owner-authorized bounded DR-02 lineage dispatch contract.
+- `dr02-lineage-supervisor-initial-audit-20261008.md` — initial bridge and accepted-lineage recovery audit.
 - `dr04-plausibility-source-extraction-20261008.md` — reviewed ten-rule predicates and authoritative strict tolerance-2 semantics.
 - `codex-dr04-ten-rule-execution-prompt-20261008.md` — bounded DR-04 execution authority and acceptance contract.
 - `development-setup.md` — supported local development setup.

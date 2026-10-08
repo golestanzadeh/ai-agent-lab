@@ -1,7 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 3,
   "package": "DR-02",
-  "status": "PASS",
+  "status": "HISTORICAL_PASS_LINEAGE_REACCEPTANCE_HUMAN_REQUIRED",
   "case_id": "CASE-001",
   "tax_year": 2024,
   "official_source_sha256": "6379af3c83b8d8ea1f5b8e683d2cfc401cb1506a6018cd44d68452f8b67dacd5",
@@ -13,5 +13,14 @@
   "independent_source_review": "PASS",
   "frozen_refund_eur": "133.83",
   "official_eric_executed": false,
-  "external_transmission": false
+  "external_transmission": false,
+  "lineage_reacceptance_20261008": {
+    "original_identity_recovery": "UNRECOVERED",
+    "candidate_focused_tests": "9 passed",
+    "relevant_regression": "33 passed, 5 skipped",
+    "independent_acceptance": "FAIL",
+    "blocking_defect": "new replay was not recomputed from an exact accepted DR-01 request/result and exact protected evidence references; fresh-candidate substitution remained possible",
+    "candidate_committed_or_pushed": false,
+    "human_gate": "provide accepted DR-01 request/result/full-XML identities or separately authorize bounded DR-01 lineage re-acceptance"
+  }
 }
