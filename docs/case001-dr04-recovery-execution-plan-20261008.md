@@ -47,6 +47,10 @@ Before every project task or status claim:
 ## Change control
 Only explicit Owner approval can reorder or remove a stage or expand scope. Record the change with rationale in DECISIONS.md and update checkpoint/plan together. This documentation records the approved order; it does not authorize implementation, external action, or automated continuation.
 
+## Parallel GitHub CI email-notification repair — Owner-accepted closure
+
+**Latest authoritative disposition (2026-10-08):** `DOC-INDEX-CI-REPAIR` is `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`. Technical regression: 68 PASS; GitHub Actions runs `37792324906` and `37792372732` SUCCESS; Owner observed no new incoming emails after the repairs. The Owner explicitly approved closure without a separate independent reviewer; this is not an independent-review PASS. OI-0001 has been removed from the active OPEN_ITEMS register. Earlier `NOT EXECUTED` language below is preserved as historical planning context only; do not reopen. The seven-stage CASE-001 recovery order remains unchanged.
+
 ## Parallel GitHub CI email-notification repair — tracked independently
 
 **Priority:** Owner reports excessive GitHub Inbox emails. Required reference: [DOC-INDEX-CI-REPAIR six-step plan](doc-index-ci-repair-plan-20261008.md). Status: OWNER-PRIORITIZED / NOT EXECUTED. This is an independent bounded CI/documentation-maintenance workstream, not a prerequisite for DR-04.
