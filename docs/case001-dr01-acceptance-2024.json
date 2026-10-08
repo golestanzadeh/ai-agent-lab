@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
+  "schema_version": 3,
   "package": "DR-01",
   "case_id": "CASE-001",
   "tax_year": 2024,
-  "status": "PASS",
+  "status": "HISTORICAL_PASS_LINEAGE_REACCEPTANCE_HUMAN_REQUIRED",
   "implementation_version": "1",
   "capabilities": [
     "case/run/registry/frozen-calculation/evidence identity binding",
@@ -48,5 +48,19 @@
     "signing_or_certificate_use": false,
     "production_filing": false
   },
-  "next_dependency_ready": ["DR-02", "DR-03", "DR-04"]
+  "next_dependency_ready": [],
+  "lineage_reacceptance_20261008": {
+    "historical_request_identity": "UNRECOVERED",
+    "historical_result_identity": "UNRECOVERED",
+    "historical_xml_sha256": "UNRECOVERED",
+    "new_candidate": "NOT_CREATED",
+    "independent_acceptance": "HUMAN_REQUIRED_FAIL",
+    "missing_authoritative_inputs": [
+      "Person A religion code",
+      "Person B religion code",
+      "marriage date",
+      "complete immutable Case Registry and person-evidence lineage mappings"
+    ],
+    "next_action": "authorized durable fact confirmation, exact lineage mapping, deterministic replay, substitution tests, and repeat independent acceptance"
+  }
 }

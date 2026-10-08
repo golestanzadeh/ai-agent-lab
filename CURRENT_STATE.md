@@ -1,5 +1,9 @@
 # Current State
 
+## DR-01 lineage re-acceptance stop — 2026-10-08
+
+Historical DR-01 identities remain unrecovered. A new replay is `HUMAN_REQUIRED` because exact Person A/B religion codes, marriage date, and complete immutable lineage mappings are not durably available in the authorized CASE-001 boundary. Independent review did not accept candidate creation; no identity or implementation changed. DR-02 re-acceptance, DR-04, and DR-05 remain blocked in dependency order.
+
 ## DR-02 lineage re-acceptance stop — 2026-10-08
 
 The Owner-authorized DR-02 lineage re-acceptance candidate passed focused and relevant tests but failed genuine Independent Acceptance because its initial replay was not anchored to a durably recovered accepted DR-01 request/result/full-XML identity and exact evidence references. Candidate code was not pushed. State is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.
