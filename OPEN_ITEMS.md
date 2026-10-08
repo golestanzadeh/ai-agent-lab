@@ -1,6 +1,6 @@
 # OPEN_ITEMS — Active Unaccepted Gates
 
-Owner-proposed tracking design, initial evidence-reconciled inventory (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
+Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
 
 ## Lifecycle (proposal recorded, automatic enforcement not implemented)
 
@@ -10,7 +10,6 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0001 | `DOC-INDEX-CI-REPAIR` formal independent acceptance | Index/Constitution v3 repaired; 68 related tests PASS, Actions runs 37792324906 and 37792372732 SUCCESS; Owner observed no new notification emails. **No formal independent acceptance record**. | Authorized independent reviewer checks scope, commits, before/after CI and records PASS/FAIL; no claim of exhaustive inbox coverage. | `docs/doc-index-ci-repair-plan-20261008.md` |
 | OI-0002 | CASE-001 Identity & Family Persistence (stage 1) | Durable subject/person-role binding absent; independent HUMAN_REQUIRED/FAIL. | Compatible effective-dated identity schema, protected persistence, deterministic readback, tests, independent PASS. | `docs/case001-dr04-recovery-execution-plan-20261008.md` stage 1; checkpoint latest 2026-10-08 |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
@@ -22,9 +21,13 @@ At every governed recovery and package boundary, reconcile active gates with the
 | OI-0010 | Authoritative continuation scheduler migration and wake proof | Checkpoint `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`; retired Codex trigger missed wake. | First inspect live Work task/trigger state to avoid stale conclusion; one authorized scheduler and `WAKE_TEST_PASS`, no duplicate. | `docs/work-scheduler-migration-stop-20261005.json`; `CURRENT_STATE.md` |
 | OI-0011 | Outbound operational exception notification provider activation | Sender activation FAILED due to protected provider configuration/permission; underlying contract and independent acceptance PASS. **Unrelated to incoming GitHub emails.** | Only if capability remains desired: authorized provider setup and bounded real delivery proof, preserving Article 1. | Checkpoint “Owner operational exception notification amendment”; `DECISIONS.md` |
 
+## Closed items (not active)
+
+- `OI-0001` DOC-INDEX-CI-REPAIR: `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE` on 2026-10-08. Explicit Owner decision; 68 tests PASS and two GitHub Actions runs SUCCESS. This is **not** a claim of formal independent reviewer acceptance. Closure evidence: `docs/doc-index-ci-repair-plan-20261008.md`, commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. ID is never reused.
+
 ## Superseded / intentionally excluded
 
-- Documentation-index and Constitution v2-marker **technical** FAILs: fixed and green; only independent acceptance remains OI-0001.
+- Documentation-index and Constitution v2-marker **technical** FAILs: fixed and green; Owner accepted closure of OI-0001; no technical defect remains open.
 - DR-04 rounding-change Human Gate: Owner approved versioned successor; do not reopen.
 - DR-03 old capacity deferral/registration: later accepted DR-03 continuation supersedes them.
 - ERiC developer-access email pending: access received, license accepted.
