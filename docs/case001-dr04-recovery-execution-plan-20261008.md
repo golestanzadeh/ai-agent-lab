@@ -13,7 +13,7 @@ Use CASE-001/2024 to discover and resolve foundational structural defects before
 
 | Order | Stage | Current baseline | Exit gate |
 |---|---|---|---|
-| 1 | Identity & Family Persistence | HUMAN_REQUIRED: architecture decisions pending for F02/F03/F06; F05/F07 bounded | Approved compatible schema, persistent person identities, effective-dated family/case roles, subject-bound immutable protected facts, deterministic readback, tests, independent acceptance PASS |
+| 1 | Identity & Family Persistence | Conditions gate BLOCKED: E-03, C-02, C-06; remediation-02 not released | Approved compatible schema, persistent person identities, effective-dated family/case roles, subject-bound immutable protected facts, deterministic readback, tests, independent acceptance PASS |
 | 2 | Package A — Owner Facts Registration | BLOCKED / HUMAN_REQUIRED at f9a4b99 | Verify existing protected owner declaration integrity, bind confirmed 2024 facts to authoritative subjects, idempotent protected persistence, independent acceptance PASS |
 | 3 | DR-01 — Lineage Reacceptance | Historical PASS but successor independent acceptance FAIL | Recover or safely reconstruct exact request/result/XML identities from authoritative evidence, detect substitution, validate official XSD and identity bindings, independent acceptance PASS |
 | 4 | DR-02 — Independent Reacceptance | BLOCKED pending DR-01 | Independent lineage and substitution-resistant validation based on accepted DR-01, independent acceptance PASS |
@@ -28,6 +28,8 @@ Stage 1 remediation note (2026-10-08): the implementation worker corrected all s
 Stage 1 second-review note (2026-10-08): the separate review of `ad263284ff211d6d7d75234c03c3005d43b7d2df` returned `FAIL`. F01 and F04 pass; F02, F03, F05, F06 and F07 require a bounded second remediation followed by another separate review. Exact evidence is in `docs/oi-0002-independent-security-acceptance-review-02-20261008.md`. Stage 2 remains blocked.
 
 Stage 1 architecture-gate note (2026-10-08): remediation-02 cannot start until the Owner decides the dedicated identity capability/service-role contract, the protected evidence-resolution authority and the Kernel-owned monotonic continuity/restore boundary. F05/F07 requirements are implementation-bounded after those dependencies. Evidence: `docs/oi-0002-architecture-decision-gate-20261008.md`.
+
+Stage 1 conditions-gate note (2026-10-08): the Owner approved F02 and conditionally approved F03/F06. E-03 is blocked by missing durable evidence authorities; C-02/C-06 are blocked by missing separate-custody operational evidence. Remediation-02 remains unauthorized until explicit Owner release. Evidence: `docs/oi-0002-owner-architecture-decision-20261008.md` and `docs/oi-0002-conditions-verification-gate-20261008.md`.
 
 ## Known evidence and cautions
 - CASE-001/2024 frozen historical analytical refund EUR 133.83; DR-04 Part 1 versioned rounding successor refund EUR 134.00. Preserve both identities; do not silently overwrite or conflate.

@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 conditions verification gate — 2026-10-08
+
+The Owner approved F02 architecture and conditionally approved F03/F06. The authorized documentation gate specifies provider mappings, resolver trust, Kernel continuity and restore, but E-03 remains blocked by missing durable general declaration/confirmation/identity-authorization/audit-content authorities, while C-02/C-06 lack operational custody, ACL, key and recovery evidence. Status is `BLOCKED / CONDITIONAL_RELEASE_NOT_READY`; remediation-02 and OI-0003 remain blocked.
+
 ## OI-0002 architecture decision gate — 2026-10-08
 
 Review-02 left F02/F03/F05/F06/F07 unresolved. Architecture analysis now defines the minimum corrections but requires three Owner decisions before implementation: dedicated identity capabilities/service role, authoritative protected evidence-resolution composition, and Kernel-owned independent monotonic continuity/restore authority. F05 and F07 remain bounded implementation corrections after those dependencies. State is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`; OI-0002 remains OPEN and OI-0003 remains blocked.

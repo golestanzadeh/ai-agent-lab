@@ -16,6 +16,7 @@ Last reconciled: **2026-10-08**
 
 ## Current position
 
+- OI-0002 conditions verification is `BLOCKED / CONDITIONAL_RELEASE_NOT_READY`: E-03, C-02 and C-06 need governed durable evidence authorities and operational separate-custody evidence. Remediation-02 is not authorized. Evidence: `docs/oi-0002-conditions-verification-gate-20261008.md`.
 - OI-0002 is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`. Before remediation-02, the Owner must decide dedicated identity permissions, the protected evidence resolver authority and Kernel-owned monotonic anti-rollback continuity. F05/F07 are bounded after those dependencies; OI-0003 remains blocked. Evidence: `docs/oi-0002-architecture-decision-gate-20261008.md`.
 - OI-0002 second independent review of `ad263284` is `FAIL`: F01/F04 pass, while F02/F03/F05/F06/F07 require bounded second remediation and another independent review. OI-0002 remains OPEN and OI-0003 remains blocked.
 - Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. DR-03 is independently accepted. DR-04 Part 1 preserves the Owner-approved EUR 32.00 credit / EUR 134.00 refund successor. The ten-rule candidate passed focused and relevant tests but failed Independent Acceptance because the exact accepted DR-02 predecessor identity was never durably recorded and cannot be safely invented. DR-04 is `HUMAN_REQUIRED`; DR-05 stays blocked. No external notification or transmission is active.

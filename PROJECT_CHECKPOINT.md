@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 Owner disposition and conditions gate — 2026-10-08
+
+- Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.
+- `OI-0002-CONDITIONS-VERIFICATION-GATE` finds E-03 BLOCKED because durable general declaration, confirmation, identity-authorization and audit/content-verification authorities are absent; C-02/C-06 are BLOCKED because actual separate-custody service-account, ACL, key and backup/recovery evidence is unavailable. Architecture/specification conditions otherwise pass as design evidence only.
+- Recommendation is `DO NOT AUTHORIZE REMEDIATION-02 YET`. Exact evidence and continuation are in `docs/oi-0002-conditions-verification-gate-20261008.md`. No code or contract changed; OI-0002 remains OPEN and remediation-02/OI-0003 remain BLOCKED.
+
 ### OI-0002 architecture decision gate — 2026-10-08
 
 - Architecture review of exact implementation `ad263284ff211d6d7d75234c03c3005d43b7d2df` determined that F02, F03 and F06 cannot be remediated safely under unmodified frozen authority. Three explicit Owner decisions are required: dedicated identity permissions/service role; designation of the composite protected evidence resolver and metadata index; and the existing Kernel store as independent monotonic continuity/restore authority.
