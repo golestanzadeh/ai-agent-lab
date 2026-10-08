@@ -1,5 +1,9 @@
 # Current State
 
+## CASE-001 Owner Facts Package A schema stop — 2026-10-08
+
+The protected CASE-001/2024 Owner Declaration passed exact SHA-256, scope, confirmation, and no-transmission validation, but Package A is `HUMAN_REQUIRED / INDEPENDENT_ACCEPTANCE_FAIL`. The authoritative Case Registry has only one case-owner reference; no durable CASE-001 Person A/Person B identity records or associations exist. `PersonEntityRegistry` is in-memory, and `HumanDeclaredFact` v1 has no subject identity or generic durable store. Registration was therefore not attempted: it would require identity inference or an unapproved persistence schema. The next permitted action is a governed identity-resolution/schema decision that durably establishes Person A and Person B identities and CASE-001 roles, plus subject-bound protected fact persistence, before Package A is rerun.
+
 ## DR-01 lineage re-acceptance stop — 2026-10-08
 
 Historical DR-01 identities remain unrecovered. A new replay is `HUMAN_REQUIRED` because exact Person A/B religion codes, marriage date, and complete immutable lineage mappings are not durably available in the authorized CASE-001 boundary. Independent review did not accept candidate creation; no identity or implementation changed. DR-02 re-acceptance, DR-04, and DR-05 remain blocked in dependency order.
