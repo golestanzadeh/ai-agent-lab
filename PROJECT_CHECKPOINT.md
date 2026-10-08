@@ -37,6 +37,18 @@ The human confirmed the following final state from the preceding project convers
 
 This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and the 2026-09-13 operational-readiness audit wherever they describe CASE-001 tax-analysis evidence gaps as currently open. Those older records remain historical evidence, not the current continuation point.
 
+## Mandatory active recovery plan — Owner-approved 2026-10-08
+
+**Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
+
+**Locked execution order:** Identity & Family Persistence → Package A Owner Facts Registration → DR-01 Lineage Reacceptance → DR-02 Independent Reacceptance → Package B Annual Carryover Contract & Kernel Gate → Package C Bilingual Annual Questionnaire & UI → DR-04 final Independent Acceptance PASS. B/C precede DR-04 by Owner scheduling decision, not technical dependency. DR-03 prior acceptance requires compatibility verification, not automatic replay.
+
+**Verified current stop:** Identity/Persistence foundational blocker; Package A `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`. DR-01 historical acceptance is not sufficient for current lineage reacceptance. DR-02 and DR-04 cannot be called complete. DR-04 rounding successor EUR 134.00 and historical analytical EUR 133.83 must remain separately versioned.
+
+**Next permitted work:** separately governed design/implementation/independent acceptance of compatible durable identity, effective-dated family roles and subject-bound protected persistence. No automatic execution or external transmission is authorized by this documentation.
+
+**Checkpoint hygiene:** after every stage or blocker, update this checkpoint and the plan together with evidence and exact continuation; preserve local intentional deletion of `PROJECT_CHECKPOINT.md` and unrelated untracked files. No parallel checkpoint, database, scheduler or orchestrator.
+
 ## Current continuation point
 
 ### DR-04 Part 1 approved successor — 2026-10-08
