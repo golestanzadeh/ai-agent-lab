@@ -1040,3 +1040,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - This decision **supersedes** the earlier same-day instruction to measure Codex quota before each task. The supervisor supplies starting remaining percentages in the prompt: FIRST task Owner-provided five-hour 23%, weekly 86%; later tasks use the preceding Codex task's verified END snapshot from `BRIDGE_STATE.json`.
 - Codex's pre-execution duty is only conservative full-package capacity estimation plus deterministic Limit Guard against supplied values; it must not redundantly query live quota at task start. If stale/reset-ambiguous or insufficient, stop fail-closed.
 - AFTER execution or safe stop, Codex measures actual ending quota, persists timestamped exact values and reset times in existing `BRIDGE_STATE.json` and verifies by readback. That is the sole next-task quota handoff. Updated `docs/codex-agent-workflow.md` and DR-02/DR-04 prompts. This change does not claim a bridge-state measurement or Codex execution.
+
+
+### Supervisor reset-time responsibility — Owner clarification 2026-10-08
+
+- The supervisor reads the preceding Codex task's verified `BRIDGE_STATE.json` snapshot including five-hour/weekly reset timestamps, calculates remaining capacity and next eligible dispatch time, and supplies the computed capacity to the next Codex prompt. Codex does not perform a redundant initial quota read.
+- A reset means that window's quota becomes available again; never assume exactly 100% *currently remaining* if intervening use is unknown. Resolve stale/ambiguous evidence before dispatch. Codex only estimates package cost against supervisor-provided values and records verified END capacity and reset timestamps.
+- Standing protocol and current DR-02/DR-04 prompts amended accordingly; no Codex dispatched.
