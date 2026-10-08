@@ -40,3 +40,10 @@ Required reference from PROJECT_CHECKPOINT.md and the CASE-001 recovery plan. Ke
 - Step 6: **PARTIAL / NOT ACCEPTED**. Index-specific verification PASS, but live GitHub Actions result and independent acceptance are pending; repeated GitHub notification cessation not established. A separate governed bounded change is needed to reconcile the pilot validator with ratified Constitution v3 without weakening markers or authority. No mailbox accessed and no email settings changed.
 
 **Exact continuation:** inspect authoritative Constitution v3 and pilot governance validator contract, approve and apply a narrow version-aware validator fix, rerun relevant tests, verify GitHub Actions run outcomes, then independent acceptance. Preserve this plan OPEN until confirmed.
+
+## Constitution v3 compatibility fix — 2026-10-08
+
+- Verified ratified `CONSTITUTION.md` starts `# Project Constitution v3` and retains `## Article 10 — Human Gates`.
+- Narrowly changed only the obsolete Constitution title marker in `src/agent_lab/orchestrator_pilot.py`; retained Article 10 marker and other allowlisted governance requirements. Commit `b6731183afc634d8eac4a4818b34a827f95a09ed`.
+- Isolated clean worktree at that commit: `PYTHONPATH=src python -m pytest -q tests/unit/test_documentation_index.py tests/unit/test_orchestrator_pilot.py` → **15 passed in 3.73s**. All three previously failing pilot tests now PASS.
+- Local targeted verification PASS; **live GitHub Actions status, broader regression, and independent acceptance not yet verified**. Do not infer that all notification emails have stopped.
