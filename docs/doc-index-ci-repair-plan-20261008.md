@@ -29,3 +29,14 @@ Run a read-only CI/documentation-index diagnosis and estimate a minimal correcti
 
 ## Persistence
 Required reference from PROJECT_CHECKPOINT.md and the CASE-001 recovery plan. Keep OPEN until independent acceptance PASS or explicit Owner cancellation. Update both references after material status changes.
+
+## Execution evidence — 2026-10-08
+
+- Step 1: inspected current remote branch and prior DR-04 acceptance evidence. Historical full regression: 1068 passed, 5 skipped, 4 failed; documentation index and three Constitution v2 marker failures were reported. Current GitHub Actions live run listing was not available via connected tools; email-frequency outcome remains unverified.
+- Step 2: compared tracked `docs/*.md` against `docs/README.md` on remote HEAD. 98 focused Markdown files vs 96 indexed, with exactly two missing: `case001-dr04-recovery-execution-plan-20261008.md` and `doc-index-ci-repair-plan-20261008.md`; no stale index entries. These two newly added plans were eligible for the index.
+- Step 3: registered only those two entries in `docs/README.md`, commit `b850a33c0c598c9ecf8e882bd6c576a189ec4ce4`. No test or CI configuration disabled.
+- Step 4: on isolated clean worktree at that commit, `python -m pytest -q tests/unit/test_documentation_index.py` returned **10 passed in 0.41s**.
+- Step 5: related test command `PYTHONPATH=src python -m pytest -q tests/unit/test_documentation_index.py tests/unit/test_orchestrator_pilot.py` returned **12 passed, 3 failed**. All three failures arise from `src/agent_lab/orchestrator_pilot.py` requiring the obsolete literal `# Project Constitution v2` in `CONSTITUTION.md`, while Constitution v3 is ratified. This is a **separate governance-validator compatibility defect**, not an index entry defect. First attempt without PYTHONPATH failed test collection (missing agent_lab module); corrected environment produced the authoritative results.
+- Step 6: **PARTIAL / NOT ACCEPTED**. Index-specific verification PASS, but live GitHub Actions result and independent acceptance are pending; repeated GitHub notification cessation not established. A separate governed bounded change is needed to reconcile the pilot validator with ratified Constitution v3 without weakening markers or authority. No mailbox accessed and no email settings changed.
+
+**Exact continuation:** inspect authoritative Constitution v3 and pilot governance validator contract, approve and apply a narrow version-aware validator fix, rerun relevant tests, verify GitHub Actions run outcomes, then independent acceptance. Preserve this plan OPEN until confirmed.
