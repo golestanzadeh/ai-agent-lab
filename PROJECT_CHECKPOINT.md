@@ -991,3 +991,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verified the protected ELSTER E10/2024 ODS SHA-256 and extracted all ten HA_35a rule predicates, field references and severity from rows 7–16. See `docs/dr04-plausibility-source-extraction-20261008.md`.
 - Stage 1 source extraction PASS; precise `UngleichMitToleranz2` operator semantics still require authoritative verification before an evaluator can be accepted. Stages 2–4 structural/data/evaluator audits complete; stage 5 contract remains proposed, not frozen.
 - No local plausibility execution, full regression, independent acceptance, external transmission, Wake, scheduling or DR-05 authorization occurred. DR-04 OPEN; DR-05 BLOCKED. Preserve the existing authoritative execution checkpoint and next action until an independently authorized implementation slice is ready.
+
+
+### DR-04 tolerance operator authoritative resolution — 2026-10-08
+
+- Resolved `UngleichMitToleranz2` using official protected ERiC 44.3.6.0 documentation archive, `Dokumentation/Datenarten/Zusatzinformationen_zur_Plausibilitaetspruefung.pdf`, page 70, section 4.5, Table 4-20. Exact condition: `abs(v1-v2) > 2`; difference 2 is not an error, difference 3 is an error for whole-euro inputs.
+- Applies to DR-04 rules `101100090` and `12204`; all ten source rule predicates and fields already extracted. See `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Source-definition and operator-semantics blocker cleared. Next authorized engineering work remains deterministic local evaluator contract/implementation with evidence and tests, then exact lineage and independent acceptance. No ERiC execution, no submission, no DR-05 authorization. DR-04 remains OPEN.
