@@ -26,3 +26,7 @@ Independent review must verify actual active and expired Kernel manifests, audit
 - T12: real CASE-001 bootstrap deliberately absent, remains HUMAN_REQUIRED.
 
 These are coverage notes, not a claim that all twelve acceptance criteria have passed.
+
+## Kernel integration smoke test
+
+A synthetic ACTIVE manifest for the existing TAX_LAW_AGENT role was registered, validated, and activated in the real OrchestratorKernel with a synthetic Human-owner test authority. Exact case C1/year 2025/run RUN1 read and write capabilities were allowed; cross-case C2 was denied. No live manifest or case was modified. The dedicated test suite passed 22 tests. This does not grant real-world standing authority.

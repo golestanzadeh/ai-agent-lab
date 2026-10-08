@@ -315,3 +315,31 @@ def test_two_distinct_people_survive_restart(tmp_path):
     assert reopened.load_identity("P2").person_id == "P2"
     assert reopened.load_identity("P1") != reopened.load_identity("P2")
     reopened.close()
+
+
+def test_real_kernel_active_manifest_grants_exact_case_scope(tmp_path):
+    from agent_lab.identity_permission_adapter import kernel_case_authorizer
+    from agent_lab.orchestrator_kernel import OrchestratorKernel
+    from test_orchestrator_kernel import task, manifest, CONTRACT_ROOT
+    _, cases, store = setup(tmp_path)
+    scope = {"case_id": "C1", "tax_year": 2025, "run_id": "RUN1"}
+    payload = task(role_id="TAX_LAW_AGENT",
+                   permissions=["read_derived_case_artifact", "write_derived_case_artifact"],
+                   case_context=scope)
+    m = manifest(payload, tiers=["A3", "A4"])
+    with OrchestratorKernel(tmp_path / "kernel2.sqlite3", CONTRACT_ROOT) as kernel:
+        kernel.register_task(payload, gate_triggers=())
+        kernel.register_manifest(m)
+        kernel.validate_manifest(m["manifest_id"])
+        kernel.set_kill_switch("RUNNING", actor_id="HUMAN_PROJECT_OWNER",
+                               authority_reference="synthetic-test-authority")
+        kernel.activate_manifest(m["manifest_id"])
+        check = kernel_case_authorizer(kernel=kernel, cases=cases,
+                                       manifest_id=m["manifest_id"], run_id="RUN1")
+        assert check("read_party", "C1", "C1", "synthetic")
+        assert check("bind_party", "C1", "C1", "synthetic")
+        assert not check("read_party", "C2", "C2", "synthetic")
+        kernel.set_kill_switch('HALTED', actor_id='HUMAN_PROJECT_OWNER',
+                               authority_reference='synthetic-stop')
+        assert not check('read_party', 'C1', 'C1', 'synthetic')
+    store.close()
