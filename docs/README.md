@@ -134,6 +134,10 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-dr04-recovery-execution-plan-20261008.md` — Owner-approved seven-stage DR-04 recovery order, independent acceptance gates and durable continuation protocol.
 - `doc-index-ci-repair-plan-20261008.md` — six-step GitHub CI documentation-index repair, notification investigation, and independent acceptance criteria.
 
+- `oi-0002-identity-family-persistence-design-20261008.md` - OI-0002 frozen design, security gates, and acceptance scenarios.
+
+- `oi-0002-review-candidate.md` - Implementation review candidate and outstanding independent acceptance boundaries.
+
 ## Documentation rules
 
 - Do not place private case documents, credentials, tokens, or provider object IDs here.
