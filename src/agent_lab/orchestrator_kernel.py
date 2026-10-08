@@ -1232,6 +1232,17 @@ class OrchestratorKernel:
         row = self._manifest_row(manifest_id)
         if row["state"] != "ACTIVE" or self.kill_switch_state() != "RUNNING":
             return KernelDecision(False, "DENY", "manifest is not active or kill switch is not running")
+        if _parse_timestamp(row["expires_at"], "expires_at") <= _utc_now():
+            try:
+                self.transition_manifest(
+                    manifest_id,
+                    "EXPIRED",
+                    actor_id="AGENT_FACTORY_KERNEL",
+                    reason="manifest expired before permission decision",
+                )
+            except StateTransitionError:
+                pass
+            return KernelDecision(False, "DENY", "manifest has expired")
         if capability not in self.capabilities:
             return KernelDecision(False, "DENY", "unknown capability")
         capability_contract = self.capabilities[capability]
