@@ -37,6 +37,12 @@ The human confirmed the following final state from the preceding project convers
 
 This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and the 2026-09-13 operational-readiness audit wherever they describe CASE-001 tax-analysis evidence gaps as currently open. Those older records remain historical evidence, not the current continuation point.
 
+## Active unresolved-gates register — Owner proposal recorded 2026-10-08
+
+**Required reference:** [OPEN_ITEMS.md](OPEN_ITEMS.md), initial inventory commit `59293d1229a6cbf8a4168a6b8fd7cc415f180564`. Eleven bounded unresolved or planned acceptance gates are registered with stable OI IDs, dependencies and authoritative evidence. This is a tracking projection, not an additional Kernel, scheduler, execution permission or checkpoint. At each governed recovery/package boundary reconcile it against **newest** accepted evidence and remove an item only after formal acceptance evidence and checkpoint/plan updates are committed. The automatic periodic reconciliation is a **proposal, not yet implemented**.
+
+**Supersession notice:** Earlier historical statements here or in the recovery plan that DOC-INDEX-CI-REPAIR was `NOT EXECUTED` are outdated. Its index and Constitution v3 compatibility fixes are committed; 68 relevant tests PASS and two inspected GitHub Actions runs succeeded. Owner observed no further GitHub notification emails after repairs began. Formal independent acceptance remains open as `OI-0001`; see `docs/doc-index-ci-repair-plan-20261008.md`. Earlier DR-04 rounding Human Gate and historical ERiC access pending are also superseded; do not resurrect them.
+
 ## Mandatory active recovery plan — Owner-approved 2026-10-08
 
 **Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
