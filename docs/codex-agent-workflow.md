@@ -131,3 +131,7 @@ Environment observations are not permanent product guarantees. The tested Window
 ## Operational principle
 
 The coding agent is an execution accelerator inside the governed engineering process. It is not the project owner, architectural authority, source of truth, approval authority, or runtime dependency.
+
+## Mandatory Codex capacity snapshot for every future task (Owner directive 2026-10-08)
+
+Every Codex dispatch prompt MUST instruct the worker to read live authenticated 300-minute and 10080-minute rate-limit telemetry before and after each bounded package, apply the deterministic Limit Guard, and persist exact timestamped remaining/used percentages and reset times to the established authoritative `BRIDGE_STATE.json` using its actual schema and existing writer. Verify the persisted snapshot by reading it back. Recheck before a follow-on task or wake. On stale/unavailable telemetry, schema uncertainty, write/readback mismatch, or insufficient capacity, fail closed and record a durable blocked status. Do not invent a second bridge-state file or conflate Codex with Work quota. Include verified values and file path in the result. This is a mandatory reusable requirement for future prompts, not only the current DR-02/DR-04 tasks.
