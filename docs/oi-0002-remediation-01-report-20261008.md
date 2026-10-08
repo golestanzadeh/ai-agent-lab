@@ -59,3 +59,9 @@ These are implementation-worker results, not independent acceptance.
 ## Required next action
 
 Conduct a new independent, read-only security and T01-T12 acceptance review of the exact published remediation head. Keep OI-0002 OPEN unless that review passes; do not begin OI-0003.
+
+## Capacity handoff
+
+- Authenticated start observation: five-hour 83% remaining; weekly 73% remaining. The deterministic bounded estimate preserved the required 15-point five-hour reserve.
+- Authenticated end observation at `2026-10-08T17:24:59Z`: five-hour 56% remaining, reset `2026-10-08T21:47:13Z`; weekly 68% remaining, reset `2026-10-14T16:57:07Z`.
+- Source: signed-in Codex account rate-limit service. Readback was unambiguous; no reset credit was used.
