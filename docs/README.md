@@ -137,6 +137,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-identity-family-persistence-design-20261008.md` - OI-0002 frozen design, security gates, and acceptance scenarios.
 
 - `oi-0002-review-candidate.md` - Implementation review candidate and outstanding independent acceptance boundaries.
+- `oi-0002-independent-security-acceptance-review-20261008.md` - independent read-only security review of commit `90d44a8`; recommendation FAIL with T01-T12 evidence and ordered remediation.
 
 ## Documentation rules
 
