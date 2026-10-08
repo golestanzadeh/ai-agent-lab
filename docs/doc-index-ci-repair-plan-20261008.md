@@ -62,3 +62,10 @@ Required reference from PROJECT_CHECKPOINT.md and the CASE-001 recovery plan. Ke
 - Direct diff verification: commit `b850a33` adds only two missing plan entries in `docs/README.md`; commit `b673118` changes only `# Project Constitution v2` to ratified `# Project Constitution v3` in the pilot documentation validator, retaining `## Article 10 — Human Gates`.
 - Previously captured focused/bounded regression: 68 passed; GitHub Actions runs `37792324906` and `37792372732` completed successfully, including governance/documentation checks. Owner observed no new incoming GitHub notification emails after repairs began. This observation does not prove exhaustive future notification silence.
 - **Technical evidence review: PASS. Formal independent acceptance: NOT ATTESTED.** The same assistant participated in implementation and cannot truthfully attest to a separate independent review authority. OI-0001 must remain OPEN until an actually distinct authorized reviewer records a signed/attributed acceptance result. No need to rerun Codex or change working implementation.
+
+## Owner acceptance and closure — 2026-10-08
+
+- Project Owner explicitly accepted the completed technical repair and authorized closing `OI-0001` without a separate independent reviewer. Acceptance type: `OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, **not** `FORMAL_INDEPENDENT_REVIEW_PASS`.
+- Basis: minimal diff review, 68 related tests PASS, GitHub Actions runs `37792324906` and `37792372732` SUCCESS, and Owner observation of no further incoming CI emails since repairs began.
+- Final bounded package status: `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`. The earlier independent-review pending status is superseded by this explicit Owner closure decision, not retroactively converted into an independent review.
+- Remove `OI-0001` from the active `OPEN_ITEMS.md` register; retain history here and in Git. No Codex, inbox changes, notification muting, outbound message, or external transmission was required.
