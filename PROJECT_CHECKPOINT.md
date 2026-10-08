@@ -45,6 +45,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 **OI-0001 CLOSED — 2026-10-08:** Owner explicitly accepted DOC-INDEX-CI-REPAIR on verified technical evidence (68 tests PASS, Actions runs `37792324906` / `37792372732` SUCCESS, Owner-observed email quiet). Status `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, not a fabricated independent-review PASS. `OI-0001` was removed from active `OPEN_ITEMS.md` at commit `848ff06c14d8524c399d5c3f36c275dbe10a47d3`; full closure evidence in `docs/doc-index-ci-repair-plan-20261008.md` at commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. The seven-stage CASE-001 execution order is unchanged; next primary stage remains `OI-0002`.
 
+**OI-0002 design review — 2026-10-08:** Actual PersonEntityRegistry, CaseRegistry, CaseIdentityAssociationService, HumanDeclaredFact, CaseStateStore and DurableApprovalStore were reviewed. Compatible logical schema, fail-closed case-party effective dates, subject-bound immutable fact envelope, security invariants and twelve synthetic acceptance scenarios recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` at commit `8787d7f97a7790ddaaf5e1ff96becc39ae3757c1`. **Design baseline only; no implementation, protected identity binding, Codex run or stage acceptance.** Verify authoritative frozen Persistence Contract before implementation; OI-0002 remains OPEN.
+
 ## Mandatory active recovery plan — Owner-approved 2026-10-08
 
 **Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
