@@ -998,3 +998,11 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Resolved `UngleichMitToleranz2` using official protected ERiC 44.3.6.0 documentation archive, `Dokumentation/Datenarten/Zusatzinformationen_zur_Plausibilitaetspruefung.pdf`, page 70, section 4.5, Table 4-20. Exact condition: `abs(v1-v2) > 2`; difference 2 is not an error, difference 3 is an error for whole-euro inputs.
 - Applies to DR-04 rules `101100090` and `12204`; all ten source rule predicates and fields already extracted. See `docs/dr04-plausibility-source-extraction-20261008.md`.
 - Source-definition and operator-semantics blocker cleared. Next authorized engineering work remains deterministic local evaluator contract/implementation with evidence and tests, then exact lineage and independent acceptance. No ERiC execution, no submission, no DR-05 authorization. DR-04 remains OPEN.
+
+
+### DR-04 bounded Codex implementation handoff — 2026-10-08
+
+- Owner requires uninterrupted progression through the authorized ten-stage workflow; an intermediate PASS must trigger the next dependent stage, with documented checkpoints and self-repair of ordinary failures.
+- Source rule predicates, exact 10/10 field mappings, and official strict tolerance-2 semantics are documented in `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Stages 5–10 need actual evaluator implementation, tests, evidence binding and independent acceptance. Prepared Codex prompt: `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`. Codex has NOT been dispatched. Stop at this necessary development-worker handoff, not at an intermediate rule PASS.
+- Do not recreate a local checkpoint, bypass independent acceptance, execute ERiC transmission, merge, or start DR-05. DR-04 remains OPEN until verified and independently accepted.
