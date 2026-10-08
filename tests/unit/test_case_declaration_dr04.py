@@ -39,7 +39,7 @@ def request():
         craftsman_invoice_eur="90.00",
         craftsman_eligible_basis_eur="90.00",
         tenant_eligible_basis_eur="69.13",
-        accepted_section_35a_credit_eur="31.83",
+        accepted_section_35a_credit_eur="32.00",
     )
 
 
@@ -50,16 +50,19 @@ def test_dr04_exact_values_xsd_order_and_external_boundary():
         "craftsman_invoice_eur": "90.00",
         "craftsman_eligible_basis_eur": "90.00",
         "tenant_eligible_basis_eur": "69.13",
-        "accepted_section_35a_credit_eur": "31.83",
+        "accepted_section_35a_credit_eur": "32.00",
     }
     assert dict(result.declared_values) == {
         "E0107207": "70", "E0107208": "70", "E0170601": "90",
         "E0111214": "90", "E0111215": "90",
     }
-    assert result.calculated_section_35a_credit_eur == "31.83"
-    assert result.frozen_refund_eur == "133.83"
+    assert result.calculated_section_35a_credit_eur == "32.00"
+    assert result.historical_section_35a_credit_eur == "31.83"
+    assert result.historical_refund_eur == "133.83"
+    assert result.successor_refund_eur == "134.00"
+    assert result.version == "2"
     assert result.official_xsd_validated and result.non_transmitting_preview
-    assert result.local_plausibility_passed
+    assert not result.local_plausibility_passed
     assert "101170007" in result.local_plausibility_rules
     assert not result.official_eric_executed and not result.transmission_permitted
     assert result.declaration_xml.index("HA_35a") < result.declaration_xml.index("<N>")
@@ -70,7 +73,7 @@ def test_dr04_case_isolation_credit_and_amounts_fail_closed():
     with pytest.raises(DR04Error, match="exact CASE-001"):
         replace(request(), case_id="CASE-002")
     with pytest.raises(DR04Error, match="credit does not match"):
-        replace(request(), accepted_section_35a_credit_eur="32.00")
+        replace(request(), accepted_section_35a_credit_eur="31.83")
     with pytest.raises(DR04Error, match="bounded exact decimal"):
         replace(request(), tenant_eligible_basis_eur="69.123")
     with pytest.raises(DR04Error, match="cannot exceed"):
@@ -81,7 +84,9 @@ def test_dr04_identity_binds_each_evidence_chain_and_exact_cent_amount():
     original = request().artifact_identity.reference
     assert original != replace(request(), craftsman_payment_reference="sha256:" + "6" * 64).artifact_identity.reference
     assert original != replace(request(), tenant_payment_relationship_reference="sha256:" + "7" * 64).artifact_identity.reference
-    assert original != replace(request(), tenant_eligible_basis_eur="69.14", accepted_section_35a_credit_eur="31.83").artifact_identity.reference
+    assert original != replace(request(), tenant_eligible_basis_eur="69.14").artifact_identity.reference
+    with pytest.raises(DR04Error, match="unsupported DR-04 contract version"):
+        replace(request(), version="1")
 
 
 @pytest.mark.skipif(not ROOT.exists(), reason="protected official sources unavailable")

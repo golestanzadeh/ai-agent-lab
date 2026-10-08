@@ -37,3 +37,6 @@ ERiC-*-Schemadokumentation.zip
 Vordrucke_archive_ERiC-*.zip
 Jahresdokumentation_E10_*.ods
 E10-*.xsd
+
+# Local runtime state
+.runtime/

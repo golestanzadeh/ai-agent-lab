@@ -2,18 +2,28 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-10-06**
+Last reconciled: **2026-10-08**
+
+
+## Supervisor loop validation — 2026-10-07
+
+- Design contract: `docs/supervisor-loop-design.md`.
+- Status: `G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED`.
+- G1 passed on the real Windows/ChatGPT account: authenticated `codex app-server` exposed unambiguous 300-minute and 10080-minute windows through `account/rateLimits/read`; the read-only normalized reader and ignored runtime snapshot are implemented and focused verification passes. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
+- Validate next in order: G2 MCP event delivery to one designated Work chat, G3 one-shot Work wake, then G4 synthetic end-to-end loop.
+- No MCP callback server, scheduler binding, credentials, Telegram adapter, or autonomous continuation is authorized before the corresponding smoke test passes.
+- The existing Deterministic Orchestrator Kernel remains execution authority; this work may close the recorded `NO_AUTHORITATIVE_SCHEDULER` boundary but must not introduce a second orchestrator.
 
 ## Current position
 
-- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. The existing Kernel now has a versioned Master Execution Graph, hash-bound HOT CONTEXT, cost-aware next-action contract, durable continuation capsule, reset-aligned scheduler binding, and Article-1-gated notification contract. DR-03 is independently accepted. DR-04 remediation reached `HUMAN_REQUIRED` on 2026-10-06 before code change: the accepted taxpayer-favorable whole-euro rule makes the declared EUR 70 plus EUR 90 bases imply a EUR 32.00 section-35a credit, not the frozen EUR 31.83. The frozen EUR 133.83 refund remains unchanged pending the Owner's exact decision; DR-05 stays blocked. No external notification or transmission is active.
+- Infrastructure reconciliation R1-R6 is independently accepted at implementation commit `9355f81`. DR-03 is independently accepted. DR-04 Part 1 preserves the Owner-approved EUR 32.00 credit / EUR 134.00 refund successor. The ten-rule candidate passed focused and relevant tests but failed Independent Acceptance because the exact accepted DR-02 predecessor identity was never durably recorded and cannot be safely invented. DR-04 is `HUMAN_REQUIRED`; DR-05 stays blocked. No external notification or transmission is active.
 
 - O1-O5, P1 local synthetic packages 1-7, the four-role local runtime, and UI-1 through UI-19 are complete.
 - ELSTER developer access, private Human authentication, Release 44 license acceptance, and local retrieval of the official 44.3.6.0 documentation/schema packages are complete.
 - No real ELSTER/Finanzamt submission has occurred.
 - Autonomous execution authority remains `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`, but execution is fail-closed at `NO_AUTHORITATIVE_SCHEDULER`. The logical identity `plan-limit-continuation-guard` is reserved for one local-project ChatGPT Work Scheduled Task; the Codex trigger is paused/non-authoritative and no current schedule or Work object exists. Migration requires a real wake test and never uses five-minute polling.
 - Owner authority `MILESTONE-A-20260927-001` is fully exercised. MA-01 through MA-05 are independently accepted; the complete local synthetic golden journey, failure matrix, clean setup, and read-only CI proof pass. External and production capabilities remain blocked.
-- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`. DR-04 is `HUMAN_REQUIRED` because its authoritative whole-euro representation implies a EUR 0.17 tax-result change; the exact Owner decision is now required before changing the accepted result or completing remediation. DR-05 is dependency-blocked.
+- Owner authority for declaration remediation DR-01 through DR-05 is active. DR-01, DR-02 and DR-03 are `PASS`, but DR-02's exact accepted package identity was not durably captured. DR-04 is open at the resulting Human Gate after two independent-review failures. DR-05 is dependency-blocked.
 - Infrastructure repairs for deterministic capacity governance and manifest-pinned indexed official knowledge are independently accepted; no CASE-001 declaration package advanced.
 
 ## Track 1 — Autonomous project control

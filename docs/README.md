@@ -17,6 +17,8 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
 - `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
 - `master-execution-graph.md` — versioned project graph, deterministic next-action projection, hot context, scheduler, and notification boundary.
+- `supervisor-loop-design.md` — bounded supervisor-loop design and G1–G4 validation gates.
+- `supervisor-loop-g1-validation-20261007.md` — accepted read-only usage-telemetry validation evidence.
 - `owner-exception-notification-activation-20261005.json` — privacy-minimized evidence for the single authorized activation attempt.
 - `work-scheduler-migration-stop-20261005.json` — privacy-minimized missed-wake evidence and fail-closed Work Scheduled Task migration stop.
 - `repository-audit-20261004.json` — complete tracked-repository classification and safe cleanup disposition.
@@ -25,7 +27,12 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `case001-dr03-capacity-deferred-20261004.json` — deterministic non-token deferral and exact DR-03 continuation.
 - `case001-dr03-acceptance-2024.md` / `.json` — accepted protected-fact, Anlage Kind, XSD, plausibility and lineage evidence.
 - `dr04-capacity-deferred-after-dr03-20261005.json` — exact reset-aligned DR-04 continuation capsule after accepted DR-03.
-- `case001-dr04-acceptance-2024.md` — recoverable DR-04 implementation record and independent-acceptance defects.
+- `case001-dr04-acceptance-2024.md` — DR-04 ten-rule attempt, two independent-review failures, unrecovered DR-02 identity Human Gate, and exact continuation.
+- `dr02-lineage-reacceptance-plan-20261008.md` — bounded DR-02 identity-recovery and re-acceptance plan.
+- `codex-dr02-lineage-reacceptance-prompt-20261008.md` — Owner-authorized bounded DR-02 lineage dispatch contract.
+- `dr02-lineage-supervisor-initial-audit-20261008.md` — initial bridge and accepted-lineage recovery audit.
+- `dr04-plausibility-source-extraction-20261008.md` — reviewed ten-rule predicates and authoritative strict tolerance-2 semantics.
+- `codex-dr04-ten-rule-execution-prompt-20261008.md` — bounded DR-04 execution authority and acceptance contract.
 - `development-setup.md` — supported local development setup.
 - `architecture.md` — system components and boundaries.
 - `requirements.md` — supported requirements.
@@ -123,6 +130,9 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `case001-dr01-stop-diagnostic-20260929.md` — fail-closed DR-01 source-material recovery diagnostic, capacity record, protected-artifact identities, and exact continuation point.
 - `protected-official-source-store.md` — accepted portable protected-source hierarchy, exact ERiC 44.3.6.0 package/artifact identities, deterministic resolver, and fail-closed guarantees.
 - `case001-dr01-acceptance-2024.md` — accepted case-bound Hauptvordruck/joint-assessment composition, authoritative gross-wage transformation, exact XSD result, and non-transmitting boundary.
+
+- `case001-dr04-recovery-execution-plan-20261008.md` — Owner-approved seven-stage DR-04 recovery order, independent acceptance gates and durable continuation protocol.
+- `doc-index-ci-repair-plan-20261008.md` — six-step GitHub CI documentation-index repair, notification investigation, and independent acceptance criteria.
 
 ## Documentation rules
 

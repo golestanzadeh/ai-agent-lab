@@ -37,7 +37,47 @@ The human confirmed the following final state from the preceding project convers
 
 This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and the 2026-09-13 operational-readiness audit wherever they describe CASE-001 tax-analysis evidence gaps as currently open. Those older records remain historical evidence, not the current continuation point.
 
+## Active unresolved-gates register — Owner proposal recorded 2026-10-08
+
+**Required reference:** [OPEN_ITEMS.md](OPEN_ITEMS.md), initial inventory commit `59293d1229a6cbf8a4168a6b8fd7cc415f180564`. Eleven bounded unresolved or planned acceptance gates are registered with stable OI IDs, dependencies and authoritative evidence. This is a tracking projection, not an additional Kernel, scheduler, execution permission or checkpoint. At each governed recovery/package boundary reconcile it against **newest** accepted evidence and remove an item only after formal acceptance evidence and checkpoint/plan updates are committed. The automatic periodic reconciliation is a **proposal, not yet implemented**.
+
+**Supersession notice:** Earlier historical statements here or in the recovery plan that DOC-INDEX-CI-REPAIR was `NOT EXECUTED` are outdated. Its index and Constitution v3 compatibility fixes are committed; 68 relevant tests PASS and two inspected GitHub Actions runs succeeded. Owner observed no further GitHub notification emails after repairs began. Formal independent acceptance remains open as `OI-0001`; see `docs/doc-index-ci-repair-plan-20261008.md`. Earlier DR-04 rounding Human Gate and historical ERiC access pending are also superseded; do not resurrect them.
+
+**OI-0001 CLOSED — 2026-10-08:** Owner explicitly accepted DOC-INDEX-CI-REPAIR on verified technical evidence (68 tests PASS, Actions runs `37792324906` / `37792372732` SUCCESS, Owner-observed email quiet). Status `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, not a fabricated independent-review PASS. `OI-0001` was removed from active `OPEN_ITEMS.md` at commit `848ff06c14d8524c399d5c3f36c275dbe10a47d3`; full closure evidence in `docs/doc-index-ci-repair-plan-20261008.md` at commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. The seven-stage CASE-001 execution order is unchanged; next primary stage remains `OI-0002`.
+
+**OI-0002 design review — 2026-10-08:** Actual PersonEntityRegistry, CaseRegistry, CaseIdentityAssociationService, HumanDeclaredFact, CaseStateStore and DurableApprovalStore were reviewed. Compatible logical schema, fail-closed case-party effective dates, subject-bound immutable fact envelope, security invariants and twelve synthetic acceptance scenarios recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` at commit `8787d7f97a7790ddaaf5e1ff96becc39ae3757c1`. **Design baseline only; no implementation, protected identity binding, Codex run or stage acceptance.** Verify authoritative frozen Persistence Contract before implementation; OI-0002 remains OPEN.
+
+**OI-0002 persistence contract recovered — 2026-10-08:** From Owner-approved 2026-09-29 Storage design conversation, `Persistence Contract v1 — FROZEN` specifies SQLite as the current authoritative structured-data DB, Google Drive for private documents, GitHub for engineering-only artifacts, one DB/deployment with case isolation, PostgreSQL-portable schema and later optional migration. Live SQLite must not reside in Drive sync. Current Git branch had no standalone frozen contract file; reconciliation with actual repo architecture and canonical `docs/case-party-model.md` roles is recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` (commit `5c0eb0665696e515a3d63f81a54d91bc02d6163a`). This recovers the design choice only; no stage implementation/acceptance, and no CASE-001 person identity inference.
+
+## Mandatory active recovery plan — Owner-approved 2026-10-08
+
+**Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
+
+**Locked execution order:** Identity & Family Persistence → Package A Owner Facts Registration → DR-01 Lineage Reacceptance → DR-02 Independent Reacceptance → Package B Annual Carryover Contract & Kernel Gate → Package C Bilingual Annual Questionnaire & UI → DR-04 final Independent Acceptance PASS. B/C precede DR-04 by Owner scheduling decision, not technical dependency. DR-03 prior acceptance requires compatibility verification, not automatic replay.
+
+**Verified current stop:** Identity/Persistence foundational blocker; Package A `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`. DR-01 historical acceptance is not sufficient for current lineage reacceptance. DR-02 and DR-04 cannot be called complete. DR-04 rounding successor EUR 134.00 and historical analytical EUR 133.83 must remain separately versioned.
+
+**Parallel GitHub CI email repair — Owner priority:** Repeated incoming GitHub Inbox email notifications were reported alongside the failing documentation-index test `test_every_focused_document_is_registered_in_the_index`. The exact six-step bounded remediation is mandatory reference [`docs/doc-index-ci-repair-plan-20261008.md`](docs/doc-index-ci-repair-plan-20261008.md), ID `DOC-INDEX-CI-REPAIR`, status `OWNER-PRIORITIZED / NOT EXECUTED`: identify failing CI paths → determine index eligibility → minimal index fix → exact test → related regression → independent acceptance/evidence. Verify live Actions before claiming root cause or reduced email volume. Keep open until PASS or Owner cancellation. **Distinct:** outgoing operational notification provider is separately blocked; neither workstream authorizes inbox access, sending, or disabling CI.
+
+**DOC-INDEX-CI-REPAIR verified progress — 2026-10-08:** Index drift fixed by registering two missing plan documents in `docs/README.md` (commit `b850a33`); isolated focused run `10 passed`. Related test run `12 passed, 3 failed`: three pre-existing pilot governance checks require obsolete literal Constitution v2 heading despite ratified v3. GitHub Actions live status and email reduction not yet verified; independent acceptance remains OPEN. See `docs/doc-index-ci-repair-plan-20261008.md` for exact evidence and next governed compatibility repair. Do not mark whole CI package PASS or mute notifications.
+
+**Next permitted work:** separately governed design/implementation/independent acceptance of compatible durable identity, effective-dated family roles and subject-bound protected persistence. No automatic execution or external transmission is authorized by this documentation.
+
+**Checkpoint hygiene:** after every stage or blocker, update this checkpoint and the plan together with evidence and exact continuation; preserve local intentional deletion of `PROJECT_CHECKPOINT.md` and unrelated untracked files. No parallel checkpoint, database, scheduler or orchestrator.
+
 ## Current continuation point
+
+### DR-04 Part 1 approved successor — 2026-10-08
+
+- Owner decision `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE-20261006` is implemented as DR-04 contract version 2. The exact source bases remain EUR 69.13 and EUR 90.00, while their separately bound whole-euro declaration representations remain EUR 70 and EUR 90.
+- The versioned successor records section-35a credit EUR 32.00 and refund EUR 134.00. Historical section-35a credit EUR 31.83 and refund EUR 133.83 remain explicit predecessor values and were not silently overwritten. Case isolation, provenance inputs and the `NON_TRANSMITTING_PREVIEW` boundary remain fail-closed.
+- Focused and bounded regression verification passed (`26 passed, 5 skipped`); the DR-04 exact official-XSD path executed and passed. Part 1 does not accept or close DR-04. Execution/binding of the ten reviewed plausibility rules, exact accepted-artifact lineage pinning, full regression and Independent Acceptance remain deferred; DR-05 remains blocked. Evidence: `docs/case001-dr04-acceptance-2024.md` and its JSON companion.
+
+### Supervisor-loop G1 usage telemetry — 2026-10-07
+
+- G1 is `PASS` on the actual Windows/ChatGPT account. Codex CLI `0.160.1` authenticated with the existing ChatGPT login, and local `codex app-server` returned unambiguous 300-minute and 10080-minute rate-limit windows through `account/rateLimits/read` without creating a model thread or project task.
+- A strict read-only normalizer now writes only non-secret usage telemetry to ignored `.runtime/usage/CODEX_USAGE.json` and adapts it to the existing deterministic `CapacityObservation`; no second Limit Guard or execution authority was created. Focused verification passed (`33 passed`) and the real local smoke created the ignored snapshot successfully. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
+- G2 MCP Event delivery remains unproven and is the next infrastructure gate. This infrastructure validation does not resolve or bypass the separate DR-04 Owner Human Gate below.
 
 ### DR-04 authoritative rounding Human Gate — 2026-10-06
 
@@ -972,3 +1012,96 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Verification: targeted mapping, declaration, and local-plausibility suite `67 passed`.
 - Status: **E10_MAPPING_PROFILE_V2_COMPLETE / OFFICIAL_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
+
+
+### DR-04 official plausibility rule extraction — 2026-10-08
+
+- Verified the protected ELSTER E10/2024 ODS SHA-256 and extracted all ten HA_35a rule predicates, field references and severity from rows 7–16. See `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Stage 1 source extraction PASS; precise `UngleichMitToleranz2` operator semantics still require authoritative verification before an evaluator can be accepted. Stages 2–4 structural/data/evaluator audits complete; stage 5 contract remains proposed, not frozen.
+- No local plausibility execution, full regression, independent acceptance, external transmission, Wake, scheduling or DR-05 authorization occurred. DR-04 OPEN; DR-05 BLOCKED. Preserve the existing authoritative execution checkpoint and next action until an independently authorized implementation slice is ready.
+
+
+### DR-04 tolerance operator authoritative resolution — 2026-10-08
+
+- Resolved `UngleichMitToleranz2` using official protected ERiC 44.3.6.0 documentation archive, `Dokumentation/Datenarten/Zusatzinformationen_zur_Plausibilitaetspruefung.pdf`, page 70, section 4.5, Table 4-20. Exact condition: `abs(v1-v2) > 2`; difference 2 is not an error, difference 3 is an error for whole-euro inputs.
+- Applies to DR-04 rules `101100090` and `12204`; all ten source rule predicates and fields already extracted. See `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Source-definition and operator-semantics blocker cleared. Next authorized engineering work remains deterministic local evaluator contract/implementation with evidence and tests, then exact lineage and independent acceptance. No ERiC execution, no submission, no DR-05 authorization. DR-04 remains OPEN.
+
+
+### DR-04 bounded Codex implementation handoff — 2026-10-08
+
+- Owner requires uninterrupted progression through the authorized ten-stage workflow; an intermediate PASS must trigger the next dependent stage, with documented checkpoints and self-repair of ordinary failures.
+- Source rule predicates, exact 10/10 field mappings, and official strict tolerance-2 semantics are documented in `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Stages 5–10 need actual evaluator implementation, tests, evidence binding and independent acceptance. Prepared Codex prompt: `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`. Codex has NOT been dispatched. Stop at this necessary development-worker handoff, not at an intermediate rule PASS.
+- Do not recreate a local checkpoint, bypass independent acceptance, execute ERiC transmission, merge, or start DR-05. DR-04 remains OPEN until verified and independently accepted.
+
+### DR-04 ten-rule execution safe stop — 2026-10-08
+
+- The capacity and recovery gates passed, and the bounded candidate implemented all ten extracted HA_35a predicates, strict tolerance-2 semantics, exact direct DR-04 evidence hashes, deterministic rule evidence, and negative coverage. Focused verification reached `26 passed`; relevant declaration/source regression reached `83 passed, 5 skipped`.
+- Independent Acceptance returned `FAIL` twice. The first defect (unrelated DR-02 scope/semantics) was repaired. The remaining defect is substitution of the accepted DR-02 request/prior-result identities or unrelated non-VOR XML: the DR-02 acceptance record never durably stored its exact request reference, prior-result reference, complete XML digest, or result identity.
+- Bounded recovery checked the checkpoint, DR-02 acceptance dossier, Git history, and authorized CASE-001 runtime artifacts; the missing identity was not recovered. It must not be invented. Candidate code was not committed or pushed; the official-knowledge index remains `EXTRACTED_UNRESOLVED`.
+- Status is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`. The Owner and independent acceptance authority must provide/confirm the canonical DR-02 identities or authorize bounded DR-02 lineage re-acceptance. Then pin that identity, add request/prior/non-VOR substitution tests, rerun focused/relevant/full regression, and repeat independent review. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred. Evidence: `docs/case001-dr04-acceptance-2024.md` and JSON companion.
+
+
+### Next bounded execution plan / owner-reported capacity — 2026-10-08
+
+- Owner reports remaining five-hour 23% and weekly 86%; these values supersede stale app-server snapshot for planning but are not independently verified. Five-hour headroom is binding; no long Codex dispatch authorized solely from historical telemetry.
+- New bounded plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. Next gate: owner/independent-authority confirmation of canonical accepted DR-02 identities OR explicit authorization for bounded DR-02 lineage re-acceptance. The plan does not grant this authority.
+- Once authorized and capacity-checked, recover/re-accept DR-02 identity, pin negative substitution tests, rerun DR-04 regression and independent acceptance; keep DR-04 OPEN / DR-05 BLOCKED until independent PASS. No Codex dispatched by this planning update.
+
+
+### Owner Human Gate decision: DR-02 bounded lineage re-acceptance APPROVED — 2026-10-08
+
+- The Owner explicitly approved option B, a bounded DR-02 lineage re-acceptance, in the current project conversation. This resolves the Owner-authorization portion of `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`, but does NOT itself provide recovered identities or independent acceptance.
+- Authorized scope and guarded Codex handoff: `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`; prerequisite plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. First obtain fresh actual Codex telemetry and honor the Limit Guard; owner last reported 23% five-hour and 86% weekly remaining.
+- New canonical DR-02 identities require reproducible evidence and independent review. Until accepted, DR-04 OPEN / DR-05 BLOCKED. No external transfer, signing, release, or Wake. Codex dispatch is not claimed by this checkpoint update.
+
+
+### Mandatory Codex bridge capacity evidence — Owner directive 2026-10-08
+
+- Owner requires every current and future Codex prompt to measure LIVE authenticated five-hour and weekly capacity before and after each package and persist exact timestamped remaining values in the existing authoritative `BRIDGE_STATE.json`, then read back to verify. Repeat before next task/wake; fail closed on missing/stale telemetry, schema uncertainty, or persistence mismatch. Never substitute the historical snapshot or confuse Work and Codex quotas.
+- Applied to `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`, `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`, and standing protocol `docs/codex-agent-workflow.md`. This records a requirement, not a claim that `BRIDGE_STATE.json` was already written or that Codex was dispatched.
+
+
+### Corrected Codex quota handoff — Owner clarification 2026-10-08
+
+- This decision **supersedes** the earlier same-day instruction to measure Codex quota before each task. The supervisor supplies starting remaining percentages in the prompt: FIRST task Owner-provided five-hour 23%, weekly 86%; later tasks use the preceding Codex task's verified END snapshot from `BRIDGE_STATE.json`.
+- Codex's pre-execution duty is only conservative full-package capacity estimation plus deterministic Limit Guard against supplied values; it must not redundantly query live quota at task start. If stale/reset-ambiguous or insufficient, stop fail-closed.
+- AFTER execution or safe stop, Codex measures actual ending quota, persists timestamped exact values and reset times in existing `BRIDGE_STATE.json` and verifies by readback. That is the sole next-task quota handoff. Updated `docs/codex-agent-workflow.md` and DR-02/DR-04 prompts. This change does not claim a bridge-state measurement or Codex execution.
+
+
+### Supervisor reset-time responsibility — Owner clarification 2026-10-08
+
+- The supervisor reads the preceding Codex task's verified `BRIDGE_STATE.json` snapshot including five-hour/weekly reset timestamps, calculates remaining capacity and next eligible dispatch time, and supplies the computed capacity to the next Codex prompt. Codex does not perform a redundant initial quota read.
+- A reset means that window's quota becomes available again; never assume exactly 100% *currently remaining* if intervening use is unknown. Resolve stale/ambiguous evidence before dispatch. Codex only estimates package cost against supervisor-provided values and records verified END capacity and reset timestamps.
+- Standing protocol and current DR-02/DR-04 prompts amended accordingly; no Codex dispatched.
+
+
+### Supervisor direct initial audit — 2026-10-08
+
+- Supervisor directly inspected authorized local worktree, DR-02 acceptance and the actual Work bridge state/contract. Evidence and findings: `docs/dr02-lineage-supervisor-initial-audit-20261008.md`.
+- DR-02 original accepted request/prior-result/XML/result identities remain unrecovered; owner-authorized bounded re-acceptance is pending, not PASS. Existing `BRIDGE_STATE.json` v1 has no Codex quota fields and is Work report transport; do not overwrite with invented telemetry. Proposed additive capacity extension needs writer/consumer compatibility checks.
+- Preserved intentionally deleted local checkpoint and pre-existing untracked files. No Codex dispatched or ERiC/external action. DR-04 OPEN; DR-05 BLOCKED.
+
+### DR-02 lineage re-acceptance independent FAIL — 2026-10-08
+
+- Owner-authorized bounded re-acceptance ran after a `RUN` capacity admission. Original DR-02 request/prior/XML/result identities remained unrecovered. A clearly new candidate mechanism bound request, prior result, complete XML digest, result identity, official source/XSD and the non-transmitting boundary; focused verification passed `9 passed` and relevant DR-01/02/03/source regression passed `33 passed, 5 skipped`.
+- Independent Acceptance returned `FAIL`: the replay still depended on placeholder evidence references and a preconstructed DR-02 result, so an arbitrary canonical request reference or unrelated XSD-valid non-VOR XML could become the initial candidate. The candidate source was not committed or pushed.
+- Scoped CASE-001 recovery confirmed exact source documents exist, but no immutable accepted DR-01 declaration result/request identity was durably recovered to recompute DR-02 end to end. Status is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`.
+- Exact continuation: an independent authority must provide/confirm the accepted DR-01 request/result/full-XML identities, or the Owner must separately authorize bounded DR-01 lineage re-acceptance before DR-02 can be re-accepted. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred.
+
+### DR-01 lineage re-acceptance evidence stop — 2026-10-08
+
+- Owner-authorized bounded recovery inspected commits `6b3c90c` and `ff90456` plus the scoped protected CASE-001 artifact tree. Historical DR-01 request/result/run identities and complete XML digest were not durably recovered.
+- A new deterministic replay could not safely start: protected evidence supports wage facts and partial Person A/B identity, but exact Person A religion code, Person B religion code, marriage date, and fully mapped immutable Case Registry/person evidence references required by the DR-01 contract are not durably available. No placeholder, inference, or arbitrary hash was used.
+- Independent review returned `HUMAN_REQUIRED / FAIL` for acceptance from the current evidence. No candidate identity was generated, no implementation changed, and no DR-01 identity was promoted.
+- Exact continuation: the Owner or authorized declaration-fact authority must supply/confirm those exact facts in a durable case-scoped record and map each DR-01 lineage reference to an immutable artifact. Then replay DR-01, bind request/result/full XML/source/XSD, run substitution tests, and repeat independent acceptance. DR-02 re-acceptance remains blocked; DR-04 OPEN; DR-05 BLOCKED.
+
+### CASE-001 Owner Facts Package A schema stop — 2026-10-08
+
+- Instruction `CASE001-OWNER-FACTS-PACKAGE-A-20261008` verified the protected CASE-001/2024 Owner Declaration at exact SHA-256 `560310A335E80C54E37F5030E5213180072E0C2F2787D819F924B9CA8D98A0F3`. Its scope, Owner-confirmed state, pending registry mapping, and no-external-transmission boundary are intact; no protected value is committed here.
+- The frozen architecture cannot yet complete the required binding safely. The authoritative CASE-001 Case Registry material exposes one case-owner reference, but no durable Person A/Person B identity records or associations. `PersonEntityRegistry` remains in-memory, and `HumanDeclaredFact` v1 has no subject/person identity field or generic durable persistence boundary.
+- Independent review returned `HUMAN_REQUIRED / FAIL`. No protected fact registration, identity creation, alternative registry, or runtime implementation was performed. Package B, Package C, DR-01 re-acceptance, DR-02, DR-04, and DR-05 were not executed.
+- Exact continuation: a separately governed identity-resolution/schema action must durably establish Person A and Person B identities and their CASE-001 roles/associations, and approve or identify a subject-bound protected fact persistence representation. Then rerun Package A against the unchanged hash-pinned Owner Declaration. Do not infer identity from family names.
+
+**DOC-INDEX-CI-REPAIR CI verification — 2026-10-08:** Ratified Constitution v3 marker compatibility fixed in `src/agent_lab/orchestrator_pilot.py` at commit `b673118`; two GitHub Actions `Milestone A synthetic acceptance` runs succeeded (IDs `37792324906`, `37792372732`) with successful governance/documentation steps. Isolated regression at commit `299f40e`: `68 passed in 16.56s`. Evidence in `docs/doc-index-ci-repair-plan-20261008.md`. Status `IMPLEMENTATION_VERIFIED / CI_GREEN / FORMAL_INDEPENDENT_ACCEPTANCE_PENDING`; do not mark formally accepted or claim all incoming emails stopped. No changes to outbound email provider or inbox.

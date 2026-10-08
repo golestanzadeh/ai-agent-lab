@@ -1,8 +1,24 @@
 # Current State
 
-## DR-04 Human Gate — 2026-10-06
+## CASE-001 Owner Facts Package A schema stop — 2026-10-08
 
-A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`; live capacity was five-hour `82%` and weekly `23%`. Authoritative reconciliation confirms the accepted whole-euro transformation yields declared section-35a bases `70 + 90` and therefore EUR 32.00 credit, not the frozen EUR 31.83. A EUR 0.17 result change would project the successor refund to EUR 134.00, so execution stopped before code or accepted-result change at `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. DR-05 remains blocked. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
+The protected CASE-001/2024 Owner Declaration passed exact SHA-256, scope, confirmation, and no-transmission validation, but Package A is `HUMAN_REQUIRED / INDEPENDENT_ACCEPTANCE_FAIL`. The authoritative Case Registry has only one case-owner reference; no durable CASE-001 Person A/Person B identity records or associations exist. `PersonEntityRegistry` is in-memory, and `HumanDeclaredFact` v1 has no subject identity or generic durable store. Registration was therefore not attempted: it would require identity inference or an unapproved persistence schema. The next permitted action is a governed identity-resolution/schema decision that durably establishes Person A and Person B identities and CASE-001 roles, plus subject-bound protected fact persistence, before Package A is rerun.
+
+## DR-01 lineage re-acceptance stop — 2026-10-08
+
+Historical DR-01 identities remain unrecovered. A new replay is `HUMAN_REQUIRED` because exact Person A/B religion codes, marriage date, and complete immutable lineage mappings are not durably available in the authorized CASE-001 boundary. Independent review did not accept candidate creation; no identity or implementation changed. DR-02 re-acceptance, DR-04, and DR-05 remain blocked in dependency order.
+
+## DR-02 lineage re-acceptance stop — 2026-10-08
+
+The Owner-authorized DR-02 lineage re-acceptance candidate passed focused and relevant tests but failed genuine Independent Acceptance because its initial replay was not anchored to a durably recovered accepted DR-01 request/result/full-XML identity and exact evidence references. Candidate code was not pushed. State is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.
+
+## DR-04 ten-rule execution safe stop — 2026-10-08
+
+The bounded ten-rule candidate passed focused (`26 passed`) and relevant (`83 passed, 5 skipped`) verification, but two actual independent reviews withheld acceptance. The remaining blocker is not evaluator semantics: DR-02 acceptance did not durably record its exact request reference, prior-result reference, complete XML digest, or result identity, so a canonical-hash predecessor substitution cannot yet be excluded. No identity was fabricated and no candidate code was pushed. State is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`; DR-04 remains open and DR-05 remains blocked.
+
+## DR-04 Part 1 — 2026-10-08
+
+The Owner-approved rounding successor is implemented as DR-04 contract version 2. Exact source bases EUR 69.13 and EUR 90.00 remain distinct from whole-euro declaration values EUR 70 and EUR 90. The successor records section-35a credit EUR 32.00 and refund EUR 134.00 while preserving historical EUR 31.83 / EUR 133.83 predecessor values. Part 1 preserves case isolation, provenance inputs and the non-transmitting boundary. DR-04 remains open pending executable plausibility binding, exact accepted-lineage pinning, full regression and Independent Acceptance; DR-05 remains blocked.
 
 ## Owner operational exception infrastructure — 2026-10-05
 
@@ -23,7 +39,7 @@ Authorized bounded packages may continue sequentially while the deterministic ca
 
 The bounded infrastructure repair is independently accepted: Limit Controller repair `PASS`, indexed Official Source Knowledge repair `PASS`, and canonical continuation preservation `PASS`. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`).
 
-Last reconciled: **2026-10-06**
+Last reconciled: **2026-10-08**
 
 ## Authoritative status
 
@@ -114,7 +130,7 @@ Last reconciled: **2026-10-06**
 
 ## Exact next action
 
-Obtain the Project Owner's exact decision on `DR04-ROUNDING-RESULT-CHANGE-20261006`. Until then, keep the accepted refund at EUR 133.83, do not mark DR-04 accepted, and do not start DR-05. If the successor result is approved, update the versioned result to section-35a credit EUR 32.00 / projected refund EUR 134.00, repair the remaining plausibility and exact-lineage defects, run focused/regression tests, and repeat Independent Acceptance. All external-action gates remain closed.
+Obtain the Owner/independent-authority decision to provide or establish the canonical accepted DR-02 request reference, prior-result reference, complete XML digest, and result identity. Then resume bounded DR-04 implementation from the recorded findings: pin lineage to the exact accepted artifacts, execute the ten reviewed plausibility rules, add request/prior/non-VOR substitution tests, rerun focused/relevant/full regression, and repeat Independent Acceptance. Part 1's EUR 32.00 credit / EUR 134.00 refund successor remains provisional; DR-05 remains blocked. All external-action gates remain closed.
 
 ## Non-negotiable constraints
 

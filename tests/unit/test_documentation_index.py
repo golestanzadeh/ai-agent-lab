@@ -88,7 +88,8 @@ def test_case001_continuation_does_not_regress_to_completed_declaration_packages
         assert "Exact next package is DR-01" not in text
         assert "all packages remain unstarted" not in text
     exact_next = current.split("## Exact next action", 1)[1].split("## Non-negotiable", 1)[0]
-    assert "DR04-ROUNDING-RESULT-CHANGE-20261006" in exact_next
+    assert "ten reviewed plausibility rules" in exact_next
+    assert "exact accepted artifacts" in exact_next
     assert "DR-05" in exact_next
     assert "resume exactly at dependency-ready DR-02" not in exact_next
 
