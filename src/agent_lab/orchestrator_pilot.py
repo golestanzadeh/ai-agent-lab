@@ -26,7 +26,7 @@ FINAL_CHECKPOINT_ID = "O4-CHECKPOINT-COMPLETE"
 O4_AUTHORITY_REFERENCE = "human-approval://phase-o4/d70a28b9b33710a81881855048baccb63f3fc176"
 
 DOCUMENT_RULES = {
-    "CONSTITUTION.md": ("# Project Constitution v2", "## Article 10 — Human Gates"),
+    "CONSTITUTION.md": ("# Project Constitution v3", "## Article 10 — Human Gates"),
     "PROJECT_CHECKPOINT.md": ("# Project Checkpoint", "## Mandatory startup protocol"),
     "AGENTS.md": ("# AGENTS.md", "## Mandatory cross-session startup"),
     "CURRENT_STATE.md": ("# Current State", "## Exact next action"),
