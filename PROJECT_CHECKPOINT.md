@@ -67,6 +67,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 SEC-01 through SEC-04 remediation REVIEW_READY — 2026-10-09
+
+- Exact baseline `28b0c1571c6026b7bfe996f68b52a30450d1f352` was clean and synchronized. Before code changed, synthetic adversarial probes independently reproduced unauthorized restore registration/consumption, unauthorized evidence revocation, context-free continuity initialization and accepted tail-truncated audit history.
+- Implementation commit `4c54c5cba6ef6e007012d035d59310e5dd2db3a9` makes the existing Kernel/evidence contracts require exact active Kernel and approved Human Gate restore authority, manifest-bound recovery-operator consumption, one-time scope-bound revocation authorization, authorized non-repeatable initialization, and a transactional keyed audit count/head anchor. Focused verification passes `18`; relevant Kernel/identity/registry verification passes `107`; complete unit regression passes `1104 passed, 5 skipped`.
+- Status is `REVIEW_READY / NOT INDEPENDENTLY ACCEPTED / NOT RELEASED`. Evidence is in `docs/oi-0002-security-remediation-sec01-sec04-20261009.md`. `E-03`, `C-02`, `C-06`, `REMEDIATION-02` and `OI-0003` remain BLOCKED. Exact next action is a separate independent read-only review of the published remediation SHA; this worker must not accept or release it.
+
 ### OI-0002 limited implementation package 1 — 2026-10-09
 
 - Under Owner-authorized limited synthetic development, `IdentityContinuityAuthority` now delegates to the actual persistent Deterministic Orchestrator Kernel rather than a parallel SQLite authority. Kernel state binds deployment, case, tax year, task, manifest, run and operation; reservation, commit, restart verification, deterministic pending reconciliation and older-epoch rejection are covered.

@@ -146,6 +146,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-missing-authority-custody-preparation-20261008.md` - missing-authority analysis and redacted custody evidence preparation.
 - `oi-0002-kernel-continuity-and-e03-contract-v0-20261008.md` - synthetic Kernel continuity and durable evidence prototype contract.
 - `oi-0002-limited-integration-report-20261009.md` - actual Kernel integration, durable evidence/custody verification, regression evidence and blocked-gate handoff.
+- `oi-0002-security-remediation-sec01-sec04-20261009.md` - SEC-01 through SEC-04 reproduction, scoped fixes, negative tests, regression evidence and independent-review handoff.
 - `oi-0002-remediation-01-report-20261008.md` - F01-F07 remediation mapping, T01-T12 implementation evidence, regression record and independent-review handoff.
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
 
