@@ -28,3 +28,15 @@ Work must preserve the existing Deterministic Orchestrator Kernel, case isolatio
 This Owner authorization expands internal implementation/testing discretion, not external communication or submission authority. Higher-priority project rules remain effective. This record is not a grant to merge/release, activate production access, or bypass previously blocked real-data gates.
 
 Source: Owner message, 2026-10-09. No taxpayer-specific data is included.
+
+
+## Gemini API — Owner-approved narrow exception (2026-10-09)
+The Owner expressly authorizes use of the **already registered Gemini API** solely for the existing previously specified and approved prompt scope, to perform **initial document analysis, translation and interpretation**. Gemini is an extraction/interpretation aid, **not** a tax decision maker: it must not decide or recommend how any particular document should be used in the tax return, classify a tax deduction as allowable as an authoritative conclusion, approve calculations, or authorize submission. Those decisions remain with the existing internal specialist/Chief/Kernel workflow and Human Gates.
+
+This is a **destination-specific exception** to the general external-communication restriction above, not permission to use any other external provider, endpoint, model, plugin, storage service or publication channel. Use only the configured API and the minimum document content necessary under the previously approved prompt and project privacy/security controls. Do not include credentials in prompts, logs or GitHub.
+
+**Prohibited:** unauthorized use, secondary use, public disclosure, or deliberate registration, storage, publication or forwarding of document content, analysis, translation, interpretations or results to any external repository or service. No public GitHub artifacts or external logging containing private data.
+
+**Provider-side limitation:** the project can constrain its own requests, retention and forwarding, but cannot establish or guarantee Google's provider-side retention, logging or processing policy merely by this authorization. Before processing protected real documents, verify the actual Gemini API product, data-use/retention terms and configuration against the Owner's no-unauthorized-external-registration requirement. If incompatible or unverified, block real-data API transmission while allowing authorized synthetic tests and unrelated internal work.
+
+This authorization does not alter the two independent Owner approvals required before any ELSTER/ERiC/Finanzamt submission, nor waive any existing project security or Human Gate.
