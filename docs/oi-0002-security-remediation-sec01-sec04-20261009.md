@@ -49,3 +49,7 @@ Negative tests explicitly cover unauthorized restore registration and consumptio
 This remediation worker does not independently accept the package. No real identity or taxpayer data, production principal, ACL, key, backup, external transmission, merge, release, gate release or OI-0003 execution occurred.
 
 `E-03`, `C-02`, `C-06`, `REMEDIATION-02` and `OI-0003` remain `BLOCKED`. The exact next action is a separate independent read-only security and acceptance review of the published remediation SHA, including fresh adversarial reproduction of SEC-01 through SEC-04. Only later explicit Owner governance may change conditional-gate status.
+
+## Capacity handoff
+
+Authenticated at `2026-10-09T20:18:51.8115017Z`: five-hour 41 percent remaining, reset `2026-10-10T00:35:43Z`; weekly 53 percent remaining, reset `2026-10-14T16:57:07Z`. Source: signed-in Codex rate-limit service. No reset credit was used and the 15-point five-hour reserve remains intact.
