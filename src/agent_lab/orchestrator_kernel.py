@@ -1286,7 +1286,10 @@ class OrchestratorKernel:
     ) -> sqlite3.Row:
         if not all(isinstance(v, str) and v.strip() for v in (manifest_id, task_id, case_id, run_id, operation)):
             raise PermissionDenied("complete identity continuity context is required")
-        row = self._manifest_row(manifest_id)
+        try:
+            row = self._manifest_row(manifest_id)
+        except ContractError as exc:
+            raise PermissionDenied("identity continuity context is not authorized") from exc
         payload = json.loads(row["payload_json"])
         context = payload["scope"]["case_context"]
         if (
@@ -1298,13 +1301,26 @@ class OrchestratorKernel:
             raise PermissionDenied("identity continuity context is not authorized")
         return row
 
-    def initialize_identity_continuity(self, *, deployment_id: str, case_id: str, tax_year: int, head: str) -> None:
+    def initialize_identity_continuity(
+        self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
+        task_id: str, run_id: str, operation: str, head: str,
+    ) -> None:
         if not all(isinstance(v, str) and v.strip() for v in (deployment_id, case_id, head)) or not head.startswith("sha256:"):
             raise ContractError("canonical continuity identity is required")
+        row = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )
         with self._connection:
-            self._connection.execute(
+            changed = self._connection.execute(
                 "INSERT OR IGNORE INTO identity_continuity VALUES(?,?,?,?,?,NULL)",
                 (deployment_id, case_id, tax_year, 0, head),
+            ).rowcount
+            if changed != 1:
+                raise IntegrityError("identity continuity is already initialized")
+            self._append_event(
+                "IDENTITY_CONTINUITY_INITIALIZED", "IDENTITY_CONTINUITY", deployment_id,
+                row["actor_instance_id"], {"case_id": case_id, "tax_year": tax_year, "head": head},
             )
 
     def reserve_identity_continuity(
@@ -1383,9 +1399,18 @@ class OrchestratorKernel:
         self, *, authorization_id: str, deployment_id: str, case_id: str, tax_year: int,
         backup_digest: str, expected_epoch: int, expected_head: str, target_generation: int,
         operator_id: str, expires_at: str, owner_authority_reference: str,
+        manifest_id: str, task_id: str, run_id: str, operation: str,
     ) -> None:
-        if not owner_authority_reference.startswith("OWNER-"):
-            raise PermissionDenied("explicit synthetic Owner restore authority required")
+        row = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )
+        gate = self._connection.execute(
+            "SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='IDENTITY_RESTORE'",
+            (task_id,),
+        ).fetchone()
+        if gate is None or gate["status"] != "APPROVED" or gate["authority_reference"] != owner_authority_reference:
+            raise PermissionDenied("exact approved Human Gate restore authority required")
         if _parse_timestamp(expires_at,"expires_at") <= _utc_now() or target_generation <= expected_epoch:
             raise ContractError("restore authorization expiry or generation is invalid")
         with self._connection:
@@ -1395,14 +1420,20 @@ class OrchestratorKernel:
                  expected_head,target_generation,operator_id,expires_at),
             )
             self._append_event("IDENTITY_RESTORE_AUTHORIZED","IDENTITY_RESTORE",authorization_id,
-                               "HUMAN_PROJECT_OWNER",{"deployment_id":deployment_id,"case_id":case_id,
+                               row["actor_instance_id"],{"deployment_id":deployment_id,"case_id":case_id,
                                "tax_year":tax_year,"target_generation":target_generation})
 
     def consume_identity_restore_authorization(
         self, *, authorization_id: str, deployment_id: str, case_id: str, tax_year: int,
         backup_digest: str, expected_epoch: int, expected_head: str, target_generation: int,
-        operator_id: str,
+        operator_id: str, manifest_id: str, task_id: str, run_id: str, operation: str,
     ) -> None:
+        context = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )
+        if context["actor_instance_id"] != operator_id:
+            raise PermissionDenied("restore operator is not authorized by the active manifest")
         row=self._connection.execute("SELECT * FROM identity_restore_authorizations WHERE authorization_id=?",(authorization_id,)).fetchone()
         expected=(deployment_id,case_id,tax_year,backup_digest,expected_epoch,expected_head,target_generation,operator_id)
         observed=None if row is None else tuple(row[k] for k in ("deployment_id","case_id","tax_year","backup_digest","expected_epoch","expected_head","target_generation","operator_id"))

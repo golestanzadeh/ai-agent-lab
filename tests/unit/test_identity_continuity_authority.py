@@ -62,13 +62,43 @@ def test_exact_case_task_manifest_binding(tmp_path):
     with pytest.raises(PermissionDenied): IdentityContinuityAuthority(kernel,bad).reserve(0,H0,H1)
     kernel.close()
 
+
+def test_unauthorized_initialization_is_rejected(tmp_path):
+    kernel, authority, ctx = configured(tmp_path)
+    with pytest.raises(PermissionDenied):
+        kernel.initialize_identity_continuity(
+            deployment_id=ctx.deployment_id, case_id=ctx.case_id, tax_year=ctx.tax_year,
+            manifest_id="ATTACKER", task_id=ctx.task_id, run_id=ctx.run_id,
+            operation=ctx.operation, head=H0,
+        )
+    authority.initialize(H0)
+    with pytest.raises(IdentityContinuityError, match="already initialized"):
+        authority.initialize(H1)
+    kernel.close()
+
 def test_governed_restore_is_exact_expiring_and_one_time(tmp_path):
-    kernel,_,_=configured(tmp_path)
+    kernel,_,ctx=configured(tmp_path)
     expires=(datetime.now(timezone.utc)+timedelta(hours=1)).isoformat()
-    values=dict(authorization_id="RESTORE-1",deployment_id="DEPLOYMENT-SYNTHETIC",case_id="CASE-SYNTHETIC",tax_year=2025,backup_digest=H0,expected_epoch=3,expected_head=H1,target_generation=4,operator_id="RECOVERY-OPERATOR")
-    with pytest.raises(PermissionDenied): kernel.register_identity_restore_authorization(**values,expires_at=expires,owner_authority_reference="not-owner")
-    kernel.register_identity_restore_authorization(**values,expires_at=expires,owner_authority_reference="OWNER-SYNTHETIC-RESTORE")
-    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**{**values,"backup_digest":H1})
-    kernel.consume_identity_restore_authorization(**values)
-    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**values)
+    values=dict(authorization_id="RESTORE-1",deployment_id="DEPLOYMENT-SYNTHETIC",case_id="CASE-SYNTHETIC",tax_year=2025,backup_digest=H0,expected_epoch=3,expected_head=H1,target_generation=4,operator_id="IDENTITY-SERVICE-1")
+    governed={"manifest_id":ctx.manifest_id,"task_id":ctx.task_id,"run_id":ctx.run_id,"operation":"IDENTITY_RESTORE"}
+    with kernel._connection:
+        kernel._connection.execute("INSERT INTO task_human_gates VALUES(?, 'IDENTITY_RESTORE', 'APPROVED', ?, ?)",(ctx.task_id,"OWNER-SYNTHETIC-RESTORE",datetime.now(timezone.utc).isoformat()))
+    with pytest.raises(PermissionDenied): kernel.register_identity_restore_authorization(**values,**governed,expires_at=expires,owner_authority_reference="OWNER-FORGED")
+    kernel.register_identity_restore_authorization(**values,**governed,expires_at=expires,owner_authority_reference="OWNER-SYNTHETIC-RESTORE")
+    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**{**values,**governed,"backup_digest":H1})
+    with pytest.raises(PermissionDenied,match="operator"):
+        kernel.consume_identity_restore_authorization(**{**values,**governed,"operator_id":"ATTACKER"})
+    kernel.consume_identity_restore_authorization(**values,**governed)
+    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**values,**governed)
+    kernel.close()
+
+
+def test_restore_requires_active_kernel_context_and_approved_gate(tmp_path):
+    kernel,_,ctx=configured(tmp_path)
+    expires=(datetime.now(timezone.utc)+timedelta(hours=1)).isoformat()
+    values=dict(authorization_id="RESTORE-UNAUTHORIZED",deployment_id=ctx.deployment_id,case_id=ctx.case_id,tax_year=ctx.tax_year,backup_digest=H0,expected_epoch=0,expected_head=H0,target_generation=1,operator_id="RECOVERY-OPERATOR",expires_at=expires,owner_authority_reference="OWNER-SYNTHETIC-RESTORE",manifest_id=ctx.manifest_id,task_id=ctx.task_id,run_id=ctx.run_id,operation="IDENTITY_RESTORE")
+    with pytest.raises(PermissionDenied,match="Human Gate"):
+        kernel.register_identity_restore_authorization(**values)
+    with pytest.raises(PermissionDenied):
+        kernel.register_identity_restore_authorization(**{**values,"manifest_id":"ATTACKER"})
     kernel.close()

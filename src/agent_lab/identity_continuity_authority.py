@@ -29,8 +29,7 @@ class IdentityContinuityAuthority:
 
     def initialize(self, head: str) -> None:
         self._kernel.initialize_identity_continuity(
-            deployment_id=self.context.deployment_id, case_id=self.context.case_id,
-            tax_year=self.context.tax_year, head=head,
+            **self._scope(), head=head,
         )
 
     def reserve(self, epoch: int, current_head: str, next_head: str) -> None:

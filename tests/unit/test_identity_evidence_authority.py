@@ -43,11 +43,41 @@ def test_exact_scope_and_revision_binding(tmp_path,changed):
 def test_missing_mismatched_revoked_expired_and_tampered_fail(tmp_path):
     store,db=make(tmp_path); append_chain(store)
     with pytest.raises(IdentityEvidenceError,match="digest mismatch"): store.resolve("A1",content_loader=lambda *a:b"changed",expected_scope=scope())
-    store.revoke("C1",actor_id="OWNER-SYNTHETIC")
+    with pytest.raises(IdentityEvidenceError,match="not authorized"): store.revoke("C1",actor_id="ATTACKER",authorization_event_id="A1")
+    store.revoke("C1",actor_id="OWNER-SYNTHETIC",authorization_event_id="A1")
     with pytest.raises(IdentityEvidenceError,match="revoked"): store.resolve("A1",content_loader=loader,expected_scope=scope())
     store.close()
     raw=sqlite3.connect(db); raw.execute("UPDATE identity_evidence_v2 SET actor_id='ATTACKER' WHERE event_id='D1'"); raw.commit(); raw.close()
     with pytest.raises(IdentityEvidenceError,match="integrity"): DurableIdentityEvidenceAuthority(db,integrity_key=KEY)
+
+
+def test_revocation_authorization_is_one_time_and_scope_bound(tmp_path):
+    store,_=make(tmp_path); append_chain(store)
+    with pytest.raises(IdentityEvidenceError,match="not authorized"):
+        store.revoke("A1",actor_id="OWNER-SYNTHETIC",authorization_event_id="A1")
+    store.revoke("D1",actor_id="OWNER-SYNTHETIC",authorization_event_id="A1")
+    with pytest.raises(IdentityEvidenceError,match="consumed"):
+        store.revoke("C1",actor_id="OWNER-SYNTHETIC",authorization_event_id="A1")
+    store.close()
+
+
+def test_truncated_audit_history_is_rejected(tmp_path):
+    store,db=make(tmp_path); append_chain(store); store.close()
+    raw=sqlite3.connect(db)
+    raw.execute("DELETE FROM identity_evidence_audit_v2 WHERE sequence=(SELECT MAX(sequence) FROM identity_evidence_audit_v2)")
+    raw.commit(); raw.close()
+    with pytest.raises(IdentityEvidenceError,match="audit anchor integrity"):
+        DurableIdentityEvidenceAuthority(db,integrity_key=KEY)
+
+
+def test_deleted_audit_and_anchor_cannot_be_reinitialized(tmp_path):
+    store,db=make(tmp_path); append_chain(store); store.close()
+    raw=sqlite3.connect(db)
+    raw.execute("DELETE FROM identity_evidence_audit_v2")
+    raw.execute("DELETE FROM identity_evidence_audit_anchor_v2")
+    raw.commit(); raw.close()
+    with pytest.raises(IdentityEvidenceError,match="audit anchor unavailable"):
+        DurableIdentityEvidenceAuthority(db,integrity_key=KEY)
 
 def test_expired_authorization_and_wrong_key_fail(tmp_path):
     store,db=make(tmp_path); append_chain(store,expiry=datetime.now(timezone.utc)-timedelta(seconds=1)); store.close()

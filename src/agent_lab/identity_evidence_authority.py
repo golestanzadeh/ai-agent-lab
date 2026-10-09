@@ -57,11 +57,26 @@ class DurableIdentityEvidenceAuthority:
             CREATE TABLE IF NOT EXISTS identity_evidence_audit_v2(
               sequence INTEGER PRIMARY KEY,event_id TEXT NOT NULL,action TEXT NOT NULL,payload TEXT NOT NULL,
               previous_mac TEXT NOT NULL,event_mac TEXT NOT NULL,occurred_at TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS identity_evidence_audit_anchor_v2(
+              singleton INTEGER PRIMARY KEY CHECK(singleton=1),event_count INTEGER NOT NULL,
+              head_mac TEXT NOT NULL,anchor_mac TEXT NOT NULL);
             """)
+            anchor=self._db.execute("SELECT 1 FROM identity_evidence_audit_anchor_v2 WHERE singleton=1").fetchone()
+            if anchor is None:
+                last=self._db.execute("SELECT sequence,event_mac FROM identity_evidence_audit_v2 ORDER BY sequence DESC LIMIT 1").fetchone()
+                evidence_count=self._db.execute("SELECT COUNT(*) FROM identity_evidence_v2").fetchone()[0]
+                if last is not None or evidence_count:
+                    raise IdentityEvidenceError("identity audit anchor unavailable")
+                count=0 if last is None else last["sequence"]
+                head="0"*64 if last is None else last["event_mac"]
+                self._db.execute("INSERT INTO identity_evidence_audit_anchor_v2 VALUES(1,?,?,?)",(count,head,self._anchor_mac(count,head)))
         self.verify_integrity()
 
     def _mac(self, value: object) -> str:
         return hmac.new(self._key,_canonical(value).encode(),hashlib.sha256).hexdigest()
+
+    def _anchor_mac(self, count: int, head: str) -> str:
+        return self._mac({"authority":"IDENTITY_EVIDENCE_AUDIT_V2","event_count":count,"head_mac":head})
 
     @staticmethod
     def _scope_dict(scope: EvidenceScope) -> dict[str,object]:
@@ -101,11 +116,21 @@ class DurableIdentityEvidenceAuthority:
         except sqlite3.IntegrityError as exc: raise IdentityEvidenceError("duplicate or invalid evidence") from exc
         return event_id
 
-    def revoke(self,event_id:str,*,actor_id:str) -> None:
+    def revoke(self,event_id:str,*,actor_id:str,authorization_event_id:str) -> None:
         row=self._row(event_id)
+        authorization=self._row(authorization_event_id)
+        self._assert_usable(authorization,authorization=True)
+        if authorization_event_id==event_id or authorization["kind"]!="IDENTITY_AUTHORIZATION" or authorization["actor_id"]!=actor_id:
+            raise IdentityEvidenceError("revocation is not authorized")
+        bound=("case_id","tax_year","subject_id","semantic_key","run_id","task_id","manifest_id")
+        if any(authorization[key]!=row[key] for key in bound):
+            raise IdentityEvidenceError("revocation authorization scope mismatch")
         if row["revoked_at"] is not None: return
         when=datetime.now(timezone.utc).isoformat(); payload=self._payload(row); payload["revoked_at"]=when
         with self._db:
+            consumed=self._payload(authorization); consumed["consumed_at"]=when
+            changed=self._db.execute("UPDATE identity_evidence_v2 SET consumed_at=?,row_mac=? WHERE event_id=? AND consumed_at IS NULL",(when,self._mac(consumed),authorization_event_id)).rowcount
+            if changed!=1: raise IdentityEvidenceError("revocation authorization already consumed")
             self._db.execute("UPDATE identity_evidence_v2 SET revoked_at=?,row_mac=? WHERE event_id=?",(when,self._mac(payload),event_id)); self._audit(event_id,"REVOKE",{"actor_id":actor_id})
 
     def consume_authorization(self,event_id:str) -> None:
@@ -147,7 +172,7 @@ class DurableIdentityEvidenceAuthority:
         return ProtectedEvidence(row["event_id"],row["kind"],s,row["provider"],row["object_id"],row["document_revision"],row["content_digest"],row["parent_event_id"],parse(row["expires_at"]),parse(row["revoked_at"]),parse(row["consumed_at"]))
 
     def _audit(self,event_id:str,action:str,details:dict[str,object]) -> None:
-        last=self._db.execute("SELECT sequence,event_mac FROM identity_evidence_audit_v2 ORDER BY sequence DESC LIMIT 1").fetchone(); seq=1 if last is None else last["sequence"]+1; prev="0"*64 if last is None else last["event_mac"]; occurred=datetime.now(timezone.utc).isoformat(); payload=_canonical(details); mac=self._mac({"sequence":seq,"event_id":event_id,"action":action,"payload":payload,"previous_mac":prev,"occurred_at":occurred}); self._db.execute("INSERT INTO identity_evidence_audit_v2 VALUES(?,?,?,?,?,?,?)",(seq,event_id,action,payload,prev,mac,occurred))
+        last=self._db.execute("SELECT sequence,event_mac FROM identity_evidence_audit_v2 ORDER BY sequence DESC LIMIT 1").fetchone(); seq=1 if last is None else last["sequence"]+1; prev="0"*64 if last is None else last["event_mac"]; occurred=datetime.now(timezone.utc).isoformat(); payload=_canonical(details); mac=self._mac({"sequence":seq,"event_id":event_id,"action":action,"payload":payload,"previous_mac":prev,"occurred_at":occurred}); self._db.execute("INSERT INTO identity_evidence_audit_v2 VALUES(?,?,?,?,?,?,?)",(seq,event_id,action,payload,prev,mac,occurred)); self._db.execute("UPDATE identity_evidence_audit_anchor_v2 SET event_count=?,head_mac=?,anchor_mac=? WHERE singleton=1",(seq,mac,self._anchor_mac(seq,mac)))
 
     def verify_integrity(self) -> None:
         for row in self._db.execute("SELECT * FROM identity_evidence_v2"):
@@ -157,6 +182,10 @@ class DurableIdentityEvidenceAuthority:
             expected=self._mac({"sequence":row["sequence"],"event_id":row["event_id"],"action":row["action"],"payload":row["payload"],"previous_mac":row["previous_mac"],"occurred_at":row["occurred_at"]})
             if row["previous_mac"]!=prev or not hmac.compare_digest(row["event_mac"],expected): raise IdentityEvidenceError("identity audit integrity failure")
             prev=row["event_mac"]
+        anchor=self._db.execute("SELECT event_count,head_mac,anchor_mac FROM identity_evidence_audit_anchor_v2 WHERE singleton=1").fetchone()
+        count=self._db.execute("SELECT COUNT(*) FROM identity_evidence_audit_v2").fetchone()[0]
+        if anchor is None or anchor["event_count"]!=count or anchor["head_mac"]!=prev or not hmac.compare_digest(anchor["anchor_mac"],self._anchor_mac(count,prev)):
+            raise IdentityEvidenceError("identity audit anchor integrity failure")
 
     def close(self) -> None:
         self.verify_integrity(); self._db.close()
