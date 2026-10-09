@@ -1584,3 +1584,10 @@ Register the canonical CASE-001 bank CSV as one immutable `STRUCTURED_FINANCIAL_
 - **Decision:** After a second verified missed one-shot wake, the local Codex automation is no longer an authoritative continuation scheduler. It is paused, Relay re-arming is disabled, and the logical identity `plan-limit-continuation-guard` is reserved for exactly one local-project ChatGPT Work Scheduled Task.
 - **Evidence:** Host, desktop app, Relay, repository cleanliness and remote synchronization were healthy; the Codex automation remained `ACTIVE` after `2026-10-05T11:42:44Z`, with no trigger execution and no relay request.
 - **Fail-closed state:** The current tool surface cannot create or update a local-project Work Scheduled Task. ChatGPT web Scheduled Tasks cannot access the local folder, and the available computer-use safety contract prohibits automating ChatGPT Desktop. No web reminder, shell launcher, duplicate automation, or unverified wake substitutes for the required object. Status remains `NO_AUTHORITATIVE_SCHEDULER` until an actual short wake test is independently accepted.
+
+
+## UI25 — Owner-approved UI-led product completion (2026-10-09)
+
+**Status:** accepted as development approach, not as a product test PASS.
+
+**Decision:** Follow the Personal Finance Analyzer-style iterative workflow for AI-Tax-Agent: finish and connect existing UI one tab at a time, test with the Owner, correct UI/backend/Kernel/agent/persistence defects as found, and then run an end-to-end 2025 case through that same UI. Permit staged and late-arriving PDF evidence with versioned reanalysis. Preserve the existing Kernel, project rules, privacy restrictions and independent two-stage ELSTER submission approval. Scope of internal testing and the bounded Gemini API exception are in docs/ui25-owner-internal-development-testing-authorization-20261009.md. Package register and acceptance criteria are in docs/ui25-execution-and-acceptance-plan.md. ROADMAP.md tracks all packages; OPEN_ITEMS.md tracks only unresolved gates, not the ordinary work list.
