@@ -2,7 +2,7 @@
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
-Last reconciled: **2026-10-08**
+Last reconciled: **2026-10-09**
 
 
 ## Supervisor loop validation — 2026-10-07
@@ -108,3 +108,12 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 - Keep this file limited to incomplete work and registered future artifacts.
 - Remove temporary probes and generated outputs when they carry no unique audit or recovery value.
 - Never remove reusable contracts, tests, security evidence, isolation controls, or consequential audit records merely to shorten the repository.
+
+
+## Track 3A — UI25 UI-led 2025 product completion (Owner-approved 2026-10-09)
+
+**Status:** PLANNED / NOT EXECUTED. Continue existing UI-1..UI-19, do not rebuild. Detailed package tests and boundaries: [UI25 execution and acceptance plan](docs/ui25-execution-and-acceptance-plan.md). Owner-approved limited internal development and Gemini scope: [authorization](docs/ui25-owner-internal-development-testing-authorization-20261009.md).
+
+Work packages: UI25-00 existing UI audit/launch; UI25-01 Dashboard; UI25-02 Case/Tax Year; UI25-03 Family/Carryover; UI25-04 incremental Documents; UI25-05 Kernel/Agents; UI25-06 Issues/Questions; UI25-07 Analysis/Evidence; UI25-08 Calculation; UI25-09 Result/Declaration; UI25-10 Approval/Export; UI25-11 German/Persian and mobile; UI25-12 2025 end-to-end Owner acceptance.
+
+Each package uses IMPLEMENT -> TEST -> FIX -> ACCEPT with separate technical, Owner UI and E2E statuses. Structural/backend changes required by verified UI tests are in scope, without bypassing existing gates. Begin staged 2025 document testing when intake is ready; support late documents and versioned dependency-aware reanalysis. Do not duplicate these packages in OPEN_ITEMS.md; record only genuine unresolved acceptance blockers there. Existing two-stage ELSTER Owner authorization, case isolation, external egress and protected-data restrictions remain binding.
