@@ -67,6 +67,11 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
+### OI-0002 limited implementation package 1 — 2026-10-09
+
+- Under Owner-authorized limited synthetic development, `IdentityContinuityAuthority` now delegates to the actual persistent Deterministic Orchestrator Kernel rather than a parallel SQLite authority. Kernel state binds deployment, case, tax year, task, manifest, run and operation; reservation, commit, restart verification, deterministic pending reconciliation and older-epoch rejection are covered.
+- Focused continuity/Kernel verification passes (`29 passed`). This is synthetic implementation evidence only: C-06 is not automatically PASS or released, no real custody/restore/production action occurred, and remediation-02/OI-0003 remain blocked.
+
 ### OI-0002 Owner disposition and conditions gate — 2026-10-08
 
 - Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.

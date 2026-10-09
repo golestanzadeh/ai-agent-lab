@@ -363,6 +363,28 @@ class OrchestratorKernel:
                     snapshot_json TEXT NOT NULL,
                     snapshot_hash TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS identity_continuity (
+                    deployment_id TEXT NOT NULL,
+                    case_id TEXT NOT NULL,
+                    tax_year INTEGER NOT NULL,
+                    epoch INTEGER NOT NULL CHECK(epoch >= 0),
+                    head TEXT NOT NULL,
+                    pending_json TEXT,
+                    PRIMARY KEY(deployment_id, case_id, tax_year)
+                );
+                CREATE TABLE IF NOT EXISTS identity_restore_authorizations (
+                    authorization_id TEXT PRIMARY KEY,
+                    deployment_id TEXT NOT NULL,
+                    case_id TEXT NOT NULL,
+                    tax_year INTEGER NOT NULL,
+                    backup_digest TEXT NOT NULL,
+                    expected_epoch INTEGER NOT NULL,
+                    expected_head TEXT NOT NULL,
+                    target_generation INTEGER NOT NULL,
+                    operator_id TEXT NOT NULL,
+                    expires_at TEXT NOT NULL,
+                    consumed_at TEXT
+                );
                 """
             )
             row = self._connection.execute(
@@ -1257,6 +1279,105 @@ class OrchestratorKernel:
             if context is None or context != supplied:
                 return KernelDecision(False, "DENY", "case/run scope mismatch")
         return KernelDecision(True, "ALLOW", "capability matches active manifest and scope")
+
+    def _identity_continuity_context(
+        self, *, manifest_id: str, task_id: str, case_id: str, tax_year: int,
+        run_id: str, operation: str,
+    ) -> sqlite3.Row:
+        if not all(isinstance(v, str) and v.strip() for v in (manifest_id, task_id, case_id, run_id, operation)):
+            raise PermissionDenied("complete identity continuity context is required")
+        row = self._manifest_row(manifest_id)
+        payload = json.loads(row["payload_json"])
+        context = payload["scope"]["case_context"]
+        if (
+            row["state"] != "ACTIVE" or self.kill_switch_state() != "RUNNING"
+            or _parse_timestamp(row["expires_at"], "expires_at") <= _utc_now()
+            or row["task_id"] != task_id
+            or context != {"case_id": case_id, "tax_year": tax_year, "run_id": run_id}
+        ):
+            raise PermissionDenied("identity continuity context is not authorized")
+        return row
+
+    def initialize_identity_continuity(self, *, deployment_id: str, case_id: str, tax_year: int, head: str) -> None:
+        if not all(isinstance(v, str) and v.strip() for v in (deployment_id, case_id, head)) or not head.startswith("sha256:"):
+            raise ContractError("canonical continuity identity is required")
+        with self._connection:
+            self._connection.execute(
+                "INSERT OR IGNORE INTO identity_continuity VALUES(?,?,?,?,?,NULL)",
+                (deployment_id, case_id, tax_year, 0, head),
+            )
+
+    def reserve_identity_continuity(
+        self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
+        task_id: str, run_id: str, operation: str, expected_epoch: int,
+        expected_head: str, next_head: str,
+    ) -> None:
+        row = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )
+        pending = _canonical({"manifest_id": manifest_id, "task_id": task_id, "run_id": run_id,
+                              "operation": operation, "next_head": next_head,
+                              "actor_id": row["actor_instance_id"]})
+        with self._connection:
+            changed = self._connection.execute(
+                "UPDATE identity_continuity SET pending_json=? WHERE deployment_id=? AND case_id=? AND tax_year=? AND epoch=? AND head=? AND pending_json IS NULL",
+                (pending, deployment_id, case_id, tax_year, expected_epoch, expected_head),
+            ).rowcount
+            if changed != 1:
+                raise IntegrityError("stale continuity state or pending reservation")
+            self._append_event("IDENTITY_CONTINUITY_RESERVED", "IDENTITY_CONTINUITY", deployment_id,
+                               row["actor_instance_id"], {"case_id": case_id, "tax_year": tax_year,
+                               "epoch": expected_epoch + 1, "head": next_head, "operation": operation})
+
+    def finalize_identity_continuity(
+        self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
+        task_id: str, run_id: str, operation: str, committed_epoch: int, committed_head: str,
+    ) -> None:
+        row = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )
+        current = self._connection.execute(
+            "SELECT epoch,pending_json FROM identity_continuity WHERE deployment_id=? AND case_id=? AND tax_year=?",
+            (deployment_id, case_id, tax_year),
+        ).fetchone()
+        if current is None or current["pending_json"] is None:
+            raise IntegrityError("continuity reservation is missing")
+        pending = json.loads(current["pending_json"])
+        if current["epoch"] + 1 != committed_epoch or pending != {
+            "actor_id": row["actor_instance_id"], "manifest_id": manifest_id,
+            "next_head": committed_head, "operation": operation,
+            "run_id": run_id, "task_id": task_id,
+        }:
+            raise IntegrityError("identity commit does not match Kernel reservation")
+        with self._connection:
+            self._connection.execute(
+                "UPDATE identity_continuity SET epoch=?,head=?,pending_json=NULL WHERE deployment_id=? AND case_id=? AND tax_year=?",
+                (committed_epoch, committed_head, deployment_id, case_id, tax_year),
+            )
+            self._append_event("IDENTITY_CONTINUITY_COMMITTED", "IDENTITY_CONTINUITY", deployment_id,
+                               row["actor_instance_id"], {"case_id": case_id, "tax_year": tax_year,
+                               "epoch": committed_epoch, "head": committed_head})
+
+    def verify_identity_continuity(self, *, deployment_id: str, case_id: str, tax_year: int, epoch: int, head: str) -> None:
+        row = self._connection.execute(
+            "SELECT epoch,head,pending_json FROM identity_continuity WHERE deployment_id=? AND case_id=? AND tax_year=?",
+            (deployment_id, case_id, tax_year),
+        ).fetchone()
+        if row is None or row["pending_json"] is not None or row["epoch"] != epoch or row["head"] != head:
+            raise IntegrityError("rollback, pending write or unknown identity head")
+
+    def reconcile_identity_continuity(
+        self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
+        task_id: str, run_id: str, operation: str, identity_epoch: int, identity_head: str,
+    ) -> None:
+        """Finalize only an exact post-commit pending state; every ambiguity denies."""
+        self.finalize_identity_continuity(
+            deployment_id=deployment_id, case_id=case_id, tax_year=tax_year,
+            manifest_id=manifest_id, task_id=task_id, run_id=run_id, operation=operation,
+            committed_epoch=identity_epoch, committed_head=identity_head,
+        )
 
     def consume_budget(
         self,
