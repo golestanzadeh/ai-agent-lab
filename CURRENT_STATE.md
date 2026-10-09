@@ -1,5 +1,11 @@
 # Current State
 
+
+## UI25 Owner-approved UI-led completion — 2026-10-09
+
+The Owner approved tab-by-tab completion and real service integration of the existing UI, followed by 2025 end-to-end acceptance. The UI25-00..UI25-12 plan is registered in ROADMAP.md and docs/ui25-execution-and-acceptance-plan.md. **No UI25 package has been executed or accepted by this documentation change.** Exact next work is UI25-00: run existing UI and inventory live vs synthetic integrations. Existing OI blockers and outbound controls remain unchanged.
+
+
 ## OI-0002 limited implementation package 1 — 2026-10-09
 
 The synthetic continuity adapter is integrated with the real Deterministic Orchestrator Kernel and focused verification passes (`29 passed`). C-06 remains conditionally blocked pending the complete synthetic package, independent verification and explicit Owner release; no operational authority changed.
