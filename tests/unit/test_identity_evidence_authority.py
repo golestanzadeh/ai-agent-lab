@@ -2,6 +2,7 @@ import hashlib, sqlite3
 from dataclasses import replace
 from datetime import date, datetime, timedelta, timezone
 import pytest
+from concurrent.futures import ThreadPoolExecutor
 from agent_lab.identity_evidence_authority import DurableIdentityEvidenceAuthority, EvidenceScope, IdentityEvidenceError
 
 KEY=b"k"*32; CONTENT=b"synthetic protected bytes"; DIGEST="sha256:"+hashlib.sha256(CONTENT).hexdigest()
@@ -54,3 +55,13 @@ def test_expired_authorization_and_wrong_key_fail(tmp_path):
     with pytest.raises(IdentityEvidenceError,match="expired"): reopened.resolve("A1",content_loader=loader,expected_scope=scope())
     reopened.close()
     with pytest.raises(IdentityEvidenceError,match="integrity"): DurableIdentityEvidenceAuthority(db,integrity_key=b"z"*32)
+
+def test_concurrent_one_time_consumption_has_single_winner(tmp_path):
+    store,db=make(tmp_path); append_chain(store,expiry=datetime.now(timezone.utc)+timedelta(hours=1)); store.close()
+    def attempt():
+        authority=DurableIdentityEvidenceAuthority(db,integrity_key=KEY)
+        try: authority.consume_authorization("A1"); outcome="CONSUMED"
+        except IdentityEvidenceError: outcome="DENIED"
+        authority.close(); return outcome
+    with ThreadPoolExecutor(max_workers=2) as pool: results=list(pool.map(lambda _:attempt(),range(2)))
+    assert sorted(results)==["CONSUMED","DENIED"]

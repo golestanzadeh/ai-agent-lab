@@ -8,6 +8,10 @@ The synthetic continuity adapter is integrated with the real Deterministic Orche
 
 Synthetic durable declaration/confirmation/authorization/audit resolution and custody-topology validation are implemented; identity party/fact paths require resolver verification during bind and restart readback. Focused verification passes (`36 passed`). E-03/C-02/C-06 remain BLOCKED pending integrated regression, independent review and explicit Owner release.
 
+## OI-0002 limited implementation package 3 — 2026-10-09
+
+Synthetic restore authorization and concurrent one-time consumption are verified. Focused security is `15 passed`; relevant integrated regression is `115 passed`. The first full suite has only a documentation-index failure for three pre-existing OI-0002 documents; product/security tests are green. Conditional gates remain BLOCKED.
+
 ## OI-0002 conditions verification gate — 2026-10-08
 
 The Owner approved F02 architecture and conditionally approved F03/F06. The authorized documentation gate specifies provider mappings, resolver trust, Kernel continuity and restore, but E-03 remains blocked by missing durable general declaration/confirmation/identity-authorization/audit-content authorities, while C-02/C-06 lack operational custody, ACL, key and recovery evidence. Status is `BLOCKED / CONDITIONAL_RELEASE_NOT_READY`; remediation-02 and OI-0003 remain blocked.

@@ -78,6 +78,11 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Identity persistence now requires a protected evidence resolver on party/fact bind and restart readback; a digest-shaped string alone is no longer sufficient. A synthetic custody contract verifies distinct service/recovery identities, non-nested Kernel/identity/backup roots, nonliteral key references and least-privilege ACL requirements without changing Windows state.
 - Focused evidence/custody/persistence verification passes (`36 passed`). E-03/C-02 remain conditionally blocked pending independent verification and Owner release; no real principal, ACL, secret, backup or taxpayer artifact changed.
 
+### OI-0002 limited implementation package 3 — 2026-10-09
+
+- Synthetic governed restore is exact, expiring and one-time, bound to deployment, backup digest, current epoch/head, target generation and recovery operator. Concurrent consumption of one identity authorization has exactly one winner. Focused security verification passes (`15 passed`); relevant integrated regression passes (`115 passed`).
+- The first complete unit run produced `1098 passed, 5 skipped, 1 failed`; the sole failure is the documentation-index guard identifying three existing OI-0002 baseline documents that were not registered. No product/security test failed. The index and final governed report are the next bounded package.
+
 ### OI-0002 Owner disposition and conditions gate — 2026-10-08
 
 - Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.

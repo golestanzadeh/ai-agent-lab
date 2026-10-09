@@ -61,3 +61,14 @@ def test_exact_case_task_manifest_binding(tmp_path):
     bad = IdentityContinuityContext(ctx.deployment_id,ctx.case_id,ctx.tax_year,"OTHER",ctx.manifest_id,ctx.run_id,ctx.operation)
     with pytest.raises(PermissionDenied): IdentityContinuityAuthority(kernel,bad).reserve(0,H0,H1)
     kernel.close()
+
+def test_governed_restore_is_exact_expiring_and_one_time(tmp_path):
+    kernel,_,_=configured(tmp_path)
+    expires=(datetime.now(timezone.utc)+timedelta(hours=1)).isoformat()
+    values=dict(authorization_id="RESTORE-1",deployment_id="DEPLOYMENT-SYNTHETIC",case_id="CASE-SYNTHETIC",tax_year=2025,backup_digest=H0,expected_epoch=3,expected_head=H1,target_generation=4,operator_id="RECOVERY-OPERATOR")
+    with pytest.raises(PermissionDenied): kernel.register_identity_restore_authorization(**values,expires_at=expires,owner_authority_reference="not-owner")
+    kernel.register_identity_restore_authorization(**values,expires_at=expires,owner_authority_reference="OWNER-SYNTHETIC-RESTORE")
+    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**{**values,"backup_digest":H1})
+    kernel.consume_identity_restore_authorization(**values)
+    with pytest.raises(PermissionDenied): kernel.consume_identity_restore_authorization(**values)
+    kernel.close()

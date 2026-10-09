@@ -1379,6 +1379,40 @@ class OrchestratorKernel:
             committed_epoch=identity_epoch, committed_head=identity_head,
         )
 
+    def register_identity_restore_authorization(
+        self, *, authorization_id: str, deployment_id: str, case_id: str, tax_year: int,
+        backup_digest: str, expected_epoch: int, expected_head: str, target_generation: int,
+        operator_id: str, expires_at: str, owner_authority_reference: str,
+    ) -> None:
+        if not owner_authority_reference.startswith("OWNER-"):
+            raise PermissionDenied("explicit synthetic Owner restore authority required")
+        if _parse_timestamp(expires_at,"expires_at") <= _utc_now() or target_generation <= expected_epoch:
+            raise ContractError("restore authorization expiry or generation is invalid")
+        with self._connection:
+            self._connection.execute(
+                "INSERT INTO identity_restore_authorizations VALUES(?,?,?,?,?,?,?,?,?,?,NULL)",
+                (authorization_id,deployment_id,case_id,tax_year,backup_digest,expected_epoch,
+                 expected_head,target_generation,operator_id,expires_at),
+            )
+            self._append_event("IDENTITY_RESTORE_AUTHORIZED","IDENTITY_RESTORE",authorization_id,
+                               "HUMAN_PROJECT_OWNER",{"deployment_id":deployment_id,"case_id":case_id,
+                               "tax_year":tax_year,"target_generation":target_generation})
+
+    def consume_identity_restore_authorization(
+        self, *, authorization_id: str, deployment_id: str, case_id: str, tax_year: int,
+        backup_digest: str, expected_epoch: int, expected_head: str, target_generation: int,
+        operator_id: str,
+    ) -> None:
+        row=self._connection.execute("SELECT * FROM identity_restore_authorizations WHERE authorization_id=?",(authorization_id,)).fetchone()
+        expected=(deployment_id,case_id,tax_year,backup_digest,expected_epoch,expected_head,target_generation,operator_id)
+        observed=None if row is None else tuple(row[k] for k in ("deployment_id","case_id","tax_year","backup_digest","expected_epoch","expected_head","target_generation","operator_id"))
+        if row is None or row["consumed_at"] is not None or _parse_timestamp(row["expires_at"],"expires_at")<=_utc_now() or observed!=expected:
+            raise PermissionDenied("restore authorization unavailable, consumed, expired or mismatched")
+        with self._connection:
+            changed=self._connection.execute("UPDATE identity_restore_authorizations SET consumed_at=? WHERE authorization_id=? AND consumed_at IS NULL",(_utc_now().isoformat(),authorization_id)).rowcount
+            if changed!=1: raise PermissionDenied("restore authorization already consumed")
+            self._append_event("IDENTITY_RESTORE_CONSUMED","IDENTITY_RESTORE",authorization_id,operator_id,{"backup_digest":backup_digest,"target_generation":target_generation})
+
     def consume_budget(
         self,
         manifest_id: str,
