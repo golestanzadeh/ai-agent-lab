@@ -1,5 +1,11 @@
 # Project Checkpoint
 
+
+## Owner-approved UI25 continuation — 2026-10-09
+
+Owner approved UI-led incremental product completion and 2025 end-to-end testing, with real UI tabs connected to the existing Kernel, agents and persistence. Planned packages UI25-00..UI25-12 and acceptance contract: docs/ui25-execution-and-acceptance-plan.md and ROADMAP.md Track 3A. Limited internal development/testing and narrow Gemini API authority: docs/ui25-owner-internal-development-testing-authorization-20261009.md. **Planning only: no UI25 implementation, test PASS, Human Gate release or production activation is implied.** Next product task: UI25-00 inspect/run the existing UI and identify actual functional/synthetic gaps. Existing OI-0002 and other active gates remain unchanged; no ELSTER transmission without the two independent Owner approvals.
+
+
 ## Purpose
 
 This file is the mandatory, session-independent entry point for AI-Tax-Agent. It exists so a change of ChatGPT conversation, Codex session, or Agent process never requires the human to reconstruct project history.
