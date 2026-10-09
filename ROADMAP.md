@@ -16,6 +16,7 @@ Last reconciled: **2026-10-08**
 
 ## Current position
 
+- OI-0002 limited synthetic Kernel continuity, durable evidence and custody verification is implemented and awaits separate independent review. E-03/C-02/C-06 remain conditionally blocked; remediation-02 and OI-0003 are not released. Evidence: `docs/oi-0002-limited-integration-report-20261009.md`.
 - OI-0002 conditions verification is `BLOCKED / CONDITIONAL_RELEASE_NOT_READY`: E-03, C-02 and C-06 need governed durable evidence authorities and operational separate-custody evidence. Remediation-02 is not authorized. Evidence: `docs/oi-0002-conditions-verification-gate-20261008.md`.
 - OI-0002 is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`. Before remediation-02, the Owner must decide dedicated identity permissions, the protected evidence resolver authority and Kernel-owned monotonic anti-rollback continuity. F05/F07 are bounded after those dependencies; OI-0003 remains blocked. Evidence: `docs/oi-0002-architecture-decision-gate-20261008.md`.
 - OI-0002 second independent review of `ad263284` is `FAIL`: F01/F04 pass, while F02/F03/F05/F06/F07 require bounded second remediation and another independent review. OI-0002 remains OPEN and OI-0003 remains blocked.

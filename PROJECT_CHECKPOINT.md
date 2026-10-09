@@ -83,6 +83,11 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Synthetic governed restore is exact, expiring and one-time, bound to deployment, backup digest, current epoch/head, target generation and recovery operator. Concurrent consumption of one identity authorization has exactly one winner. Focused security verification passes (`15 passed`); relevant integrated regression passes (`115 passed`).
 - The first complete unit run produced `1098 passed, 5 skipped, 1 failed`; the sole failure is the documentation-index guard identifying three existing OI-0002 baseline documents that were not registered. No product/security test failed. The index and final governed report are the next bounded package.
 
+### OI-0002 limited integration REVIEW_READY — 2026-10-09
+
+- The documentation index is reconciled and passes (`15 passed`). The corrected complete unit regression passes (`1099 passed, 5 skipped`). Package evidence is published in `docs/oi-0002-limited-integration-report-20261009.md`.
+- Status is `REVIEW_READY / NOT RELEASED`, not acceptance: E-03/C-02/C-06 remain BLOCKED pending a separate independent review and explicit Owner release. Real service accounts, ACLs, keys, backups, taxpayer data, production, remediation-02 and OI-0003 remain untouched/blocked.
+
 ### OI-0002 Owner disposition and conditions gate — 2026-10-08
 
 - Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.

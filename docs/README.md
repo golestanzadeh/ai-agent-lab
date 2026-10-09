@@ -142,6 +142,10 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-architecture-decision-gate-20261008.md` - F02/F03/F06 Owner decision requests, bounded F05/F07 requirements, and remediation-02 execution/acceptance contract.
 - `oi-0002-owner-architecture-decision-20261008.md` - durable Owner disposition: F02 approved, F03/F06 conditional, and exact conditions/prohibitions.
 - `oi-0002-conditions-verification-gate-20261008.md` - provider mapping, resolver/continuity/restore specifications, E/C condition assessment and release recommendation.
+- `oi-0002-limited-implementation-authorization-20261008.md` - Owner-authorized synthetic implementation scope and unchanged conditional-release boundary.
+- `oi-0002-missing-authority-custody-preparation-20261008.md` - missing-authority analysis and redacted custody evidence preparation.
+- `oi-0002-kernel-continuity-and-e03-contract-v0-20261008.md` - synthetic Kernel continuity and durable evidence prototype contract.
+- `oi-0002-limited-integration-report-20261009.md` - actual Kernel integration, durable evidence/custody verification, regression evidence and blocked-gate handoff.
 - `oi-0002-remediation-01-report-20261008.md` - F01-F07 remediation mapping, T01-T12 implementation evidence, regression record and independent-review handoff.
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
 
