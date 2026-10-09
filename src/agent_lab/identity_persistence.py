@@ -76,6 +76,7 @@ class IdentityPersistence:
     def __init__(
         self, path: str | Path, *, cases: CaseRegistry,
         authorize: Callable[[str, str, str, str], bool] | None = None,
+        evidence_resolver: Callable[[str, str, str, int, str, date, date], None],
         integrity_key: bytes,
         fault_injector: Callable[[str], None] | None = None,
     ) -> None:
@@ -88,6 +89,9 @@ class IdentityPersistence:
         self._anchor_path = self._path.with_suffix(self._path.suffix + ".audit-anchor")
         self._cases = cases
         self._authorize = authorize
+        if evidence_resolver is None:
+            raise ValueError("a protected evidence resolver is required")
+        self._resolve_evidence = evidence_resolver
         self._key = integrity_key
         self._fault = fault_injector
         self._db = sqlite3.connect(str(self._path))
@@ -337,6 +341,11 @@ class IdentityPersistence:
         if binding.subject_type not in ("PERSON","ENTITY") or binding.role not in PARTY_ROLES: self._failure("VALIDATION_DENIED",binding.case_id,"unsupported subject type or role",permission=False)
         if not binding.binding_id or not SHA_REFERENCE.fullmatch(binding.evidence_ref) or not SHA_REFERENCE.fullmatch(binding.authorization_ref): self._failure("VALIDATION_DENIED",binding.case_id,"canonical binding, evidence and authorization are required",permission=False)
         if binding.valid_to_exclusive is not None and binding.valid_from >= binding.valid_to_exclusive: self._failure("VALIDATION_DENIED",binding.case_id,"invalid effective interval",permission=False)
+        evidence_end=binding.valid_to_exclusive or date(self._cases.get(binding.case_id).tax_period.year+1,1,1)
+        try:
+            self._resolve_evidence("ROLE_EVIDENCE",binding.evidence_ref,binding.case_id,self._cases.get(binding.case_id).tax_period.year,binding.subject_id,binding.valid_from,evidence_end)
+            self._resolve_evidence("IDENTITY_AUTHORIZATION",binding.authorization_ref,binding.case_id,self._cases.get(binding.case_id).tax_period.year,binding.subject_id,binding.valid_from,evidence_end)
+        except Exception: self._failure("EVIDENCE_DENIED",binding.case_id,"role evidence is unavailable or mismatched",permission=True)
         subject=self._load_identity(binding.subject_id,require_active=True)
         if subject is None or subject.record_type.value != binding.subject_type: self._failure("VALIDATION_DENIED",binding.case_id,"unknown or mismatched subject",permission=False)
         if binding.role=="PRIMARY_TAXPAYER" and (case.owner_id!=binding.subject_id or case.owner_type.value!=binding.subject_type): self._failure("SECURITY_DENIED",binding.case_id,"primary taxpayer must be exact registered case owner",permission=True)
@@ -362,6 +371,11 @@ class IdentityPersistence:
             if row["schema_version"]!=2 or not hmac.compare_digest(self._mac(payload),row["digest"]): self._failure("INTEGRITY_FAILURE",case_id,"party binding integrity failure",permission=False)
             self._load_identity(row["subject_id"],require_active=True)
             start=date.fromisoformat(row["valid_from"]); end=date.fromisoformat(row["valid_to_exclusive"]) if row["valid_to_exclusive"] else None
+            evidence_end=end or date(self._cases.get(case_id).tax_period.year+1,1,1)
+            try:
+                self._resolve_evidence("ROLE_EVIDENCE",row["evidence_ref"],case_id,self._cases.get(case_id).tax_period.year,row["subject_id"],start,evidence_end)
+                self._resolve_evidence("IDENTITY_AUTHORIZATION",row["authorization_ref"],case_id,self._cases.get(case_id).tax_period.year,row["subject_id"],start,evidence_end)
+            except Exception: raise PermissionError("role evidence is unavailable or mismatched")
             if start<=on_date and (end is None or on_date<end): result.append(CasePartyRole(row["binding_id"],case_id,row["subject_type"],row["subject_id"],row["role"],start,end,row["evidence_ref"],row["authorization_ref"]))
         return tuple(result)
 
@@ -397,6 +411,9 @@ class IdentityPersistence:
         if authorization_ref!=fact.authorization_reference: self._failure("SECURITY_DENIED",case_id,"matching authorization required",permission=True)
         year_start=date(tax_year,1,1); year_end=date(tax_year+1,1,1)
         if not (year_start<=valid_from<valid_to_exclusive<=year_end): self._failure("VALIDATION_DENIED",case_id,"fact validity must be an explicit interval within the tax year",permission=False)
+        for kind,ref in (("OWNER_DECLARATION",declaration_artifact_ref),("OWNER_CONFIRMATION",confirmation_ref),("IDENTITY_AUTHORIZATION",authorization_ref),*(("IDENTITY_AUDIT",r) for r in fact.audit_references)):
+            try: self._resolve_evidence(kind,ref,case_id,tax_year,subject_id,valid_from,valid_to_exclusive)
+            except Exception: self._failure("EVIDENCE_DENIED",case_id,"fact evidence is unavailable or mismatched",permission=True)
         roles=[p for p in self.list_parties(case_id,on_date=valid_from,authorization_ref=authorization_ref) if p.subject_id==subject_id]
         if not any(p.valid_from<=valid_from and (p.valid_to_exclusive is None or p.valid_to_exclusive>=valid_to_exclusive) for p in roles): self._failure("SECURITY_DENIED",case_id,"subject role does not cover fact validity",permission=True)
         record=self._load_identity(subject_id,require_active=True); subject_type=record.record_type.value
@@ -424,6 +441,9 @@ class IdentityPersistence:
             fact=self._restore_fact(fact_payload)
             if row["schema_version"]!=2 or row["authorization_ref"]!=authorization_ref or fact.artifact_identity.reference!=row["fact_artifact_ref"] or fact.confirmation_state is not FactConfirmationState.CONFIRMED or not hmac.compare_digest(self._mac(payload),row["digest"]): self._failure("INTEGRITY_FAILURE",case_id,"fact lineage integrity failure",permission=False)
             fact.assert_consumable(case_id=case_id,tax_year=tax_year)
+            for kind,ref in (("OWNER_DECLARATION",env.declaration_artifact_ref),("OWNER_CONFIRMATION",env.confirmation_ref),("IDENTITY_AUTHORIZATION",env.authorization_ref),*(("IDENTITY_AUDIT",r) for r in env.audit_lineage)):
+                try: self._resolve_evidence(kind,ref,case_id,tax_year,subject_id,env.valid_from,env.valid_to_exclusive)
+                except Exception: raise PermissionError("fact evidence is unavailable or mismatched")
             roles=[p for p in self.list_parties(case_id,on_date=env.valid_from,authorization_ref=authorization_ref) if p.subject_id==subject_id]
             if not any(p.valid_from<=env.valid_from and (p.valid_to_exclusive is None or p.valid_to_exclusive>=env.valid_to_exclusive) for p in roles): raise PermissionError("subject role no longer covers fact validity")
             result.append(env)

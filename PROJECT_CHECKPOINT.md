@@ -72,6 +72,12 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - Under Owner-authorized limited synthetic development, `IdentityContinuityAuthority` now delegates to the actual persistent Deterministic Orchestrator Kernel rather than a parallel SQLite authority. Kernel state binds deployment, case, tax year, task, manifest, run and operation; reservation, commit, restart verification, deterministic pending reconciliation and older-epoch rejection are covered.
 - Focused continuity/Kernel verification passes (`29 passed`). This is synthetic implementation evidence only: C-06 is not automatically PASS or released, no real custody/restore/production action occurred, and remediation-02/OI-0003 remain blocked.
 
+### OI-0002 limited implementation package 2 — 2026-10-09
+
+- The durable synthetic evidence authority now binds declaration → confirmation → one-time identity authorization to exact case, year, subject, semantic key, actor, run, task, manifest, validity, provider object and document revision. It verifies protected bytes through an injected case-scoped loader, supports expiry/revocation/consumption, and HMAC-protects rows plus an immutable audit chain.
+- Identity persistence now requires a protected evidence resolver on party/fact bind and restart readback; a digest-shaped string alone is no longer sufficient. A synthetic custody contract verifies distinct service/recovery identities, non-nested Kernel/identity/backup roots, nonliteral key references and least-privilege ACL requirements without changing Windows state.
+- Focused evidence/custody/persistence verification passes (`36 passed`). E-03/C-02 remain conditionally blocked pending independent verification and Owner release; no real principal, ACL, secret, backup or taxpayer artifact changed.
+
 ### OI-0002 Owner disposition and conditions gate — 2026-10-08
 
 - Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.

@@ -42,6 +42,10 @@ def registry() -> CaseRegistry:
 def authorizer(action, case_id, root, token):
     return token == (A1 if case_id == "C1" else B1) and root == ("ROOT1" if case_id == "C1" else "ROOT2")
 
+def evidence_resolver(kind, reference, case_id, tax_year, subject_id, valid_from, valid_to):
+    if reference not in {A1,B1,E1,E2,D1,C1,AUDIT} or case_id not in {"C1","C2"} or tax_year!=2025 or not subject_id:
+        raise ValueError("unresolved evidence")
+
 
 def person(identity="P1", status=RegistryStatus.ACTIVE):
     return PersonRecord(identity, status, None, NOW, NOW, 1)
@@ -49,7 +53,7 @@ def person(identity="P1", status=RegistryStatus.ACTIVE):
 
 def open_store(tmp_path, *, fault=None, cases=None):
     cases = cases or registry()
-    store = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer,
+    store = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, evidence_resolver=evidence_resolver,
                                 integrity_key=KEY, fault_injector=fault)
     return cases, store
 
@@ -85,7 +89,7 @@ def test_t01_two_identities_idempotent_restart(tmp_path):
     store.bind_party(role())
     store.bind_party(role("P2", binding="R2", role_code="SPOUSE_OR_PARTNER", evidence=E2))
     store.close()
-    reopened = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, integrity_key=KEY)
+    reopened = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, evidence_resolver=evidence_resolver, integrity_key=KEY)
     assert reopened.read_case_identity(case_id="C1", subject_id="P1", on_date=date(2025, 2, 1), authorization_ref=A1).person_id == "P1"
     assert reopened.read_case_identity(case_id="C1", subject_id="P2", on_date=date(2025, 2, 1), authorization_ref=A1).person_id == "P2"
     reopened.close()
@@ -133,7 +137,7 @@ def test_t06_complete_fact_envelope_restart_and_original_digest(tmp_path):
     item = fact(); original = item.artifact_identity.reference; envelope = bind_fact(store, item)
     assert envelope.fact_artifact_ref == original and envelope.semantic_key == item.semantic_key
     store.close()
-    reopened = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, integrity_key=KEY)
+    reopened = IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, evidence_resolver=evidence_resolver, integrity_key=KEY)
     assert reopened.read_facts(case_id="C1", tax_year=2025, subject_id="P1", authorization_ref=A1) == (envelope,)
     assert item.artifact_identity.reference == original
     reopened.close()
@@ -158,7 +162,7 @@ def test_t08_idempotent_fact_and_crash_after_commit_fails_closed(tmp_path):
     with pytest.raises(RuntimeError): bind_fact(store)
     store._db.close()
     with pytest.raises(ValueError, match="anchor continuity"):
-        IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, integrity_key=KEY)
+        IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, evidence_resolver=evidence_resolver, integrity_key=KEY)
 
 
 @pytest.mark.parametrize("target", ["IDENTITY_REGISTER", "CASE_PARTY_BIND", "SUBJECT_FACT_BIND"])
@@ -195,15 +199,15 @@ def test_t10_tamper_detection(tmp_path, tamper):
     elif tamper == "audit_rewrite": store._db.execute("UPDATE identity_audit SET event_payload='{}' WHERE event_id=1")
     else: store._db.execute("UPDATE identity_record SET payload='{}',digest=? WHERE identity_id='P1'", ("0"*64,))
     store._db.commit(); store._db.close()
-    with pytest.raises(ValueError): IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, integrity_key=KEY)
+    with pytest.raises(ValueError): IdentityPersistence(tmp_path / "identity.sqlite", cases=cases, authorize=authorizer, evidence_resolver=evidence_resolver, integrity_key=KEY)
 
 
 def test_t10_backup_restore_and_key_required(tmp_path):
     cases, store = open_store(tmp_path); register(store); store.bind_party(role()); target=store.backup_to(tmp_path / "backup.sqlite"); store.close()
-    restored=IdentityPersistence(target,cases=cases,authorize=authorizer,integrity_key=KEY)
+    restored=IdentityPersistence(target,cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
     assert restored.read_case_identity(case_id="C1",subject_id="P1",on_date=date(2025,1,1),authorization_ref=A1).person_id=="P1"
     restored.close()
-    with pytest.raises(ValueError): IdentityPersistence(tmp_path / "other.sqlite",cases=cases,integrity_key=b"short")
+    with pytest.raises(ValueError): IdentityPersistence(tmp_path / "other.sqlite",cases=cases,evidence_resolver=evidence_resolver,integrity_key=b"short")
 
 
 def test_t12_no_live_case001_bootstrap_or_private_data():
@@ -218,23 +222,23 @@ def test_raw_identity_bypass_api_removed(tmp_path):
 
 
 def test_lifecycle_operations_default_deny_and_audit_validation(tmp_path):
-    cases=registry(); store=IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,integrity_key=KEY)
+    cases=registry(); store=IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,evidence_resolver=evidence_resolver,integrity_key=KEY)
     with pytest.raises(PermissionError): store.register_identity(case_id="C1",record=person(),authorization_ref=A1)
     store.close()
 
 
 def test_synced_deployment_path_rejected(tmp_path):
     path=tmp_path / "OneDrive" / "db.sqlite"; path.parent.mkdir()
-    with pytest.raises(ValueError,match="synced"): IdentityPersistence(path,cases=registry(),integrity_key=KEY)
+    with pytest.raises(ValueError,match="synced"): IdentityPersistence(path,cases=registry(),evidence_resolver=evidence_resolver,integrity_key=KEY)
 
 
 def test_unversioned_and_unsupported_schema_rejected(tmp_path):
     path=tmp_path/"legacy.sqlite"
     with sqlite3.connect(path) as db: db.execute("CREATE TABLE unrelated(id INTEGER)")
-    with pytest.raises(ValueError,match="unversioned"): IdentityPersistence(path,cases=registry(),integrity_key=KEY)
+    with pytest.raises(ValueError,match="unversioned"): IdentityPersistence(path,cases=registry(),evidence_resolver=evidence_resolver,integrity_key=KEY)
     path2=tmp_path/"future.sqlite"
     with sqlite3.connect(path2) as db: db.execute("PRAGMA user_version=99")
-    with pytest.raises(ValueError,match="unsupported"): IdentityPersistence(path2,cases=registry(),integrity_key=KEY)
+    with pytest.raises(ValueError,match="unsupported"): IdentityPersistence(path2,cases=registry(),evidence_resolver=evidence_resolver,integrity_key=KEY)
 
 
 def test_reviewed_empty_v1_migration_to_v2(tmp_path):
@@ -247,7 +251,7 @@ def test_reviewed_empty_v1_migration_to_v2(tmp_path):
         CREATE TABLE subject_fact_binding(request_id TEXT PRIMARY KEY,case_id TEXT,tax_year INTEGER,subject_id TEXT,artifact_ref TEXT,authorization_ref TEXT,digest TEXT);
         PRAGMA user_version=1;
         """)
-    store=IdentityPersistence(path,cases=registry(),authorize=authorizer,integrity_key=KEY)
+    store=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
     assert store._db.execute("PRAGMA user_version").fetchone()[0] == 2
     store.close()
 

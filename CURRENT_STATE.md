@@ -4,6 +4,10 @@
 
 The synthetic continuity adapter is integrated with the real Deterministic Orchestrator Kernel and focused verification passes (`29 passed`). C-06 remains conditionally blocked pending the complete synthetic package, independent verification and explicit Owner release; no operational authority changed.
 
+## OI-0002 limited implementation package 2 — 2026-10-09
+
+Synthetic durable declaration/confirmation/authorization/audit resolution and custody-topology validation are implemented; identity party/fact paths require resolver verification during bind and restart readback. Focused verification passes (`36 passed`). E-03/C-02/C-06 remain BLOCKED pending integrated regression, independent review and explicit Owner release.
+
 ## OI-0002 conditions verification gate — 2026-10-08
 
 The Owner approved F02 architecture and conditionally approved F03/F06. The authorized documentation gate specifies provider mappings, resolver trust, Kernel continuity and restore, but E-03 remains blocked by missing durable general declaration/confirmation/identity-authorization/audit-content authorities, while C-02/C-06 lack operational custody, ACL, key and recovery evidence. Status is `BLOCKED / CONDITIONAL_RELEASE_NOT_READY`; remediation-02 and OI-0003 remain blocked.
