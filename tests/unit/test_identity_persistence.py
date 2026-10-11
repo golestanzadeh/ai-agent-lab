@@ -1,5 +1,7 @@
 from dataclasses import replace
 from datetime import date, datetime, timezone
+import hashlib
+import hmac
 import json
 from pathlib import Path
 import sqlite3
@@ -434,3 +436,37 @@ def test_f07_v1_with_unmigratable_fact_is_preserved_and_blocked(tmp_path):
     with sqlite3.connect(path) as db:
         assert db.execute("PRAGMA user_version").fetchone()[0] == 1
         assert db.execute("SELECT count(*) FROM subject_fact_binding").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("invalid",["digest","version","head"])
+def test_f07_invalid_legacy_receipt_is_rejected_before_upgrade(tmp_path,invalid):
+    from agent_lab.identity_persistence import _canonical
+    cases,store=open_store(tmp_path); store.close(); path=tmp_path/"identity.sqlite"
+    payload={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":0,"head_mac":"0"*64}
+    if invalid == "version": payload["from_version"]=999
+    elif invalid == "head": payload["head_mac"]="not-a-head"
+    digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
+    if invalid == "digest": digest="f"*64
+    with sqlite3.connect(path) as db:
+        db.execute("DROP TABLE schema_migration_receipt")
+        db.execute("CREATE TABLE schema_migration_receipt(migration_id TEXT PRIMARY KEY,from_version INTEGER,to_version INTEGER,event_count INTEGER,head_mac TEXT,digest TEXT)")
+        db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*payload.values(),digest))
+    with pytest.raises(ValueError,match="legacy schema migration receipt integrity"):
+        IdentityPersistence(path,cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    with sqlite3.connect(path) as db:
+        assert "status" not in {row[1] for row in db.execute("PRAGMA table_info(schema_migration_receipt)")}
+
+
+def test_f07_valid_legacy_receipt_upgrades_as_consumed_when_anchor_exists(tmp_path):
+    from agent_lab.identity_persistence import _canonical
+    cases,store=open_store(tmp_path); store.close(); path=tmp_path/"identity.sqlite"
+    payload={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":0,"head_mac":"0"*64}
+    digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
+    with sqlite3.connect(path) as db:
+        db.execute("DROP TABLE schema_migration_receipt")
+        db.execute("CREATE TABLE schema_migration_receipt(migration_id TEXT PRIMARY KEY,from_version INTEGER,to_version INTEGER,event_count INTEGER,head_mac TEXT,digest TEXT)")
+        db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*payload.values(),digest))
+    reopened=IdentityPersistence(path,cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    receipt=reopened._db.execute("SELECT * FROM schema_migration_receipt").fetchone()
+    assert receipt["status"] == "CONSUMED"
+    reopened.close()

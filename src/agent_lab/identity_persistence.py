@@ -133,10 +133,21 @@ class IdentityPersistence:
             """)
             receipt_columns={row["name"] for row in self._db.execute("PRAGMA table_info(schema_migration_receipt)")}
             if "status" not in receipt_columns:
+                legacy_receipts=self._db.execute("SELECT * FROM schema_migration_receipt").fetchall()
+                if len(legacy_receipts) > 1:
+                    raise ValueError("invalid legacy schema migration receipts")
+                for receipt in legacy_receipts:
+                    legacy={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac")}
+                    if (legacy["migration_id"] != "IDENTITY_SCHEMA_V1_TO_V2" or legacy["from_version"] != 1 or
+                            legacy["to_version"] != 2 or not isinstance(legacy["event_count"],int) or legacy["event_count"] < 0 or
+                            re.fullmatch(r"[0-9a-f]{64}",legacy["head_mac"]) is None or
+                            not hmac.compare_digest(self._mac(legacy),receipt["digest"])):
+                        raise ValueError("legacy schema migration receipt integrity failure")
                 self._db.execute("ALTER TABLE schema_migration_receipt ADD COLUMN status TEXT NOT NULL DEFAULT 'CONSUMED'")
-                for receipt in self._db.execute("SELECT * FROM schema_migration_receipt").fetchall():
-                    payload={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac","status")}
-                    self._db.execute("UPDATE schema_migration_receipt SET digest=? WHERE migration_id=?",(self._mac(payload),receipt["migration_id"]))
+                for legacy in legacy_receipts:
+                    status="PENDING" if not self._anchor_path.exists() else "CONSUMED"
+                    payload={key:legacy[key] for key in ("migration_id","from_version","to_version","event_count","head_mac")}|{"status":status}
+                    self._db.execute("UPDATE schema_migration_receipt SET status=?,digest=? WHERE migration_id=?",(status,self._mac(payload),legacy["migration_id"]))
         self._verify_audit_continuity(create_empty=created_empty)
         self._verify_data_integrity()
 
