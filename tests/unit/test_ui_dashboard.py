@@ -57,3 +57,19 @@ def test_rejects_synthetic_identity_and_unknown_status():
         DashboardCase("SYNTH-CASE-001", 2024, "ACTIVE")
     with pytest.raises(ValueError):
         DashboardCase("CASE-A", 2024, "APPROVED_FOR_SUBMISSION")
+
+
+def test_all_tabs_are_navigable_and_truthful():
+    client = TestClient(create_dashboard_app())
+    names = {"overview": "نمای کلی", "cases": "پرونده‌ها", "family": "خانواده", "documents": "مدارک", "analysis": "تحلیل", "issues": "پرسش‌ها", "result": "نتیجه", "declaration": "اظهارنامه", "approval": "تأیید و ارسال", "activity": "فعالیت‌ها"}
+    for tab, label in names.items():
+        response = client.get("/", params={"tab": tab})
+        assert response.status_code == 200
+        assert label in response.text
+        assert "SYNTH-CASE" not in response.text
+        assert response.headers["cache-control"] == "no-store"
+    approval = client.get("/?tab=approval").text
+    assert "۱. تأیید صحت محتوا" in approval
+    assert "۲. مجوز مقصد و ارسال" in approval
+    assert 'disabled' in approval
+    assert client.get("/?tab=unknown").status_code == 404
