@@ -30,11 +30,12 @@ def test_key_is_random_binary_and_never_printed_or_committed_as_literal():
 def test_acl_verifier_requires_protected_exact_allowlists_and_separate_roots():
     assert "AreAccessRulesProtected" in VERIFY
     assert "OI0002_ACL_UNAUTHORIZED" in VERIFY
-    assert "OI0002_ACL_RIGHTS_MISMATCH" in VERIFY
     assert "OI0002_OWNER_MISMATCH" in VERIFY
+    assert "OI0002_ACL_RULE_MISMATCH" in VERIFY
     assert "OI0002_MANIFEST_PRINCIPAL_MISMATCH" in VERIFY
     assert "OI0002_PATH_OUTSIDE_ROOT" in VERIFY
     assert "OI0002_REPARSE_POINT_FORBIDDEN" in VERIFY
+    assert "OI0002_NONCANONICAL_CUSTODY_PATH" in VERIFY
     assert "OI0002_CUSTODY_ROOT_COLLISION" in VERIFY
     assert "OI0002_WINDOWS_CUSTODY_VERIFIED" in VERIFY
 
