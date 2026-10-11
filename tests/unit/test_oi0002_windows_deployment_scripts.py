@@ -32,6 +32,9 @@ def test_key_is_random_binary_and_never_printed_or_committed_as_literal():
     assert "RandomNumberGenerator]::Create" in PROVISION
     assert "$rng.GetBytes($key)" in PROVISION
     assert "$rng.Dispose()" in PROVISION
+    assert "[IO.File]::WriteAllText" in PROVISION
+    assert "[Text.UTF8Encoding]::new($false)" in PROVISION
+    assert "-Encoding utf8NoBOM" not in PROVISION
     assert "WriteAllBytes" in PROVISION
     assert "identity-hmac.key" in PROVISION
     assert "Write-Output $keyPath" not in PROVISION

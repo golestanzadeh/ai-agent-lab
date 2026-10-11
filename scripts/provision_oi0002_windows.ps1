@@ -58,7 +58,8 @@ if ($PSCmdlet.ShouldProcess($root,'Provision protected OI-0002 deployment')) {
     Set-FileAcl $keyPath $keySid @($keySid,$recoverySid,$systemSid) @($identitySid)
     $manifest=[ordered]@{schema_version=1;deployment_id='OI0002-LOCAL-WINDOWS-V1';root=$root;kernel_principal_sid=$kernelSid.Value;identity_principal_sid=$identitySid.Value;key_custodian_principal_sid=$keySid.Value;recovery_principal_sid=$recoverySid.Value;paths=$paths;key_reference='file:secrets/identity-hmac.key'}
     $manifestPath=Join-Path $paths.control 'deployment.json'
-    $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $manifestPath -Encoding utf8NoBOM
+    $manifestJson = $manifest | ConvertTo-Json -Depth 4
+    [IO.File]::WriteAllText($manifestPath, $manifestJson, [Text.UTF8Encoding]::new($false))
     Set-FileAcl $manifestPath $recoverySid @($recoverySid,$systemSid)
     # Apply child ACLs before the root ACL, which intentionally removes the provisioning token.
     Set-DirectoryAcl $paths.control $recoverySid @($recoverySid,$systemSid)
