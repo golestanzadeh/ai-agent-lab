@@ -70,6 +70,8 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None) -> FastAPI:
                     raise HTTPException(status_code=404, detail="Case not found")
                 selected = next((item for item in cases if item.case_id == case_id), None) if case_id else (cases[0] if cases else None)
             except DashboardUnavailable:
+                if case_id is not None:
+                    raise HTTPException(status_code=503, detail="Verified case source unavailable")
                 state = "unavailable"
                 cases = ()
                 selected = None
