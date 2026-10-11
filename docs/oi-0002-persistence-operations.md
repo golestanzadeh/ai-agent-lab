@@ -17,7 +17,9 @@ Never copy only the database or only the anchor. A missing, stale or mismatched 
 
 ## Migration and recovery policy
 
-Schema v2 is the only writable schema. Opening an empty v1 store performs the reviewed transactional v1-to-v2 migration. A v1 store containing subject-fact bindings is rejected because v1 did not retain enough lineage to construct the frozen envelope safely; migration then requires a separately reviewed evidence-backed procedure and Human Gate. Unknown, unversioned or malformed schemas fail closed.
+Schema v2 is the only writable schema. The reviewed v1-to-v2 migration is one `BEGIN IMMEDIATE` transaction: legacy tables are renamed, verified content is copied, v2 indexes are created and legacy tables are dropped before the single commit. Any injected failure before commit rolls back to intact v1; a failure after commit must reopen as fully verified v2 with its matching audit anchor. A v1 store containing subject-fact bindings is rejected without mutation because v1 did not retain enough lineage to construct the frozen envelope safely; migration then requires a separately reviewed evidence-backed procedure and Human Gate. Unknown, unversioned or malformed schemas fail closed.
+
+Case-party role corrections are immutable revisions. Only an authorized, evidence-resolved correction may close an open half-open interval. Preserve both the original and corrected revision, verify both on reopen, and apply the existing role-specific overlap/cardinality rules to every successor binding.
 
 Writes and their audit events share one transaction. Fault-injection coverage verifies rollback before commit and fail-closed reopen after an injected post-commit interruption. After any process, host or storage failure, reopen the store and require the complete integrity verification before further use. Do not repair digests, anchors or rows in place.
 

@@ -261,12 +261,13 @@ def test_kernel_adapter_expiry_denies_read_and_write(tmp_path, monkeypatch):
     import agent_lab.orchestrator_kernel as kernel_module
     from agent_lab.identity_permission_adapter import kernel_case_authorizer
     from agent_lab.orchestrator_kernel import OrchestratorKernel
-    from test_orchestrator_kernel import CONTRACT_ROOT, manifest, task
+    from test_orchestrator_kernel import manifest, task
+    contract_root = Path(__file__).resolve().parents[2] / "contracts" / "orchestrator" / "v2"
     cases = registry()
     scope = {"case_id":"C1","tax_year":2025,"run_id":"RUN1"}
-    payload = task(role_id="TAX_LAW_AGENT", permissions=["read_derived_case_artifact","write_derived_case_artifact"], case_context=scope)
+    payload = task(role_id="IDENTITY_ADMINISTRATION_AGENT", permissions=["identity_read","case_party_bind"], case_context=scope)
     item = manifest(payload, tiers=["A3","A4"])
-    with OrchestratorKernel(tmp_path/"kernel.sqlite", CONTRACT_ROOT) as kernel:
+    with OrchestratorKernel(tmp_path/"kernel.sqlite", contract_root) as kernel:
         kernel.register_task(payload, gate_triggers=()); kernel.register_manifest(item); kernel.validate_manifest(item["manifest_id"])
         kernel.set_kill_switch("RUNNING", actor_id="HUMAN_PROJECT_OWNER", authority_reference="synthetic")
         kernel.activate_manifest(item["manifest_id"])
@@ -280,13 +281,127 @@ def test_kernel_adapter_expiry_denies_read_and_write(tmp_path, monkeypatch):
 def test_kernel_adapter_kill_switch_revocation_denies(tmp_path):
     from agent_lab.identity_permission_adapter import kernel_case_authorizer
     from agent_lab.orchestrator_kernel import OrchestratorKernel
-    from test_orchestrator_kernel import CONTRACT_ROOT, manifest, task
+    from test_orchestrator_kernel import manifest, task
+    contract_root = Path(__file__).resolve().parents[2] / "contracts" / "orchestrator" / "v2"
     cases=registry(); scope={"case_id":"C1","tax_year":2025,"run_id":"RUN1"}
-    payload=task(role_id="TAX_LAW_AGENT",permissions=["read_derived_case_artifact"],case_context=scope)
+    payload=task(role_id="IDENTITY_ADMINISTRATION_AGENT",permissions=["identity_read"],case_context=scope)
     item=manifest(payload,tiers=["A3"])
-    with OrchestratorKernel(tmp_path/"kernel.sqlite",CONTRACT_ROOT) as kernel:
+    with OrchestratorKernel(tmp_path/"kernel.sqlite",contract_root) as kernel:
         kernel.register_task(payload,gate_triggers=()); kernel.register_manifest(item); kernel.validate_manifest(item["manifest_id"])
         kernel.set_kill_switch("RUNNING",actor_id="HUMAN_PROJECT_OWNER",authority_reference="synthetic"); kernel.activate_manifest(item["manifest_id"])
         check=kernel_case_authorizer(kernel=kernel,cases=cases,manifest_id=item["manifest_id"],run_id="RUN1")
         kernel.set_kill_switch("HALTED",actor_id="HUMAN_PROJECT_OWNER",authority_reference="stop")
         assert not check("read_party","C1","ROOT1",A1)
+
+
+def test_f02_generic_tax_role_cannot_administer_identity(tmp_path):
+    from agent_lab.identity_permission_adapter import kernel_case_authorizer
+    from agent_lab.orchestrator_kernel import OrchestratorKernel
+    from test_orchestrator_kernel import manifest, task
+    contract_root = Path(__file__).resolve().parents[2] / "contracts" / "orchestrator" / "v2"
+    cases=registry(); scope={"case_id":"C1","tax_year":2025,"run_id":"RUN1"}
+    payload=task(role_id="TAX_LAW_AGENT",permissions=["read_derived_case_artifact"],case_context=scope)
+    item=manifest(payload,tiers=["A3"])
+    with OrchestratorKernel(tmp_path/"kernel.sqlite",contract_root) as kernel:
+        kernel.register_task(payload,gate_triggers=()); kernel.register_manifest(item); kernel.validate_manifest(item["manifest_id"])
+        kernel.set_kill_switch("RUNNING",actor_id="HUMAN_PROJECT_OWNER",authority_reference="synthetic"); kernel.activate_manifest(item["manifest_id"])
+        check=kernel_case_authorizer(kernel=kernel,cases=cases,manifest_id=item["manifest_id"],run_id="RUN1")
+        assert not check("read_party","C1","ROOT1",A1)
+        assert not check("register_identity","C1","ROOT1",A1)
+
+
+def test_f05_evidence_backed_role_correction_preserves_immutable_history(tmp_path):
+    _,store=open_store(tmp_path); register(store); store.bind_party(role())
+    corrected=store.correct_party_role(
+        case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),
+        correction_evidence_ref=E2,authorization_ref=A1,
+    )
+    assert corrected.valid_to_exclusive == date(2025,7,1)
+    history=store._db.execute("SELECT revision,payload FROM case_party_role_history WHERE binding_id='R1' ORDER BY revision").fetchall()
+    assert [row["revision"] for row in history] == [1,2]
+    assert json.loads(history[0]["payload"])["valid_to_exclusive"] is None
+    assert json.loads(history[1]["payload"])["valid_to_exclusive"] == "2025-07-01"
+    assert store.list_parties("C1",on_date=date(2025,6,30),authorization_ref=A1)
+    assert not store.list_parties("C1",on_date=date(2025,7,1),authorization_ref=A1)
+    store.close()
+    reopened=IdentityPersistence(tmp_path/"identity.sqlite",cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    assert reopened._db.execute("SELECT count(*) FROM case_party_role_history").fetchone()[0] == 2
+    reopened.close()
+
+
+def test_f05_correction_rejects_missing_evidence_and_history_tampering(tmp_path):
+    cases,store=open_store(tmp_path); register(store); store.bind_party(role())
+    with pytest.raises(ValueError,match="canonical correction"):
+        store.correct_party_role(case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),correction_evidence_ref="missing",authorization_ref=A1)
+    store.correct_party_role(case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),correction_evidence_ref=E2,authorization_ref=A1)
+    store._db.execute("UPDATE case_party_role_history SET payload='{}' WHERE binding_id='R1' AND revision=1")
+    store._db.commit(); store._db.close()
+    with pytest.raises(ValueError,match="history integrity"):
+        IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+
+
+def _create_empty_v1(path):
+    with sqlite3.connect(path) as db:
+        db.executescript("""
+        CREATE TABLE identity_record(identity_id TEXT PRIMARY KEY,record_type TEXT,payload TEXT,digest TEXT,schema_version INTEGER);
+        CREATE TABLE case_party_role(binding_id TEXT PRIMARY KEY,case_id TEXT,subject_type TEXT,subject_id TEXT,role TEXT,valid_from TEXT,valid_to_exclusive TEXT,evidence_ref TEXT,authorization_ref TEXT,digest TEXT,schema_version INTEGER);
+        CREATE TABLE identity_audit(event_id INTEGER PRIMARY KEY AUTOINCREMENT,action TEXT,case_id TEXT,subject_id TEXT,payload_digest TEXT,recorded_at TEXT);
+        CREATE TABLE subject_fact_binding(request_id TEXT PRIMARY KEY,case_id TEXT,tax_year INTEGER,subject_id TEXT,artifact_ref TEXT,authorization_ref TEXT,digest TEXT);
+        PRAGMA user_version=1;
+        """)
+
+
+@pytest.mark.parametrize("stage",[
+    "MIGRATION_V1_V2:AFTER_BEGIN","MIGRATION_V1_V2:AFTER_RENAME",
+    "MIGRATION_V1_V2:AFTER_SCHEMA","MIGRATION_V1_V2:AFTER_COPY",
+    "MIGRATION_V1_V2:BEFORE_COMMIT",
+])
+def test_f07_migration_interruptions_roll_back_to_intact_v1(tmp_path,stage):
+    path=tmp_path/(stage.rsplit(":",1)[-1]+".sqlite"); _create_empty_v1(path)
+    def fault(observed):
+        if observed == stage: raise RuntimeError("synthetic migration interruption")
+    with pytest.raises(RuntimeError,match="interruption"):
+        IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY,fault_injector=fault)
+    with sqlite3.connect(path) as db:
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 1
+        tables={row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        assert {"identity_record","case_party_role","identity_audit","subject_fact_binding"} <= tables
+        assert not any(name.endswith("_v1") for name in tables)
+
+
+def test_f07_post_commit_interruption_leaves_verified_v2(tmp_path):
+    path=tmp_path/"post.sqlite"; _create_empty_v1(path)
+    def fault(observed):
+        if observed == "MIGRATION_V1_V2:AFTER_COMMIT": raise RuntimeError("synthetic migration interruption")
+    with pytest.raises(RuntimeError,match="interruption"):
+        IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY,fault_injector=fault)
+    reopened=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    assert reopened._db.execute("PRAGMA user_version").fetchone()[0] == 2
+    reopened.close()
+
+
+def test_f07_populated_v1_migrates_without_losing_identity_role_or_audit(tmp_path):
+    from agent_lab.identity_persistence import _canonical, _legacy_digest
+    path=tmp_path/"populated.sqlite"; _create_empty_v1(path)
+    payload=IdentityPersistence._identity_payload(person())
+    role_payload={"binding_id":"R1","case_id":"C1","subject_type":"PERSON","subject_id":"P1","role":"PRIMARY_TAXPAYER","valid_from":"2025-01-01","valid_to_exclusive":None,"evidence_ref":E1,"authorization_ref":A1}
+    with sqlite3.connect(path) as db:
+        db.execute("INSERT INTO identity_record VALUES(?,?,?,?,1)",("P1","PERSON",_canonical(payload),_legacy_digest(payload)))
+        db.execute("INSERT INTO case_party_role VALUES(?,?,?,?,?,?,?,?,?,?,1)",(*role_payload.values(),_legacy_digest(role_payload)))
+        db.execute("INSERT INTO identity_audit(action,case_id,subject_id,payload_digest,recorded_at) VALUES(?,?,?,?,?)",("LEGACY","C1","P1","legacy-digest",NOW.isoformat()))
+    store=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    assert store.read_case_identity(case_id="C1",subject_id="P1",on_date=date(2025,2,1),authorization_ref=A1).person_id == "P1"
+    assert store._db.execute("SELECT count(*) FROM identity_history").fetchone()[0] == 1
+    assert store._db.execute("SELECT count(*) FROM identity_audit").fetchone()[0] == 1
+    store.close()
+
+
+def test_f07_v1_with_unmigratable_fact_is_preserved_and_blocked(tmp_path):
+    path=tmp_path/"fact.sqlite"; _create_empty_v1(path)
+    with sqlite3.connect(path) as db:
+        db.execute("INSERT INTO subject_fact_binding VALUES(?,?,?,?,?,?,?)",("F1","C1",2025,"P1","legacy",A1,"legacy"))
+    with pytest.raises(ValueError,match="reviewed lineage migration"):
+        IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    with sqlite3.connect(path) as db:
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert db.execute("SELECT count(*) FROM subject_fact_binding").fetchone()[0] == 1

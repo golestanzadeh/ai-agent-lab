@@ -16,9 +16,11 @@ from typing import Any, Iterable
 
 KERNEL_SCHEMA_VERSION = 1
 CONTRACT_SET_ID = "ORCHESTRATOR_CONTRACT_SET_V1"
+IDENTITY_CONTRACT_SET_ID = "ORCHESTRATOR_CONTRACT_SET_V2_IDENTITY_ADMINISTRATION"
 ACCEPTED_O2_COMMIT = "382a140e42496ad9edd92dc2016cfde51d091575"
 ACCEPTED_MILESTONE_AUTHORITY = "ORCH-CONT-20260927-001"
 ACCEPTED_CONTRACT_DIGEST = "sha256:63574e753fddae774f7dcb9464814f7c26dc76f8f145883c35db86c332c0b419"
+IDENTITY_CONTRACT_DIGEST = "sha256:15cc046e9af5911f8b356c2a836c69c8a24e30ed721bcdb9fdf9954dbf63bf50"
 CONTRACT_FILES = (
     "contract-set.json",
     "roles.json",
@@ -164,6 +166,7 @@ class OrchestratorKernel:
         self.database_path = Path(database_path)
         self.contract_root = Path(contract_root)
         self.contracts = self._load_contracts()
+        self.contract_set_id = self.contracts["contract-set.json"]["contract_set_id"]
         self.roles = {role["role_id"]: role for role in self.contracts["roles.json"]["roles"]}
         self.permission_rows = {
             row["role_id"]: row
@@ -200,7 +203,8 @@ class OrchestratorKernel:
                 raise ContractError(f"{filename} root must be an object")
             loaded[filename] = payload
         contract_set = loaded["contract-set.json"]
-        if contract_set.get("schema_version") != 1 or contract_set.get("contract_set_id") != CONTRACT_SET_ID:
+        contract_set_id = contract_set.get("contract_set_id")
+        if contract_set.get("schema_version") != 1 or contract_set_id not in {CONTRACT_SET_ID, IDENTITY_CONTRACT_SET_ID}:
             raise ContractError("unsupported contract set")
         declared = {
             Path(entry["path"]).name: entry.get("schema_version")
@@ -217,7 +221,11 @@ class OrchestratorKernel:
                 version = loaded[filename].get("schema_version")
             if version != 1:
                 raise ContractError(f"unsupported {filename} version")
-        if _digest(loaded) != ACCEPTED_CONTRACT_DIGEST:
+        expected_digest = {
+            CONTRACT_SET_ID: ACCEPTED_CONTRACT_DIGEST,
+            IDENTITY_CONTRACT_SET_ID: IDENTITY_CONTRACT_DIGEST,
+        }[contract_set_id]
+        if _digest(loaded) != expected_digest:
             raise ContractError(
                 f"contract set does not match accepted O2 base {ACCEPTED_O2_COMMIT} "
                 f"and milestone authority {ACCEPTED_MILESTONE_AUTHORITY}"
@@ -1637,7 +1645,7 @@ class OrchestratorKernel:
                 self._connection.execute(
                     "INSERT INTO checkpoints(checkpoint_id, created_at, last_event_id, contract_set_id, snapshot_json, snapshot_hash) VALUES(?, ?, ?, ?, ?, ?)",
                     (
-                        checkpoint_id, _utc_now().isoformat(), last_event, CONTRACT_SET_ID,
+                        checkpoint_id, _utc_now().isoformat(), last_event, self.contract_set_id,
                         _canonical(snapshot), snapshot_hash,
                     ),
                 )
@@ -1654,7 +1662,7 @@ class OrchestratorKernel:
             return [dict(row) for row in self._connection.execute(query).fetchall()]
 
         return {
-            "contract_set_id": CONTRACT_SET_ID,
+            "contract_set_id": self.contract_set_id,
             "last_event_id": last_event_id,
             "kill_switch": rows("SELECT state, updated_at, authority_reference FROM kill_switch ORDER BY singleton"),
             "tasks": rows("SELECT task_id, parent_task_id, role_id, actor_instance_id, status, payload_json, retry_count FROM tasks ORDER BY task_id"),
@@ -1679,7 +1687,7 @@ class OrchestratorKernel:
         ).fetchone()
         if row is None:
             raise IntegrityError("no checkpoint is available")
-        if row["contract_set_id"] != CONTRACT_SET_ID:
+        if row["contract_set_id"] != self.contract_set_id:
             raise IntegrityError("checkpoint contract set mismatch")
         snapshot = json.loads(row["snapshot_json"])
         if row["snapshot_hash"] != _digest(snapshot):

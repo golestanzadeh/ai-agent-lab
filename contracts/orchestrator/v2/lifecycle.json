@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "lifecycle_id": "AGENT_INSTANCE_LIFECYCLE_V1",
+  "initial_state": "PROPOSED",
+  "states": ["PROPOSED", "VALIDATED", "HUMAN_REQUIRED", "ACTIVE", "BLOCKED", "COMPLETED", "FAILED", "REJECTED", "CANCELLED", "EXPIRED", "REVOKED"],
+  "terminal_states": ["COMPLETED", "FAILED", "REJECTED", "CANCELLED", "EXPIRED", "REVOKED"],
+  "transitions": {
+    "PROPOSED": ["VALIDATED", "HUMAN_REQUIRED", "REJECTED", "CANCELLED", "EXPIRED"],
+    "VALIDATED": ["ACTIVE", "HUMAN_REQUIRED", "REJECTED", "CANCELLED", "EXPIRED", "REVOKED"],
+    "HUMAN_REQUIRED": ["VALIDATED", "REJECTED", "CANCELLED", "EXPIRED", "REVOKED"],
+    "ACTIVE": ["BLOCKED", "COMPLETED", "FAILED", "CANCELLED", "EXPIRED", "REVOKED"],
+    "BLOCKED": ["ACTIVE", "HUMAN_REQUIRED", "FAILED", "CANCELLED", "EXPIRED", "REVOKED"],
+    "COMPLETED": [],
+    "FAILED": [],
+    "REJECTED": [],
+    "CANCELLED": [],
+    "EXPIRED": [],
+    "REVOKED": []
+  },
+  "activation_requirements": ["registered_task", "validated_manifest", "validated_role", "permission_check_pass", "conflict_check_pass", "kill_switch_running", "not_expired"],
+  "transition_requirements": ["expected_current_state", "authorized_actor", "timestamp", "reason", "audit_event"],
+  "rules": {
+    "unknown_state_outcome": "BLOCKED",
+    "unknown_transition_outcome": "BLOCKED",
+    "terminal_state_reuse": "PROHIBITED",
+    "failed_retry_model": "new_attempt_and_audit_event",
+    "expiry_effect": "revoke_tools_and_permissions",
+    "revocation_effect": "stop_execution_and_revoke_tools_and_permissions",
+    "blocked_resume_requires": ["blocking_condition_resolved", "scope_unchanged_or_revalidated", "budget_available", "not_expired"],
+    "retained_after_termination": ["manifest", "task", "responses", "audit_events", "artifacts", "test_evidence", "costs", "failure_evidence"]
+  }
+}

@@ -113,6 +113,13 @@ class IdentityPersistence:
         elif version != SCHEMA_VERSION:
             self._db.close()
             raise ValueError("unsupported database schema version")
+        with self._db:
+            self._db.execute("""
+                CREATE TABLE IF NOT EXISTS case_party_role_history(
+                    binding_id TEXT NOT NULL, revision INTEGER NOT NULL, payload TEXT NOT NULL,
+                    digest TEXT NOT NULL, correction_evidence_ref TEXT,
+                    PRIMARY KEY(binding_id,revision))
+            """)
         self._verify_audit_continuity(create_empty=True)
         self._verify_data_integrity()
 
@@ -122,22 +129,34 @@ class IdentityPersistence:
 
     def _create_schema(self) -> None:
         with self._db:
-            self._db.executescript("""
+            self._create_schema_objects()
+            self._db.execute("PRAGMA user_version=2")
+
+    def _create_schema_objects(self, *, include_indexes: bool = True) -> None:
+        statements = (
+                """
                 CREATE TABLE identity_record(
                     identity_id TEXT PRIMARY KEY, record_type TEXT NOT NULL CHECK(record_type IN ('PERSON','ENTITY')),
                     payload TEXT NOT NULL, digest TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision>=1),
-                    schema_version INTEGER NOT NULL CHECK(schema_version=2));
+                    schema_version INTEGER NOT NULL CHECK(schema_version=2))""",
+                """
                 CREATE TABLE identity_history(
                     identity_id TEXT NOT NULL, revision INTEGER NOT NULL, payload TEXT NOT NULL,
-                    digest TEXT NOT NULL, PRIMARY KEY(identity_id,revision));
+                    digest TEXT NOT NULL, PRIMARY KEY(identity_id,revision))""",
+                """
                 CREATE TABLE case_party_role(
                     binding_id TEXT PRIMARY KEY, case_id TEXT NOT NULL,
                     subject_type TEXT NOT NULL CHECK(subject_type IN ('PERSON','ENTITY')),
                     subject_id TEXT NOT NULL REFERENCES identity_record(identity_id), role TEXT NOT NULL,
                     valid_from TEXT NOT NULL, valid_to_exclusive TEXT, evidence_ref TEXT NOT NULL,
                     authorization_ref TEXT NOT NULL, digest TEXT NOT NULL,
-                    revision INTEGER NOT NULL CHECK(revision>=1), schema_version INTEGER NOT NULL CHECK(schema_version=2));
-                CREATE INDEX idx_case_party_scope ON case_party_role(case_id,role,valid_from,valid_to_exclusive);
+                    revision INTEGER NOT NULL CHECK(revision>=1), schema_version INTEGER NOT NULL CHECK(schema_version=2))""",
+                """
+                CREATE TABLE case_party_role_history(
+                    binding_id TEXT NOT NULL, revision INTEGER NOT NULL, payload TEXT NOT NULL,
+                    digest TEXT NOT NULL, correction_evidence_ref TEXT,
+                    PRIMARY KEY(binding_id,revision))""",
+                """
                 CREATE TABLE subject_fact_binding(
                     request_id TEXT PRIMARY KEY, case_id TEXT NOT NULL, tax_year INTEGER NOT NULL,
                     subject_type TEXT NOT NULL CHECK(subject_type IN ('PERSON','ENTITY')),
@@ -146,13 +165,17 @@ class IdentityPersistence:
                     declaration_artifact_ref TEXT NOT NULL, confirmation_ref TEXT NOT NULL,
                     authorization_ref TEXT NOT NULL, valid_from TEXT NOT NULL, valid_to_exclusive TEXT NOT NULL,
                     audit_lineage TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision>=1),
-                    digest TEXT NOT NULL, schema_version INTEGER NOT NULL CHECK(schema_version=2));
-                CREATE INDEX idx_subject_fact_scope ON subject_fact_binding(case_id,tax_year,subject_id);
+                    digest TEXT NOT NULL, schema_version INTEGER NOT NULL CHECK(schema_version=2))""",
+                """
                 CREATE TABLE identity_audit(
                     event_id INTEGER PRIMARY KEY AUTOINCREMENT, event_payload TEXT NOT NULL,
-                    previous_mac TEXT NOT NULL, event_mac TEXT NOT NULL, recorded_at TEXT NOT NULL);
-                PRAGMA user_version=2;
-            """)
+                    previous_mac TEXT NOT NULL, event_mac TEXT NOT NULL, recorded_at TEXT NOT NULL)""",
+        )
+        for statement in statements:
+            self._db.execute(statement)
+        if include_indexes:
+            self._db.execute("CREATE INDEX idx_case_party_scope ON case_party_role(case_id,role,valid_from,valid_to_exclusive)")
+            self._db.execute("CREATE INDEX idx_subject_fact_scope ON subject_fact_binding(case_id,tax_year,subject_id)")
 
     def _migrate_v1(self) -> None:
         fact_count = self._db.execute("SELECT count(*) FROM subject_fact_binding").fetchone()[0]
@@ -172,10 +195,14 @@ class IdentityPersistence:
                 "valid_to_exclusive", "evidence_ref", "authorization_ref")}
             if _legacy_digest(payload) != row["digest"]:
                 self._db.close(); raise ValueError("v1 role integrity failure")
-        with self._db:
-            self._db.executescript("DROP TABLE subject_fact_binding; DROP TABLE identity_audit; DROP TABLE case_party_role; DROP TABLE identity_record;")
-        self._create_schema()
-        with self._db:
+        try:
+            self._db.execute("BEGIN IMMEDIATE")
+            if self._fault: self._fault("MIGRATION_V1_V2:AFTER_BEGIN")
+            for table in ("subject_fact_binding", "identity_audit", "case_party_role", "identity_record"):
+                self._db.execute(f"ALTER TABLE {table} RENAME TO {table}_v1")
+            if self._fault: self._fault("MIGRATION_V1_V2:AFTER_RENAME")
+            self._create_schema_objects(include_indexes=False)
+            if self._fault: self._fault("MIGRATION_V1_V2:AFTER_SCHEMA")
             for row in identities:
                 payload = json.loads(row["payload"]); digest = self._mac(payload)
                 self._db.execute("INSERT INTO identity_record VALUES(?,?,?,?,?,2)", (row["identity_id"],row["record_type"],row["payload"],digest,1))
@@ -185,7 +212,21 @@ class IdentityPersistence:
                 self._db.execute("INSERT INTO case_party_role VALUES(?,?,?,?,?,?,?,?,?,?,?,2)", (*payload.values(),self._mac(payload),1))
             for row in audits:
                 self._append_audit("LEGACY_V1_EVENT", row["case_id"], row["subject_id"], {"action":row["action"],"legacy_digest":row["payload_digest"]})
+            if self._fault: self._fault("MIGRATION_V1_V2:AFTER_COPY")
+            for table in ("subject_fact_binding_v1", "identity_audit_v1", "case_party_role_v1", "identity_record_v1"):
+                self._db.execute(f"DROP TABLE {table}")
+            self._db.execute("CREATE INDEX idx_case_party_scope ON case_party_role(case_id,role,valid_from,valid_to_exclusive)")
+            self._db.execute("CREATE INDEX idx_subject_fact_scope ON subject_fact_binding(case_id,tax_year,subject_id)")
+            self._db.execute("PRAGMA user_version=2")
+            if self._fault: self._fault("MIGRATION_V1_V2:BEFORE_COMMIT")
+            self._db.commit()
+        except Exception:
+            if self._db.in_transaction:
+                self._db.rollback()
+            self._db.close()
+            raise
         self._sync_anchor()
+        if self._fault: self._fault("MIGRATION_V1_V2:AFTER_COMMIT")
 
     def _anchor_payload(self, count: int, head: str) -> dict:
         return {"schema_version":1,"event_count":count,"head_mac":head}
@@ -240,6 +281,10 @@ class IdentityPersistence:
             payload = {key:row[key] for key in ("binding_id","case_id","subject_type","subject_id","role","valid_from","valid_to_exclusive","evidence_ref","authorization_ref")}
             if row["schema_version"] != 2 or not hmac.compare_digest(self._mac(payload), row["digest"]):
                 raise ValueError("party binding integrity failure")
+        for row in self._db.execute("SELECT * FROM case_party_role_history"):
+            payload=json.loads(row["payload"])
+            if payload.get("binding_id") != row["binding_id"] or payload.get("revision") != row["revision"] or not hmac.compare_digest(self._mac(payload),row["digest"]):
+                raise ValueError("party binding history integrity failure")
         for row in self._db.execute("SELECT * FROM subject_fact_binding"):
             fact_payload=json.loads(row["fact_payload"]); lineage=tuple(json.loads(row["audit_lineage"])["items"])
             env=SubjectFactEnvelope(row["request_id"],row["case_id"],row["tax_year"],row["subject_type"],row["subject_id"],row["semantic_key"],row["fact_artifact_ref"],row["declaration_artifact_ref"],row["confirmation_ref"],row["authorization_ref"],date.fromisoformat(row["valid_from"]),date.fromisoformat(row["valid_to_exclusive"]),lineage,row["revision"])
@@ -363,6 +408,41 @@ class IdentityPersistence:
             self._db.execute("INSERT INTO case_party_role VALUES(?,?,?,?,?,?,?,?,?,?,?,2)",(*payload.values(),digest,1))
             self._append_audit("CASE_PARTY_BIND",binding.case_id,binding.subject_id,{"digest":digest})
         self._commit("CASE_PARTY_BIND",op)
+
+    def correct_party_role(
+        self, *, case_id: str, binding_id: str, valid_to_exclusive: date,
+        correction_evidence_ref: str, authorization_ref: str,
+    ) -> CasePartyRole:
+        """Close an existing role through an immutable, evidence-backed revision."""
+        self._check_access("bind_party",case_id,authorization_ref)
+        row=self._db.execute("SELECT * FROM case_party_role WHERE binding_id=? AND case_id=?",(binding_id,case_id)).fetchone()
+        if row is None:
+            raise KeyError("unknown case-party binding")
+        if row["valid_to_exclusive"] is not None:
+            self._failure("VALIDATION_DENIED",case_id,"only an open role can be corrected",permission=False)
+        start=date.fromisoformat(row["valid_from"])
+        if valid_to_exclusive <= start:
+            self._failure("VALIDATION_DENIED",case_id,"correction must preserve a non-empty interval",permission=False)
+        if not SHA_REFERENCE.fullmatch(correction_evidence_ref) or not SHA_REFERENCE.fullmatch(authorization_ref):
+            self._failure("VALIDATION_DENIED",case_id,"canonical correction evidence and authorization are required",permission=False)
+        tax_year=self._cases.get(case_id).tax_period.year
+        try:
+            self._resolve_evidence("ROLE_EVIDENCE",correction_evidence_ref,case_id,tax_year,row["subject_id"],start,valid_to_exclusive)
+            self._resolve_evidence("IDENTITY_AUTHORIZATION",authorization_ref,case_id,tax_year,row["subject_id"],start,valid_to_exclusive)
+        except Exception:
+            self._failure("EVIDENCE_DENIED",case_id,"correction evidence is unavailable or mismatched",permission=True)
+        original={key:row[key] for key in ("binding_id","case_id","subject_type","subject_id","role","valid_from","valid_to_exclusive","evidence_ref","authorization_ref")}
+        revision=row["revision"]+1
+        corrected={**original,"valid_to_exclusive":valid_to_exclusive.isoformat(),"evidence_ref":correction_evidence_ref,"authorization_ref":authorization_ref}
+        history_original={**original,"revision":row["revision"]}
+        history_corrected={**corrected,"revision":revision}
+        def op():
+            self._db.execute("INSERT INTO case_party_role_history VALUES(?,?,?,?,?)",(binding_id,row["revision"],_canonical(history_original),self._mac(history_original),correction_evidence_ref))
+            self._db.execute("INSERT INTO case_party_role_history VALUES(?,?,?,?,?)",(binding_id,revision,_canonical(history_corrected),self._mac(history_corrected),correction_evidence_ref))
+            self._db.execute("UPDATE case_party_role SET valid_to_exclusive=?,evidence_ref=?,authorization_ref=?,digest=?,revision=? WHERE binding_id=?",(corrected["valid_to_exclusive"],correction_evidence_ref,authorization_ref,self._mac(corrected),revision,binding_id))
+            self._append_audit("CASE_PARTY_CORRECT",case_id,row["subject_id"],{"binding_id":binding_id,"revision":revision,"evidence_ref":correction_evidence_ref})
+        self._commit("CASE_PARTY_CORRECT",op)
+        return CasePartyRole(binding_id,case_id,row["subject_type"],row["subject_id"],row["role"],start,valid_to_exclusive,correction_evidence_ref,authorization_ref)
 
     def list_parties(self, case_id: str, *, on_date: date, authorization_ref: str) -> tuple[CasePartyRole,...]:
         self._check_access("read_party",case_id,authorization_ref); result=[]

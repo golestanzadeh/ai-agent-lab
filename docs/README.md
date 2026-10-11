@@ -148,6 +148,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-limited-integration-report-20261009.md` - actual Kernel integration, durable evidence/custody verification, regression evidence and blocked-gate handoff.
 - `oi-0002-security-remediation-sec01-sec04-20261009.md` - SEC-01 through SEC-04 reproduction, scoped fixes, negative tests, regression evidence and independent-review handoff.
 - `oi-0002-remediation-01-report-20261008.md` - F01-F07 remediation mapping, T01-T12 implementation evidence, regression record and independent-review handoff.
+- `oi-0002-remediation-02-report-20261011.md` - Owner-authorized F02/F05/F07 corrections, focused/full verification and independent-review handoff.
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
 - `oi-0002-operational-deployment-stop-20261011.md` - Windows deployment preflight, custody hardening, regression/review evidence, non-elevated blocker and exact continuation.
 - `ui25-full-functional-completion-stop-20261011.md` - UI25 recovery result, safe bilingual/disabled-submission work, prerequisite blockers and governed continuation.

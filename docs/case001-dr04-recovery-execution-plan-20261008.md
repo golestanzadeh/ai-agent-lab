@@ -33,6 +33,8 @@ Stage 1 conditions-gate note (2026-10-08): the Owner approved F02 and conditiona
 
 Stage 1 limited-integration note (2026-10-09): synthetic Kernel continuity, durable evidence resolution, authorization lifecycle, custody-plan validation and governed restore are implemented without real operational mutation. Exact next action is separate independent review, then explicit Owner conditional-gate disposition. Remediation-02 and stage 2 remain blocked. Evidence: `docs/oi-0002-limited-integration-report-20261009.md`.
 
+Stage 1 remediation-02 note (2026-10-11): the Owner explicitly released bounded F02/F05/F07 implementation. Dedicated identity-administration capabilities, immutable evidence-backed role corrections and atomic crash-safe v1→v2 migration are implemented with focused and complete regression PASS. Status is `REVIEW_READY / NOT ACCEPTED`; the exact pushed SHA requires separate independent review, and operational Windows custody evidence remains unresolved. Stage 2 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
+
 ## Known evidence and cautions
 - CASE-001/2024 frozen historical analytical refund EUR 133.83; DR-04 Part 1 versioned rounding successor refund EUR 134.00. Preserve both identities; do not silently overwrite or conflate.
 - Historical DR-01 accepted at 6b3c90c, but independent lineage reacceptance could not recover original immutable request/result/XML identities. A PASS must not be inferred from historical XSD success.

@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 REMEDIATION-02 review handoff — 2026-10-11
+
+F02/F05/F07 bounded implementation is complete on the authorized OI-0002 branch: dedicated Kernel identity capabilities replace generic derived-artifact authorization; immutable evidence-backed case-party correction preserves history and cardinality; and schema v1→v2 migration is atomic with crash rollback and populated-data verification. Focused tests pass (`37`), relevant security/persistence tests pass (`81`), and complete unit regression passes (`1132 passed, 5 skipped`). State is `REVIEW_READY / NOT ACCEPTED`; a separate reviewer must inspect the exact pushed SHA. OI-0002 stays open, operational Windows evidence remains unresolved, and OI-0003 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
+
 ## OI-0002 operational deployment blocked — 2026-10-11
 
 Fail-closed Windows custody provisioning/verification and SQLite consistent-snapshot audit verification are pushed through exact implementation SHA `c84d67da7c6b8e18863610a79a4440ab47a0d93a`. Focused verification passes (`25`), concurrency stress passes (`30/30`), and full unit regression passes (`1119 passed, 5 skipped`). Operational acceptance is blocked because the current host token is not elevated; the safe provisioner stopped with `OI0002_ELEVATION_REQUIRED` and created no target. No actual principal ACL/effective-access, service wiring, restart, populated backup/restore or rollback evidence exists. Independent acceptance is withheld. OI-0002 remains open; E-03/C-02/C-06, REMEDIATION-02 and OI-0003 remain blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.

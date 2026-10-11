@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-agent-lab.local/contracts/orchestrator/v1/milestone-authority.schema.json",
+  "title": "Milestone Authority v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "authority_id", "milestone_id", "owner_approval_reference",
+    "repository", "ref", "package_templates", "max_generated_packages",
+    "max_replans", "dispatch_adapters", "forbidden_actions", "created_at",
+    "expires_at", "status"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "authority_id": {"type": "string", "pattern": "^AUTH-[A-Z0-9][A-Z0-9._-]{2,63}$"},
+    "milestone_id": {"type": "string", "minLength": 1},
+    "owner_approval_reference": {"type": "string", "minLength": 1},
+    "repository": {"type": "string", "minLength": 1},
+    "ref": {"type": "string", "minLength": 1},
+    "package_templates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "package_id", "sequence", "depends_on", "objective", "role_id",
+          "actor_instance_id", "inputs", "expected_outputs", "allowed_tools",
+          "permissions", "forbidden_actions", "budget", "timeout_seconds",
+          "max_retries", "acceptance_criteria", "stop_conditions", "escalation_route"
+        ],
+        "properties": {
+          "package_id": {"type": "string", "pattern": "^PKG-[A-Z0-9][A-Z0-9._-]{2,63}$"},
+          "sequence": {"type": "integer", "minimum": 1},
+          "depends_on": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "objective": {"type": "string", "minLength": 1},
+          "role_id": {"type": "string", "minLength": 1},
+          "actor_instance_id": {"type": "string", "minLength": 1},
+          "inputs": {"type": "array", "items": {"type": "string", "pattern": "^synthetic://"}, "uniqueItems": true},
+          "expected_outputs": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^artifact://local/"}, "uniqueItems": true},
+          "allowed_tools": {"type": "array", "items": {"enum": ["synthetic_local_dispatch", "pytest"]}, "uniqueItems": true},
+          "permissions": {"type": "array", "items": {"enum": ["write_bounded_branch", "run_tests", "report_evidence"]}, "uniqueItems": true},
+          "forbidden_actions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "budget": {
+            "type": "object", "additionalProperties": false,
+            "required": ["token_limit", "tool_call_limit", "cost_limit_usd"],
+            "properties": {
+              "token_limit": {"type": "integer", "minimum": 1},
+              "tool_call_limit": {"type": "integer", "minimum": 1},
+              "cost_limit_usd": {"type": "number", "exclusiveMinimum": 0}
+            }
+          },
+          "timeout_seconds": {"type": "integer", "minimum": 1},
+          "max_retries": {"type": "integer", "minimum": 0},
+          "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "stop_conditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "escalation_route": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "max_generated_packages": {"type": "integer", "minimum": 1, "maximum": 20},
+    "max_replans": {"type": "integer", "minimum": 0, "maximum": 5},
+    "dispatch_adapters": {"const": ["SYNTHETIC_LOCAL_V1"]},
+    "forbidden_actions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "created_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "status": {"const": "ACTIVE"}
+  }
+}

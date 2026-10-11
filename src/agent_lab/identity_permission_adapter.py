@@ -27,12 +27,15 @@ def kernel_case_authorizer(
             return False
         if not reference:
             return False
-        capability = (
-            "read_derived_case_artifact" if action in {"read_party", "read_identity", "read_fact"}
-            else "write_derived_case_artifact"
-            if action in {"register_identity", "update_identity", "bind_party", "bind_fact"}
-            else None
-        )
+        capability = {
+            "register_identity": "identity_create",
+            "read_party": "identity_read",
+            "read_identity": "identity_read",
+            "read_fact": "identity_read",
+            "update_identity": "identity_status_transition",
+            "bind_party": "case_party_bind",
+            "bind_fact": "subject_fact_bind",
+        }.get(action)
         if capability is None:
             return False
         try:

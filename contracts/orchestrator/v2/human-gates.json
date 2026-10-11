@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "policy_id": "HUMAN_GATES_AND_CONFLICTS_V1",
+  "default_on_ambiguity": "HUMAN_REQUIRED",
+  "human_authority_id": "HUMAN_PROJECT_OWNER",
+  "mandatory_gate_triggers": [
+    "constitutional_change",
+    "governance_change",
+    "mission_or_scope_change",
+    "accepted_architecture_change",
+    "credential_change",
+    "permission_expansion",
+    "new_connector_or_external_data_path",
+    "protected_main_merge",
+    "production_release",
+    "destructive_or_irreversible_action",
+    "source_evidence_mutation_when_governed",
+    "tax_declaration_signing_or_submission",
+    "ELSTER_or_Finanzamt_contact",
+    "external_content_release",
+    "external_destination_transmission",
+    "authority_ambiguity"
+  ],
+  "approval_rules": {
+    "explicit": true,
+    "artifact_or_action_bound": true,
+    "case_and_run_bound_when_applicable": true,
+    "scope_bound": true,
+    "expiry_required": true,
+    "silence_is_approval": false,
+    "generic_continue_is_approval": false,
+    "approval_reuse": "PROHIBITED_UNLESS_EXACT_CONTRACT_ALLOWS"
+  },
+  "external_transfer": {
+    "default": "DENY",
+    "ordered_stages": ["CONTENT_RELEASE_APPROVAL", "DESTINATION_TRANSMISSION_APPROVAL"],
+    "stages_must_be_separate_events": true,
+    "combined_approval_prohibited": true,
+    "content_release_approval": {
+      "issued_by": "HUMAN_PROJECT_OWNER",
+      "required_bindings": ["approval_id", "artifact_identity", "artifact_version", "case_id_or_not_applicable", "run_id_or_not_applicable", "data_classification", "purpose", "issued_at", "expires_at"]
+    },
+    "destination_transmission_approval": {
+      "issued_by": "HUMAN_PROJECT_OWNER",
+      "required_bindings": ["approval_id", "content_release_approval_id", "artifact_identity", "artifact_version", "recipient_identity", "channel", "purpose", "case_id_or_not_applicable", "run_id_or_not_applicable", "issued_at", "expires_at", "single_retry_permitted"]
+    },
+    "invalidation": ["artifact_changed", "recipient_changed", "channel_changed", "purpose_changed", "approval_expired", "approval_revoked", "binding_mismatch", "audit_unavailable"],
+    "executor": "EXTERNAL_TRANSFER_GATEWAY",
+    "agent_may_issue_approval": false,
+    "uncertain_transfer_outcome": "BLOCKED_NO_AUTOMATIC_RETRY"
+  },
+  "conflict_of_interest_rules": [
+    {"rule_id": "COI-001", "actor_role": "IMPLEMENTATION_AGENT", "prohibited_review_role": "INDEPENDENT_ACCEPTANCE_AGENT", "same_work_package": true},
+    {"rule_id": "COI-002", "actor_role": "QUALITY_ENGINEERING_AGENT", "prohibited_action": "change_acceptance_criteria_after_execution"},
+    {"rule_id": "COI-003", "actor_role": "MASTER_PROJECT_ORCHESTRATOR", "prohibited_action": "approve_own_consequential_output"},
+    {"rule_id": "COI-004", "actor_role": "SECURITY_PRIVACY_AGENT", "prohibited_action": "implement_security_change_under_review"},
+    {"rule_id": "COI-005", "actor_role": "ARCHITECTURE_AGENT", "prohibited_action": "activate_accepted_architecture_change"},
+    {"rule_id": "COI-006", "actor_role": "OPERATIONS_INTEGRATION_AGENT", "prohibited_action": "independently_certify_own_production_change"},
+    {"rule_id": "COI-007", "actor_role": "DOCUMENTATION_STATE_AGENT", "prohibited_action": "manufacture_acceptance"},
+    {"rule_id": "COI-008", "actor_role": "ADVERSARIAL_REVIEWER_AGENT", "prohibited_action": "implement_reviewed_tax_finding"},
+    {"rule_id": "COI-009", "actor_role": "ANY_AGENT", "prohibited_action": "edit_own_failure_or_audit_evidence"},
+    {"rule_id": "COI-010", "actor_role": "ANY_TAX_AGENT", "prohibited_action": "access_or_approve_another_case_without_separate_task"}
+  ],
+  "control_precedence": ["CONSTITUTION", "CURRENT_EXPLICIT_HUMAN_AUTHORITY", "ACCEPTED_DECISIONS", "REGISTERED_TASK", "AGENT_MANIFEST"],
+  "control_result_precedence": ["HUMAN_REQUIRED", "BLOCKED", "FAILED", "PASS"]
+}
