@@ -69,6 +69,14 @@ The fifth independent review of `f152ff487f72e7aad3ea4d6d2fe62fdd6c444990` confi
 
 ## Acceptance handoff
 
-Implementation disposition is `REVIEW_READY`, never `ACCEPTED`. A separate independent reviewer must inspect the exact pushed commit, reproduce F02/F05/F07 adversarial behavior and regression evidence, and return PASS or actionable findings. OI-0002 remains OPEN until independent PASS and the Owner's final acceptance decision. OI-0003 remains blocked.
+The sixth independent review inspected exact SHA `6e97d20cc2411868bb038c1d894613b43a609bf1` read-only and returned **PASS**. Its independent probes rejected corrupt-anchor mutation, invalid legacy receipt digest/version/head/count, receipt replay, correction-reference tampering and history deletion; verified exact legacy audit preservation; and reconfirmed F02 dedicated authorization. Reviewer-executed focused selection: `22 passed`; relevant suite: `90 passed`; both exit 0. No remaining in-scope F02/F05/F07 defect was found.
+
+REMEDIATION-02 disposition is **`INDEPENDENT_REVIEW_PASS / OWNER_ACCEPTANCE_READY`**, not Owner-accepted and not overall OI-0002 acceptance. OI-0002 remains OPEN pending the Owner's final disposition and the separate unresolved operational Windows gates. OI-0003 remains blocked.
 
 Operational Windows acceptance remains a separate unresolved boundary: this package does not claim real service-token effective access, deployed restart, populated operational backup/restore or rollback evidence.
+
+## Capacity handoff
+
+- Authenticated starting remaining capacity: 99% five-hour, 88% weekly.
+- Authenticated ending measurement at `2026-10-12T00:04:50+02:00`: 23% five-hour remaining, reset `2026-10-12T02:11:39Z`; 77% weekly remaining, reset `2026-10-18T14:48:11Z`.
+- Measurement source: signed-in Codex account rate-limit service. Readback was unambiguous; the mandatory 15-point five-hour reserve remained intact. No reset credit was used.

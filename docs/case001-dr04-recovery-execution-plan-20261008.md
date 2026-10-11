@@ -35,6 +35,8 @@ Stage 1 limited-integration note (2026-10-09): synthetic Kernel continuity, dura
 
 Stage 1 remediation-02 note (2026-10-11): the Owner explicitly released bounded F02/F05/F07 implementation. Dedicated identity-administration capabilities, immutable evidence-backed role corrections and atomic crash-safe v1→v2 migration are implemented with focused and complete regression PASS. Status is `REVIEW_READY / NOT ACCEPTED`; the exact pushed SHA requires separate independent review, and operational Windows custody evidence remains unresolved. Stage 2 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
 
+Stage 1 remediation-02 acceptance note (2026-10-12): after five preserved review/fix cycles, the sixth independent review of exact SHA `6e97d20cc2411868bb038c1d894613b43a609bf1` returned PASS for F02/F05/F07. REMEDIATION-02 is `OWNER_ACCEPTANCE_READY`, not Owner-accepted and not overall OI-0002 acceptance. Operational Windows custody/effective-access/restart/backup-restore gates remain unresolved, so stage 2 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
+
 ## Known evidence and cautions
 - CASE-001/2024 frozen historical analytical refund EUR 133.83; DR-04 Part 1 versioned rounding successor refund EUR 134.00. Preserve both identities; do not silently overwrite or conflate.
 - Historical DR-01 accepted at 6b3c90c, but independent lineage reacceptance could not recover original immutable request/result/XML identities. A PASS must not be inferred from historical XSD success.
