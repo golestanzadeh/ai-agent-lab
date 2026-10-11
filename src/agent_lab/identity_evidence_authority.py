@@ -175,17 +175,24 @@ class DurableIdentityEvidenceAuthority:
         last=self._db.execute("SELECT sequence,event_mac FROM identity_evidence_audit_v2 ORDER BY sequence DESC LIMIT 1").fetchone(); seq=1 if last is None else last["sequence"]+1; prev="0"*64 if last is None else last["event_mac"]; occurred=datetime.now(timezone.utc).isoformat(); payload=_canonical(details); mac=self._mac({"sequence":seq,"event_id":event_id,"action":action,"payload":payload,"previous_mac":prev,"occurred_at":occurred}); self._db.execute("INSERT INTO identity_evidence_audit_v2 VALUES(?,?,?,?,?,?,?)",(seq,event_id,action,payload,prev,mac,occurred)); self._db.execute("UPDATE identity_evidence_audit_anchor_v2 SET event_count=?,head_mac=?,anchor_mac=? WHERE singleton=1",(seq,mac,self._anchor_mac(seq,mac)))
 
     def verify_integrity(self) -> None:
-        for row in self._db.execute("SELECT * FROM identity_evidence_v2"):
-            if not hmac.compare_digest(row["row_mac"],self._mac(self._payload(row))): raise IdentityEvidenceError("evidence integrity failure")
-        prev="0"*64
-        for row in self._db.execute("SELECT * FROM identity_evidence_audit_v2 ORDER BY sequence"):
-            expected=self._mac({"sequence":row["sequence"],"event_id":row["event_id"],"action":row["action"],"payload":row["payload"],"previous_mac":row["previous_mac"],"occurred_at":row["occurred_at"]})
-            if row["previous_mac"]!=prev or not hmac.compare_digest(row["event_mac"],expected): raise IdentityEvidenceError("identity audit integrity failure")
-            prev=row["event_mac"]
-        anchor=self._db.execute("SELECT event_count,head_mac,anchor_mac FROM identity_evidence_audit_anchor_v2 WHERE singleton=1").fetchone()
-        count=self._db.execute("SELECT COUNT(*) FROM identity_evidence_audit_v2").fetchone()[0]
-        if anchor is None or anchor["event_count"]!=count or anchor["head_mac"]!=prev or not hmac.compare_digest(anchor["anchor_mac"],self._anchor_mac(count,prev)):
-            raise IdentityEvidenceError("identity audit anchor integrity failure")
+        started=not self._db.in_transaction
+        if started: self._db.execute("BEGIN")
+        try:
+            for row in self._db.execute("SELECT * FROM identity_evidence_v2"):
+                if not hmac.compare_digest(row["row_mac"],self._mac(self._payload(row))): raise IdentityEvidenceError("evidence integrity failure")
+            prev="0"*64
+            for row in self._db.execute("SELECT * FROM identity_evidence_audit_v2 ORDER BY sequence"):
+                expected=self._mac({"sequence":row["sequence"],"event_id":row["event_id"],"action":row["action"],"payload":row["payload"],"previous_mac":row["previous_mac"],"occurred_at":row["occurred_at"]})
+                if row["previous_mac"]!=prev or not hmac.compare_digest(row["event_mac"],expected): raise IdentityEvidenceError("identity audit integrity failure")
+                prev=row["event_mac"]
+            anchor=self._db.execute("SELECT event_count,head_mac,anchor_mac FROM identity_evidence_audit_anchor_v2 WHERE singleton=1").fetchone()
+            count=self._db.execute("SELECT COUNT(*) FROM identity_evidence_audit_v2").fetchone()[0]
+            if anchor is None or anchor["event_count"]!=count or anchor["head_mac"]!=prev or not hmac.compare_digest(anchor["anchor_mac"],self._anchor_mac(count,prev)):
+                raise IdentityEvidenceError("identity audit anchor integrity failure")
+            if started: self._db.commit()
+        except Exception:
+            if started: self._db.rollback()
+            raise
 
     def close(self) -> None:
         self.verify_integrity(); self._db.close()
