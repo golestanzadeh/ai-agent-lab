@@ -39,7 +39,7 @@ The original checkout contained unrelated uncommitted operational-probe work. It
 
 - Corrected focused F02/F05/F07 suite: `39 passed`, exit 0.
 - Corrected relevant Kernel, persistence, evidence and continuity suite: `83 passed`, exit 0.
-- Corrected complete unit regression: `1134 passed, 5 skipped`, exit 0, 240.59 seconds.
+- Final corrected complete unit regression: `1134 passed, 5 skipped`, exit 0, 243.10 seconds.
 - Successor contract JSON parsing: PASS.
 - `git diff --check`: PASS.
 
@@ -48,6 +48,8 @@ Tests include generic tax-role denial, dedicated-role expiry and Kill Switch den
 ## Independent-review correction cycle
 
 The first independent review of `89d861ecfb8848edfe8629e7b314cd10b70bf95c` passed F02 but rejected F05 and F07. It reproduced an unauthenticated `correction_evidence_ref` history column and loss of recoverable legacy audit semantics. The corrected candidate binds and compares the correction reference inside each HMAC-protected history payload, requires complete revision sequences, rejects deleted/orphaned/mismatched history, and preserves every legacy audit field and original timestamp in an HMAC-protected v2 lineage table. It also adds a signed in-transaction migration receipt so a crash after database commit but before anchor publication can reconcile deterministically. The corrected exact SHA requires a new independent review; the earlier FAIL is preserved, not overwritten.
+
+The second independent review of `290f96d35f1d78a2d21606136aa7cfa621b4f5c2` passed F02, F05, exact legacy-audit preservation and commit-to-anchor recovery, but found that the signed recovery receipt remained reusable after successful publication. The final candidate gives that HMAC-protected receipt crash-safe one-time `PENDING → CONSUMED` semantics. A pending receipt may reconcile exactly one missing anchor at its bound audit head; successful publication consumes it, and later anchor deletion fails closed. A fresh empty database is distinguished from an existing empty database so the latter cannot silently regenerate a deleted anchor. A third independent review of the final exact SHA is required.
 
 ## Files changed
 

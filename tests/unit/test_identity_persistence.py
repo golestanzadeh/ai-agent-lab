@@ -399,6 +399,9 @@ def test_f07_database_commit_to_anchor_interruption_reconciles_from_signed_recei
     reopened=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
     assert path.with_suffix(path.suffix+".audit-anchor").exists()
     reopened.close()
+    path.with_suffix(path.suffix+".audit-anchor").unlink()
+    with pytest.raises(ValueError,match="anchor missing"):
+        IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
 
 
 def test_f07_populated_v1_migrates_without_losing_identity_role_or_audit(tmp_path):

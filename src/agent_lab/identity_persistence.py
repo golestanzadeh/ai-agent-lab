@@ -100,6 +100,7 @@ class IdentityPersistence:
         self._db.execute("PRAGMA foreign_keys=ON")
         self._db.execute("PRAGMA busy_timeout=5000")
         version = self._db.execute("PRAGMA user_version").fetchone()[0]
+        created_empty = False
         if version == 0:
             tables = self._db.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
@@ -108,6 +109,7 @@ class IdentityPersistence:
                 self._db.close()
                 raise ValueError("unversioned existing database requires reviewed migration")
             self._create_schema()
+            created_empty = True
         elif version == 1:
             self._migrate_v1()
         elif version != SCHEMA_VERSION:
@@ -126,9 +128,16 @@ class IdentityPersistence:
                 CREATE TABLE IF NOT EXISTS schema_migration_receipt(
                     migration_id TEXT PRIMARY KEY, from_version INTEGER NOT NULL,
                     to_version INTEGER NOT NULL, event_count INTEGER NOT NULL,
-                    head_mac TEXT NOT NULL, digest TEXT NOT NULL);
+                    head_mac TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('PENDING','CONSUMED')),
+                    digest TEXT NOT NULL);
             """)
-        self._verify_audit_continuity(create_empty=True)
+            receipt_columns={row["name"] for row in self._db.execute("PRAGMA table_info(schema_migration_receipt)")}
+            if "status" not in receipt_columns:
+                self._db.execute("ALTER TABLE schema_migration_receipt ADD COLUMN status TEXT NOT NULL DEFAULT 'CONSUMED'")
+                for receipt in self._db.execute("SELECT * FROM schema_migration_receipt").fetchall():
+                    payload={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac","status")}
+                    self._db.execute("UPDATE schema_migration_receipt SET digest=? WHERE migration_id=?",(self._mac(payload),receipt["migration_id"]))
+        self._verify_audit_continuity(create_empty=created_empty)
         self._verify_data_integrity()
 
     def _mac(self, value: dict | str) -> str:
@@ -173,7 +182,8 @@ class IdentityPersistence:
                 CREATE TABLE schema_migration_receipt(
                     migration_id TEXT PRIMARY KEY, from_version INTEGER NOT NULL,
                     to_version INTEGER NOT NULL, event_count INTEGER NOT NULL,
-                    head_mac TEXT NOT NULL, digest TEXT NOT NULL)""",
+                    head_mac TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('PENDING','CONSUMED')),
+                    digest TEXT NOT NULL)""",
                 """
                 CREATE TABLE subject_fact_binding(
                     request_id TEXT PRIMARY KEY, case_id TEXT NOT NULL, tax_year INTEGER NOT NULL,
@@ -239,8 +249,8 @@ class IdentityPersistence:
             self._db.execute("CREATE INDEX idx_case_party_scope ON case_party_role(case_id,role,valid_from,valid_to_exclusive)")
             self._db.execute("CREATE INDEX idx_subject_fact_scope ON subject_fact_binding(case_id,tax_year,subject_id)")
             count,head=self._audit_head()
-            receipt={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":count,"head_mac":head}
-            self._db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*receipt.values(),self._mac(receipt)))
+            receipt={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":count,"head_mac":head,"status":"PENDING"}
+            self._db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?,?)",(*receipt.values(),self._mac(receipt)))
             self._db.execute("PRAGMA user_version=2")
             if self._fault: self._fault("MIGRATION_V1_V2:BEFORE_COMMIT")
             self._db.commit()
@@ -251,6 +261,7 @@ class IdentityPersistence:
             raise
         if self._fault: self._fault("MIGRATION_V1_V2:AFTER_DATABASE_COMMIT")
         self._sync_anchor()
+        self._consume_migration_receipt()
         if self._fault: self._fault("MIGRATION_V1_V2:AFTER_COMMIT")
 
     def _anchor_payload(self, count: int, head: str) -> dict:
@@ -283,9 +294,9 @@ class IdentityPersistence:
                 self._write_anchor(0, head); return
             receipt=self._db.execute("SELECT * FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V1_TO_V2'").fetchone()
             if receipt is not None:
-                payload={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac")}
-                if hmac.compare_digest(self._mac(payload),receipt["digest"]) and payload["event_count"]==count and payload["head_mac"]==head:
-                    self._write_anchor(count,head); return
+                payload={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac","status")}
+                if payload["status"]=="PENDING" and hmac.compare_digest(self._mac(payload),receipt["digest"]) and payload["event_count"]==count and payload["head_mac"]==head:
+                    self._write_anchor(count,head); self._consume_migration_receipt(); return
             raise ValueError("audit anchor missing")
         document = json.loads(self._anchor_path.read_text(encoding="utf-8"))
         payload = {key:document[key] for key in ("schema_version","event_count","head_mac")}
@@ -293,6 +304,18 @@ class IdentityPersistence:
             raise ValueError("audit anchor integrity failure")
         if payload != self._anchor_payload(count, head):
             raise ValueError("audit anchor continuity failure")
+        self._consume_migration_receipt()
+
+    def _consume_migration_receipt(self) -> None:
+        receipt=self._db.execute("SELECT * FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V1_TO_V2'").fetchone()
+        if receipt is None or receipt["status"]=="CONSUMED":
+            return
+        pending={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac","status")}
+        if not hmac.compare_digest(self._mac(pending),receipt["digest"]):
+            raise ValueError("schema migration receipt integrity failure")
+        consumed={**pending,"status":"CONSUMED"}
+        with self._db:
+            self._db.execute("UPDATE schema_migration_receipt SET status='CONSUMED',digest=? WHERE migration_id=? AND status='PENDING'",(self._mac(consumed),receipt["migration_id"]))
 
     def _sync_anchor(self) -> None:
         count, head = self._audit_head()
@@ -336,7 +359,7 @@ class IdentityPersistence:
             if not hmac.compare_digest(self._mac(payload),row["digest"]):
                 raise ValueError("legacy audit integrity failure")
         for row in self._db.execute("SELECT * FROM schema_migration_receipt"):
-            payload={key:row[key] for key in ("migration_id","from_version","to_version","event_count","head_mac")}
+            payload={key:row[key] for key in ("migration_id","from_version","to_version","event_count","head_mac","status")}
             if not hmac.compare_digest(self._mac(payload),row["digest"]):
                 raise ValueError("schema migration receipt integrity failure")
         for row in self._db.execute("SELECT * FROM subject_fact_binding"):
