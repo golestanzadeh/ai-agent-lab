@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>داشبورد · AI Tax Agent</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/dashboard.css') }}">
+</head>
+<body>
+<a class="skip" href="#content">رفتن به محتوا</a>
+<div class="shell">
+  <aside class="sidebar" aria-label="ناوبری اصلی">
+    <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>فضای کار مالیاتی</small></span></div>
+    <div class="side-section">فضای کار</div>
+    <a href="/" class="nav active" aria-current="page">◈ <span>نمای کلی</span></a>
+    <div class="nav muted">▤ <span>مدارک</span><span class="soon">به‌زودی</span></div>
+    <div class="nav muted">◇ <span>بررسی و تحلیل</span></div>
+    <div class="nav muted">▣ <span>اظهارنامه</span></div>
+    <div class="sidebar-bottom"><span class="lock">◉</span> محیط محلی · فقط خواندنی</div>
+  </aside>
+  <main id="content" class="main">
+    <header class="toolbar"><span class="breadcrumb">فضای کار <span class="sep">/</span> نمای کلی</span><span class="privacy">◈ حریم خصوصی فعال</span></header>
+    <div class="page">
+      <div class="heading"><div><p class="eyebrow">مدیریت پرونده‌ها</p><h1>نمای کلی پرونده‌های مالیاتی</h1><p class="sub">وضعیت پرونده‌ها و گام بعدی، در یک نگاه.</p></div>
+      <span class="source {{ state }}" role="status">{{ "● اتصال به منبع تأییدشده" if state == "connected" else "● منبع پرونده متصل نیست" }}</span></div>
+      {% if state != "connected" %}
+      <section class="notice" role="status"><div class="notice-icon">!</div><div><h2>اتصال معتبر هنوز برقرار نشده است</h2><p>تا زمانی که دسترسی فقط‌خواندنی به منبع معتبر پرونده‌ها تأیید نشود، هیچ اطلاعات فرضی به‌عنوان پروندهٔ واقعی نمایش داده نمی‌شود.</p><p class="detail">وضعیت: اتصال نیازمند تکمیل قرارداد دسترسی Kernel و Persistence است.</p></div></section>
+      {% elif not cases %}
+      <section class="notice"><div class="notice-icon">○</div><div><h2>پرونده‌ای برای نمایش وجود ندارد</h2><p>منبع تأییدشده متصل است، اما پروندهٔ مجازی در محدودهٔ دسترسی فعلی وجود ندارد.</p></div></section>
+      {% else %}
+      <section class="stats" aria-label="خلاصهٔ پرونده‌ها"><div class="stat"><span>پرونده‌های قابل مشاهده</span><strong>{{ cases|length }}</strong><small>از منبع مجاز</small></div><div class="stat"><span>آخرین سال مالیاتی</span><strong>{{ cases[0].tax_year }}</strong><small>ثبت‌شده در فهرست</small></div><div class="stat"><span>وضعیت پروندهٔ انتخابی</span><strong class="status-text">{{ selected.status }}</strong><small>بر اساس دادهٔ معتبر</small></div></section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">پرونده‌های شما</p><h2>فهرست پرونده‌ها</h2></div><span class="read-only">فقط خواندنی</span></div><div class="case-list">{% for case in cases %}<a class="case-row {{ 'selected' if selected.case_id == case.case_id else '' }}" href="/?case_id={{ case.case_id|urlencode }}"><span class="case-avatar">{{ case.tax_year }}</span><span class="case-info"><strong>{{ case.case_id }}</strong><small>سال مالیاتی {{ case.tax_year }}</small></span><span class="case-status">{{ case.status }}</span><span class="chevron">‹</span></a>{% endfor %}</div></section>
+      {% endif %}
+      <section class="next"><div><p class="eyebrow">مرحلهٔ بعد</p><h2>اتصال امن به پرونده‌های واقعی</h2><p>پس از تأیید منبع داده، جزئیات پرونده، مدارک و وظایف بدون نمایش اطلاعات ساختگی فعال می‌شوند.</p></div><span class="next-symbol" aria-hidden="true">↗</span></section>
+      <footer>AI Tax Agent · UI25-01 <span>ارسال به ELSTER غیرفعال است</span></footer>
+    </div>
+  </main>
+</div>
+</body>
+</html>
