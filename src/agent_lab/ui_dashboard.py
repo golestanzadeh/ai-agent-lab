@@ -52,7 +52,10 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None) -> FastAPI:
         return response
 
     @app.get("/", response_class=HTMLResponse)
-    async def dashboard(request: Request, case_id: str | None = None):
+    async def dashboard(request: Request, case_id: str | None = None, tab: str = "overview"):
+        tabs = {"overview", "cases", "family", "documents", "analysis", "issues", "result", "declaration", "approval", "activity"}
+        if tab not in tabs:
+            raise HTTPException(status_code=404, detail="Unknown workspace tab")
         state = "unavailable"
         cases: tuple[DashboardCase, ...] = ()
         selected = None
@@ -78,7 +81,7 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None) -> FastAPI:
         elif case_id is not None:
             raise HTTPException(status_code=503, detail="Verified case source unavailable")
         return templates.TemplateResponse(request=request, name="dashboard.html", context={
-            "state": state, "cases": cases, "selected": selected,
+            "state": state, "cases": cases, "selected": selected, "tab": tab,
         })
 
     @app.get("/health")
