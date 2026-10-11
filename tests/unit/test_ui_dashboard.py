@@ -40,6 +40,7 @@ def test_bad_or_ambiguous_source_fails_closed():
         assert page.status_code == 200
         assert "منبع پرونده متصل نیست" in page.text
         assert "CASE-A" not in page.text
+        assert TestClient(create_dashboard_app(read_cases=source)).get("/?case_id=CASE-A").status_code == 503
 
 
 def test_security_headers_and_no_external_calls():
