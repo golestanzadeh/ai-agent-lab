@@ -54,6 +54,8 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
         response = await call_next(request)
         for name, value in LOCAL_SECURITY_HEADERS.items():
             response.headers[name] = value
+        if test_store is not None:
+            response.headers["content-security-policy"] = response.headers["content-security-policy"].replace("form-action "+chr(39)+"none"+chr(39), "form-action "+chr(39)+"self"+chr(39))
         return response
 
     @app.get("/", response_class=HTMLResponse)
