@@ -12,21 +12,22 @@
   <aside class="sidebar" aria-label="ناوبری اصلی">
     <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>فضای کار مالیاتی</small></span></div>
     <div class="side-section">فضای کار</div>
-    <a href="/?tab=overview" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>نمای کلی</span></a>
-    <a href="/?tab=cases" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>پرونده‌ها</span></a>
-    <a href="/?tab=family" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>خانواده</span></a>
-    <a href="/?tab=documents" class="nav {{ 'active' if tab == 'documents' else '' }}" {% if tab == 'documents' %}aria-current="page"{% endif %}>▥ <span>مدارک</span></a>
-    <a href="/?tab=analysis" class="nav {{ 'active' if tab == 'analysis' else '' }}" {% if tab == 'analysis' %}aria-current="page"{% endif %}>◇ <span>تحلیل</span></a>
-    <a href="/?tab=issues" class="nav {{ 'active' if tab == 'issues' else '' }}" {% if tab == 'issues' %}aria-current="page"{% endif %}>? <span>پرسش‌ها</span></a>
-    <a href="/?tab=result" class="nav {{ 'active' if tab == 'result' else '' }}" {% if tab == 'result' %}aria-current="page"{% endif %}>▦ <span>نتیجه</span></a>
-    <a href="/?tab=declaration" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>اظهارنامه</span></a>
-    <a href="/?tab=approval" class="nav {{ 'active' if tab == 'approval' else '' }}" {% if tab == 'approval' %}aria-current="page"{% endif %}>✓ <span>تأیید و ارسال</span></a>
-    <a href="/?tab=activity" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>فعالیت‌ها</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=overview" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>نمای کلی</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=cases" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>پرونده‌ها</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=family" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>خانواده</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=documents" class="nav {{ 'active' if tab == 'documents' else '' }}" {% if tab == 'documents' %}aria-current="page"{% endif %}>▥ <span>مدارک</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=analysis" class="nav {{ 'active' if tab == 'analysis' else '' }}" {% if tab == 'analysis' %}aria-current="page"{% endif %}>◇ <span>تحلیل</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=issues" class="nav {{ 'active' if tab == 'issues' else '' }}" {% if tab == 'issues' %}aria-current="page"{% endif %}>? <span>پرسش‌ها</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=result" class="nav {{ 'active' if tab == 'result' else '' }}" {% if tab == 'result' %}aria-current="page"{% endif %}>▦ <span>نتیجه</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=declaration" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>اظهارنامه</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=approval" class="nav {{ 'active' if tab == 'approval' else '' }}" {% if tab == 'approval' %}aria-current="page"{% endif %}>✓ <span>تأیید و ارسال</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=activity" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>فعالیت‌ها</span></a>
     <div class="sidebar-bottom"><span class="lock">◉</span> محیط محلی · فقط خواندنی</div>
   </aside>
   <main id="content" class="main">
     <header class="toolbar"><span class="breadcrumb">فضای کار <span class="sep">/</span> {{ {"overview":"نمای کلی","cases":"پرونده‌ها","family":"خانواده","documents":"مدارک","analysis":"تحلیل","issues":"پرسش‌ها","result":"نتیجه","declaration":"اظهارنامه","approval":"تأیید و ارسال","activity":"فعالیت‌ها"}[tab] }}</span><span class="privacy">◈ حریم خصوصی فعال</span></header>
     <div class="page">
+      {% if test_mode %}<div class="test-banner"><strong>TEST ONLY · محیط آزمایش عملکردی</strong><p>پرونده‌های TEST واقعیِ مالیاتی نیستند. عملیات این محیط فقط در پایگاه دادهٔ آزمایشی محلی ثبت می‌شوند.</p></div>{% endif %}
       {% if tab != "overview" %}
       {% include "_dashboard_tab.html" %}
       {% else %}
