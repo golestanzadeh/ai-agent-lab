@@ -48,7 +48,25 @@ $keySid=Resolve-Sid $KeyCustodianPrincipal; $recoverySid=Resolve-Sid $RecoveryPr
 $systemSid=[Security.Principal.SecurityIdentifier]::new('S-1-5-18')
 if (($kernelSid.Value,$identitySid.Value,$keySid.Value,$recoverySid.Value | Select-Object -Unique).Count -ne 4) { throw 'OI0002_DISTINCT_PRINCIPALS_REQUIRED' }
 $paths=[ordered]@{control=Join-Path $root 'control';kernel=Join-Path $root 'kernel';identity=Join-Path $root 'identity';secrets=Join-Path $root 'secrets';kernel_backup=Join-Path $root 'backup-kernel';identity_backup=Join-Path $root 'backup-identity'}
-if (Test-Path -LiteralPath $root) { $entries=@(Get-ChildItem -LiteralPath $root -Force); if ($entries.Count -gt 0 -and -not (Test-Path -LiteralPath (Join-Path $paths.control 'deployment.json'))) { throw 'OI0002_UNRECOGNIZED_NONEMPTY_ROOT' } }
+if (Test-Path -LiteralPath $root) {
+    $entries=@(Get-ChildItem -LiteralPath $root -Force)
+    $manifestPresent=Test-Path -LiteralPath (Join-Path $paths.control 'deployment.json')
+    if ($entries.Count -gt 0 -and -not $manifestPresent) {
+        # Only resume the known partial state left after key generation, never an arbitrary nonempty root.
+        $expectedDirs=@($paths.Values)
+        $expectedFiles=@((Join-Path $paths.secrets 'identity-hmac.key'))
+        $actual=@(Get-ChildItem -LiteralPath $root -Force -Recurse)
+        foreach($item in $actual) {
+            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'OI0002_UNRECOGNIZED_NONEMPTY_ROOT' }
+            if ($item.PSIsContainer) {
+                if ($expectedDirs -notcontains $item.FullName) { throw 'OI0002_UNRECOGNIZED_NONEMPTY_ROOT' }
+            } elseif ($expectedFiles -notcontains $item.FullName) { throw 'OI0002_UNRECOGNIZED_NONEMPTY_ROOT' }
+        }
+        if (@($entries | Where-Object { -not $_.PSIsContainer -or $expectedDirs -notcontains $_.FullName }).Count -gt 0) { throw 'OI0002_UNRECOGNIZED_NONEMPTY_ROOT' }
+        $existingKey=Join-Path $paths.secrets 'identity-hmac.key'
+        if ((Test-Path -LiteralPath $existingKey) -and (Get-Item -LiteralPath $existingKey).Length -ne 32) { throw 'OI0002_INVALID_EXISTING_KEY' }
+    }
+}
 if ($PSCmdlet.ShouldProcess($root,'Provision protected OI-0002 deployment')) {
     New-Item -ItemType Directory -Path $root -Force | Out-Null
     foreach($path in $paths.Values){ New-Item -ItemType Directory -Path $path -Force | Out-Null }

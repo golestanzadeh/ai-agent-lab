@@ -19,6 +19,13 @@ def test_provisioning_requires_elevation_distinct_existing_principals_and_non_sy
     assert "KeyCustodianPrincipal" in PROVISION
 
 
+def test_partial_deployment_resume_checks_known_paths_and_key_length():
+    assert "OI0002_UNRECOGNIZED_NONEMPTY_ROOT" in PROVISION
+    assert "OI0002_INVALID_EXISTING_KEY" in PROVISION
+    assert "(Get-Item -LiteralPath $existingKey).Length -ne 32" in PROVISION
+    assert "[IO.FileAttributes]::ReparsePoint" in PROVISION
+
+
 def test_root_acl_is_applied_only_after_child_custody_is_configured():
     root_acl = "Set-DirectoryAcl $root $recoverySid"
     assert PROVISION.count(root_acl) == 1
