@@ -334,9 +334,18 @@ def test_f05_correction_rejects_missing_evidence_and_history_tampering(tmp_path)
     with pytest.raises(ValueError,match="canonical correction"):
         store.correct_party_role(case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),correction_evidence_ref="missing",authorization_ref=A1)
     store.correct_party_role(case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),correction_evidence_ref=E2,authorization_ref=A1)
-    store._db.execute("UPDATE case_party_role_history SET payload='{}' WHERE binding_id='R1' AND revision=1")
+    store._db.execute("UPDATE case_party_role_history SET correction_evidence_ref=? WHERE binding_id='R1' AND revision=1",("sha256:"+"f"*64,))
     store._db.commit(); store._db.close()
     with pytest.raises(ValueError,match="history integrity"):
+        IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+
+
+def test_f05_deleted_history_is_detected(tmp_path):
+    cases,store=open_store(tmp_path); register(store); store.bind_party(role())
+    store.correct_party_role(case_id="C1",binding_id="R1",valid_to_exclusive=date(2025,7,1),correction_evidence_ref=E2,authorization_ref=A1)
+    store._db.execute("DELETE FROM case_party_role_history WHERE binding_id='R1' AND revision=1")
+    store._db.commit(); store._db.close()
+    with pytest.raises(ValueError,match="history continuity"):
         IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
 
 
@@ -380,6 +389,18 @@ def test_f07_post_commit_interruption_leaves_verified_v2(tmp_path):
     reopened.close()
 
 
+def test_f07_database_commit_to_anchor_interruption_reconciles_from_signed_receipt(tmp_path):
+    path=tmp_path/"commit-gap.sqlite"; _create_empty_v1(path)
+    def fault(observed):
+        if observed == "MIGRATION_V1_V2:AFTER_DATABASE_COMMIT": raise RuntimeError("synthetic migration interruption")
+    with pytest.raises(RuntimeError,match="interruption"):
+        IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY,fault_injector=fault)
+    assert not path.with_suffix(path.suffix+".audit-anchor").exists()
+    reopened=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    assert path.with_suffix(path.suffix+".audit-anchor").exists()
+    reopened.close()
+
+
 def test_f07_populated_v1_migrates_without_losing_identity_role_or_audit(tmp_path):
     from agent_lab.identity_persistence import _canonical, _legacy_digest
     path=tmp_path/"populated.sqlite"; _create_empty_v1(path)
@@ -388,11 +409,16 @@ def test_f07_populated_v1_migrates_without_losing_identity_role_or_audit(tmp_pat
     with sqlite3.connect(path) as db:
         db.execute("INSERT INTO identity_record VALUES(?,?,?,?,1)",("P1","PERSON",_canonical(payload),_legacy_digest(payload)))
         db.execute("INSERT INTO case_party_role VALUES(?,?,?,?,?,?,?,?,?,?,1)",(*role_payload.values(),_legacy_digest(role_payload)))
-        db.execute("INSERT INTO identity_audit(action,case_id,subject_id,payload_digest,recorded_at) VALUES(?,?,?,?,?)",("LEGACY","C1","P1","legacy-digest",NOW.isoformat()))
+        db.execute("INSERT INTO identity_audit(action,case_id,subject_id,payload_digest,recorded_at) VALUES(?,?,?,?,?)",("ORIGINAL_SECURITY_EVENT","C1","P1","legacy-digest",NOW.isoformat()))
     store=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
     assert store.read_case_identity(case_id="C1",subject_id="P1",on_date=date(2025,2,1),authorization_ref=A1).person_id == "P1"
     assert store._db.execute("SELECT count(*) FROM identity_history").fetchone()[0] == 1
     assert store._db.execute("SELECT count(*) FROM identity_audit").fetchone()[0] == 1
+    legacy=store._db.execute("SELECT * FROM legacy_identity_audit").fetchone()
+    assert legacy["action"] == "ORIGINAL_SECURITY_EVENT"
+    assert legacy["case_id"] == "C1" and legacy["subject_id"] == "P1"
+    assert legacy["payload_digest"] == "legacy-digest"
+    assert legacy["recorded_at"] == NOW.isoformat()
     store.close()
 
 

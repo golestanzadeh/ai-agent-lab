@@ -37,13 +37,17 @@ The original checkout contained unrelated uncommitted operational-probe work. It
 
 ## Verification evidence
 
-- Focused F02/F05/F07 suite: `37 passed`, exit 0.
-- Relevant Kernel, persistence, evidence and continuity suite: `81 passed`, exit 0.
-- Complete unit regression: `1132 passed, 5 skipped`, exit 0, 251.71 seconds.
+- Corrected focused F02/F05/F07 suite: `39 passed`, exit 0.
+- Corrected relevant Kernel, persistence, evidence and continuity suite: `83 passed`, exit 0.
+- Corrected complete unit regression: `1134 passed, 5 skipped`, exit 0, 240.59 seconds.
 - Successor contract JSON parsing: PASS.
 - `git diff --check`: PASS.
 
 Tests include generic tax-role denial, dedicated-role expiry and Kill Switch denial, immutable correction history and tamper rejection, role boundary behavior, five pre-commit crash points, post-commit recovery, populated migration readback, and preservation of unsupported legacy lineage.
+
+## Independent-review correction cycle
+
+The first independent review of `89d861ecfb8848edfe8629e7b314cd10b70bf95c` passed F02 but rejected F05 and F07. It reproduced an unauthenticated `correction_evidence_ref` history column and loss of recoverable legacy audit semantics. The corrected candidate binds and compares the correction reference inside each HMAC-protected history payload, requires complete revision sequences, rejects deleted/orphaned/mismatched history, and preserves every legacy audit field and original timestamp in an HMAC-protected v2 lineage table. It also adds a signed in-transaction migration receipt so a crash after database commit but before anchor publication can reconcile deterministically. The corrected exact SHA requires a new independent review; the earlier FAIL is preserved, not overwritten.
 
 ## Files changed
 

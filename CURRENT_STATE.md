@@ -2,7 +2,7 @@
 
 ## OI-0002 REMEDIATION-02 review handoff — 2026-10-11
 
-F02/F05/F07 bounded implementation is complete on the authorized OI-0002 branch: dedicated Kernel identity capabilities replace generic derived-artifact authorization; immutable evidence-backed case-party correction preserves history and cardinality; and schema v1→v2 migration is atomic with crash rollback and populated-data verification. Focused tests pass (`37`), relevant security/persistence tests pass (`81`), and complete unit regression passes (`1132 passed, 5 skipped`). State is `REVIEW_READY / NOT ACCEPTED`; a separate reviewer must inspect the exact pushed SHA. OI-0002 stays open, operational Windows evidence remains unresolved, and OI-0003 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
+F02/F05/F07 bounded implementation is complete on the authorized OI-0002 branch: dedicated Kernel identity capabilities replace generic derived-artifact authorization; immutable evidence-backed case-party correction preserves authenticated complete history and cardinality; and schema v1→v2 migration is atomic with crash rollback, signed commit-to-anchor reconciliation and exact protected legacy-audit preservation. The first review FAIL on history provenance/audit preservation was corrected. Corrected focused tests pass (`39`), relevant security/persistence tests pass (`83`), and complete unit regression passes (`1134 passed, 5 skipped`). State is `REVIEW_READY / NOT ACCEPTED`; a new separate review must inspect the corrected exact pushed SHA. OI-0002 stays open, operational Windows evidence remains unresolved, and OI-0003 remains blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
 
 ## OI-0002 operational deployment blocked — 2026-10-11
 
