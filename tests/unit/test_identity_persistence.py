@@ -472,3 +472,22 @@ def test_f07_valid_legacy_receipt_upgrades_as_consumed_when_anchor_exists(tmp_pa
     receipt=reopened._db.execute("SELECT * FROM schema_migration_receipt").fetchone()
     assert receipt["status"] == "CONSUMED"
     reopened.close()
+
+
+def test_f07_corrupt_anchor_rejects_without_mutating_legacy_receipt(tmp_path):
+    from agent_lab.identity_persistence import _canonical
+    cases,store=open_store(tmp_path); store.close(); path=tmp_path/"identity.sqlite"
+    payload={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":0,"head_mac":"0"*64}
+    digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
+    with sqlite3.connect(path) as db:
+        db.execute("DROP TABLE schema_migration_receipt")
+        db.execute("CREATE TABLE schema_migration_receipt(migration_id TEXT PRIMARY KEY,from_version INTEGER,to_version INTEGER,event_count INTEGER,head_mac TEXT,digest TEXT)")
+        db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*payload.values(),digest))
+        before_schema=db.execute("SELECT sql FROM sqlite_master WHERE name='schema_migration_receipt'").fetchone()[0]
+        before_row=db.execute("SELECT * FROM schema_migration_receipt").fetchone()
+    path.with_suffix(path.suffix+".audit-anchor").write_text("{}",encoding="utf-8")
+    with pytest.raises(ValueError,match="anchor integrity"):
+        IdentityPersistence(path,cases=cases,authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    with sqlite3.connect(path) as db:
+        assert db.execute("SELECT sql FROM sqlite_master WHERE name='schema_migration_receipt'").fetchone()[0] == before_schema
+        assert db.execute("SELECT * FROM schema_migration_receipt").fetchone() == before_row

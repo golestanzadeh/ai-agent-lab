@@ -116,20 +116,24 @@ class IdentityPersistence:
             self._db.close()
             raise ValueError("unsupported database schema version")
         with self._db:
-            self._db.executescript("""
+            self._db.execute("""
                 CREATE TABLE IF NOT EXISTS case_party_role_history(
                     binding_id TEXT NOT NULL, revision INTEGER NOT NULL, payload TEXT NOT NULL,
                     digest TEXT NOT NULL, correction_evidence_ref TEXT,
-                    PRIMARY KEY(binding_id,revision));
+                    PRIMARY KEY(binding_id,revision))
+            """)
+            self._db.execute("""
                 CREATE TABLE IF NOT EXISTS legacy_identity_audit(
                     legacy_event_id INTEGER PRIMARY KEY, action TEXT NOT NULL, case_id TEXT,
                     subject_id TEXT NOT NULL, payload_digest TEXT NOT NULL, recorded_at TEXT NOT NULL,
-                    digest TEXT NOT NULL);
+                    digest TEXT NOT NULL)
+            """)
+            self._db.execute("""
                 CREATE TABLE IF NOT EXISTS schema_migration_receipt(
                     migration_id TEXT PRIMARY KEY, from_version INTEGER NOT NULL,
                     to_version INTEGER NOT NULL, event_count INTEGER NOT NULL,
                     head_mac TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('PENDING','CONSUMED')),
-                    digest TEXT NOT NULL);
+                    digest TEXT NOT NULL)
             """)
             receipt_columns={row["name"] for row in self._db.execute("PRAGMA table_info(schema_migration_receipt)")}
             if "status" not in receipt_columns:
@@ -145,6 +149,15 @@ class IdentityPersistence:
                             legacy["event_count"] != actual_count or legacy["head_mac"] != actual_head or
                             not hmac.compare_digest(self._mac(legacy),receipt["digest"])):
                         raise ValueError("legacy schema migration receipt integrity failure")
+                if self._anchor_path.exists():
+                    try:
+                        document=json.loads(self._anchor_path.read_text(encoding="utf-8"))
+                        anchor={key:document[key] for key in ("schema_version","event_count","head_mac")}
+                    except (OSError,KeyError,TypeError,ValueError,json.JSONDecodeError) as exc:
+                        raise ValueError("audit anchor integrity failure") from exc
+                    if (not hmac.compare_digest(self._mac(anchor),document.get("anchor_mac","")) or
+                            anchor != self._anchor_payload(actual_count,actual_head)):
+                        raise ValueError("audit anchor integrity failure")
                 self._db.execute("ALTER TABLE schema_migration_receipt ADD COLUMN status TEXT NOT NULL DEFAULT 'CONSUMED'")
                 for legacy in legacy_receipts:
                     status="PENDING" if not self._anchor_path.exists() else "CONSUMED"

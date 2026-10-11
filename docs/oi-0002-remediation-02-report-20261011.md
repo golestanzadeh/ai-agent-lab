@@ -37,9 +37,9 @@ The original checkout contained unrelated uncommitted operational-probe work. It
 
 ## Verification evidence
 
-- Final focused F02/F05/F07 suite: `45 passed`, exit 0.
-- Final relevant Kernel, persistence, evidence and continuity suite: `89 passed`, exit 0.
-- Final complete unit regression: `1140 passed, 5 skipped`, exit 0, 249.32 seconds.
+- Final focused F02/F05/F07 suite: `46 passed`, exit 0.
+- Final relevant Kernel, persistence, evidence and continuity suite: `90 passed`, exit 0.
+- Final complete unit regression: `1141 passed, 5 skipped`, exit 0, 248.30 seconds.
 - Successor contract JSON parsing: PASS.
 - `git diff --check`: PASS.
 
@@ -54,6 +54,8 @@ The second independent review of `290f96d35f1d78a2d21606136aa7cfa621b4f5c2` pass
 The third independent review of `03c45ea1bc59fd18e989ca08dd7da908da037705` confirmed that replay was fixed, then found that compatibility upgrade of a pre-status receipt re-signed unverified legacy fields. The final candidate verifies the old canonical HMAC and exact migration ID, versions, non-negative event count and canonical audit head before any schema alteration. Invalid digest or semantic fields are rejected without adding the status column; a valid legacy receipt upgrades to `CONSUMED` when its anchor already exists. A fourth independent review of the final exact SHA is required.
 
 The fourth independent review of `ee0857e9eca5c23bda08a557156e40daa5695cc9` confirmed invalid digests/versions were rejected, then reproduced a valid-HMAC but false 64-hex audit head. The final candidate now verifies the complete current audit chain before altering the receipt schema and requires the legacy receipt's event count and head to equal the verified chain exactly. Negative tests cover valid-HMAC wrong head and wrong non-negative count. A fifth independent review of the final exact SHA is required.
+
+The fifth independent review of `f152ff487f72e7aad3ea4d6d2fe62fdd6c444990` confirmed all prior receipt probes, then found compatibility mutation committed before a corrupted existing anchor was rejected. The final candidate replaces implicit `executescript` commits with explicit transactional statements and verifies any existing anchor's HMAC and exact current count/head before `ALTER` or re-signing. A corrupt-anchor negative test proves the old schema and row remain byte-equivalent after rejection. A sixth independent review of the final exact SHA is required.
 
 ## Files changed
 
