@@ -1,5 +1,9 @@
 # Current State
 
+## UI25-01 implemented dashboard shell and guarded source boundary — 2026-10-11
+
+Implemented `src/agent_lab/ui_dashboard.py` as a separate read-only FastAPI dashboard factory, with responsive Persian RTL professional dashboard template and stylesheet, explicit owner-authorized read source injection, fail-closed unconnected/ambiguous source behavior, case-scoped selection, and no synthetic-as-live fallback or submission action. Local branch `oi0002-identity-persistence` fast-forwarded without touching `d021-agent-case-provisioning`; focused suite: **31 passed, 1 warning** (dashboard, existing UI, responsive/state). This is **NOT full UI25-01 acceptance**: no verified owner-authorized persistent real case metadata resolver is connected, and existing OI-0002 governance remains blocked. New app is not activated as the main UI. Do not claim real 2024 dashboard data or Owner visual acceptance. Exact next dependency: obtain approved Kernel-owned read-only case-list resolver and persistence/restart evidence, then connect and Owner-test UI25-01.
+
 ## UI25-00 local technical inventory evidence — 2026-10-11
 
 On Owner Windows checkout `d021-agent-case-provisioning` at `41554eb`, the existing FastAPI UI was verified as synthetic-local-only; TestClient GET /, /health returned 200 and 17 focused UI/launcher tests passed after setting PYTHONPATH=src. No real case adapter or protected intake was verified. UI25-00 technical inventory recorded, **Owner UI acceptance not yet obtained**. Next work UI25-01 read-only real case/workspace integration, contingent on canonical registry/persistence inspection and existing protected gates. Evidence: [UI25-00 local inventory](docs/ui25-00-local-inventory-20261011.md).
