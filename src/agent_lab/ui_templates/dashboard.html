@@ -12,15 +12,24 @@
   <aside class="sidebar" aria-label="ناوبری اصلی">
     <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>فضای کار مالیاتی</small></span></div>
     <div class="side-section">فضای کار</div>
-    <a href="/" class="nav active" aria-current="page">◈ <span>نمای کلی</span></a>
-    <div class="nav muted">▤ <span>مدارک</span><span class="soon">به‌زودی</span></div>
-    <div class="nav muted">◇ <span>بررسی و تحلیل</span></div>
-    <div class="nav muted">▣ <span>اظهارنامه</span></div>
+    <a href="/?tab=overview" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>نمای کلی</span></a>
+    <a href="/?tab=cases" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>پرونده‌ها</span></a>
+    <a href="/?tab=family" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>خانواده</span></a>
+    <a href="/?tab=documents" class="nav {{ 'active' if tab == 'documents' else '' }}" {% if tab == 'documents' %}aria-current="page"{% endif %}>▥ <span>مدارک</span></a>
+    <a href="/?tab=analysis" class="nav {{ 'active' if tab == 'analysis' else '' }}" {% if tab == 'analysis' %}aria-current="page"{% endif %}>◇ <span>تحلیل</span></a>
+    <a href="/?tab=issues" class="nav {{ 'active' if tab == 'issues' else '' }}" {% if tab == 'issues' %}aria-current="page"{% endif %}>? <span>پرسش‌ها</span></a>
+    <a href="/?tab=result" class="nav {{ 'active' if tab == 'result' else '' }}" {% if tab == 'result' %}aria-current="page"{% endif %}>▦ <span>نتیجه</span></a>
+    <a href="/?tab=declaration" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>اظهارنامه</span></a>
+    <a href="/?tab=approval" class="nav {{ 'active' if tab == 'approval' else '' }}" {% if tab == 'approval' %}aria-current="page"{% endif %}>✓ <span>تأیید و ارسال</span></a>
+    <a href="/?tab=activity" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>فعالیت‌ها</span></a>
     <div class="sidebar-bottom"><span class="lock">◉</span> محیط محلی · فقط خواندنی</div>
   </aside>
   <main id="content" class="main">
-    <header class="toolbar"><span class="breadcrumb">فضای کار <span class="sep">/</span> نمای کلی</span><span class="privacy">◈ حریم خصوصی فعال</span></header>
+    <header class="toolbar"><span class="breadcrumb">فضای کار <span class="sep">/</span> {{ {"overview":"نمای کلی","cases":"پرونده‌ها","family":"خانواده","documents":"مدارک","analysis":"تحلیل","issues":"پرسش‌ها","result":"نتیجه","declaration":"اظهارنامه","approval":"تأیید و ارسال","activity":"فعالیت‌ها"}[tab] }}</span><span class="privacy">◈ حریم خصوصی فعال</span></header>
     <div class="page">
+      {% if tab != "overview" %}
+      {% include "_dashboard_tab.html" %}
+      {% else %}
       <div class="heading"><div><p class="eyebrow">مدیریت پرونده‌ها</p><h1>نمای کلی پرونده‌های مالیاتی</h1><p class="sub">وضعیت پرونده‌ها و گام بعدی، در یک نگاه.</p></div>
       <span class="source {{ state }}" role="status">{{ "● اتصال به منبع تأییدشده" if state == "connected" else "● منبع پرونده متصل نیست" }}</span></div>
       {% if state != "connected" %}
@@ -32,6 +41,7 @@
       <section class="panel"><div class="panel-heading"><div><p class="eyebrow">پرونده‌های شما</p><h2>فهرست پرونده‌ها</h2></div><span class="read-only">فقط خواندنی</span></div><div class="case-list">{% for case in cases %}<a class="case-row {{ 'selected' if selected.case_id == case.case_id else '' }}" href="/?case_id={{ case.case_id|urlencode }}"><span class="case-avatar">{{ case.tax_year }}</span><span class="case-info"><strong>{{ case.case_id }}</strong><small>سال مالیاتی {{ case.tax_year }}</small></span><span class="case-status">{{ case.status }}</span><span class="chevron">‹</span></a>{% endfor %}</div></section>
       {% endif %}
       <section class="next"><div><p class="eyebrow">مرحلهٔ بعد</p><h2>اتصال امن به پرونده‌های واقعی</h2><p>پس از تأیید منبع داده، جزئیات پرونده، مدارک و وظایف بدون نمایش اطلاعات ساختگی فعال می‌شوند.</p></div><span class="next-symbol" aria-hidden="true">↗</span></section>
+      {% endif %}
       <footer>AI Tax Agent · UI25-01 <span>ارسال به ELSTER غیرفعال است</span></footer>
     </div>
   </main>
