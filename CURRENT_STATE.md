@@ -2,7 +2,7 @@
 
 ## OI-0002 operational deployment blocked — 2026-10-11
 
-Fail-closed Windows custody provisioning/verification and SQLite consistent-snapshot audit verification are pushed through `2537901`. Focused verification passes (`25`), concurrency stress passes (`30/30`), and full unit regression passes (`1119 passed, 5 skipped`). Operational acceptance is blocked because the current host token is not elevated; the safe provisioner stopped with `OI0002_ELEVATION_REQUIRED` and created no target. No actual principal ACL/effective-access, service wiring, restart, populated backup/restore or rollback evidence exists. Independent acceptance is withheld. OI-0002 remains open; E-03/C-02/C-06, REMEDIATION-02 and OI-0003 remain blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
+Fail-closed Windows custody provisioning/verification and SQLite consistent-snapshot audit verification are pushed through exact implementation SHA `c84d67da7c6b8e18863610a79a4440ab47a0d93a`. Focused verification passes (`25`), concurrency stress passes (`30/30`), and full unit regression passes (`1119 passed, 5 skipped`). Operational acceptance is blocked because the current host token is not elevated; the safe provisioner stopped with `OI0002_ELEVATION_REQUIRED` and created no target. No actual principal ACL/effective-access, service wiring, restart, populated backup/restore or rollback evidence exists. Independent acceptance is withheld. OI-0002 remains open; E-03/C-02/C-06, REMEDIATION-02 and OI-0003 remain blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
 
 ## UI25 full functional completion prerequisite stop — 2026-10-11
 

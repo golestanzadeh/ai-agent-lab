@@ -24,6 +24,7 @@ Three pushed commits were produced:
 1. `d8f197e5512bf20d3c8197896fa198e2a10f1c7a` — fail-closed Windows custody provisioning and verification entry points.
 2. `3834367ac45d2a78298036b62eb5df77813523b5` — separate Kernel, Identity, key-custodian and recovery principals; recovery-controlled manifest; exact ACL allowlists; independent HMAC custody; unsafe-root rejection; and consistent-snapshot SQLite audit verification.
 3. `2537901a6ecd6e1ca7e584875a3881cc2d09fd44` — exact fixed custody-path binding, root ACL verification, and ACE rights/inheritance/propagation matching. The subsequent reporting change also extends reparse inspection from each child through the deployment root to the volume boundary.
+4. `c84d67da7c6b8e18863610a79a4440ab47a0d93a` — exact final implementation SHA; completes volume-boundary reparse inspection and records the governed operational stop.
 
 Changed implementation files:
 
@@ -69,4 +70,4 @@ The next permitted action is an Owner-governed **elevated disposable-host deploy
 
 ## Final independent review
 
-The final narrow review of `2537901a6ecd6e1ca7e584875a3881cc2d09fd44` found no new critical defect and confirmed the ACL/path verifier was materially improved. It still withheld acceptance: explicit ACE inspection is not an effective-access test under each real service token, and the reviewed SHA stopped reparse inspection at the deployment root. The latter code-level issue was corrected in the reporting commit by walking to the volume boundary. The effective-access requirement cannot be honestly satisfied without the approved elevated disposable-host principals. Final recommendation remains **BLOCKED / NOT ACCEPTED**.
+The final narrow review of exact final implementation SHA `c84d67da7c6b8e18863610a79a4440ab47a0d93a` passed the ancestor-reparse correction at code level, confirmed zero PowerShell AST errors and `5 passed` focused script tests, and found the governed records accurate. It still withheld acceptance because explicit ACE inspection is not an effective-access test under each real service token. That requirement cannot be honestly satisfied without the approved elevated disposable-host principals. Final recommendation remains **BLOCKED / NOT ACCEPTED**.
