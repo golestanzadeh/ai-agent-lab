@@ -37,7 +37,13 @@ function Assert-Acl([string]$Path,[string]$OwnerSid,[hashtable]$Expected){
     foreach($ace in @($acl.Access|Where-Object AccessControlType -eq Allow)){
         $sid=$ace.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value
         if($actual.ContainsKey($sid)){throw "OI0002_DUPLICATE_ACE: $Path $sid"}
-        $actual[$sid]="$([int64]$ace.FileSystemRights)|$([int]$ace.InheritanceFlags)|$([int]$ace.PropagationFlags)"
+        $rights=[int64]$ace.FileSystemRights
+        $sync=[int64][Security.AccessControl.FileSystemRights]::Synchronize
+        $read=[int64][Security.AccessControl.FileSystemRights]::Read
+        $readExec=[int64][Security.AccessControl.FileSystemRights]::ReadAndExecute
+        # Windows can add Synchronize to read-only ACEs; normalize only these exact combinations.
+        if($rights -eq ($read -bor $sync) -or $rights -eq ($readExec -bor $sync)) { $rights=$rights -band (-bnot $sync) }
+        $actual[$sid]="$rights|$([int]$ace.InheritanceFlags)|$([int]$ace.PropagationFlags)"
     }
     foreach($sid in $Expected.Keys){if(-not $actual.ContainsKey($sid) -or $actual[$sid] -ne [string]$Expected[$sid]){throw "OI0002_ACL_RULE_MISMATCH: $Path $sid"}}
     foreach($sid in $actual.Keys){if(-not $Expected.ContainsKey($sid)){throw "OI0002_ACL_UNAUTHORIZED: $Path $sid"}}
