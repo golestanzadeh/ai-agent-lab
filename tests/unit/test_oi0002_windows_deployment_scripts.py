@@ -19,6 +19,15 @@ def test_provisioning_requires_elevation_distinct_existing_principals_and_non_sy
     assert "KeyCustodianPrincipal" in PROVISION
 
 
+def test_root_acl_is_applied_only_after_child_custody_is_configured():
+    root_acl = "Set-DirectoryAcl $root $recoverySid"
+    assert PROVISION.count(root_acl) == 1
+    root_position = PROVISION.index(root_acl)
+    for child in ("control", "kernel", "identity", "secrets", "kernel_backup", "identity_backup"):
+        assert PROVISION.index(f"Set-DirectoryAcl $paths.{child} ") < root_position
+    assert PROVISION.index("Set-FileAcl $manifestPath") < root_position
+
+
 def test_key_is_random_binary_and_never_printed_or_committed_as_literal():
     assert "RandomNumberGenerator]::Fill" in PROVISION
     assert "WriteAllBytes" in PROVISION

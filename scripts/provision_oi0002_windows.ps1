@@ -52,13 +52,7 @@ if (Test-Path -LiteralPath $root) { $entries=@(Get-ChildItem -LiteralPath $root 
 if ($PSCmdlet.ShouldProcess($root,'Provision protected OI-0002 deployment')) {
     New-Item -ItemType Directory -Path $root -Force | Out-Null
     foreach($path in $paths.Values){ New-Item -ItemType Directory -Path $path -Force | Out-Null }
-    Set-DirectoryAcl $root $recoverySid @($recoverySid,$systemSid) @($kernelSid,$identitySid,$keySid)
-    Set-DirectoryAcl $paths.control $recoverySid @($recoverySid,$systemSid)
-    Set-DirectoryAcl $paths.kernel $recoverySid @($kernelSid,$recoverySid,$systemSid)
-    Set-DirectoryAcl $paths.identity $recoverySid @($identitySid,$recoverySid,$systemSid)
-    Set-DirectoryAcl $paths.secrets $recoverySid @($keySid,$recoverySid,$systemSid) @($identitySid)
-    Set-DirectoryAcl $paths.kernel_backup $recoverySid @($kernelSid,$recoverySid,$systemSid)
-    Set-DirectoryAcl $paths.identity_backup $recoverySid @($identitySid,$recoverySid,$systemSid)
+    # Stage content before applying restrictive ACLs; the provisioning token is not the recovery principal.
     $keyPath=Join-Path $paths.secrets 'identity-hmac.key'
     if (-not (Test-Path -LiteralPath $keyPath)) { $key=[byte[]]::new(32); [Security.Cryptography.RandomNumberGenerator]::Fill($key); [IO.File]::WriteAllBytes($keyPath,$key); [Array]::Clear($key,0,$key.Length) }
     Set-FileAcl $keyPath $keySid @($keySid,$recoverySid,$systemSid) @($identitySid)
@@ -66,5 +60,13 @@ if ($PSCmdlet.ShouldProcess($root,'Provision protected OI-0002 deployment')) {
     $manifestPath=Join-Path $paths.control 'deployment.json'
     $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $manifestPath -Encoding utf8NoBOM
     Set-FileAcl $manifestPath $recoverySid @($recoverySid,$systemSid)
+    # Apply child ACLs before the root ACL, which intentionally removes the provisioning token.
+    Set-DirectoryAcl $paths.control $recoverySid @($recoverySid,$systemSid)
+    Set-DirectoryAcl $paths.kernel $recoverySid @($kernelSid,$recoverySid,$systemSid)
+    Set-DirectoryAcl $paths.identity $recoverySid @($identitySid,$recoverySid,$systemSid)
+    Set-DirectoryAcl $paths.secrets $recoverySid @($keySid,$recoverySid,$systemSid) @($identitySid)
+    Set-DirectoryAcl $paths.kernel_backup $recoverySid @($kernelSid,$recoverySid,$systemSid)
+    Set-DirectoryAcl $paths.identity_backup $recoverySid @($identitySid,$recoverySid,$systemSid)
+    Set-DirectoryAcl $root $recoverySid @($recoverySid,$systemSid) @($kernelSid,$identitySid,$keySid)
     Write-Output $manifestPath
 }
