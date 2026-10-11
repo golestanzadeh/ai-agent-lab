@@ -51,6 +51,11 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
+        if test_store is not None and request.method not in {"GET", "HEAD", "OPTIONS"}:
+            origin = request.headers.get("origin")
+            if origin not in (None, "http://127.0.0.1:8766"):
+                from fastapi.responses import PlainTextResponse
+                return PlainTextResponse("Cross-origin mutation rejected", status_code=403)
         response = await call_next(request)
         for name, value in LOCAL_SECURITY_HEADERS.items():
             response.headers[name] = value
