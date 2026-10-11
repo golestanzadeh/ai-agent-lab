@@ -1,5 +1,9 @@
 # Current State
 
+## UI25-00 local technical inventory evidence — 2026-10-11
+
+On Owner Windows checkout `d021-agent-case-provisioning` at `41554eb`, the existing FastAPI UI was verified as synthetic-local-only; TestClient GET /, /health returned 200 and 17 focused UI/launcher tests passed after setting PYTHONPATH=src. No real case adapter or protected intake was verified. UI25-00 technical inventory recorded, **Owner UI acceptance not yet obtained**. Next work UI25-01 read-only real case/workspace integration, contingent on canonical registry/persistence inspection and existing protected gates. Evidence: [UI25-00 local inventory](docs/ui25-00-local-inventory-20261011.md).
+
 
 ## UI25 Owner-approved UI-led completion — 2026-10-09
 
