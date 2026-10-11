@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 operational deployment blocked — 2026-10-11
+
+Fail-closed Windows custody provisioning/verification and SQLite consistent-snapshot audit verification are pushed through `2537901`. Focused verification passes (`25`), concurrency stress passes (`30/30`), and full unit regression passes (`1119 passed, 5 skipped`). Operational acceptance is blocked because the current host token is not elevated; the safe provisioner stopped with `OI0002_ELEVATION_REQUIRED` and created no target. No actual principal ACL/effective-access, service wiring, restart, populated backup/restore or rollback evidence exists. Independent acceptance is withheld. OI-0002 remains open; E-03/C-02/C-06, REMEDIATION-02 and OI-0003 remain blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
+
 ## UI25 full functional completion prerequisite stop — 2026-10-11
 
 Recovery passed at synchronized `ffa8ae67825f485baf9bf8a429f61eee7bfb2866`; quota was not limiting. Safe UI work added selectable German LTR and Persian RTL behavior and made Approval/Submission navigation inert. Verification passes focused `32`, relevant UI/docs `42`, and full unit `1114 passed, 5 skipped`. Full integration is `BLOCKED_PREREQUISITE`: no approved durable live case resolver exists, OI-0002 remains unaccepted, OI-0003/Package A remains schema-blocked, and carryover/protected-evidence gates remain closed. The isolated port-8766 test store is not promoted. Evidence: `docs/ui25-full-functional-completion-stop-20261011.md`.

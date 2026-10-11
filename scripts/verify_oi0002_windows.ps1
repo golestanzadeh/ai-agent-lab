@@ -9,13 +9,13 @@ param(
 $ErrorActionPreference='Stop'; Set-StrictMode -Version Latest
 function Resolve-Sid([string]$Name){ try{return ([Security.Principal.NTAccount]::new($Name)).Translate([Security.Principal.SecurityIdentifier]).Value}catch{throw "OI0002_PRINCIPAL_NOT_FOUND: $Name"} }
 function Assert-NoReparsePath([string]$Root,[string]$Path){
-    $cursor=Get-Item -LiteralPath $Path
+    $cursor=Get-Item -LiteralPath $Path; $reachedRoot=$false
     while($null -ne $cursor){
         if($cursor.Attributes -band [IO.FileAttributes]::ReparsePoint){throw "OI0002_REPARSE_POINT_FORBIDDEN: $($cursor.FullName)"}
-        if($cursor.FullName.TrimEnd([IO.Path]::DirectorySeparatorChar) -eq $Root){return}
+        if($cursor.FullName.TrimEnd([IO.Path]::DirectorySeparatorChar) -eq $Root){$reachedRoot=$true}
         $cursor=$cursor.Parent
     }
-    throw "OI0002_PATH_OUTSIDE_ROOT: $Path"
+    if(-not $reachedRoot){throw "OI0002_PATH_OUTSIDE_ROOT: $Path"}
 }
 function Canonical-Child([string]$Root,[string]$Path,[string]$ExpectedLeaf){
     if(-not [IO.Path]::IsPathRooted($Path)){throw 'OI0002_ABSOLUTE_PATH_REQUIRED'}
