@@ -1,3 +1,7 @@
+# OI-0002 bounded review follow-up — 2026-10-11
+
+Owner requested independent review, operational remediation and final acceptance. A separate bounded inspection confirmed that `identity_custody.py` explicitly implements a **synthetic-only** topology validator; its tests use synthetic principals and temporary paths. The earlier focused identity/continuity/evidence/custody/persistence tests passed (46), but no verified real service-account ACL, protected key custody, separated backup/recovery rehearsal or formally independent acceptance is recorded. Consequently **C-02/C-06 remain BLOCKED**, and E-03's live protected-provider integration remains unverified. **OI-0002 remains OPEN / NOT ACCEPTED**; no release, identity activation, or OI-0003 unblock is authorized. Do not confuse this evidence review with independent acceptance. Exact remaining work: implement and verify real protected deployment custody, independently assess the precise published security remediation, and obtain explicit Owner release of conditional gates. No new database or orchestrator is authorized.
+
 # Project Checkpoint
 
 ## UI25 full functional completion governed stop — 2026-10-11
