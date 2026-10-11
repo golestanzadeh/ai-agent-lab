@@ -29,7 +29,9 @@ def test_root_acl_is_applied_only_after_child_custody_is_configured():
 
 
 def test_key_is_random_binary_and_never_printed_or_committed_as_literal():
-    assert "RandomNumberGenerator]::Fill" in PROVISION
+    assert "RandomNumberGenerator]::Create" in PROVISION
+    assert "$rng.GetBytes($key)" in PROVISION
+    assert "$rng.Dispose()" in PROVISION
     assert "WriteAllBytes" in PROVISION
     assert "identity-hmac.key" in PROVISION
     assert "Write-Output $keyPath" not in PROVISION

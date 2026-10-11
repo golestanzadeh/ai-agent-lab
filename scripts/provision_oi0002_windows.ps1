@@ -54,7 +54,7 @@ if ($PSCmdlet.ShouldProcess($root,'Provision protected OI-0002 deployment')) {
     foreach($path in $paths.Values){ New-Item -ItemType Directory -Path $path -Force | Out-Null }
     # Stage content before applying restrictive ACLs; the provisioning token is not the recovery principal.
     $keyPath=Join-Path $paths.secrets 'identity-hmac.key'
-    if (-not (Test-Path -LiteralPath $keyPath)) { $key=[byte[]]::new(32); [Security.Cryptography.RandomNumberGenerator]::Fill($key); [IO.File]::WriteAllBytes($keyPath,$key); [Array]::Clear($key,0,$key.Length) }
+    if (-not (Test-Path -LiteralPath $keyPath)) { $key=[byte[]]::new(32); $rng=[Security.Cryptography.RandomNumberGenerator]::Create(); try { $rng.GetBytes($key); [IO.File]::WriteAllBytes($keyPath,$key) } finally { $rng.Dispose(); [Array]::Clear($key,0,$key.Length) } }
     Set-FileAcl $keyPath $keySid @($keySid,$recoverySid,$systemSid) @($identitySid)
     $manifest=[ordered]@{schema_version=1;deployment_id='OI0002-LOCAL-WINDOWS-V1';root=$root;kernel_principal_sid=$kernelSid.Value;identity_principal_sid=$identitySid.Value;key_custodian_principal_sid=$keySid.Value;recovery_principal_sid=$recoverySid.Value;paths=$paths;key_reference='file:secrets/identity-hmac.key'}
     $manifestPath=Join-Path $paths.control 'deployment.json'
