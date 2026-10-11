@@ -11,7 +11,7 @@ def test_default_unavailable_has_no_synthetic_or_real_case():
     assert "منبع پرونده متصل نیست" in response.text
     assert "SYNTH-CASE" not in response.text
     assert "CASE-001" not in response.text
-    assert 'lang="fa" dir="rtl"' in response.text
+    assert 'lang="fa-IR" dir="rtl"' in response.text
     assert client.get("/?case_id=CASE-001").status_code == 503
     assert client.get("/health").json()["source"] == "unavailable"
 
@@ -73,3 +73,21 @@ def test_all_tabs_are_navigable_and_truthful():
     assert "۲. مجوز مقصد و ارسال" in approval
     assert 'disabled' in approval
     assert client.get("/?tab=unknown").status_code == 404
+
+
+def test_german_ltr_mode_and_language_navigation_are_real():
+    client = TestClient(create_dashboard_app())
+    page = client.get("/", params={"lang": "de-DE"})
+    assert page.status_code == 200
+    assert '<html lang="de-DE" dir="ltr">' in page.text
+    assert "Übersicht der Steuerfälle" in page.text
+    assert "ELSTER-Übermittlung ist deaktiviert" in page.text
+    assert "tab=documents&lang=de-DE" in page.text
+    assert client.get("/", params={"lang": "unknown"}).status_code == 404
+
+
+def test_submission_navigation_is_inert_and_has_no_control():
+    page = TestClient(create_dashboard_app()).get("/").text
+    assert 'aria-disabled="true"' in page
+    assert "tab=approval&amp;lang=" not in page
+    assert "ELSTER" in page

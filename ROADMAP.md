@@ -112,7 +112,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 ## Track 3A — UI25 UI-led 2025 product completion (Owner-approved 2026-10-09)
 
-**Status:** PLANNED / NOT EXECUTED. Continue existing UI-1..UI-19, do not rebuild. Detailed package tests and boundaries: [UI25 execution and acceptance plan](docs/ui25-execution-and-acceptance-plan.md). Owner-approved limited internal development and Gemini scope: [authorization](docs/ui25-owner-internal-development-testing-authorization-20261009.md).
+**Status:** BLOCKED_PREREQUISITE / PARTIAL SAFE UI WORK COMPLETE. UI25-00 inventory and the UI25-01 fail-closed shell exist; German/Persian direction and disabled submission navigation are tested. Real UI25-02..09/12 integration remains blocked by the absent approved durable case resolver and unresolved OI-0002/OI-0003/carryover gates. Do not promote the isolated functional-test store. Evidence: [UI25 governed stop](docs/ui25-full-functional-completion-stop-20261011.md).
 
 Work packages: UI25-00 existing UI audit/launch; UI25-01 Dashboard; UI25-02 Case/Tax Year; UI25-03 Family/Carryover; UI25-04 incremental Documents; UI25-05 Kernel/Agents; UI25-06 Issues/Questions; UI25-07 Analysis/Evidence; UI25-08 Calculation; UI25-09 Result/Declaration; UI25-10 Approval/Export; UI25-11 German/Persian and mobile; UI25-12 2025 end-to-end Owner acceptance.
 

@@ -149,6 +149,11 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-security-remediation-sec01-sec04-20261009.md` - SEC-01 through SEC-04 reproduction, scoped fixes, negative tests, regression evidence and independent-review handoff.
 - `oi-0002-remediation-01-report-20261008.md` - F01-F07 remediation mapping, T01-T12 implementation evidence, regression record and independent-review handoff.
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
+- `ui25-full-functional-completion-stop-20261011.md` - UI25 recovery result, safe bilingual/disabled-submission work, prerequisite blockers and governed continuation.
+- `ui25-execution-and-acceptance-plan.md` - Owner-approved UI25 package sequence, acceptance evidence and immutable boundaries.
+- `ui25-owner-internal-development-testing-authorization-20261009.md` - internal development/testing authority and narrow Gemini exception.
+- `ui25-00-local-inventory-20261011.md` - actual synthetic/live UI inventory and initial dependency findings.
+- `ui25-01-dashboard-implementation-contract.md` - fail-closed product dashboard integration and UX contract.
 
 ## Documentation rules
 

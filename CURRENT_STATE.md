@@ -1,5 +1,9 @@
 # Current State
 
+## UI25 full functional completion prerequisite stop — 2026-10-11
+
+Recovery passed at synchronized `ffa8ae67825f485baf9bf8a429f61eee7bfb2866`; quota was not limiting. Safe UI work added selectable German LTR and Persian RTL behavior and made Approval/Submission navigation inert. Verification passes focused `32`, relevant UI/docs `42`, and full unit `1114 passed, 5 skipped`. Full integration is `BLOCKED_PREREQUISITE`: no approved durable live case resolver exists, OI-0002 remains unaccepted, OI-0003/Package A remains schema-blocked, and carryover/protected-evidence gates remain closed. The isolated port-8766 test store is not promoted. Evidence: `docs/ui25-full-functional-completion-stop-20261011.md`.
+
 ## UI25-01 implemented dashboard shell and guarded source boundary — 2026-10-11
 
 Implemented `src/agent_lab/ui_dashboard.py` as a separate read-only FastAPI dashboard factory, with responsive Persian RTL professional dashboard template and stylesheet, explicit owner-authorized read source injection, fail-closed unconnected/ambiguous source behavior, case-scoped selection, and no synthetic-as-live fallback or submission action. Local branch `oi0002-identity-persistence` fast-forwarded without touching `d021-agent-case-provisioning`; focused suite: **31 passed, 1 warning** (dashboard, existing UI, responsive/state). This is **NOT full UI25-01 acceptance**: no verified owner-authorized persistent real case metadata resolver is connected, and existing OI-0002 governance remains blocked. New app is not activated as the main UI. Do not claim real 2024 dashboard data or Owner visual acceptance. Exact next dependency: obtain approved Kernel-owned read-only case-list resolver and persistence/restart evidence, then connect and Owner-test UI25-01.

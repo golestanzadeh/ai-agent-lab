@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="{{ lang }}" dir="{{ t.dir }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,26 +12,26 @@
   <aside class="sidebar" aria-label="ناوبری اصلی">
     <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>فضای کار مالیاتی</small></span></div>
     <div class="side-section">فضای کار</div>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=overview" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>نمای کلی</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=cases" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>پرونده‌ها</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=family" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>خانواده</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=documents" class="nav {{ 'active' if tab == 'documents' else '' }}" {% if tab == 'documents' %}aria-current="page"{% endif %}>▥ <span>مدارک</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=analysis" class="nav {{ 'active' if tab == 'analysis' else '' }}" {% if tab == 'analysis' %}aria-current="page"{% endif %}>◇ <span>تحلیل</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=issues" class="nav {{ 'active' if tab == 'issues' else '' }}" {% if tab == 'issues' %}aria-current="page"{% endif %}>? <span>پرسش‌ها</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=result" class="nav {{ 'active' if tab == 'result' else '' }}" {% if tab == 'result' %}aria-current="page"{% endif %}>▦ <span>نتیجه</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=declaration" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>اظهارنامه</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=approval" class="nav {{ 'active' if tab == 'approval' else '' }}" {% if tab == 'approval' %}aria-current="page"{% endif %}>✓ <span>تأیید و ارسال</span></a>
-    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=activity" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>فعالیت‌ها</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=overview&lang={{ lang }}" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>{{ t.overview }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=cases&lang={{ lang }}" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>{{ t.cases }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=family&lang={{ lang }}" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>{{ t.family }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=documents&lang={{ lang }}" class="nav {{ 'active' if tab == 'documents' else '' }}" {% if tab == 'documents' %}aria-current="page"{% endif %}>▥ <span>{{ t.documents }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=analysis&lang={{ lang }}" class="nav {{ 'active' if tab == 'analysis' else '' }}" {% if tab == 'analysis' %}aria-current="page"{% endif %}>◇ <span>{{ t.analysis }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=issues&lang={{ lang }}" class="nav {{ 'active' if tab == 'issues' else '' }}" {% if tab == 'issues' %}aria-current="page"{% endif %}>? <span>{{ t.issues }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=result&lang={{ lang }}" class="nav {{ 'active' if tab == 'result' else '' }}" {% if tab == 'result' %}aria-current="page"{% endif %}>▦ <span>{{ t.result }}</span></a>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=declaration&lang={{ lang }}" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>{{ t.declaration }}</span></a>
+    <span class="nav muted" aria-disabled="true" title="{{ t.disabled }}">✓ <span>{{ t.approval }} · {{ t.disabled }}</span></span>
+    <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=activity&lang={{ lang }}" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>{{ t.activity }}</span></a>
     <div class="sidebar-bottom"><span class="lock">◉</span> محیط محلی · فقط خواندنی</div>
   </aside>
   <main id="content" class="main">
-    <header class="toolbar"><span class="breadcrumb">فضای کار <span class="sep">/</span> {{ {"overview":"نمای کلی","cases":"پرونده‌ها","family":"خانواده","documents":"مدارک","analysis":"تحلیل","issues":"پرسش‌ها","result":"نتیجه","declaration":"اظهارنامه","approval":"تأیید و ارسال","activity":"فعالیت‌ها"}[tab] }}</span><span class="privacy">◈ حریم خصوصی فعال</span></header>
+    <header class="toolbar"><span class="breadcrumb">AI Tax Agent <span class="sep">/</span> {{ t[tab] }}</span><a class="language" href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab={{ tab }}&lang={{ t.switch_code }}">{{ t.switch }}</a><span class="privacy">◈ {{ t.privacy }}</span></header>
     <div class="page">
       {% if test_mode %}<div class="test-banner"><strong>TEST ONLY · محیط آزمایش عملکردی</strong><p>پرونده‌های TEST واقعیِ مالیاتی نیستند. عملیات این محیط فقط در پایگاه دادهٔ آزمایشی محلی ثبت می‌شوند.</p></div>{% endif %}
       {% if tab != "overview" %}
       {% include "_dashboard_tab.html" %}
       {% else %}
-      <div class="heading"><div><p class="eyebrow">مدیریت پرونده‌ها</p><h1>نمای کلی پرونده‌های مالیاتی</h1><p class="sub">وضعیت پرونده‌ها و گام بعدی، در یک نگاه.</p></div>
+      <div class="heading"><div><p class="eyebrow">AI Tax Agent</p><h1>{{ t.heading }}</h1><p class="sub">وضعیت پرونده‌ها و گام بعدی، در یک نگاه.</p></div>
       <span class="source {{ state }}" role="status">{{ "● اتصال به منبع تأییدشده" if state == "connected" else "● منبع پرونده متصل نیست" }}</span></div>
       {% if state != "connected" %}
       <section class="notice" role="status"><div class="notice-icon">!</div><div><h2>اتصال معتبر هنوز برقرار نشده است</h2><p>تا زمانی که دسترسی فقط‌خواندنی به منبع معتبر پرونده‌ها تأیید نشود، هیچ اطلاعات فرضی به‌عنوان پروندهٔ واقعی نمایش داده نمی‌شود.</p><p class="detail">وضعیت: اتصال نیازمند تکمیل قرارداد دسترسی Kernel و Persistence است.</p></div></section>
@@ -43,7 +43,7 @@
       {% endif %}
       <section class="next"><div><p class="eyebrow">مرحلهٔ بعد</p><h2>اتصال امن به پرونده‌های واقعی</h2><p>پس از تأیید منبع داده، جزئیات پرونده، مدارک و وظایف بدون نمایش اطلاعات ساختگی فعال می‌شوند.</p></div><span class="next-symbol" aria-hidden="true">↗</span></section>
       {% endif %}
-      <footer>AI Tax Agent · UI25-01 <span>ارسال به ELSTER غیرفعال است</span></footer>
+      <footer>AI Tax Agent · UI25 <span>{{ t.submission }}</span></footer>
     </div>
   </main>
 </div>

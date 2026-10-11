@@ -1,5 +1,9 @@
 # Project Checkpoint
 
+## UI25 full functional completion governed stop — 2026-10-11
+
+Recovery passed on synchronized clean baseline `ffa8ae67825f485baf9bf8a429f61eee7bfb2866`; authenticated starting capacity was 98 percent five-hour and 100 percent weekly. The dashboard now supports German LTR and Persian RTL navigation and keeps Approval/Submission inert. Verification passes focused `32`, relevant UI/docs `42`, and full unit `1114 passed, 5 skipped`. Full completion is `BLOCKED_PREREQUISITE`, not PASS: the authoritative Case Registry/CaseStateStore remain in-memory, no approved durable live resolver is connected, OI-0002 remains unaccepted, OI-0003/Package A remains schema-blocked, and carryover/protected-evidence prerequisites remain closed. The port-8766 test store was not promoted. Exact continuation is in `docs/ui25-full-functional-completion-stop-20261011.md`: complete OI-0002 independent acceptance and Owner disposition, then OI-0003, before real UI25-02..09 integration. UI25-10 remains disabled; no submission, merge or release occurred.
+
 
 ## Owner-approved UI25 continuation — 2026-10-09
 

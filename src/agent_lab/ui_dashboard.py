@@ -34,6 +34,11 @@ class DashboardUnavailable(RuntimeError):
 
 ReadCases = Callable[[], tuple[DashboardCase, ...]]
 
+UI_TEXT = {
+    "fa-IR": {"dir":"rtl","overview":"نمای کلی","cases":"پرونده‌ها","family":"خانواده","documents":"مدارک","analysis":"تحلیل","issues":"پرسش‌ها","result":"نتیجه","declaration":"اظهارنامه","approval":"تأیید و ارسال","activity":"فعالیت‌ها","heading":"نمای کلی پرونده‌های مالیاتی","privacy":"حریم خصوصی فعال","disabled":"غیرفعال","switch":"Deutsch","switch_code":"de-DE","submission":"ارسال به ELSTER غیرفعال است"},
+    "de-DE": {"dir":"ltr","overview":"Übersicht","cases":"Steuerfälle","family":"Familie","documents":"Dokumente","analysis":"Analyse","issues":"Rückfragen","result":"Ergebnis","declaration":"Steuererklärung","approval":"Freigabe und Übermittlung","activity":"Aktivitäten","heading":"Übersicht der Steuerfälle","privacy":"Datenschutz aktiv","disabled":"Deaktiviert","switch":"فارسی","switch_code":"fa-IR","submission":"ELSTER-Übermittlung ist deaktiviert"},
+}
+
 
 def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
@@ -64,10 +69,12 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
         return response
 
     @app.get("/", response_class=HTMLResponse)
-    async def dashboard(request: Request, case_id: str | None = None, tab: str = "overview"):
+    async def dashboard(request: Request, case_id: str | None = None, tab: str = "overview", lang: str = "fa-IR"):
         tabs = {"overview", "cases", "family", "documents", "analysis", "issues", "result", "declaration", "approval", "activity"}
         if tab not in tabs:
             raise HTTPException(status_code=404, detail="Unknown workspace tab")
+        if lang not in UI_TEXT:
+            raise HTTPException(status_code=404, detail="Unsupported language")
         state = "unavailable"
         cases: tuple[DashboardCase, ...] = ()
         selected = None
@@ -97,7 +104,7 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
             detail = test_store.detail(selected.case_id)
         return templates.TemplateResponse(request=request, name="dashboard.html", context={
             "state": state, "cases": cases, "selected": selected, "tab": tab,
-            "test_mode": test_store is not None, "detail": detail,
+            "test_mode": test_store is not None, "detail": detail, "lang": lang, "t": UI_TEXT[lang],
         })
 
     def require_test():
