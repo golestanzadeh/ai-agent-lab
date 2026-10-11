@@ -136,11 +136,13 @@ class IdentityPersistence:
                 legacy_receipts=self._db.execute("SELECT * FROM schema_migration_receipt").fetchall()
                 if len(legacy_receipts) > 1:
                     raise ValueError("invalid legacy schema migration receipts")
+                actual_count,actual_head=self._audit_head()
                 for receipt in legacy_receipts:
                     legacy={key:receipt[key] for key in ("migration_id","from_version","to_version","event_count","head_mac")}
                     if (legacy["migration_id"] != "IDENTITY_SCHEMA_V1_TO_V2" or legacy["from_version"] != 1 or
                             legacy["to_version"] != 2 or not isinstance(legacy["event_count"],int) or legacy["event_count"] < 0 or
                             re.fullmatch(r"[0-9a-f]{64}",legacy["head_mac"]) is None or
+                            legacy["event_count"] != actual_count or legacy["head_mac"] != actual_head or
                             not hmac.compare_digest(self._mac(legacy),receipt["digest"])):
                         raise ValueError("legacy schema migration receipt integrity failure")
                 self._db.execute("ALTER TABLE schema_migration_receipt ADD COLUMN status TEXT NOT NULL DEFAULT 'CONSUMED'")

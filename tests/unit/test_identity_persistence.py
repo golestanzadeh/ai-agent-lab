@@ -438,13 +438,15 @@ def test_f07_v1_with_unmigratable_fact_is_preserved_and_blocked(tmp_path):
         assert db.execute("SELECT count(*) FROM subject_fact_binding").fetchone()[0] == 1
 
 
-@pytest.mark.parametrize("invalid",["digest","version","head"])
+@pytest.mark.parametrize("invalid",["digest","version","head","head_mismatch","count_mismatch"])
 def test_f07_invalid_legacy_receipt_is_rejected_before_upgrade(tmp_path,invalid):
     from agent_lab.identity_persistence import _canonical
     cases,store=open_store(tmp_path); store.close(); path=tmp_path/"identity.sqlite"
     payload={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":0,"head_mac":"0"*64}
     if invalid == "version": payload["from_version"]=999
     elif invalid == "head": payload["head_mac"]="not-a-head"
+    elif invalid == "head_mismatch": payload["head_mac"]="f"*64
+    elif invalid == "count_mismatch": payload["event_count"]=1
     digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
     if invalid == "digest": digest="f"*64
     with sqlite3.connect(path) as db:
