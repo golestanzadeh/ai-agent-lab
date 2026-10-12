@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 closure scope frozen; capacity-paused before IPC implementation — 2026-10-12
+
+The Owner-approved final closure instruction is recovered at baseline `0342590`. One authoritative C01–C13 closure matrix now fixes the remaining acceptance scope and UI handoff. Five-hour capacity admission failed safely: 45% remained, only 30 points were usable after reserve, versus a 45–55 point whole-mission estimate. No partial IPC implementation or reset credit use occurred. Resume with the bounded Windows-local authenticated IPC ADR and independent architecture review after capacity readmission. UI25 Track 3A remains the sole product roadmap; the next real integration after OI-0002 is UI25-02, while synthetic UI/navigation/localization testing remains independently permissible.
+
 ## OI-0002 real-token custody PASS; operational integration blocked — 2026-10-12
 
 Owner authorization removed the previous approval wait. Real limited task tokens for `AITaxKernel`, `AITaxIdentity`, `AITaxKeyCustodian` and `AITaxRecovery` passed the exact positive/negative access matrix against preserved `OI0002-TEST2`; the official verifier passed under Recovery. Temporary tasks were deleted, passwords rotated and no credential/key/taxpayer data was recorded. OI-0002 is still not accepted: the only continuity adapter is explicitly synthetic and directly owns a Kernel object, while Identity persistence has no authenticated Kernel service client or protected cross-service transaction. The accepted ACL separation makes direct Identity access to the Kernel DB correctly impossible. A reviewed Kernel↔Identity operational service contract is now the exact architecture dependency; OI-0003 stays blocked.
