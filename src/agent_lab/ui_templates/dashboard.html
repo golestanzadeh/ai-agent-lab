@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>داشبورد · AI Tax Agent</title>
+  <title>{{ t.page_title }}</title>
   <link rel="stylesheet" href="{{ url_for('static', path='/dashboard.css') }}">
 </head>
 <body>
-<a class="skip" href="#content">رفتن به محتوا</a>
+<a class="skip" href="#content">{{ t.skip }}</a>
 <div class="shell">
-  <aside class="sidebar" aria-label="ناوبری اصلی">
-    <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>فضای کار مالیاتی</small></span></div>
-    <div class="side-section">فضای کار</div>
+  <aside class="sidebar" aria-label="{{ t.main_nav }}">
+    <div class="brand"><span class="brand-icon">A</span><span>AI Tax Agent<small>{{ t.tax_workspace }}</small></span></div>
+    <div class="side-section">{{ t.workspace }}</div>
     <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=overview&lang={{ lang }}" class="nav {{ 'active' if tab == 'overview' else '' }}" {% if tab == 'overview' %}aria-current="page"{% endif %}>◈ <span>{{ t.overview }}</span></a>
     <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=cases&lang={{ lang }}" class="nav {{ 'active' if tab == 'cases' else '' }}" {% if tab == 'cases' %}aria-current="page"{% endif %}>▤ <span>{{ t.cases }}</span></a>
     <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=family&lang={{ lang }}" class="nav {{ 'active' if tab == 'family' else '' }}" {% if tab == 'family' %}aria-current="page"{% endif %}>♧ <span>{{ t.family }}</span></a>
@@ -22,26 +22,26 @@
     <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=declaration&lang={{ lang }}" class="nav {{ 'active' if tab == 'declaration' else '' }}" {% if tab == 'declaration' %}aria-current="page"{% endif %}>▣ <span>{{ t.declaration }}</span></a>
     <span class="nav muted" aria-disabled="true" title="{{ t.disabled }}">✓ <span>{{ t.approval }} · {{ t.disabled }}</span></span>
     <a href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab=activity&lang={{ lang }}" class="nav {{ 'active' if tab == 'activity' else '' }}" {% if tab == 'activity' %}aria-current="page"{% endif %}>◷ <span>{{ t.activity }}</span></a>
-    <div class="sidebar-bottom"><span class="lock">◉</span> محیط محلی · فقط خواندنی</div>
+    <div class="sidebar-bottom"><span class="lock">◉</span> {{ t.local_readonly }}</div>
   </aside>
   <main id="content" class="main">
     <header class="toolbar"><span class="breadcrumb">AI Tax Agent <span class="sep">/</span> {{ t[tab] }}</span><a class="language" href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab={{ tab }}&lang={{ t.switch_code }}">{{ t.switch }}</a><span class="privacy">◈ {{ t.privacy }}</span></header>
     <div class="page">
-      {% if test_mode %}<div class="test-banner"><strong>TEST ONLY · محیط آزمایش عملکردی</strong><p>پرونده‌های TEST واقعیِ مالیاتی نیستند. عملیات این محیط فقط در پایگاه دادهٔ آزمایشی محلی ثبت می‌شوند.</p></div>{% endif %}
+      {% if test_mode %}<div class="test-banner"><strong>{{ t.test_banner }}</strong><p>{{ t.test_banner_description }}</p></div>{% endif %}
       {% if tab != "overview" %}
       {% include "_dashboard_tab.html" %}
       {% else %}
-      <div class="heading"><div><p class="eyebrow">AI Tax Agent</p><h1>{{ t.heading }}</h1><p class="sub">وضعیت پرونده‌ها و گام بعدی، در یک نگاه.</p></div>
-      <span class="source {{ state }}" role="status">{{ "● اتصال به منبع تأییدشده" if state == "connected" else "● منبع پرونده متصل نیست" }}</span></div>
+      <div class="heading"><div><p class="eyebrow">AI Tax Agent</p><h1>{{ t.heading }}</h1><p class="sub">{{ t.next_status }}</p></div>
+      <span class="source {{ state }}" role="status">{{ t.connected_source if state == "connected" else t.disconnected_source }}</span></div>
       {% if state != "connected" %}
-      <section class="notice" role="status"><div class="notice-icon">!</div><div><h2>اتصال معتبر هنوز برقرار نشده است</h2><p>تا زمانی که دسترسی فقط‌خواندنی به منبع معتبر پرونده‌ها تأیید نشود، هیچ اطلاعات فرضی به‌عنوان پروندهٔ واقعی نمایش داده نمی‌شود.</p><p class="detail">وضعیت: اتصال نیازمند تکمیل قرارداد دسترسی Kernel و Persistence است.</p></div></section>
+      <section class="notice" role="status"><div class="notice-icon">!</div><div><h2>{{ t.connection_missing }}</h2><p>{{ t.connection_explanation }}</p><p class="detail">{{ t.connection_dependency }}</p></div></section>
       {% elif not cases %}
-      <section class="notice"><div class="notice-icon">○</div><div><h2>پرونده‌ای برای نمایش وجود ندارد</h2><p>منبع تأییدشده متصل است، اما پروندهٔ مجازی در محدودهٔ دسترسی فعلی وجود ندارد.</p></div></section>
+      <section class="notice"><div class="notice-icon">○</div><div><h2>{{ t.no_cases }}</h2><p>{{ t.no_cases_description }}</p></div></section>
       {% else %}
-      <section class="stats" aria-label="خلاصهٔ پرونده‌ها"><div class="stat"><span>پرونده‌های قابل مشاهده</span><strong>{{ cases|length }}</strong><small>از منبع مجاز</small></div><div class="stat"><span>آخرین سال مالیاتی</span><strong>{{ cases[0].tax_year }}</strong><small>ثبت‌شده در فهرست</small></div><div class="stat"><span>وضعیت پروندهٔ انتخابی</span><strong class="status-text">{{ selected.status }}</strong><small>بر اساس دادهٔ معتبر</small></div></section>
-      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">پرونده‌های شما</p><h2>فهرست پرونده‌ها</h2></div><span class="read-only">فقط خواندنی</span></div><div class="case-list">{% for case in cases %}<a class="case-row {{ 'selected' if selected.case_id == case.case_id else '' }}" href="/?case_id={{ case.case_id|urlencode }}"><span class="case-avatar">{{ case.tax_year }}</span><span class="case-info"><strong>{{ case.case_id }}</strong><small>سال مالیاتی {{ case.tax_year }}</small></span><span class="case-status">{{ case.status }}</span><span class="chevron">‹</span></a>{% endfor %}</div></section>
+      <section class="stats" aria-label="{{ t.stats_aria }}"><div class="stat"><span>{{ t.visible_cases }}</span><strong>{{ cases|length }}</strong><small>{{ t.authorized_source }}</small></div><div class="stat"><span>{{ t.latest_tax_year }}</span><strong>{{ cases[0].tax_year }}</strong><small>{{ t.listed_year }}</small></div><div class="stat"><span>{{ t.selected_case_status }}</span><strong class="status-text">{{ t.status_labels[selected.status] }}</strong><small>{{ t.verified_data }}</small></div></section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">{{ t.your_cases }}</p><h2>{{ t.case_list }}</h2></div><span class="read-only">{{ t.read_only }}</span></div><div class="case-list">{% for case in cases %}<a class="case-row {{ 'selected' if selected.case_id == case.case_id else '' }}" href="/?case_id={{ case.case_id|urlencode }}&tab={{ tab }}&lang={{ lang }}"><span class="case-avatar">{{ case.tax_year }}</span><span class="case-info"><strong>{{ case.case_id }}</strong><small>{{ t.tax_year }} {{ case.tax_year }}</small></span><span class="case-status">{{ t.status_labels[case.status] }}</span><span class="chevron">‹</span></a>{% endfor %}</div></section>
       {% endif %}
-      <section class="next"><div><p class="eyebrow">مرحلهٔ بعد</p><h2>اتصال امن به پرونده‌های واقعی</h2><p>پس از تأیید منبع داده، جزئیات پرونده، مدارک و وظایف بدون نمایش اطلاعات ساختگی فعال می‌شوند.</p></div><span class="next-symbol" aria-hidden="true">↗</span></section>
+      <section class="next"><div><p class="eyebrow">{{ t.next_step }}</p><h2>{{ t.secure_connection }}</h2><p>{{ t.secure_connection_detail }}</p></div><span class="next-symbol" aria-hidden="true">↗</span></section>
       {% endif %}
       <footer>AI Tax Agent · UI25 <span>{{ t.submission }}</span></footer>
     </div>

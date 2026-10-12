@@ -1,50 +1,50 @@
 {% set pages = {
-"cases": ("پرونده‌ها و سال مالیاتی", "ایجاد، انتخاب و بازکردن پرونده‌های مالیاتی", "Case Registry / CaseCreationWorkflow"),
-"family": ("خانواده و اشخاص", "هویت، اعضای خانواده و انتقال کنترل‌شدهٔ اطلاعات سال قبل", "IdentityPersistence / CaseIdentityAssociationService"),
-"documents": ("مدارک پرونده", "دریافت تدریجی مدارک، شناسایی تکراری‌ها و مدیریت نسخه‌ها", "Case-scoped storage / document identity"),
-"analysis": ("تحلیل و شواهد", "نتایج استخراج، تحلیل ایجنت‌ها و ارتباط هر یافته با شواهد", "Deterministic Kernel / Gemini extraction boundary"),
-"issues": ("پرسش‌ها و موارد باز", "سؤال‌های قابل پیگیری و موارد نیازمند تصمیم انسانی", "Issues / Human Gates"),
-"result": ("نتیجهٔ محاسبه", "نتایج نسخه‌بندی‌شده و مقایسهٔ تغییرات", "Deterministic tax calculation"),
-"declaration": ("پیش‌نمایش اظهارنامه", "مشاهدهٔ فرم پیش از تأیید، بدون ارسال", "Declaration / ERiC validation"),
-"approval": ("تأیید و ارسال", "دو مجوز مستقل برای صحت محتوا و مقصد ارسال", "Human Gate 1 / Human Gate 2"),
-"activity": ("تاریخچه و فعالیت‌ها", "رویدادها، شواهد اجرا و ردپای ممیزی", "Audit / Checkpoint")
+"cases": (t.cases_heading, t.cases_desc, "Case Registry / CaseCreationWorkflow"),
+"family": (t.family_heading, t.family_desc, "IdentityPersistence / CaseIdentityAssociationService"),
+"documents": (t.documents_heading, t.documents_desc, "Case-scoped storage / document identity"),
+"analysis": (t.analysis_heading, t.analysis_desc, "Deterministic Kernel / Gemini extraction boundary"),
+"issues": (t.issues_heading, t.issues_desc, "Issues / Human Gates"),
+"result": (t.result_heading, t.result_desc, "Deterministic tax calculation"),
+"declaration": (t.declaration_heading, t.declaration_desc, "Declaration / ERiC validation"),
+"approval": (t.approval_heading, t.approval_desc, "Human Gate 1 / Human Gate 2"),
+"activity": (t.activity_heading, t.activity_desc, "Audit / Checkpoint")
 } %}
 {% set page = pages[tab] %}
-<div class="heading"><div><p class="eyebrow">فضای کار / {{ tab }}</p><h1>{{ page[0] }}</h1><p class="sub">{{ page[1] }}</p></div><span class="source {{ state }}" role="status">{{ "● منبع معتبر متصل" if state == "connected" else "● اتصال تأییدنشده" }}</span></div>
+<div class="heading"><div><p class="eyebrow">{{ t.workspace }} / {{ tab }}</p><h1>{{ page[0] }}</h1><p class="sub">{{ page[1] }}</p></div><span class="source {{ state }}" role="status">{{ t.verified if state == "connected" else t.not_verified }}</span></div>
 <section class="panel tab-panel">
-  <div class="panel-heading"><div><p class="eyebrow">وضعیت اتصال</p><h2>{{ page[0] }}</h2></div><span class="read-only">محیط امن · فقط خواندنی</span></div>
+  <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.local_safe_readonly }}</span></div>
   <div class="tab-body">
     {% if state != "connected" %}
-      <div class="notice-inline" role="status"><strong>دادهٔ واقعی هنوز قابل نمایش نیست</strong><p>اتصال مجاز به رجیستری پایدار پرونده‌ها در این نشست تأیید نشده است. برای جلوگیری از نمایش اطلاعات گمراه‌کننده، داده‌ای ساخته یا حدس زده نمی‌شود.</p></div>
+      <div class="notice-inline" role="status"><strong>{{ t.no_live_data }}</strong><p>{{ t.no_live_data_desc }}</p></div>
     {% elif selected %}
-      <div class="scope-mini"><span>پرونده: <strong>{{ selected.case_id }}</strong></span><span>سال: <strong>{{ selected.tax_year }}</strong></span><span>وضعیت: <strong>{{ selected.status }}</strong></span></div>
-      <p>هویت پرونده از منبع مجاز خوانده شده است؛ داده‌های تخصصی این بخش تنها پس از تأیید قرارداد دسترسی همان سرویس نمایش داده می‌شوند.</p>
+      <div class="scope-mini"><span>{{ t.case_label }} <strong>{{ selected.case_id }}</strong></span><span>{{ t.year_label }} <strong>{{ selected.tax_year }}</strong></span><span>{{ t.status_label }} <strong>{{ t.status_labels[selected.status] }}</strong></span></div>
+      <p>{{ t.selected_verified }}</p>
     {% else %}
-      <div class="notice-inline">در محدودهٔ مجاز پرونده‌ای وجود ندارد.</div>
+      <div class="notice-inline">{{ t.no_scope_cases }}</div>
     {% endif %}
-    <div class="connection-info"><span>سرویس مربوطه</span><strong>{{ page[2] }}</strong><small>وضعیت: اتصال عملیاتی این تب هنوز تأیید نشده است.</small></div>
-    {% if tab == "approval" %}<div class="gate-steps"><div><strong>۱. تأیید صحت محتوا</strong><span>ثبت نشده</span></div><div><strong>۲. مجوز مقصد و ارسال</strong><span>ثبت نشده</span></div></div><button type="button" disabled class="disabled-action">ارسال به ELSTER غیرفعال است</button>{% endif %}
+    <div class="connection-info"><span>{{ t.service_label }}</span><strong>{{ page[2] }}</strong><small>{{ t.service_not_verified }}</small></div>
+    {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.gate1 }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.gate2 }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.elster_disabled }}</button>{% endif %}
 
 {% if test_mode %}
 <section class="test-console" aria-label="Functional test controls">
-  <div class="test-banner"><strong>محیط تست عملکردی (TEST ONLY)</strong><p>داده‌های این بخش آزمایشی و محلی هستند. این محیط به پرونده‌های واقعی، Kernel اجرایی یا ELSTER متصل نیست. فایل واقعی مالیاتی بارگذاری نکنید.</p></div>
+  <div class="test-banner"><strong>{{ t.test_controls }}</strong><p>{{ t.test_warning }}</p></div>
   {% if tab == "cases" %}
-  <h3>ساخت پروندهٔ آزمایشی</h3>
-  <form method="post" action="/test/cases" class="test-form"><label>شناسه (با TEST- شروع شود)<input name="case_id" required pattern="TEST-[A-Za-z0-9_-]+" placeholder="TEST-2025-01"></label><label>سال مالیاتی<input name="tax_year" type="number" min="2000" max="2100" value="2025" required></label><button>ایجاد پروندهٔ آزمایشی</button></form>
+  <h3>{{ t.create_test_case }}</h3>
+  <form method="post" action="/test/cases" class="test-form"><label>{{ t.test_id_label }}<input name="case_id" required pattern="TEST-[A-Za-z0-9_-]+" placeholder="TEST-2025-01"></label><label>{{ t.tax_year }}<input name="tax_year" type="number" min="2000" max="2100" value="2025" required></label><button>{{ t.create_test_button }}</button></form>
   {% endif %}
   {% if cases %}
-  <nav class="test-case-nav" aria-label="انتخاب پروندهٔ آزمایشی">{% for item in cases %}<a href="/?tab={{ tab }}&case_id={{ item.case_id|urlencode }}" class="{{ 'chosen' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }} · {{ item.tax_year }}</a>{% endfor %}</nav>
+  <nav class="test-case-nav" aria-label="{{ t.select_test_case }}">{% for item in cases %}<a href="/?tab={{ tab }}&case_id={{ item.case_id|urlencode }}&lang={{ lang }}" class="{{ 'chosen' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }} · {{ item.tax_year }}</a>{% endfor %}</nav>
   {% endif %}
   {% if selected and detail %}
     {% if tab == "documents" %}
-    <h3>ثبت هش مدرک آزمایشی</h3><p>فایل فقط برای محاسبهٔ SHA-256 خوانده می‌شود؛ محتوای آن ذخیره نمی‌شود.</p>
-    <form method="post" action="/test/documents" enctype="multipart/form-data" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>عنوان مدرک<input name="label" required maxlength="100"></label><label>فایل آزمایشی (حداکثر ۲ مگابایت)<input name="document" type="file" required></label><button>ثبت و بررسی تکراری</button></form>
-    <h3>مدارک ثبت‌شده</h3><div class="data-list">{% for label,digest in detail.documents %}<div><strong>{{ label }}</strong><small>SHA-256: {{ digest[:16] }}…</small></div>{% else %}<p>هنوز مدرکی ثبت نشده است.</p>{% endfor %}</div>
+    <h3>{{ t.test_document_heading }}</h3><p>{{ t.test_document_desc }}</p>
+    <form method="post" action="/test/documents" enctype="multipart/form-data" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>{{ t.document_title }}<input name="label" required maxlength="100"></label><label>{{ t.test_file_label }}<input name="document" type="file" required></label><button>{{ t.duplicate_button }}</button></form>
+    <h3>{{ t.saved_documents }}</h3><div class="data-list">{% for label,digest in detail.documents %}<div><strong>{{ label }}</strong><small>SHA-256: {{ digest[:16] }}…</small></div>{% else %}<p>{{ t.no_documents }}</p>{% endfor %}</div>
     {% elif tab == "issues" %}
-    <h3>ثبت پرسش آزمایشی</h3><form method="post" action="/test/issues" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>پرسش<input name="question" required maxlength="500"></label><button>ثبت پرسش</button></form>
-    <h3>پرسش‌های پرونده</h3><div class="data-list">{% for issue_id,question,answer,state in detail.issues %}<div><strong>{{ question }}</strong><small>{{ state }} {% if answer %} · {{ answer }}{% endif %}</small>{% if state == "OPEN" %}<form method="post" action="/test/issues/answer" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><input type="hidden" name="issue_id" value="{{ issue_id }}"><label>پاسخ<input name="answer" required maxlength="2000"></label><button>ثبت پاسخ</button></form>{% endif %}</div>{% else %}<p>پرسشی ثبت نشده است.</p>{% endfor %}</div>
+    <h3>{{ t.test_question }}</h3><form method="post" action="/test/issues" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>{{ t.question }}<input name="question" required maxlength="500"></label><button>{{ t.save_question }}</button></form>
+    <h3>{{ t.case_questions }}</h3><div class="data-list">{% for issue_id,question,answer,state in detail.issues %}<div><strong>{{ question }}</strong><small>{{ state }} {% if answer %} · {{ answer }}{% endif %}</small>{% if state == "OPEN" %}<form method="post" action="/test/issues/answer" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><input type="hidden" name="issue_id" value="{{ issue_id }}"><label>{{ t.answer }}<input name="answer" required maxlength="2000"></label><button>{{ t.save_answer }}</button></form>{% endif %}</div>{% else %}<p>{{ t.no_questions }}</p>{% endfor %}</div>
     {% elif tab == "activity" %}
-    <h3>تاریخچهٔ آزمایشی پرونده</h3><div class="data-list">{% for event,recorded_at in detail.activity %}<div><strong>{{ event }}</strong><small>{{ recorded_at }}</small></div>{% else %}<p>رویدادی ثبت نشده است.</p>{% endfor %}</div>
+    <h3>{{ t.test_history }}</h3><div class="data-list">{% for event,recorded_at in detail.activity %}<div><strong>{{ event }}</strong><small>{{ recorded_at }}</small></div>{% else %}<p>{{ t.no_events }}</p>{% endfor %}</div>
     {% endif %}
   {% endif %}
 </section>
