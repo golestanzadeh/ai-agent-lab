@@ -1,5 +1,40 @@
 # OI-0002 operational deployment and acceptance stop — 2026-10-11
 
+## Final operational acceptance follow-up — 2026-10-12
+
+Status: **HUMAN_REQUIRED / OPERATIONAL_ACCEPTANCE_BLOCKED / NOT ACCEPTED**.
+
+The exact governed target was recovered at Owner-acceptance commit `605e502d61556258d219c3ab2b6cf12372c2d451`. This commit records the Owner's acceptance of REMEDIATION-02 only; it does not release the separate OI-0002 operational gates.
+
+The host state has changed since the original stop. The four distinct local principals now exist and are enabled:
+
+- `AITaxKernel` (`S-1-5-21-212838446-3778166418-3746953556-1020`)
+- `AITaxIdentity` (`S-1-5-21-212838446-3778166418-3746953556-1021`)
+- `AITaxKeyCustodian` (`S-1-5-21-212838446-3778166418-3746953556-1022`)
+- `AITaxRecovery` (`S-1-5-21-212838446-3778166418-3746953556-1023`)
+
+The current Codex process is still `desktop-hvruqb7\rezag` and is not elevated. No OI-0002-specific Windows service or Scheduled Task, and no task running under an `AITax*` principal, was found. Three unrelated legacy `AI-Tax-Agent` tasks running as `rezag` were excluded from this claim. Three bounded roots were observed under `C:\ProgramData\AI-Tax-Agent`:
+
+- `OI0002`: official verifier returned `OI0002_MANIFEST_MISSING`.
+- `OI0002-TEST`: official verifier returned `OI0002_MANIFEST_MISSING`; the visible root still inherits the parent ACL.
+- `OI0002-TEST2`: the current medium-integrity user was denied access before the manifest could be read. This is useful negative-access evidence, but it is not proof of the exact ACL allowlist, effective access under each service token, key custody, application wiring, restart, backup/restore or rollback behavior.
+
+No protected content or key bytes were read or printed, and no Windows account, ACL, secret, service, task, database or backup was changed. The two incomplete roots were not deleted because their ownership and intended recovery status are not established.
+
+Verification on exact SHA `605e502d61556258d219c3ab2b6cf12372c2d451`:
+
+- Focused Windows custody, identity persistence, evidence, continuity and Kernel tests: `104 passed`, `0 failed`, exit `0`.
+- Complete unit regression: `1141 passed, 5 skipped`, exit `0`, `256.66s`.
+- The first attempted focused command used one incorrect test filename and therefore collected no tests; it was corrected before any test result was claimed.
+
+Authenticated capacity at admission was 94% five-hour remaining (reset `2026-10-12T21:37:10Z`) and 75% weekly remaining (reset `2026-10-18T14:48:11Z`), preserving the mandatory 15-point reserve.
+
+The exact missing authority is an approved elevated execution context plus an approved non-secret-bearing mechanism to execute the operational probes under each of the four actual `AITax*` tokens. Passwords or other credentials must not be placed in Git, chat, command output or test evidence. In that context, the existing provisioner/verifier must first establish one canonical disposable root; the application must then be wired through its real persistence contracts and the effective-access, restart, populated backup/restore, unauthorized restore, rollback and audit-continuity scenarios must be executed. Only a separate independent review of that new exact evidence may recommend `INDEPENDENT_REVIEW_PASS / OWNER_ACCEPTANCE_READY`.
+
+Until that Human Gate is satisfied, `E-03`, `C-02`, `C-06`, overall OI-0002 and OI-0003 remain blocked. REMEDIATION-02 remains Owner-accepted on its independent-review evidence and was not reopened.
+
+An independent read-only reviewer reproduced the host-state claims, reran the focused suite (`104 passed`, exit `0`), and returned **PASS for the accuracy of this stop/handoff and its blocker disposition**. That review explicitly does not accept OI-0002; it confirms that `HUMAN_REQUIRED / OPERATIONAL_ACCEPTANCE_BLOCKED` is the evidence-supported result.
+
 ## Outcome
 
 Status: **BLOCKED / NOT ACCEPTED**.
