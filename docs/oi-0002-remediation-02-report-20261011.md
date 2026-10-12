@@ -80,3 +80,9 @@ Operational Windows acceptance remains a separate unresolved boundary: this pack
 - Authenticated starting remaining capacity: 99% five-hour, 88% weekly.
 - Authenticated ending measurement at `2026-10-12T00:04:50+02:00`: 23% five-hour remaining, reset `2026-10-12T02:11:39Z`; 77% weekly remaining, reset `2026-10-18T14:48:11Z`.
 - Measurement source: signed-in Codex account rate-limit service. Readback was unambiguous; the mandatory 15-point five-hour reserve remained intact. No reset credit was used.
+
+## Owner disposition — 2026-10-12
+
+The Project Owner explicitly confirmed in the project conversation that REMEDIATION-02 is PASS and accepted, following the sixth independent review PASS on exact implementation SHA `6e97d20cc2411868bb038c1d894613b43a609bf1` and evidence/checkpoint commit `20ed56e322ca3e2f821e14706300c690f5152b61`.
+
+**REMEDIATION-02: `OWNER_ACCEPTED_ON_INDEPENDENT_REVIEW_PASS`.** This approval is limited to the F02/F05/F07 remediation package. It does **not** approve OI-0002 overall, operational Windows deployment, production activation, release of E-03/C-02/C-06 gates, OI-0003, any taxpayer-data access or ELSTER/Finanzamt submission. OI-0002 remains `OPEN / NOT ACCEPTED` until separate operational evidence and acceptance.
