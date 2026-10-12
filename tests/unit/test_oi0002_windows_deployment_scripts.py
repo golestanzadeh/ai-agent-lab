@@ -7,6 +7,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 PROVISION = (ROOT / "scripts" / "provision_oi0002_windows.ps1").read_text(encoding="utf-8")
 VERIFY = (ROOT / "scripts" / "verify_oi0002_windows.ps1").read_text(encoding="utf-8")
+TOKEN_PROBE = (ROOT / "scripts" / "oi0002_windows_token_probe.ps1").read_text(encoding="utf-8")
+TOKEN_RUNNER = (ROOT / "scripts" / "invoke_oi0002_windows_token_verification.ps1").read_text(encoding="utf-8")
 
 
 def test_provisioning_requires_elevation_distinct_existing_principals_and_non_synced_root():
@@ -59,6 +61,33 @@ def test_acl_verifier_requires_protected_exact_allowlists_and_separate_roots():
     assert "OI0002_NONCANONICAL_CUSTODY_PATH" in VERIFY
     assert "OI0002_CUSTODY_ROOT_COLLISION" in VERIFY
     assert "OI0002_WINDOWS_CUSTODY_VERIFIED" in VERIFY
+
+
+def test_real_token_probe_covers_positive_and_negative_effective_access():
+    for check in (
+        "control_read", "kernel_write", "identity_write", "secrets_write",
+        "kernel_backup_write", "identity_backup_write", "key_read", "key_write",
+    ):
+        assert check in TOKEN_PROBE
+    for role in ("Kernel", "Identity", "KeyCustodian", "Recovery"):
+        assert role in TOKEN_PROBE
+    assert "OI0002_EFFECTIVE_ACCESS_MISMATCH" in TOKEN_PROBE
+    assert "OI0002_WINDOWS_CUSTODY_VERIFIED" in VERIFY
+
+
+def test_token_runner_uses_limited_temporary_tasks_and_rotates_passwords():
+    assert "New-RandomPassword" in TOKEN_RUNNER
+    assert "-RunLevel Limited" in TOKEN_RUNNER
+    assert "Unregister-ScheduledTask" in TOKEN_RUNNER
+    assert TOKEN_RUNNER.count("SetPassword") >= 2
+    assert "Add-LocalGroupMember" not in TOKEN_RUNNER
+    assert "-RunLevel Highest" not in TOKEN_RUNNER
+    assert "OI0002-Temporary-" in TOKEN_RUNNER
+    assert "Write-Output $password" not in TOKEN_RUNNER
+    assert "Out-File $password" not in TOKEN_RUNNER
+    assert "Get-FileHash -Algorithm SHA256" in TOKEN_RUNNER
+    assert "ReadAndExecute" in TOKEN_RUNNER
+    assert "evidence=\"$($role.ToLowerInvariant())/result.json\"" in TOKEN_RUNNER
 
 
 @pytest.mark.skipif(shutil.which("powershell") is None, reason="Windows PowerShell unavailable")

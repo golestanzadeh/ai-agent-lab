@@ -1,5 +1,46 @@
 # OI-0002 operational deployment and acceptance stop — 2026-10-11
 
+## Owner-authorized uninterrupted completion attempt — 2026-10-12
+
+Status: **TECHNICAL_BLOCKER / OPERATIONAL_PARTIAL_PASS / NOT ACCEPTED**.
+
+The Owner's new authorization removed the former approval/Human-Gate blocker and authorized minimum Windows logon rights, disposable execution mechanisms and bounded operational remediation. Authenticated admission capacity was 77% five-hour and 72% weekly, above the mandatory reserve.
+
+The Windows UAC path was verified with a non-mutating elevated probe. `SeBatchLogonRight` was granted to the four existing enabled `AITax*` principals. A passwordless local-account S4U task remained fail-closed (`Access denied`), so the accepted minimum mechanism used cryptographically random one-time passwords generated only inside the elevated process. Each task ran at `RunLevel Limited`; every task was deleted immediately and each account password was rotated again to a new undisclosed random value. No credential was written to Git, evidence, command output or chat. No account received Administrator membership.
+
+The authoritative real-token evidence run is `run-20261012T174008Z`, retained under the protected local evidence root `C:\ProgramData\AI-Tax-Agent\OI0002-OPS-EVIDENCE2`. Each role wrote only to its own temporary evidence directory; after the task ended that directory was sealed read-only for the role, and the controller recorded a SHA-256 for the result in its protected summary. Earlier exploratory runs are not acceptance evidence. The authoritative run contains synthetic operational metadata only and no taxpayer data or key bytes. The exact effective-access results were:
+
+| Principal | Allowed and verified | Denied and verified | Result |
+| --- | --- | --- | --- |
+| `AITaxKernel` | Kernel store and Kernel backup write | control read, Identity store/backup write, secrets write, key read/write | PASS |
+| `AITaxIdentity` | Identity store/backup write and HMAC key read | control read, Kernel store/backup write, secrets write, key write | PASS |
+| `AITaxKeyCustodian` | secrets write and key read/write-open | control read, Kernel/Identity store and backup write | PASS |
+| `AITaxRecovery` | control read, all protected store/backup writes, key read/write-open | none within the recovery contract | PASS |
+
+The official verifier executed under the real `AITaxRecovery` token and returned `OI0002_WINDOWS_CUSTODY_VERIFIED`. No probe modified the HMAC key; write tests opened the existing file without writing bytes. All probe files were uniquely named and removed. Readback found zero remaining `OI0002-Temporary-*` tasks, and all four accounts remained enabled.
+
+Two reviewed scripts now make the real-token check reproducible without embedding credentials:
+
+- `scripts/oi0002_windows_token_probe.ps1`
+- `scripts/invoke_oi0002_windows_token_verification.ps1`
+
+Focused Windows/identity/Kernel verification after implementation: `106 passed`, exit `0`. Complete unit regression: `1143 passed, 5 skipped`, exit `0`. Documentation/governance verification after the final evidence-hardening change: `26 passed`, exit `0`.
+
+An independent read-only reviewer recomputed all four sealed result hashes, inspected the protected per-role ACLs, verified that no temporary task remained, reran the focused Windows/continuity/persistence selection (`61 passed`, exit `0`) and returned **PASS for report accuracy and the technical-blocker disposition**. This PASS is not OI-0002 acceptance and does not satisfy the missing operational service-contract criteria.
+
+### Non-recoverable-in-package architecture blocker
+
+The remaining required operational criteria cannot be executed honestly with the current accepted implementation:
+
+1. `src/agent_lab/identity_continuity_authority.py:1` explicitly identifies the continuity adapter as synthetic. Lines 26–27 require an in-process `OrchestratorKernel` object, and every operation directly calls that object.
+2. The protected ACL contract correctly prevents `AITaxIdentity` from opening the Kernel store. Therefore the current adapter cannot run under the real Identity token without weakening the accepted Kernel/Identity separation.
+3. `IdentityPersistence.__init__` (`src/agent_lab/identity_persistence.py:76-95`) accepts generic callback functions for authorization and evidence resolution but has no durable Kernel client, manifest-bound permission client, continuity transaction, authenticated IPC or reviewed service boundary.
+4. Consequently no accepted mechanism binds a real protected Identity commit/backup head to Kernel `PENDING → COMMITTED` while the two stores remain under their separate principals. Restart, populated restore, unauthorized-restore and rollback tests could be run only by using synthetic callbacks, direct cross-store access, Administrator substitution or a newly invented broker. Each would falsely label synthetic/test authority as operational proof or weaken the frozen security model.
+
+Resolving this defect requires a separately reviewed Kernel/Identity service boundary (for example an authenticated, least-privilege local IPC contract), explicit binding of the Identity audit/backup head to Kernel continuity and restore authorization, and deployment lifecycle specifications. That is an architecture change, not a recoverable test failure or permission correction. The Owner's authorization forbids bypassing mandatory security criteria and parallel authority; it does not supply an accepted IPC/service contract. Accordingly OI-0002 cannot be marked `ACCEPTED / CLOSED` from the present evidence.
+
+The exact next action is Owner/architecture-authority approval of a bounded Kernel↔Identity operational service contract, followed by implementation, real-token restart/backup/restore/rollback verification and a new independent review. OI-0003 remains blocked and was not started.
+
 ## Final operational acceptance follow-up — 2026-10-12
 
 Status: **HUMAN_REQUIRED / OPERATIONAL_ACCEPTANCE_BLOCKED / NOT ACCEPTED**.
