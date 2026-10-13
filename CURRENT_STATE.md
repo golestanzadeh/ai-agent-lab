@@ -1,8 +1,12 @@
 # Current State
 
-## OI-0002 Kernel–Identity IPC ADR review ready — 2026-10-13
+## OI-0002 Kernel–Identity IPC ADR remediation review ready — 2026-10-13
 
-The bounded ADR selects a native local Windows Named Pipe, authenticates exact caller/server tokens, preserves separate protected databases, and defines a closed `oi0002.kernel-identity-ipc/1.0` transaction/recovery interface. It is documentation and verification only: no IPC implementation or Windows change exists. An independent architecture/security PASS on the exact ADR commit is mandatory before implementation.
+Independent review rejected ADR SHA `dcfb6ab` with F01–F06. The bounded ADR-only remediation specifies enforceable signed durable-PENDING and commit-authorization proofs, non-finalizable anchor synchronization, deployment-wide physical restore scope, an independently protected TPM freshness witness and exact canonical/framing bytes. No implementation or Windows/runtime change was made. Status is `ADR_REMEDIATION_REVIEW_READY / NOT IMPLEMENTED / NOT ACCEPTED`; a fresh independent review of the exact remediation commit is mandatory.
+
+## OI-0002 Kernel–Identity IPC ADR original review-ready baseline — 2026-10-13
+
+The bounded ADR selected a native local Windows Named Pipe, authenticated exact caller/server tokens, preserved separate protected databases, and defined a closed `oi0002.kernel-identity-ipc/1.0` transaction/recovery interface. This original review-ready state was later rejected and is superseded by the remediation state above.
 
 ## OI-0002 closure scope frozen; capacity-paused before IPC implementation — 2026-10-12
 

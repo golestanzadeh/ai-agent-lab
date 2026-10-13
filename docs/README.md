@@ -152,7 +152,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-persistence-operations.md` - protected SQLite deployment, key, backup/restore, migration and incident requirements.
 - `oi-0002-operational-deployment-stop-20261011.md` - Windows deployment preflight, custody hardening, regression/review evidence, non-elevated blocker and exact continuation.
 - `oi-0002-final-closure-matrix-20261012.md` - frozen remaining OI-0002 acceptance scope, capacity-safe continuation and recovered UI delivery readiness.
-- `oi-0002-kernel-identity-ipc-adr-20261013.md` - proposed Windows Named Pipe contract for authenticated Kernel-coordinated Identity transactions; ADR review required before implementation.
+- `oi-0002-kernel-identity-ipc-adr-20261013.md` - remediated proposed Windows Named Pipe contract for authenticated Kernel-coordinated Identity transactions, including F01–F06 proofs, finality, restore scope, TPM freshness and canonical framing; new independent review required before implementation.
 - `ui25-full-functional-completion-stop-20261011.md` - UI25 recovery result, safe bilingual/disabled-submission work, prerequisite blockers and governed continuation.
 - `ui25-execution-and-acceptance-plan.md` - Owner-approved UI25 package sequence, acceptance evidence and immutable boundaries.
 - `ui25-owner-internal-development-testing-authorization-20261009.md` - internal development/testing authority and narrow Gemini exception.
