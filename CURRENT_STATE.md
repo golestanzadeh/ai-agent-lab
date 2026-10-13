@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 Kernel–Identity IPC ADR review ready — 2026-10-13
+
+The bounded ADR selects a native local Windows Named Pipe, authenticates exact caller/server tokens, preserves separate protected databases, and defines a closed `oi0002.kernel-identity-ipc/1.0` transaction/recovery interface. It is documentation and verification only: no IPC implementation or Windows change exists. An independent architecture/security PASS on the exact ADR commit is mandatory before implementation.
+
 ## OI-0002 closure scope frozen; capacity-paused before IPC implementation — 2026-10-12
 
 The Owner-approved final closure instruction is recovered at baseline `0342590`. One authoritative C01–C13 closure matrix now fixes the remaining acceptance scope and UI handoff. Five-hour capacity admission failed safely: 45% remained, only 30 points were usable after reserve, versus a 45–55 point whole-mission estimate. No partial IPC implementation or reset credit use occurred. Resume with the bounded Windows-local authenticated IPC ADR and independent architecture review after capacity readmission. UI25 Track 3A remains the sole product roadmap; the next real integration after OI-0002 is UI25-02, while synthetic UI/navigation/localization testing remains independently permissible.
