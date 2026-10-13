@@ -1,5 +1,9 @@
 # Current State
 
+## OI-0002 IPC architecture review FAIL — 2026-10-13
+
+The independent architecture/security review of exact ADR SHA `dcfb6ab712b74b65b10a2e5206795061dce07c95` returned `INDEPENDENT_ARCHITECTURE_FAIL`. Six enforceability/precision defects block C03–C09/C11/C12 and therefore C13. Evidence and exact correction/test requirements: `docs/oi-0002-independent-ipc-architecture-security-review-20261013.md`. No implementation is authorized; next action is ADR-only correction and fresh independent review.
+
 ## OI-0002 Kernel–Identity IPC ADR review ready — 2026-10-13
 
 The bounded ADR selects a native local Windows Named Pipe, authenticates exact caller/server tokens, preserves separate protected databases, and defines a closed `oi0002.kernel-identity-ipc/1.0` transaction/recovery interface. It is documentation and verification only: no IPC implementation or Windows change exists. An independent architecture/security PASS on the exact ADR commit is mandatory before implementation.
