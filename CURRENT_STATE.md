@@ -1,5 +1,9 @@
 # Current State
 
+## Non-operational IPC envelope validator independent PASS — 2026-10-14
+
+The versioned development envelope validator is independently accepted at exact SHA `af99001d2dbe0f1cdfb9a136e870bd51d4019d10` after one medium closed-matrix finding was corrected. Strict fields, scope, identifiers, digests, timestamps, capability binding, empty payload and all 23 allowed/17 denied message-operation pairs are deterministic. Focused tests pass `114`; relevant regression passes `211`. No transport, peer authentication, dispatch, persistence, mutation, finality, backup or restore exists, and no operational/C09 acceptance is implied.
+
 ## Owner-approved local development baseline restored — 2026-10-14
 
 Ordinary development continues on the existing Windows laptop with the existing Python/Docker architecture and portability to a replacement laptop/VPS. TPM is not required for local development. The TPM-based IPC ADR remains an unaccepted operational profile; no replacement freshness authority is approved. C09 stays OPEN / NOT ACCEPTED but is not a global development stop. Protected persistence, rollback-resistant finality, operational restore, OI-0002 closure and OI-0003 remain gated.
