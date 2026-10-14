@@ -157,3 +157,15 @@ def test_selected_case_is_announced_semantically_in_both_directions():
         assert selected is not None
         assert 'case_id=CASE-A' in selected.group(0)
         assert 'aria-current="true"' in selected.group(0)
+
+
+def test_collapsed_mobile_navigation_keeps_localized_accessible_names():
+    client = TestClient(create_dashboard_app())
+    expected = {
+        "fa-IR": ("نمای کلی", "پرونده‌ها", "خانواده", "مدارک", "تحلیل", "پرسش‌ها", "نتیجه", "اظهارنامه", "فعالیت‌ها"),
+        "de-DE": ("Übersicht", "Steuerfälle", "Familie", "Dokumente", "Analyse", "Rückfragen", "Ergebnis", "Steuererklärung", "Aktivitäten"),
+    }
+    for lang, labels in expected.items():
+        page = client.get("/", params={"lang": lang}).text
+        for label in labels:
+            assert f'aria-label="{label}"' in page
