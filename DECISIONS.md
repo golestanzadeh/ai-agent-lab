@@ -1,5 +1,11 @@
 # Decision Log
 
+## D-C09-20261014 — Nonblocking local development despite C09 security debt
+
+**Status:** Owner-approved for independent work; not an OI-0002 acceptance waiver.
+
+**Decision:** C09 remains OPEN / NOT ACCEPTED, but `C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED`. Continue independently safe, authorized packages; preserve all separate gates and never mark OI-0002 closed prematurely. Initial deployment is Windows laptop/local Docker; migration to new laptop/VPS requires authorized verification. GitHub is not the sole anti-rollback trust anchor. Evidence and exact boundaries: `docs/decisions/c09-nonblocking-local-development-20261014.md`.
+
 Use this file for decisions that materially affect project scope, architecture, safety, or workflow.
 
 ## D-001 — Repository as source of truth
