@@ -1,5 +1,9 @@
 # Current State
 
+## UI25-01 independent audit PASS; IPC blocked by verified TPM absence — 2026-10-14
+
+The bounded UI25-01 presentation audit independently passed after one mobile/tablet accessible-name defect was fixed at exact commit `6dd95f5c58230bf41c7e8ae81e79d46c11844b88`; focused tests pass `19` and relevant UI/launcher regression passes `93`. Real persistent case resolution remains gated. Elevated read-only host evidence now confirms no present/ready TPM and no usable TBS/Platform Crypto Provider path, so the ADR-required TPM NV freshness counter is unsupported on this host. IPC implementation is `BLOCKED_ARCHITECTURE` pending Owner selection of a different independently non-rollbackable freshness authority and a new independent ADR review. C09 remains OPEN / NOT ACCEPTED and is not a global stop for unrelated work.
+
 ## UI25-11 accepted / UI25-01 localized lifecycle status — 2026-10-14
 
 UI25-11 is Owner-accepted for its bounded bilingual desktop/mobile shell. Fresh admitted UI25-01 increments now present all seven verified case lifecycle states in German and Persian while preserving canonical internal codes, and expose exactly one semantically selected case to assistive technology in both RTL and LTR modes. Focused verification passes `18`; relevant UI/launcher regression passes `92`. UI25-01 is not fully accepted because real persisted case resolution remains independently gated. C09 remains OPEN / NOT ACCEPTED and is not a global stop.

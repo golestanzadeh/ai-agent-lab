@@ -1,3 +1,11 @@
+# UI25-01 independent UI audit PASS / IPC host architecture blocker verified — 2026-10-14
+
+Independent reviewer `/root/ui25_01_independent_audit` audited exact baseline `79dde300945eef063e19c75ff8f176107eff14be` and found one reproducible medium accessibility defect: at the <=900px breakpoint, visible navigation labels are hidden and links had no localized accessible names. Commit `6dd95f5c58230bf41c7e8ae81e79d46c11844b88` adds locale-derived `aria-label` values to all nine actionable links. The same independent reviewer re-reviewed that exact commit and returned **`UI25-01_INDEPENDENT_UI_AUDIT_PASS`**. Focused dashboard tests pass `19`; relevant UI/launcher regression passes `93`. This PASS covers the bounded fail-closed presentation audit only; UI25-01 real persistent case resolution remains gated.
+
+The existing IPC ADR remediation is `ef8c2b4bb800dd04e7c92deb5deca841c53c9d16`; independent re-review `7629b43bb2e5fb26cbb7bef3c534e40bf1392e70` resolved F01-F04/F06 at contract level but blocked F05 on host feasibility. The Owner-run elevated read-only diagnostic was recovered and examined locally: `Get-Tpm` reports `TpmPresent=false`, `TpmReady=false`; `TpmTool` returns `0x800710df`; the Platform Crypto Provider returns `0x80090030 NTE_DEVICE_NOT_READY`; and TBS context creation returns `0x8028400F`. **Status: `TPM_NV_UNSUPPORTED_VERIFIED / BLOCKED_ARCHITECTURE`.** No raw host diagnostic, TPM state, key, principal, ACL or service was changed or committed. Because the accepted ADR forbids a fallback freshness authority, authenticated IPC implementation is not authorized until the Owner approves a replacement independently non-rollbackable authority and that ADR revision receives a new independent security review. C09 remains OPEN / NOT ACCEPTED; OI-0002 and OI-0003 remain blocked.
+
+Evidence and exact continuation: `docs/ui25-01-independent-audit-and-ipc-continuation-20261014.md`.
+
 # UI25-11 Owner accepted / UI25-01 lifecycle-status usability increment — 2026-10-14
 
 The Owner completed and accepted UI25-11 hands-on desktop/mobile review in German LTR and Persian RTL, including language persistence, responsive navigation and continued inert approval/ELSTER behavior. **UI25-11 is TECHNICAL PASS / OWNER ACCEPTED** for that bounded product-shell scope; this does not accept C09, persistence, protected data or submission.

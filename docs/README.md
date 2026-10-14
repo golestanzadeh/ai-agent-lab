@@ -1,5 +1,6 @@
 # Documentation Index
 
+- `ui25-01-independent-audit-and-ipc-continuation-20261014.md` - independent UI audit PASS and verified IPC host architecture blocker.
 - `ui25-01-lifecycle-status-localization-20261014.md` - bounded German/Persian status usability increment, tests and remaining persistence gate.
 - `ui25-post-11-continuation-20261014.md` - Owner-accepted UI25-11 continuation handoff and fresh-admission requirement.
 
