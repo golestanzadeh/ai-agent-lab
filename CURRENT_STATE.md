@@ -1,5 +1,9 @@
 # Current State
 
+## Owner C09 nonblocking development policy — 2026-10-14
+
+The Owner explicitly directs that C09 must not be a global execution blocker. See `docs/decisions/c09-nonblocking-local-development-20261014.md`. C09 remains OPEN / NOT ACCEPTED, and the frozen OI-0002 full-closure matrix remains unmet. Independent safe, authorized development may continue after existing capacity/dependency/security gates; operational release that depends on C09 is not authorized. Current execution target is Windows laptop/local Docker with controlled future migration. GitHub private PoC demonstrated successful forced branch-head rollback with scoped contents:write App token, so GitHub branch head alone is not a monotonic witness. No product code acceptance is implied.
+
 ## OI-0002 closure scope frozen; capacity-paused before IPC implementation — 2026-10-12
 
 The Owner-approved final closure instruction is recovered at baseline `0342590`. One authoritative C01–C13 closure matrix now fixes the remaining acceptance scope and UI handoff. Five-hour capacity admission failed safely: 45% remained, only 30 points were usable after reserve, versus a 45–55 point whole-mission estimate. No partial IPC implementation or reset credit use occurred. Resume with the bounded Windows-local authenticated IPC ADR and independent architecture review after capacity readmission. UI25 Track 3A remains the sole product roadmap; the next real integration after OI-0002 is UI25-02, while synthetic UI/navigation/localization testing remains independently permissible.
