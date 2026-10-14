@@ -1,5 +1,9 @@
 # Roadmap
 
+## UI25-11 completion — 2026-10-14
+
+UI25-11 bilingual product shell: TECHNICAL PASS and Owner hands-on desktop/mobile ACCEPTED for German LTR and Persian RTL, navigation language persistence, and safe disabled actions. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. Do not repeat this completed package. Next: fresh authenticated Limit Guard and dependency inventory for the next already-authorized C09-independent UI25 package. Real persistence and OI-0002 acceptance remain separately gated.
+
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 
 Last reconciled: **2026-10-09**
