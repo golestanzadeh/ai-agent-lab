@@ -1,5 +1,9 @@
 # Current State
 
+## UI25-11 Owner device acceptance — 2026-10-14
+
+Owner explicitly accepted all five manual desktop/mobile German/Persian criteria following technical tests (focused 10 PASS, UI/launcher 84 PASS). UI25-11 bilingual product shell is OWNER ACCEPTED for bounded read-only scope; no persistence/IPC/real-data/ELSTER release. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. C09 remains OPEN / NOT ACCEPTED and nonblocking for independent development. Next task requires fresh authenticated Limit Guard before execution.
+
 ## C09 policy synchronized; UI25-11 bilingual product shell technical PASS — 2026-10-14
 
 `C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED` is applied without weakening C09 or any other gate. The product dashboard now localizes the complete German LTR and Persian RTL shell, overview, fail-closed states and tab content; language persists through case selection and Approval/ELSTER remains inert. Focused tests pass `10`; relevant UI/launcher tests pass `84`. Owner phone/desktop acceptance remains outstanding, and no real-data or persistence acceptance is implied.
