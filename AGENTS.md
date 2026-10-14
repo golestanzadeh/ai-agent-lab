@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Owner C09 execution policy (2026-10-14)
+
+Read `docs/decisions/c09-nonblocking-local-development-20261014.md`. C09 remains OPEN / NOT ACCEPTED but is not a global development stop. Continue independently safe, already-authorized packages subject to their own dependencies, limit guard, tests, and Human Gates. Do not silently relax OI-0002 full acceptance, protected operations, OI-0003 or external submission. Do not create another checkpoint or orchestrator. On every new Codex session, read the canonical checkpoint and this decision; use a fresh session when instructions change.
+
 ## Mandatory cross-session startup
 
 For every new ChatGPT conversation, Codex session, or Agent process concerning this project:
