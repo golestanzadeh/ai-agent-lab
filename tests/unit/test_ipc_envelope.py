@@ -5,6 +5,8 @@ import pytest
 from agent_lab.ipc_envelope import (
     CONTRACT,
     EnvelopeValidationError,
+    MESSAGE_OPERATIONS,
+    OPERATION_CAPABILITIES,
     decode_and_validate_frame,
     validate_envelope,
 )
@@ -95,6 +97,44 @@ def test_operational_or_unknown_message_types_are_rejected(message_type):
 )
 def test_closed_supported_message_operation_capability_combinations(message_type, operation, capability):
     assert validate_envelope(envelope(message_type=message_type, domain_operation=operation, capability=capability))
+
+
+@pytest.mark.parametrize(
+    ("message_type", "operation"),
+    [
+        (message_type, operation)
+        for message_type, allowed in MESSAGE_OPERATIONS.items()
+        for operation in OPERATION_CAPABILITIES
+        if operation not in allowed
+    ],
+)
+def test_every_unapproved_message_operation_pair_is_rejected(message_type, operation):
+    with pytest.raises(EnvelopeValidationError, match="message type/domain operation mismatch"):
+        validate_envelope(
+            envelope(
+                message_type=message_type,
+                domain_operation=operation,
+                capability=OPERATION_CAPABILITIES[operation],
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    ("message_type", "operation"),
+    [
+        (message_type, operation)
+        for message_type, allowed in MESSAGE_OPERATIONS.items()
+        for operation in allowed
+    ],
+)
+def test_every_approved_message_operation_pair_is_accepted(message_type, operation):
+    assert validate_envelope(
+        envelope(
+            message_type=message_type,
+            domain_operation=operation,
+            capability=OPERATION_CAPABILITIES[operation],
+        )
+    )
 
 
 @pytest.mark.parametrize(

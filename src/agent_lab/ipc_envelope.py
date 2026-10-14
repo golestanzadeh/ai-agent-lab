@@ -44,6 +44,13 @@ MUTATION_OPERATIONS = frozenset(
     {"REGISTER_IDENTITY", "UPDATE_IDENTITY_STATUS", "BIND_PARTY", "CORRECT_PARTY_ROLE", "BIND_FACT"}
 )
 READ_OPERATIONS = frozenset({"READ_CASE_IDENTITY", "LIST_PARTIES", "READ_FACTS"})
+MESSAGE_OPERATIONS = {
+    "PREPARE_MUTATION": MUTATION_OPERATIONS,
+    "COMMIT_MUTATION": MUTATION_OPERATIONS,
+    "GET_TRANSACTION": MUTATION_OPERATIONS,
+    "ABORT_PREPARED": MUTATION_OPERATIONS,
+    "READ_IDENTITY_STATE": READ_OPERATIONS,
+}
 
 _FIELDS = frozenset(
     {
@@ -128,10 +135,8 @@ def validate_envelope(value: dict[str, Any]) -> ValidatedEnvelope:
     capability = value["capability"]
     if capability != OPERATION_CAPABILITIES[operation]:
         raise EnvelopeValidationError("operation/capability mismatch")
-    if message_type in {"PREPARE_MUTATION", "COMMIT_MUTATION"} and operation not in MUTATION_OPERATIONS:
-        raise EnvelopeValidationError("mutation message requires a mutation operation")
-    if message_type == "READ_IDENTITY_STATE" and operation not in READ_OPERATIONS:
-        raise EnvelopeValidationError("read message requires a read operation")
+    if operation not in MESSAGE_OPERATIONS[message_type]:
+        raise EnvelopeValidationError("message type/domain operation mismatch")
     epoch = value["expected_epoch"]
     if not isinstance(epoch, str) or _EPOCH_RE.fullmatch(epoch) is None:
         raise EnvelopeValidationError("expected_epoch is malformed")
