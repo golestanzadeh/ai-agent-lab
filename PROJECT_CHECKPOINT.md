@@ -1,3 +1,11 @@
+# UI25-11 Owner accepted / UI25-01 lifecycle-status usability increment — 2026-10-14
+
+The Owner completed and accepted UI25-11 hands-on desktop/mobile review in German LTR and Persian RTL, including language persistence, responsive navigation and continued inert approval/ELSTER behavior. **UI25-11 is TECHNICAL PASS / OWNER ACCEPTED** for that bounded product-shell scope; this does not accept C09, persistence, protected data or submission.
+
+Fresh authenticated capacity was 79% five-hour and 84% weekly remaining. The existing deterministic Limit Guard admitted one `BOUNDED (15/5)` package with `RUN_OPERATION_FITS`. The read-only UI25-01 dashboard previously exposed internal English lifecycle codes to both product locales. All seven allowed states now render as German/Persian product text while retaining the exact canonical code in non-authoritative diagnostic markup. Focused dashboard tests pass `17`; relevant UI/launcher regression passes `91`. **UI25-01 remains PARTIAL / REAL PERSISTENCE GATED**; this increment does not claim persisted case functionality. Evidence: `docs/ui25-01-lifecycle-status-localization-20261014.md`.
+
+Exact continuation: inspect the next C09-independent UI25 usability/accessibility gap under fresh Limit Guard admission. Real UI25-02..09 integration still requires its own accepted persistence/IPC prerequisites. C09 remains OPEN / NOT ACCEPTED and is not a global development stop.
+
 # C09 nonblocking policy synchronized / UI25-11 technical PASS — 2026-10-14
 
 Owner policy is now canonical: **`C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED`**. C09 remains OPEN / NOT ACCEPTED and the frozen C01–C13 matrix, operational security gates, Human Gates and external-submission restrictions remain unchanged. Safe packages must be admitted by their own dependencies and Limit Guard rather than stopped globally by C09. `AGENTS.md`, `CURRENT_STATE.md`, `DECISIONS.md` and the two 2026-10-14 C09 decision records consistently carry this policy; no second checkpoint or authority exists.

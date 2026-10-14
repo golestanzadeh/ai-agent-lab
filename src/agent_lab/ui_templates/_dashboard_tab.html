@@ -6,7 +6,7 @@
     {% if state != "connected" %}
       <div class="notice-inline" role="status"><strong>{{ t.real_unavailable }}</strong><p>{{ t.real_unavailable_body }}</p></div>
     {% elif selected %}
-      <div class="scope-mini"><span>{{ t.case }}: <strong>{{ selected.case_id }}</strong></span><span>{{ t.year }}: <strong>{{ selected.tax_year }}</strong></span><span>{{ t.status }}: <strong>{{ selected.status }}</strong></span></div>
+      <div class="scope-mini"><span>{{ t.case }}: <strong>{{ selected.case_id }}</strong></span><span>{{ t.year }}: <strong>{{ selected.tax_year }}</strong></span><span>{{ t.status }}: <strong data-status-code="{{ selected.status }}">{{ t.status_labels[selected.status] }}</strong></span></div>
       <p>{{ t.verified_case_body }}</p>
     {% else %}
       <div class="notice-inline">{{ t.no_case }}</div>

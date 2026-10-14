@@ -69,6 +69,11 @@ UI_TEXT = {
         "related_service": "سرویس مربوطه", "service_unverified": "وضعیت: اتصال عملیاتی این تب هنوز تأیید نشده است.",
         "content_approval": "۱. تأیید صحت محتوا", "destination_approval": "۲. مجوز مقصد و ارسال",
         "not_recorded": "ثبت نشده", "workspace_eyebrow": "فضای کار",
+        "status_labels": {
+            "CREATED": "ایجادشده", "ACTIVE": "فعال", "PROCESSING": "در حال پردازش",
+            "REVIEW_REQUIRED": "نیازمند بررسی", "COMPLETED": "تکمیل‌شده",
+            "ARCHIVED": "بایگانی‌شده", "BLOCKED": "مسدود",
+        },
         "pages": {
             "cases": ("پرونده‌ها و سال مالیاتی", "ایجاد، انتخاب و بازکردن پرونده‌های مالیاتی", "Case Registry / CaseCreationWorkflow"),
             "family": ("خانواده و اشخاص", "هویت، اعضای خانواده و انتقال کنترل‌شدهٔ اطلاعات سال قبل", "IdentityPersistence / CaseIdentityAssociationService"),
@@ -115,6 +120,11 @@ UI_TEXT = {
         "related_service": "Zugehöriger Dienst", "service_unverified": "Status: Die operative Verbindung dieses Bereichs ist noch nicht bestätigt.",
         "content_approval": "1. Inhaltliche Freigabe", "destination_approval": "2. Ziel- und Übermittlungsfreigabe",
         "not_recorded": "Nicht erteilt", "workspace_eyebrow": "Arbeitsbereich",
+        "status_labels": {
+            "CREATED": "Erstellt", "ACTIVE": "Aktiv", "PROCESSING": "In Bearbeitung",
+            "REVIEW_REQUIRED": "Prüfung erforderlich", "COMPLETED": "Abgeschlossen",
+            "ARCHIVED": "Archiviert", "BLOCKED": "Blockiert",
+        },
         "pages": {
             "cases": ("Steuerfälle und Steuerjahr", "Steuerfälle erstellen, auswählen und öffnen", "Case Registry / CaseCreationWorkflow"),
             "family": ("Familie und Personen", "Identitäten, Familienmitglieder und kontrollierte Übernahme aus dem Vorjahr", "IdentityPersistence / CaseIdentityAssociationService"),

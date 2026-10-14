@@ -118,3 +118,26 @@ def test_submission_navigation_is_inert_and_has_no_control():
     assert 'aria-disabled="true"' in page
     assert "tab=approval&amp;lang=" not in page
     assert "ELSTER" in page
+
+
+@pytest.mark.parametrize(
+    ("status", "persian", "german"),
+    [
+        ("CREATED", "ایجادشده", "Erstellt"),
+        ("ACTIVE", "فعال", "Aktiv"),
+        ("PROCESSING", "در حال پردازش", "In Bearbeitung"),
+        ("REVIEW_REQUIRED", "نیازمند بررسی", "Prüfung erforderlich"),
+        ("COMPLETED", "تکمیل‌شده", "Abgeschlossen"),
+        ("ARCHIVED", "بایگانی‌شده", "Archiviert"),
+        ("BLOCKED", "مسدود", "Blockiert"),
+    ],
+)
+def test_lifecycle_status_is_localized_without_losing_canonical_code(status, persian, german):
+    records = (DashboardCase("CASE-A", 2025, status),)
+    client = TestClient(create_dashboard_app(read_cases=lambda: records))
+    fa = client.get("/", params={"case_id": "CASE-A", "tab": "cases"}).text
+    de = client.get("/", params={"case_id": "CASE-A", "tab": "cases", "lang": "de-DE"}).text
+    assert persian in fa
+    assert german in de
+    assert f'data-status-code="{status}"' in fa
+    assert f'data-status-code="{status}"' in de

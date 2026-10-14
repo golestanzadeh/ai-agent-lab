@@ -1,5 +1,9 @@
 # Current State
 
+## UI25-11 accepted / UI25-01 localized lifecycle status — 2026-10-14
+
+UI25-11 is Owner-accepted for its bounded bilingual desktop/mobile shell. A fresh admitted UI25-01 increment now presents all seven verified case lifecycle states in German and Persian while preserving their canonical internal codes for deterministic diagnostics. Focused verification passes `17`; relevant UI/launcher regression passes `91`. UI25-01 is not fully accepted because real persisted case resolution remains independently gated. C09 remains OPEN / NOT ACCEPTED and is not a global stop.
+
 ## UI25-11 Owner device acceptance — 2026-10-14
 
 Owner explicitly accepted all five manual desktop/mobile German/Persian criteria following technical tests (focused 10 PASS, UI/launcher 84 PASS). UI25-11 bilingual product shell is OWNER ACCEPTED for bounded read-only scope; no persistence/IPC/real-data/ELSTER release. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. C09 remains OPEN / NOT ACCEPTED and nonblocking for independent development. Next task requires fresh authenticated Limit Guard before execution.
