@@ -1,4 +1,6 @@
 """UI25-01 dashboard must never present invented cases as live."""
+import re
+
 import pytest
 from fastapi.testclient import TestClient
 from agent_lab.ui_dashboard import DashboardCase, DashboardUnavailable, create_dashboard_app
@@ -84,6 +86,31 @@ def test_german_ltr_mode_and_language_navigation_are_real():
     assert "ELSTER-Übermittlung ist deaktiviert" in page.text
     assert "tab=documents&lang=de-DE" in page.text
     assert client.get("/", params={"lang": "unknown"}).status_code == 404
+
+
+def test_german_product_dashboard_and_tabs_do_not_leak_persian_copy():
+    records = (DashboardCase("CASE-A", 2025, "ACTIVE"),)
+    client = TestClient(create_dashboard_app(read_cases=lambda: records))
+    for tab in ("overview", "cases", "family", "documents", "analysis", "issues", "result", "declaration", "approval", "activity"):
+        page = client.get("/", params={"lang": "de-DE", "tab": tab, "case_id": "CASE-A"})
+        assert page.status_code == 200
+        assert '<html lang="de-DE" dir="ltr">' in page.text
+        assert "ELSTER-Übermittlung ist deaktiviert" in page.text
+        assert "case_id=CASE-A" in page.text and "lang=de-DE" in page.text
+        # The language switch intentionally spells the target language in Persian.
+        without_switch = page.text.replace(">فارسی<", "><")
+        assert re.search(r"[\u0600-\u06ff]", without_switch) is None
+
+
+def test_german_empty_and_fail_closed_states_are_fully_localized():
+    client = TestClient(create_dashboard_app())
+    unavailable = client.get("/", params={"lang": "de-DE"}).text
+    assert "Noch keine verifizierte Verbindung" in unavailable
+    assert "Steuerfallquelle nicht verbunden" in unavailable
+    empty = TestClient(create_dashboard_app(read_cases=lambda: ())).get(
+        "/", params={"lang": "de-DE"}
+    ).text
+    assert "Keine Steuerfälle verfügbar" in empty
 
 
 def test_submission_navigation_is_inert_and_has_no_control():

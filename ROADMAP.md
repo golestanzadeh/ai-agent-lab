@@ -116,4 +116,6 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 
 Work packages: UI25-00 existing UI audit/launch; UI25-01 Dashboard; UI25-02 Case/Tax Year; UI25-03 Family/Carryover; UI25-04 incremental Documents; UI25-05 Kernel/Agents; UI25-06 Issues/Questions; UI25-07 Analysis/Evidence; UI25-08 Calculation; UI25-09 Result/Declaration; UI25-10 Approval/Export; UI25-11 German/Persian and mobile; UI25-12 2025 end-to-end Owner acceptance.
 
+UI25-11 technical update (2026-10-14): the read-only product shell, overview, fail-closed states and all product tabs now have complete German LTR/Persian RTL copy with regression coverage. Technical tests PASS; Owner phone/desktop visual acceptance remains open. This does not release real-data, persistence, submission or C09 gates.
+
 Each package uses IMPLEMENT -> TEST -> FIX -> ACCEPT with separate technical, Owner UI and E2E statuses. Structural/backend changes required by verified UI tests are in scope, without bypassing existing gates. Begin staged 2025 document testing when intake is ready; support late documents and versioned dependency-aware reanalysis. Do not duplicate these packages in OPEN_ITEMS.md; record only genuine unresolved acceptance blockers there. Existing two-stage ELSTER Owner authorization, case isolation, external egress and protected-data restrictions remain binding.

@@ -1,5 +1,9 @@
 # Current State
 
+## C09 policy synchronized; UI25-11 bilingual product shell technical PASS — 2026-10-14
+
+`C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED` is applied without weakening C09 or any other gate. The product dashboard now localizes the complete German LTR and Persian RTL shell, overview, fail-closed states and tab content; language persists through case selection and Approval/ELSTER remains inert. Focused tests pass `10`; relevant UI/launcher tests pass `84`. Owner phone/desktop acceptance remains outstanding, and no real-data or persistence acceptance is implied.
+
 ## Owner C09 nonblocking development policy — 2026-10-14
 
 The Owner explicitly directs that C09 must not be a global execution blocker. See `docs/decisions/c09-nonblocking-local-development-20261014.md`. C09 remains OPEN / NOT ACCEPTED, and the frozen OI-0002 full-closure matrix remains unmet. Independent safe, authorized development may continue after existing capacity/dependency/security gates; operational release that depends on C09 is not authorized. Current execution target is Windows laptop/local Docker with controlled future migration. GitHub private PoC demonstrated successful forced branch-head rollback with scoped contents:write App token, so GitHub branch head alone is not a monotonic witness. No product code acceptance is implied.

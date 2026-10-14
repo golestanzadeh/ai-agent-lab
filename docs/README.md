@@ -153,6 +153,7 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - `oi-0002-operational-deployment-stop-20261011.md` - Windows deployment preflight, custody hardening, regression/review evidence, non-elevated blocker and exact continuation.
 - `oi-0002-final-closure-matrix-20261012.md` - frozen remaining OI-0002 acceptance scope, capacity-safe continuation and recovered UI delivery readiness.
 - `ui25-full-functional-completion-stop-20261011.md` - UI25 recovery result, safe bilingual/disabled-submission work, prerequisite blockers and governed continuation.
+- `ui25-11-bilingual-product-shell-20261014.md` - C09-independent completion of German/Persian product-dashboard copy, regression evidence and remaining Owner device acceptance.
 - `ui25-execution-and-acceptance-plan.md` - Owner-approved UI25 package sequence, acceptance evidence and immutable boundaries.
 - `ui25-owner-internal-development-testing-authorization-20261009.md` - internal development/testing authority and narrow Gemini exception.
 - `ui25-00-local-inventory-20261011.md` - actual synthetic/live UI inventory and initial dependency findings.

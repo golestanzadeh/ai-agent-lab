@@ -1,29 +1,18 @@
-{% set pages = {
-"cases": ("پرونده‌ها و سال مالیاتی", "ایجاد، انتخاب و بازکردن پرونده‌های مالیاتی", "Case Registry / CaseCreationWorkflow"),
-"family": ("خانواده و اشخاص", "هویت، اعضای خانواده و انتقال کنترل‌شدهٔ اطلاعات سال قبل", "IdentityPersistence / CaseIdentityAssociationService"),
-"documents": ("مدارک پرونده", "دریافت تدریجی مدارک، شناسایی تکراری‌ها و مدیریت نسخه‌ها", "Case-scoped storage / document identity"),
-"analysis": ("تحلیل و شواهد", "نتایج استخراج، تحلیل ایجنت‌ها و ارتباط هر یافته با شواهد", "Deterministic Kernel / Gemini extraction boundary"),
-"issues": ("پرسش‌ها و موارد باز", "سؤال‌های قابل پیگیری و موارد نیازمند تصمیم انسانی", "Issues / Human Gates"),
-"result": ("نتیجهٔ محاسبه", "نتایج نسخه‌بندی‌شده و مقایسهٔ تغییرات", "Deterministic tax calculation"),
-"declaration": ("پیش‌نمایش اظهارنامه", "مشاهدهٔ فرم پیش از تأیید، بدون ارسال", "Declaration / ERiC validation"),
-"approval": ("تأیید و ارسال", "دو مجوز مستقل برای صحت محتوا و مقصد ارسال", "Human Gate 1 / Human Gate 2"),
-"activity": ("تاریخچه و فعالیت‌ها", "رویدادها، شواهد اجرا و ردپای ممیزی", "Audit / Checkpoint")
-} %}
-{% set page = pages[tab] %}
-<div class="heading"><div><p class="eyebrow">فضای کار / {{ tab }}</p><h1>{{ page[0] }}</h1><p class="sub">{{ page[1] }}</p></div><span class="source {{ state }}" role="status">{{ "● منبع معتبر متصل" if state == "connected" else "● اتصال تأییدنشده" }}</span></div>
+{% set page = t.pages[tab] %}
+<div class="heading"><div><p class="eyebrow">{{ t.workspace_eyebrow }} / {{ tab }}</p><h1>{{ page[0] }}</h1><p class="sub">{{ page[1] }}</p></div><span class="source {{ state }}" role="status">{{ t.source_connected if state == "connected" else t.source_unavailable }}</span></div>
 <section class="panel tab-panel">
-  <div class="panel-heading"><div><p class="eyebrow">وضعیت اتصال</p><h2>{{ page[0] }}</h2></div><span class="read-only">محیط امن · فقط خواندنی</span></div>
+  <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>
   <div class="tab-body">
     {% if state != "connected" %}
-      <div class="notice-inline" role="status"><strong>دادهٔ واقعی هنوز قابل نمایش نیست</strong><p>اتصال مجاز به رجیستری پایدار پرونده‌ها در این نشست تأیید نشده است. برای جلوگیری از نمایش اطلاعات گمراه‌کننده، داده‌ای ساخته یا حدس زده نمی‌شود.</p></div>
+      <div class="notice-inline" role="status"><strong>{{ t.real_unavailable }}</strong><p>{{ t.real_unavailable_body }}</p></div>
     {% elif selected %}
-      <div class="scope-mini"><span>پرونده: <strong>{{ selected.case_id }}</strong></span><span>سال: <strong>{{ selected.tax_year }}</strong></span><span>وضعیت: <strong>{{ selected.status }}</strong></span></div>
-      <p>هویت پرونده از منبع مجاز خوانده شده است؛ داده‌های تخصصی این بخش تنها پس از تأیید قرارداد دسترسی همان سرویس نمایش داده می‌شوند.</p>
+      <div class="scope-mini"><span>{{ t.case }}: <strong>{{ selected.case_id }}</strong></span><span>{{ t.year }}: <strong>{{ selected.tax_year }}</strong></span><span>{{ t.status }}: <strong>{{ selected.status }}</strong></span></div>
+      <p>{{ t.verified_case_body }}</p>
     {% else %}
-      <div class="notice-inline">در محدودهٔ مجاز پرونده‌ای وجود ندارد.</div>
+      <div class="notice-inline">{{ t.no_case }}</div>
     {% endif %}
-    <div class="connection-info"><span>سرویس مربوطه</span><strong>{{ page[2] }}</strong><small>وضعیت: اتصال عملیاتی این تب هنوز تأیید نشده است.</small></div>
-    {% if tab == "approval" %}<div class="gate-steps"><div><strong>۱. تأیید صحت محتوا</strong><span>ثبت نشده</span></div><div><strong>۲. مجوز مقصد و ارسال</strong><span>ثبت نشده</span></div></div><button type="button" disabled class="disabled-action">ارسال به ELSTER غیرفعال است</button>{% endif %}
+    <div class="connection-info"><span>{{ t.related_service }}</span><strong>{{ page[2] }}</strong><small>{{ t.service_unverified }}</small></div>
+    {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.content_approval }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.destination_approval }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.submission }}</button>{% endif %}
 
 {% if test_mode %}
 <section class="test-console" aria-label="Functional test controls">
