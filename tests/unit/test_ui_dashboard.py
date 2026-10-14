@@ -141,3 +141,19 @@ def test_lifecycle_status_is_localized_without_losing_canonical_code(status, per
     assert german in de
     assert f'data-status-code="{status}"' in fa
     assert f'data-status-code="{status}"' in de
+
+
+def test_selected_case_is_announced_semantically_in_both_directions():
+    records = (
+        DashboardCase("CASE-A", 2024, "ACTIVE"),
+        DashboardCase("CASE-B", 2025, "REVIEW_REQUIRED"),
+    )
+    client = TestClient(create_dashboard_app(read_cases=lambda: records))
+    for lang, direction in (("fa-IR", "rtl"), ("de-DE", "ltr")):
+        page = client.get("/", params={"case_id": "CASE-A", "lang": lang}).text
+        assert f'<html lang="{lang}" dir="{direction}">' in page
+        assert page.count('aria-current="true"') == 1
+        selected = re.search(r'<a class="case-row selected"[^>]+>', page)
+        assert selected is not None
+        assert 'case_id=CASE-A' in selected.group(0)
+        assert 'aria-current="true"' in selected.group(0)

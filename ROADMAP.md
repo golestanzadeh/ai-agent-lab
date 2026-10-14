@@ -4,7 +4,7 @@
 
 UI25-11 bilingual product shell: TECHNICAL PASS and Owner hands-on desktop/mobile ACCEPTED for German LTR and Persian RTL, navigation language persistence, and safe disabled actions. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. Do not repeat this completed package. Next: fresh authenticated Limit Guard and dependency inventory for the next already-authorized C09-independent UI25 package. Real persistence and OI-0002 acceptance remain separately gated.
 
-UI25-01 bounded usability increment: German/Persian lifecycle-status presentation is implemented and verified (`17` focused; `91` relevant regression), without inventing case data or enabling persistence. Evidence: `docs/ui25-01-lifecycle-status-localization-20261014.md`. UI25-01 remains incomplete until an approved durable case resolver supplies real persisted status. Next safe work must be a separately demonstrated C09-independent UI usability/accessibility gap; do not restate this increment as full UI25-01 acceptance.
+UI25-01 bounded usability/accessibility increments: German/Persian lifecycle-status presentation and semantic selected-case announcement are implemented and verified (`18` focused; `92` relevant regression), without inventing case data or enabling persistence. Evidence: `docs/ui25-01-lifecycle-status-localization-20261014.md`. UI25-01 remains incomplete until an approved durable case resolver supplies real persisted status. Next safe work must be a separately demonstrated C09-independent UI usability/accessibility gap; do not restate these increments as full UI25-01 acceptance.
 
 This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
 

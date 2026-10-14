@@ -16,12 +16,14 @@ The dashboard accepted seven canonical lifecycle states but rendered their raw E
 - changes no source authority, case identity, persistence or lifecycle transition;
 - keeps approval and ELSTER transmission inert.
 
+A subsequent independently admitted accessibility increment adds exactly one `aria-current="true"` marker to the selected case row in both German LTR and Persian RTL modes. Selection is therefore exposed to assistive technology rather than conveyed by color alone.
+
 ## Verification
 
-- Focused dashboard suite: `17 passed`, exit 0.
-- Relevant UI and local-launcher regression: `91 passed`, exit 0.
+- Focused dashboard suite: `18 passed`, exit 0.
+- Relevant UI and local-launcher regression: `92 passed`, exit 0.
 - A proposed case-selection tab-persistence assertion failed because the case list exists only on the overview page. That unsupported scope was removed rather than changing product behavior without a valid defect.
-- An initial relevant-suite command referenced a nonexistent launcher test filename and executed no tests. The corrected command used `test_local_ui_launcher.py` and produced the recorded `91 passed` result.
+- An initial relevant-suite command referenced a nonexistent launcher test filename and executed no tests. The corrected command used `test_local_ui_launcher.py`; the final relevant suite produced the recorded `92 passed` result.
 
 ## Remaining boundary
 
