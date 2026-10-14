@@ -1,5 +1,11 @@
 # Roadmap
 
+## Local development versus operational IPC acceptance — 2026-10-14
+
+Continue prerequisite-ready UI, contract, portability and synthetic verification work on the current Windows/Python/Docker baseline without requiring TPM. The TPM-bound ADR is retained as an unaccepted operational profile, not a development prerequisite. No replacement anti-rollback authority is approved. Any development-only IPC slice must remain incapable of protected mutation/finality/restore and must not be represented as C09 or OI-0002 acceptance. Migration to a replacement laptop/VPS remains an explicit verified operation, never silent reinitialization.
+
+Completed development slice: portable canonical JSON and bounded one-frame primitives, independently reviewed PASS with `21` focused and `106` relevant tests. Next prerequisite-ready engineering package may add a transport-neutral closed envelope/schema validator only if it remains NON-OPERATIONAL and cannot authorize or execute a protected operation. Named Pipe activation, protected Identity mutation/finality/restore and acceptance evidence remain gated by an approved operational architecture.
+
 ## UI25-11 completion — 2026-10-14
 
 UI25-11 bilingual product shell: TECHNICAL PASS and Owner hands-on desktop/mobile ACCEPTED for German LTR and Persian RTL, navigation language persistence, and safe disabled actions. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. Do not repeat this completed package. Next: fresh authenticated Limit Guard and dependency inventory for the next already-authorized C09-independent UI25 package. Real persistence and OI-0002 acceptance remain separately gated.

@@ -1,5 +1,11 @@
 # Current State
 
+## Owner-approved local development baseline restored — 2026-10-14
+
+Ordinary development continues on the existing Windows laptop with the existing Python/Docker architecture and portability to a replacement laptop/VPS. TPM is not required for local development. The TPM-based IPC ADR remains an unaccepted operational profile; no replacement freshness authority is approved. C09 stays OPEN / NOT ACCEPTED but is not a global development stop. Protected persistence, rollback-resistant finality, operational restore, OI-0002 closure and OI-0003 remain gated.
+
+One independently reviewed non-operational IPC development slice is complete: portable strict canonical JSON/framing primitives and negative tests pass `21` focused and `106` relevant Kernel/Identity regression tests. The module has no transport or operational execution surface and earns no frozen-matrix acceptance credit.
+
 ## UI25-01 independent audit PASS; IPC blocked by verified TPM absence — 2026-10-14
 
 The bounded UI25-01 presentation audit independently passed after one mobile/tablet accessible-name defect was fixed at exact commit `6dd95f5c58230bf41c7e8ae81e79d46c11844b88`; focused tests pass `19` and relevant UI/launcher regression passes `93`. Real persistent case resolution remains gated. Elevated read-only host evidence now confirms no present/ready TPM and no usable TBS/Platform Crypto Provider path, so the ADR-required TPM NV freshness counter is unsupported on this host. IPC implementation is `BLOCKED_ARCHITECTURE` pending Owner selection of a different independently non-rollbackable freshness authority and a new independent ADR review. C09 remains OPEN / NOT ACCEPTED and is not a global stop for unrelated work.

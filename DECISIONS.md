@@ -1,5 +1,11 @@
 # Decision Log
 
+## D-OI0002-DEVBASE-20261014 — Local development is distinct from operational anti-rollback acceptance
+
+**Status:** Owner-approved deployment baseline; C09 and operational IPC remain unaccepted.
+
+**Decision:** Continue ordinary development on the existing Windows laptop using the existing Python/Docker architecture and preserve portability to a replacement laptop or VPS. TPM is not required for ordinary local development. The TPM-bound IPC ADR remains an unaccepted operational-acceptance profile, not a global development prerequisite. Work that does not claim rollback-resistant finality, activate protected persistence, or depend on C09 may continue through its own tests and gates. No alternative freshness authority is approved by this decision. Evidence and exact boundaries: `docs/decisions/oi0002-local-development-vs-operational-acceptance-20261014.md`.
+
 ## D-C09-20261014 — Nonblocking local development despite C09 security debt
 
 **Status:** Owner-approved for independent work; not an OI-0002 acceptance waiver.

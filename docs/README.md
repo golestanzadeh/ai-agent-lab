@@ -1,5 +1,7 @@
 # Documentation Index
 
+- `oi0002-nonoperational-ipc-wire-primitives-20261014.md` - independently reviewed portable framing primitives with no operational acceptance claim.
+- [OI-0002 local development versus operational acceptance](decisions/oi0002-local-development-vs-operational-acceptance-20261014.md) - Owner-approved development baseline and operational IPC security boundary.
 - `ui25-01-independent-audit-and-ipc-continuation-20261014.md` - independent UI audit PASS and verified IPC host architecture blocker.
 - `ui25-01-lifecycle-status-localization-20261014.md` - bounded German/Persian status usability increment, tests and remaining persistence gate.
 - `ui25-post-11-continuation-20261014.md` - Owner-accepted UI25-11 continuation handoff and fresh-admission requirement.
