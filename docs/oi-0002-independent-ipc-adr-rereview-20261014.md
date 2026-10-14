@@ -1,9 +1,13 @@
 # OI-0002 independent IPC ADR re-review — 2026-10-14
 
-Review identity: `/root/oi0002_ipc_independent_rereview_20261014`  
-Reviewed commit: `ef8c2b4bb800dd04e7c92deb5deca841c53c9d16`  
-Reviewed artifact: `docs/oi-0002-kernel-identity-ipc-adr-20261013.md`  
-Prior independent review: commit `86a96d06b5c1091a273badadbe3b988831b8ea27`  
+Review identity: `/root/oi0002_ipc_independent_rereview_20261014`
+
+Reviewed commit: `ef8c2b4bb800dd04e7c92deb5deca841c53c9d16`
+
+Reviewed artifact: `docs/oi-0002-kernel-identity-ipc-adr-20261013.md`
+
+Prior independent review: commit `86a96d06b5c1091a273badadbe3b988831b8ea27`
+
 Decision: **`ARCHITECTURE_BLOCKED_BY_HOST_FEASIBILITY`**
 
 ## Independence and bounded scope
