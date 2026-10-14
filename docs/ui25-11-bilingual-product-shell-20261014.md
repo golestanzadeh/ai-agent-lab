@@ -1,6 +1,6 @@
 # UI25-11 bilingual product-shell completion — 2026-10-14
 
-Status: **TECHNICAL PASS / OWNER DEVICE ACCEPTANCE OUTSTANDING**
+Status: **TECHNICAL PASS / OWNER DEVICE ACCEPTED (OWNER-REPORTED)**
 
 Baseline: `a246e392e57c5a9e020892821cd8c30edf0ef675`
 
@@ -38,3 +38,9 @@ No Owner visual/device PASS is claimed. No real case resolver, protected operati
 ## Exact continuation
 
 The next executable UI25-11 action requiring no backend gate is Owner hands-on phone/desktop review of the German LTR and Persian RTL product shell. Engineering work that needs real case persistence remains gated independently; C09 alone must not block other explicitly authorized synthetic/navigation/localization packages.
+
+## Owner hands-on acceptance — 2026-10-14
+
+The Owner explicitly confirmed completing hands-on UI25-11 review on desktop and mobile, in both German and Persian, and accepting all five criteria: German LTR without Persian copy leakage; Persian RTL; language persistence through navigation; mobile layout/navigation in both languages; and continued inert approval/ELSTER and fail-closed synthetic-vs-real presentation. This is Owner-attested manual acceptance, not a separately captured device automation trace. UI25-11 is accepted for its bounded bilingual product-shell scope only; no live case persistence, real taxpayer data, OI-0002/C09, or submission release is implied.
+
+Next: admit the next independent UI25 package only after fresh authenticated Limit Guard measurement, then implement/test and update canonical checkpoint. The prior 'Owner acceptance outstanding' statements above are historical pre-acceptance observations.
