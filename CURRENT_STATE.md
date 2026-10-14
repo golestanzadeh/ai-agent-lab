@@ -1,3 +1,7 @@
+# OI-0002 TPM host feasibility awaiting Owner-admin diagnostic — 2026-10-14
+
+Non-elevated read-only probes confirm device-not-ready and Administrator visibility boundaries but cannot decide TPM NV feasibility. The prepared elevated script performs status, device/provider/event/UEFI and raw read-only NV-handle capability queries without provisioning or changing TPM state. Status is `OWNER_ADMIN_DIAGNOSTIC_REQUIRED`; F05 and IPC implementation remain blocked until its local JSON output is examined.
+
 # OI-0002 IPC ADR re-review blocked by host feasibility — 2026-10-14
 
 Independent review of exact ADR remediation SHA `ef8c2b4bb800dd04e7c92deb5deca841c53c9d16` classifies F01–F04 and F06 `IMPLEMENTATION_VERIFICATION_REQUIRED`, but F05 `UNRESOLVED`: this Windows host did not expose a ready/verifiable application-controlled TPM NV counter, and the ADR forbids fallback. Decision is `ARCHITECTURE_BLOCKED_BY_HOST_FEASIBILITY`; OI-0002 remains OPEN and no IPC implementation or OI-0003 work is authorized. Evidence: `docs/oi-0002-independent-ipc-adr-rereview-20261014.md`.
