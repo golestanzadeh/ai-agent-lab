@@ -1,5 +1,9 @@
 # Current State
 
+## Non-operational IPC correlation validator independent PASS — 2026-10-16
+
+The stateless request/response validator is independently accepted at exact implementation commit `6a8ca48e10bbaed96dadacc24609d5daa0f6724f`. It binds contract, request type, transaction ID and request digest; enforces a closed response-outcome matrix and eight privacy-minimized denial codes; and fails closed on malformed, mismatched, ambiguous or noncanonical responses. Focused tests pass `205`; relevant regression passes `302`. No operational surface or acceptance is implied. The next operational dependencies are blocked pending an Owner-approved portable freshness/restore authority and independently accepted ADR revision; C09 remains OPEN / NOT ACCEPTED but is not a global development stop.
+
 ## Non-operational IPC envelope validator independent PASS — 2026-10-14
 
 The versioned development envelope validator is independently accepted at exact SHA `af99001d2dbe0f1cdfb9a136e870bd51d4019d10` after one medium closed-matrix finding was corrected. Strict fields, scope, identifiers, digests, timestamps, capability binding, empty payload and all 23 allowed/17 denied message-operation pairs are deterministic. Focused tests pass `114`; relevant regression passes `211`. No transport, peer authentication, dispatch, persistence, mutation, finality, backup or restore exists, and no operational/C09 acceptance is implied.

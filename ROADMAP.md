@@ -8,6 +8,8 @@ Completed development slice: portable canonical JSON and bounded one-frame primi
 
 Completed development slice: closed contract `oi0002.kernel-identity-ipc-dev/1.0` and transport-neutral envelope validator, independently accepted at `af99001` after exhaustive message/operation matrix remediation (`114` focused; `211` relevant). Next candidate package is a stateless request/response correlation validator with deterministic privacy-minimized denial codes; it must remain non-operational and may not authenticate, dispatch, persist, mutate, finalize, back up or restore state.
 
+Completed development slice: the stateless correlation/outcome validator is independently accepted at `6a8ca48` (`205` focused; `302` relevant). It closes request/response relationships and denial semantics without adding operational authority. Do not manufacture another synthetic IPC layer merely to continue. The next direct IPC step is blocked until the Owner selects a portable independently non-rollbackable freshness/restore authority; then revise the operational ADR and obtain independent security PASS before peer authentication or Kernel-owned dispatch implementation. Unrelated prerequisite-ready development remains permitted because C09 is not a global stop.
+
 ## UI25-11 completion — 2026-10-14
 
 UI25-11 bilingual product shell: TECHNICAL PASS and Owner hands-on desktop/mobile ACCEPTED for German LTR and Persian RTL, navigation language persistence, and safe disabled actions. Evidence: `docs/ui25-11-bilingual-product-shell-20261014.md`. Do not repeat this completed package. Next: fresh authenticated Limit Guard and dependency inventory for the next already-authorized C09-independent UI25 package. Real persistence and OI-0002 acceptance remain separately gated.

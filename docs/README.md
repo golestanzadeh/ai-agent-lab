@@ -1,5 +1,6 @@
 # Documentation Index
 
+- `oi0002-nonoperational-ipc-correlation-and-gap-matrix-20261016.md` - independently accepted stateless response validator and evidence-based operational IPC dependency matrix.
 - `oi0002-nonoperational-ipc-envelope-validator-20261014.md` - independently accepted closed versioned development envelope validator.
 - `oi0002-nonoperational-ipc-wire-primitives-20261014.md` - independently reviewed portable framing primitives with no operational acceptance claim.
 - [OI-0002 local development versus operational acceptance](decisions/oi0002-local-development-vs-operational-acceptance-20261014.md) - Owner-approved development baseline and operational IPC security boundary.
