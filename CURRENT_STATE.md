@@ -1,5 +1,9 @@
 # Current State
 
+## PostgreSQL persistence PoC conditionally accepted — 2026-10-16
+
+The existing PostgreSQL 18.6 Docker lab passed a 29/29 synthetic acceptance harness plus migration-rollback, TCP-authentication and transient 10,000-row indexed probes. PostgreSQL is conditionally accepted as a future backend and the lab is conditionally accepted for isolated synthetic development. Integration is not verified; protected production and C09 are rejected for this configuration because privileged audit/snapshot rollback remains possible, no independent freshness witness exists and credential custody requires hardening. SQLite remains the frozen current application authority; no parallel live database or protected integration was created.
+
 ## Non-operational IPC correlation validator independent PASS — 2026-10-16
 
 The stateless request/response validator is independently accepted at exact implementation commit `6a8ca48e10bbaed96dadacc24609d5daa0f6724f`. It binds contract, request type, transaction ID and request digest; enforces a closed response-outcome matrix and eight privacy-minimized denial codes; and fails closed on malformed, mismatched, ambiguous or noncanonical responses. Focused tests pass `205`; relevant regression passes `302`. No operational surface or acceptance is implied. The next operational dependencies are blocked pending an Owner-approved portable freshness/restore authority and independently accepted ADR revision; C09 remains OPEN / NOT ACCEPTED but is not a global development stop.

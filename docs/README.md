@@ -1,5 +1,7 @@
 # Documentation Index
 
+- `postgresql-persistence-poc-final-acceptance-20261016.md` - executable PostgreSQL 18 persistence PoC, six scoped acceptance decisions and C09 boundary.
+- `postgresql-local-lab-verified-20261016.md` - verified PostgreSQL 18 local Docker lab runbook and non-operational C09 boundary.
 - `oi0002-nonoperational-ipc-correlation-and-gap-matrix-20261016.md` - independently accepted stateless response validator and evidence-based operational IPC dependency matrix.
 - `oi0002-nonoperational-ipc-envelope-validator-20261014.md` - independently accepted closed versioned development envelope validator.
 - `oi0002-nonoperational-ipc-wire-primitives-20261014.md` - independently reviewed portable framing primitives with no operational acceptance claim.
