@@ -10,6 +10,12 @@ Completed development slice: closed contract `oi0002.kernel-identity-ipc-dev/1.0
 
 Completed development slice: the stateless correlation/outcome validator is independently accepted at `6a8ca48` (`205` focused; `302` relevant). It closes request/response relationships and denial semantics without adding operational authority. Do not manufacture another synthetic IPC layer merely to continue. The next direct IPC step is blocked until the Owner selects a portable independently non-rollbackable freshness/restore authority; then revise the operational ADR and obtain independent security PASS before peer authentication or Kernel-owned dispatch implementation. Unrelated prerequisite-ready development remains permitted because C09 is not a global stop.
 
+## UI25-05 synthetic execution — 2026-10-16
+
+Completed bounded technical slice: one explicit UI action executes one deterministic synthetic task through the existing Kernel, records an audit-bound response and displays it after restart. Focused verification passes `93`; status remains SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING. Evidence: `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
+
+Next shortest step: independent review of the exact commit, then Owner hands-on UI confirmation. Automatic intake dispatch, real case execution and protected persistence remain outside this slice.
+
 ## UI25 synthetic Kernel projection — 2026-10-16
 
 Completed bounded increment: the existing functional Dashboard reads exact synthetic case/run/task state from the existing Kernel without dispatch or mutation (`54` focused tests). Status is TECHNICAL_PASS / SYNTHETIC_ONLY. Evidence: `docs/ui25-kernel-read-only-projection-20261016.md`.

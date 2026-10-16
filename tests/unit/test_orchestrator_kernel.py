@@ -434,7 +434,8 @@ def test_scoped_read_only_projection_enforces_exact_synthetic_scope(tmp_path):
     result = OrchestratorKernel.inspect_case_run_read_only(database, **exact)
     assert result["case_id"] == "TEST-2025-A"
     assert result["tasks"] == [{
-        "task_id": "TASK-TEST-001", "role_id": "IMPLEMENTATION_AGENT", "status": "REGISTERED"
+        "task_id": "TASK-TEST-001", "role_id": "IMPLEMENTATION_AGENT", "status": "REGISTERED",
+        "response_status": None, "result_summary": None,
     }]
     assert database.stat().st_mtime_ns == before
     with pytest.raises(PermissionDenied):

@@ -29,6 +29,8 @@ No replacement Kernel, scheduler, case registry, database or checkpoint. Reuse t
 
 Current bounded evidence: UI25-01 now includes a synthetic-only, strictly read-only projection of genuine existing Kernel case/run/task status. It does not accept the live resolver, protected persistence, automatic dispatch or real 2025 workflow. See `docs/ui25-kernel-read-only-projection-20261016.md`.
 
+UI25-05 bounded evidence: one explicit user action can execute one fixed deterministic synthetic worker through the existing Kernel and display its durable response. This is not automatic intake dispatch, real-case execution or package acceptance; independent review and Owner UI confirmation remain outstanding. See `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
+
 ## Incremental evidence invariant
 A tax-year case remains open to later evidence, including after an earlier result is approved. New documents cause scoped re-extraction and dependency-aware versioned reanalysis; preserve accepted historical snapshots, explain changed figures, and require a new Owner approval where affected. Never silently modify a submitted declaration or automatically file an amendment.
 

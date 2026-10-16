@@ -22,6 +22,8 @@ class KernelTaskProjection:
     task_id: str
     role_id: str
     status: str
+    response_status: str | None = None
+    result_summary: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,7 +51,10 @@ class ReadOnlyKernelProjection:
         if raw.get("audit_integrity") != "PASS":
             raise KernelProjectionUnavailable("Kernel audit integrity is not proven")
         tasks = tuple(
-            KernelTaskProjection(item["task_id"], item["role_id"], item["status"])
+            KernelTaskProjection(
+                item["task_id"], item["role_id"], item["status"],
+                item.get("response_status"), item.get("result_summary"),
+            )
             for item in raw.get("tasks", ())
         )
         if not tasks or len({task.task_id for task in tasks}) != len(tasks):

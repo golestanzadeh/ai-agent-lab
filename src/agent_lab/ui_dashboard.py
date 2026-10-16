@@ -34,6 +34,7 @@ class DashboardUnavailable(RuntimeError):
 
 ReadCases = Callable[[], tuple[DashboardCase, ...]]
 ReadKernelProjection = Callable[[str, int, str], object]
+ExecuteKernelTask = Callable[..., object]
 
 UI_TEXT = {
     "fa-IR": {
@@ -81,7 +82,10 @@ UI_TEXT = {
         "test_doc_empty": "هنوز مدرکی ثبت نشده است.",
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
-        "kernel_readonly": "این وضعیت مستقیماً و فقط‌خواندنی از Kernel خوانده شده است؛ هیچ وظیفه‌ای اجرا نشده است.",
+        "kernel_readonly": "این وضعیت مستقیماً و فقط‌خواندنی از Kernel خوانده شده است؛ اجرا فقط با اقدام صریح کاربر آغاز می‌شود.",
+        "kernel_execute_title": "اجرای آزمایشی Kernel", "kernel_run_id": "شناسه اجرای آزمایشی",
+        "kernel_value": "مقدار صحیح آزمایشی", "kernel_execute": "اجرای یک وظیفه آزمایشی",
+        "kernel_result": "نتیجه قطعی worker", "kernel_pending": "نیازمند پذیرش مستقل",
         "status_labels": {
             "CREATED": "ایجادشده", "ACTIVE": "فعال", "PROCESSING": "در حال پردازش",
             "REVIEW_REQUIRED": "نیازمند بررسی", "COMPLETED": "تکمیل‌شده",
@@ -144,7 +148,10 @@ UI_TEXT = {
         "test_doc_empty": "Noch kein Dokument registriert.",
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
-        "kernel_readonly": "Dieser Status wurde direkt und schreibgeschützt aus dem Kernel gelesen; keine Aufgabe wurde ausgeführt.",
+        "kernel_readonly": "Dieser Status wird direkt und schreibgeschützt aus dem Kernel gelesen; die Ausführung beginnt nur durch eine ausdrückliche Benutzeraktion.",
+        "kernel_execute_title": "Synthetische Kernel-Ausführung", "kernel_run_id": "Synthetische Lauf-ID",
+        "kernel_value": "Synthetischer Ganzzahlwert", "kernel_execute": "Eine Testaufgabe ausführen",
+        "kernel_result": "Deterministisches Worker-Ergebnis", "kernel_pending": "Unabhängige Abnahme ausstehend",
         "status_labels": {
             "CREATED": "Erstellt", "ACTIVE": "Aktiv", "PROCESSING": "In Bearbeitung",
             "REVIEW_REQUIRED": "Prüfung erforderlich", "COMPLETED": "Abgeschlossen",
@@ -168,6 +175,7 @@ UI_TEXT = {
 def create_dashboard_app(
     *, read_cases: ReadCases | None = None, test_store=None,
     read_kernel_projection: ReadKernelProjection | None = None,
+    execute_kernel_task: ExecuteKernelTask | None = None,
 ) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 
@@ -178,6 +186,8 @@ def create_dashboard_app(
         raise ValueError("test store and live case resolver must never be mixed")
     if read_kernel_projection is not None and test_store is None:
         raise ValueError("Kernel UI projection is restricted to the isolated test dashboard")
+    if execute_kernel_task is not None and (test_store is None or read_kernel_projection is None):
+        raise ValueError("Kernel execution requires the isolated test store and projection")
     if test_store is not None:
         read_cases = test_store.cases
     app = FastAPI(title="AI-Tax-Agent Dashboard", docs_url=None, redoc_url=None, openapi_url=None)
@@ -289,6 +299,28 @@ def create_dashboard_app(
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid test issue or answer")
         return RedirectResponse("/?tab=issues&case_id="+case_id, status_code=303)
+
+    @app.post("/test/kernel/execute")
+    async def execute_test_kernel_task(
+        case_id: str = Form(...), run_id: str = Form(...),
+        synthetic_value: int = Form(...),
+    ):
+        require_test()
+        if execute_kernel_task is None:
+            raise HTTPException(status_code=404, detail="Synthetic Kernel execution unavailable")
+        matching = tuple(item for item in test_store.cases() if item.case_id == case_id)
+        if len(matching) != 1:
+            raise HTTPException(status_code=400, detail="Unknown or ambiguous test case")
+        try:
+            execute_kernel_task(
+                case_id=case_id, tax_year=matching[0].tax_year,
+                run_id=run_id, synthetic_value=synthetic_value,
+            )
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail="Synthetic Kernel execution rejected") from exc
+        return RedirectResponse(
+            "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
+        )
 
     @app.get("/health")
     async def health():

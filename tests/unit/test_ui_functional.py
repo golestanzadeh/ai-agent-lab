@@ -150,14 +150,14 @@ def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(t
     assert "وضعیت واقعی Kernel" in page.text
     assert "TASK-UI-001" in page.text
     assert 'data-kernel-task-status="REGISTERED"' in page.text
-    assert "هیچ وظیفه‌ای اجرا نشده است" in page.text
+    assert "اجرا فقط با اقدام صریح کاربر آغاز می‌شود" in page.text
     german = client.get("/", params={
         "tab": "activity", "case_id": "TEST-2025-UI", "run_id": "RUN-2025-UI",
         "lang": "de-DE",
     })
     assert german.status_code == 200
     assert "Echter Kernel-Status" in german.text
-    assert "keine Aufgabe wurde ausgeführt" in german.text
+    assert "ausdrückliche Benutzeraktion" in german.text
     assert "run_id=RUN-2025-UI" in german.text
 
     assert client.get("/", params={

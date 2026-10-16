@@ -1,5 +1,11 @@
 # Current State
 
+## UI25-05 synthetic execution — 2026-10-16
+
+One explicit functional-UI action now executes one deterministic, bounded `TEST-*`/2025 task using the existing Kernel and fixed test worker, then displays the durable Kernel result after restart. Duplicate, unauthorized scope, cross-case run, non-HALTED start, halted Kill Switch and response tampering fail closed. Focused verification passes `93`, relevant regression passes `148`, and complete unit regression passes `1371 passed, 5 skipped`. Status: **TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING**; the task itself remains `AWAITING_ACCEPTANCE`. Evidence: `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
+
+Next: independent review of the exact implementation commit and Owner hands-on UI confirmation. Real-case execution still requires the accepted durable live case/run resolver and protected persistence boundary.
+
 ## UI25 synthetic Kernel projection — 2026-10-16
 
 The functional Dashboard has a strictly read-only connection to the existing Kernel for exact synthetic `TEST-*` case/year/run scope. It displays genuine registered task status in German and Persian, survives restart, and rejects missing or inconsistent scope and incomplete registration audit. Focused verification passes `54`, relevant regression passes `109`, and complete unit regression passes `1366 passed, 5 skipped`. Status: **TECHNICAL_PASS / SYNTHETIC_ONLY**. No dispatch, agent execution, protected persistence, real document processing or external communication is active. Evidence: `docs/ui25-kernel-read-only-projection-20261016.md`.

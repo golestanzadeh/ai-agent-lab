@@ -16,7 +16,7 @@
     <section class="data-list" aria-label="{{ t.kernel_title }}">
       <div><strong>{{ t.kernel_title }}</strong><small>{{ t.kernel_readonly }}</small></div>
       <div><strong>{{ t.kernel_run }}: {{ kernel_projection.run_id }}</strong><small>{{ t.kernel_kill_switch }}: {{ kernel_projection.kill_switch }}</small></div>
-      {% for task in kernel_projection.tasks %}<div><strong>{{ task.task_id }}</strong><small>{{ task.role_id }} · <span data-kernel-task-status="{{ task.status }}">{{ task.status }}</span></small></div>{% endfor %}
+      {% for task in kernel_projection.tasks %}<div><strong>{{ task.task_id }}</strong><small>{{ task.role_id }} · <span data-kernel-task-status="{{ task.status }}">{{ task.status }}</span>{% if task.result_summary %} · {{ t.kernel_result }}: <span data-kernel-result>{{ task.result_summary }}</span> · {{ t.kernel_pending }}{% endif %}</small></div>{% endfor %}
     </section>
     {% endif %}
     {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.content_approval }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.destination_approval }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.submission }}</button>{% endif %}
@@ -30,6 +30,10 @@
   {% endif %}
   {% if cases %}
   <nav class="test-case-nav" aria-label="{{ t.test_choose_case }}">{% for item in cases %}<a href="/?tab={{ tab }}&case_id={{ item.case_id|urlencode }}&lang={{ lang }}" class="{{ 'chosen' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }} · {{ item.tax_year }}</a>{% endfor %}</nav>
+  {% endif %}
+  {% if tab == "analysis" and selected %}
+  <h3>{{ t.kernel_execute_title }}</h3>
+  <form method="post" action="/test/kernel/execute" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>{{ t.kernel_run_id }}<input name="run_id" required pattern="[A-Za-z0-9_-]{1,128}" placeholder="RUN-2025-001"></label><label>{{ t.kernel_value }}<input name="synthetic_value" type="number" min="0" max="1000000" required></label><button>{{ t.kernel_execute }}</button></form>
   {% endif %}
   {% if selected and detail %}
     {% if tab == "documents" %}

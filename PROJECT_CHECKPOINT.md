@@ -1,3 +1,9 @@
+# UI25-05 one-shot synthetic Kernel execution — 2026-10-16
+
+The functional UI now provides one explicit user-initiated vertical slice through the existing Kernel: exact registered `TEST-*` case / tax year 2025 / bounded run → fixed `UI25-SYNTHETIC-WORKER-V1` under the existing `IMPLEMENTATION_AGENT/report_evidence` permission → deterministic synthetic result → durable Kernel response/audit → genuine UI readback. The task remains `AWAITING_ACCEPTANCE`; no self-approval occurs. The Kill Switch returns to `HALTED` after the one-shot action.
+
+Production construction, non-test/year/run scope, cross-case run reuse, duplicate execution, non-HALTED start, direct worker invocation while halted and rewritten response content fail closed. Restart preserves exact task/result readback. No scheduler, second dispatcher, task registry, state database, protected persistence, external I/O or real data was introduced. Focused verification passes `93`; relevant regression passes `148`; complete unit regression passes `1371 passed, 5 skipped`. Status: **`TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING`**. Evidence: `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
+
 # UI25 synthetic Dashboard reads genuine Kernel status — 2026-10-16
 
 The existing functional Dashboard now projects registered case/run/task status from the existing Deterministic Orchestrator Kernel through a strictly read-only, synthetic-only adapter. Exact `TEST-*` case, tax year and run bindings are mandatory; missing, unknown, inconsistent, cross-case, cross-year and reused run identities fail closed. The Kernel schema and complete audit hash chain are verified in the same read transaction as the scoped query, and every projected task requires exactly one registration audit. No task, manifest or agent is created, activated or dispatched; no second registry, scheduler, orchestrator, database or state store exists.

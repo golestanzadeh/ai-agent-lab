@@ -1246,7 +1246,10 @@ class OrchestratorKernel:
             )
             self._append_event(
                 "RESPONSE_RECORDED", "RESPONSE", payload["response_id"], payload["actor_instance_id"],
-                {"task_id": payload["task_id"], "manifest_id": manifest_id, "status": payload["status"]},
+                {
+                    "task_id": payload["task_id"], "manifest_id": manifest_id,
+                    "status": payload["status"], "response_digest": _digest(payload),
+                },
             )
         return payload["response_id"]
 
@@ -2044,10 +2047,45 @@ class OrchestratorKernel:
                 ).fetchone()["count"]
                 if registered != 1:
                     raise IntegrityError("Kernel task registration audit is missing or ambiguous")
+                response_rows = connection.execute(
+                    "SELECT response_id, status, payload_json FROM responses WHERE task_id=? ORDER BY response_id",
+                    (row["task_id"],),
+                ).fetchall()
+                if len(response_rows) > 1:
+                    raise IntegrityError("Kernel task response is ambiguous")
+                result_summary = None
+                response_status = None
+                if response_rows:
+                    response_row = response_rows[0]
+                    try:
+                        response = json.loads(response_row["payload_json"])
+                    except (TypeError, json.JSONDecodeError) as exc:
+                        raise IntegrityError("Kernel response payload is not valid JSON") from exc
+                    if (
+                        not isinstance(response, dict)
+                        or set(response) != OrchestratorKernel.RESPONSE_FIELDS
+                        or response.get("task_id") != row["task_id"]
+                        or response.get("response_id") != response_row["response_id"]
+                        or response.get("status") != response_row["status"]
+                    ):
+                        raise IntegrityError("Kernel response lineage is not canonical")
+                    response_audits = connection.execute(
+                        "SELECT payload_json FROM audit_events WHERE event_type='RESPONSE_RECORDED' AND entity_type='RESPONSE' AND entity_id=?",
+                        (response_row["response_id"],),
+                    ).fetchall()
+                    if len(response_audits) != 1:
+                        raise IntegrityError("Kernel response audit is missing or ambiguous")
+                    response_audit = json.loads(response_audits[0]["payload_json"])
+                    if response_audit.get("response_digest") != _digest(response):
+                        raise IntegrityError("Kernel response content is not bound to its audit")
+                    result_summary = response["result_summary"]
+                    response_status = response["status"]
                 tasks.append({
                     "task_id": row["task_id"],
                     "role_id": row["role_id"],
                     "status": row["status"],
+                    "response_status": response_status,
+                    "result_summary": result_summary,
                 })
             if run_scopes - {(case_id, tax_year)}:
                 raise PermissionDenied("run identity is bound to a different case or tax year")
