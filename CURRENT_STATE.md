@@ -1,5 +1,11 @@
 # Current State
 
+## UI25 synthetic Kernel projection — 2026-10-16
+
+The functional Dashboard has a strictly read-only connection to the existing Kernel for exact synthetic `TEST-*` case/year/run scope. It displays genuine registered task status in German and Persian, survives restart, and rejects missing or inconsistent scope and incomplete registration audit. Focused verification passes `54`, relevant regression passes `109`, and complete unit regression passes `1366 passed, 5 skipped`. Status: **TECHNICAL_PASS / SYNTHETIC_ONLY**. No dispatch, agent execution, protected persistence, real document processing or external communication is active. Evidence: `docs/ui25-kernel-read-only-projection-20261016.md`.
+
+Next blocker for a real 2025 case is the independently accepted durable live case/run resolver plus protected persistence boundary. C09 remains OPEN / NOT ACCEPTED but is not a global development stop.
+
 ## UI25 synthetic 2025 canonical backend slice — 2026-10-16
 
 The explicit test-only UI can create, persist and reopen a synthetic `TEST-*` 2025 case while reconstructing the existing `CaseRegistry` and `CaseStateStore`; Dashboard status is projected from validated canonical case state, not a raw UI row. German/Persian display and synthetic document digest persistence pass. Focused tests pass `45`; relevant regression passes `133`; full unit regression passes `1361 passed, 5 skipped`. This is synthetic technical evidence only. Real case creation/reopen, protected documents and Kernel execution remain blocked by the absent accepted durable live resolver and OI-0002/OI-0003 gates.

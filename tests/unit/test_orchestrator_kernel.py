@@ -425,6 +425,54 @@ def test_read_only_inspection_reports_integrity_without_mutation(tmp_path):
     assert database.stat().st_mtime_ns == before
 
 
+def test_scoped_read_only_projection_enforces_exact_synthetic_scope(tmp_path):
+    database = tmp_path / "kernel.sqlite3"
+    exact = {"case_id": "TEST-2025-A", "tax_year": 2025, "run_id": "RUN-2025-A"}
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        kernel.register_task(task(case_context=exact), gate_triggers=())
+    before = database.stat().st_mtime_ns
+    result = OrchestratorKernel.inspect_case_run_read_only(database, **exact)
+    assert result["case_id"] == "TEST-2025-A"
+    assert result["tasks"] == [{
+        "task_id": "TASK-TEST-001", "role_id": "IMPLEMENTATION_AGENT", "status": "REGISTERED"
+    }]
+    assert database.stat().st_mtime_ns == before
+    with pytest.raises(PermissionDenied):
+        OrchestratorKernel.inspect_case_run_read_only(
+            database, case_id="TEST-2025-A", tax_year=2024, run_id="RUN-2025-A"
+        )
+    with pytest.raises(PermissionDenied):
+        OrchestratorKernel.inspect_case_run_read_only(
+            database, case_id="CASE-001", tax_year=2025, run_id="RUN-2025-A"
+        )
+
+
+def test_scoped_read_only_projection_rejects_cross_case_run_reuse(tmp_path):
+    database = tmp_path / "kernel.sqlite3"
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        kernel.register_task(task(task_id="TASK-A", case_context={
+            "case_id": "TEST-A", "tax_year": 2025, "run_id": "RUN-SHARED"
+        }), gate_triggers=())
+        kernel.register_task(task(task_id="TASK-B", case_context={
+            "case_id": "TEST-B", "tax_year": 2025, "run_id": "RUN-SHARED"
+        }), gate_triggers=())
+    with pytest.raises(PermissionDenied, match="different case"):
+        OrchestratorKernel.inspect_case_run_read_only(
+            database, case_id="TEST-A", tax_year=2025, run_id="RUN-SHARED"
+        )
+
+
+def test_scoped_read_only_projection_rejects_truncated_task_audit(tmp_path):
+    database = tmp_path / "kernel.sqlite3"
+    context = {"case_id": "TEST-A", "tax_year": 2025, "run_id": "RUN-A"}
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        kernel.register_task(task(case_context=context), gate_triggers=())
+        with kernel._connection:
+            kernel._connection.execute("DELETE FROM audit_events")
+    with pytest.raises(IntegrityError, match="registration audit"):
+        OrchestratorKernel.inspect_case_run_read_only(database, **context)
+
+
 def test_unknown_contract_version_fails_closed(tmp_path):
     contract_copy = tmp_path / "contracts"
     contract_copy.mkdir()

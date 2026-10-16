@@ -1,8 +1,36 @@
 """UI25 isolated functional smoke and restart regression."""
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 from agent_lab.ui_dashboard import DashboardCase, create_dashboard_app
 from agent_lab.ui_functional_test_store import FunctionalTestStore
+from agent_lab.ui_kernel_projection import ReadOnlyKernelProjection
+from agent_lab.orchestrator_kernel import OrchestratorKernel
+
+
+CONTRACT_ROOT = Path(__file__).resolve().parents[2] / "contracts" / "orchestrator" / "v1"
+
+
+def _kernel_task(*, case_id="TEST-2025-UI", tax_year=2025, run_id="RUN-2025-UI", task_id="TASK-UI-001"):
+    now = datetime.now(timezone.utc)
+    return {
+        "schema_version": 1, "task_id": task_id, "parent_task_id": None,
+        "objective": "Expose synthetic status without executing it",
+        "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": "AGI-UI-TEST",
+        "repository": "golestanzadeh/ai-agent-lab", "ref": "oi0002-identity-persistence",
+        "case_context": {"case_id": case_id, "tax_year": tax_year, "run_id": run_id},
+        "inputs": [], "expected_outputs": ["test://status"], "allowed_tools": [],
+        "permissions": [], "forbidden_actions": ["dispatch"],
+        "budget": {"token_limit": 100, "tool_call_limit": 1, "cost_limit_usd": 1.0},
+        "timeout_seconds": 60, "max_retries": 0,
+        "acceptance_criteria": ["read-only status visible"],
+        "stop_conditions": ["scope mismatch"],
+        "escalation_route": ["HUMAN_PROJECT_OWNER"],
+        "created_at": (now - timedelta(minutes=1)).isoformat(),
+        "expires_at": (now + timedelta(hours=1)).isoformat(), "status": "REGISTERED",
+    }
 
 
 def test_functional_case_document_issue_audit_and_restart(tmp_path):
@@ -97,3 +125,71 @@ def test_production_dashboard_rejects_test_mutations():
     client=TestClient(create_dashboard_app())
     assert client.post("/test/cases",data={"case_id":"TEST-X","tax_year":"2025"}).status_code==404
     assert "form-action 'none'" in client.get("/").headers["content-security-policy"]
+
+
+def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(tmp_path):
+    ui_database = tmp_path / "ui.sqlite3"
+    kernel_database = tmp_path / "kernel.sqlite3"
+    store = FunctionalTestStore(ui_database)
+    store.create_case("TEST-2025-UI", 2025)
+    with OrchestratorKernel(kernel_database, CONTRACT_ROOT) as kernel:
+        kernel.register_task(_kernel_task(), gate_triggers=())
+
+    projection = ReadOnlyKernelProjection(kernel_database)
+    client = TestClient(create_dashboard_app(
+        test_store=store, read_kernel_projection=projection.read
+    ))
+    assert client.get("/", params={
+        "tab": "analysis", "case_id": "TEST-2025-UI"
+    }).status_code == 400
+    page = client.get("/", params={
+        "tab": "analysis", "case_id": "TEST-2025-UI", "run_id": "RUN-2025-UI",
+        "lang": "fa-IR",
+    })
+    assert page.status_code == 200
+    assert "وضعیت واقعی Kernel" in page.text
+    assert "TASK-UI-001" in page.text
+    assert 'data-kernel-task-status="REGISTERED"' in page.text
+    assert "هیچ وظیفه‌ای اجرا نشده است" in page.text
+    german = client.get("/", params={
+        "tab": "activity", "case_id": "TEST-2025-UI", "run_id": "RUN-2025-UI",
+        "lang": "de-DE",
+    })
+    assert german.status_code == 200
+    assert "Echter Kernel-Status" in german.text
+    assert "keine Aufgabe wurde ausgeführt" in german.text
+    assert "run_id=RUN-2025-UI" in german.text
+
+    assert client.get("/", params={
+        "tab": "analysis", "case_id": "TEST-2025-UI", "run_id": "RUN-WRONG"
+    }).status_code == 403
+    store.close()
+
+    reopened = FunctionalTestStore(ui_database)
+    restarted_client = TestClient(create_dashboard_app(
+        test_store=reopened,
+        read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
+    ))
+    restarted = restarted_client.get("/", params={
+        "tab": "analysis", "case_id": "TEST-2025-UI", "run_id": "RUN-2025-UI"
+    })
+    assert restarted.status_code == 200
+    assert "TASK-UI-001" in restarted.text
+    reopened.close()
+
+
+def test_dashboard_kernel_projection_rejects_year_and_case_mismatch(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-A", 2025)
+    store.create_case("TEST-B", 2025)
+    kernel_database = tmp_path / "kernel.sqlite3"
+    with OrchestratorKernel(kernel_database, CONTRACT_ROOT) as kernel:
+        kernel.register_task(_kernel_task(case_id="TEST-A", run_id="RUN-A"), gate_triggers=())
+    client = TestClient(create_dashboard_app(
+        test_store=store,
+        read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
+    ))
+    assert client.get("/", params={
+        "tab": "analysis", "case_id": "TEST-B", "run_id": "RUN-A"
+    }).status_code == 403
+    store.close()

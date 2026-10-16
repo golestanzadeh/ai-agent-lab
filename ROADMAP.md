@@ -10,6 +10,12 @@ Completed development slice: closed contract `oi0002.kernel-identity-ipc-dev/1.0
 
 Completed development slice: the stateless correlation/outcome validator is independently accepted at `6a8ca48` (`205` focused; `302` relevant). It closes request/response relationships and denial semantics without adding operational authority. Do not manufacture another synthetic IPC layer merely to continue. The next direct IPC step is blocked until the Owner selects a portable independently non-rollbackable freshness/restore authority; then revise the operational ADR and obtain independent security PASS before peer authentication or Kernel-owned dispatch implementation. Unrelated prerequisite-ready development remains permitted because C09 is not a global stop.
 
+## UI25 synthetic Kernel projection — 2026-10-16
+
+Completed bounded increment: the existing functional Dashboard reads exact synthetic case/run/task state from the existing Kernel without dispatch or mutation (`54` focused tests). Status is TECHNICAL_PASS / SYNTHETIC_ONLY. Evidence: `docs/ui25-kernel-read-only-projection-20261016.md`.
+
+Remaining UI25-01/UI25-02 dependency: independently accepted durable live case/run resolution and protected persistence. UI25-05 automatic dispatch remains a separate gated package. Do not treat this projection as operational IPC or real-case acceptance.
+
 ## UI25-11 completion — 2026-10-14
 
 UI25 synthetic 2025 backend slice (2026-10-16): the existing isolated functional UI now reconstructs canonical `CaseRegistry`/`CaseStateStore` models, so a `TEST-*` 2025 case and its synthetic document digest metadata can be created, persisted, reopened and shown bilingually (`45` focused; `133` relevant). This is not UI25-01/02 acceptance and does not promote the test SQLite store. Next bounded candidate is a synthetic-only case/run projection into the existing Kernel with no dispatch or protected mutation; real-case work still requires the accepted durable resolver and OI gates.

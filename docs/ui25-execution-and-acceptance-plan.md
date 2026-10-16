@@ -1,7 +1,7 @@
 # UI25 — UI-led Product Completion and 2025 End-to-End Acceptance
 
 Date: 2026-10-09
-Status: OWNER-APPROVED PLAN / NOT EXECUTED
+Status: OWNER-APPROVED PLAN / PARTIALLY EXECUTED (synthetic-only increments)
 Owner direction: complete and test the existing UI tab by tab, connect it to existing real project components, fix discovered implementation or architectural defects in the same workstream, and then validate a full 2025 case through the UI.
 Authorizations: docs/ui25-owner-internal-development-testing-authorization-20261009.md (including its bounded Gemini API exception).
 
@@ -26,6 +26,8 @@ No replacement Kernel, scheduler, case registry, database or checkpoint. Reuse t
 | UI25-10 | Approval/export | Validate distinct human content approval and separate outbound destination/ELSTER authorization; PDF/export only where separately allowed, never auto-submit. |
 | UI25-11 | Bilingual/mobile | Validate German/Persian terminology, RTL/LTR, accessibility, ordinary phone and desktop workflows. |
 | UI25-12 | End-to-end acceptance | Owner exercises 2025 case creation -> staged PDF intake -> agent analysis -> questions -> corrections -> late evidence -> final calculation and report through the UI; verify restart, duplicate, privacy and case isolation. |
+
+Current bounded evidence: UI25-01 now includes a synthetic-only, strictly read-only projection of genuine existing Kernel case/run/task status. It does not accept the live resolver, protected persistence, automatic dispatch or real 2025 workflow. See `docs/ui25-kernel-read-only-projection-20261016.md`.
 
 ## Incremental evidence invariant
 A tax-year case remains open to later evidence, including after an earlier result is approved. New documents cause scoped re-extraction and dependency-aware versioned reanalysis; preserve accepted historical snapshots, explain changed figures, and require a new Owner approval where affected. Never silently modify a submitted declaration or automatically file an amendment.

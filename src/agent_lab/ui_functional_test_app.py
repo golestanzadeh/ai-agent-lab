@@ -6,6 +6,7 @@ from pathlib import Path
 
 from agent_lab.ui_dashboard import create_dashboard_app
 from agent_lab.ui_functional_test_store import FunctionalTestStore
+from agent_lab.ui_kernel_projection import ReadOnlyKernelProjection
 
 
 def create_functional_test_app():
@@ -14,4 +15,8 @@ def create_functional_test_app():
     db_path = Path(os.environ.get("AI_TAX_UI_TEST_DB", str(Path.home() / ".ai-tax-agent" / "ui-functional-test.sqlite3")))
     if any(segment.casefold() in {"google drive","onedrive","dropbox"} for segment in db_path.parts):
         raise RuntimeError("Test database cannot be stored in a synced folder")
-    return create_dashboard_app(test_store=FunctionalTestStore(db_path))
+    kernel_database = os.environ.get("AI_TAX_UI_KERNEL_DB")
+    projection = ReadOnlyKernelProjection(kernel_database).read if kernel_database else None
+    return create_dashboard_app(
+        test_store=FunctionalTestStore(db_path), read_kernel_projection=projection
+    )

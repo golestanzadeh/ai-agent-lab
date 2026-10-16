@@ -1965,3 +1965,102 @@ class OrchestratorKernel:
             }
         finally:
             connection.close()
+
+    @staticmethod
+    def inspect_case_run_read_only(
+        database_path: Path | str, *, case_id: str, tax_year: int, run_id: str
+    ) -> dict[str, Any]:
+        """Return an integrity-checked, scoped task projection without opening write access.
+
+        This is an observation API only.  It never creates a task, evaluates a
+        permission, changes lifecycle state, or dispatches work.
+        """
+        for field, value in (("case_id", case_id), ("run_id", run_id)):
+            if (
+                not isinstance(value, str)
+                or not value
+                or len(value) > 128
+                or any(not character.isascii() or not (character.isalnum() or character in "-_") for character in value)
+            ):
+                raise ContractError(f"{field} must be a bounded ASCII identifier")
+        if not case_id.startswith("TEST-"):
+            raise PermissionDenied("read-only UI projection is restricted to TEST cases")
+        if isinstance(tax_year, bool) or not isinstance(tax_year, int) or not 2000 <= tax_year <= 2100:
+            raise ContractError("tax_year is outside the synthetic projection range")
+
+        path = Path(database_path).resolve()
+        connection = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+        connection.row_factory = sqlite3.Row
+        try:
+            # One read transaction prevents an integrity-check/query TOCTOU.
+            connection.execute("BEGIN")
+            schema = connection.execute(
+                "SELECT version FROM kernel_schema WHERE component='orchestrator'"
+            ).fetchone()
+            if schema is None or schema["version"] != KERNEL_SCHEMA_VERSION:
+                raise IntegrityError("unsupported or missing orchestrator schema")
+            previous_hash: str | None = None
+            for event in connection.execute("SELECT * FROM audit_events ORDER BY event_id").fetchall():
+                payload = json.loads(event["payload_json"])
+                event_body = {
+                    "event_type": event["event_type"], "entity_type": event["entity_type"],
+                    "entity_id": event["entity_id"], "occurred_at": event["occurred_at"],
+                    "actor_id": event["actor_id"], "payload": payload,
+                    "previous_hash": previous_hash,
+                }
+                if event["previous_hash"] != previous_hash or event["event_hash"] != _digest(event_body):
+                    raise IntegrityError(f"audit chain failed at event {event['event_id']}")
+                previous_hash = event["event_hash"]
+            kill = connection.execute("SELECT state FROM kill_switch WHERE singleton=1").fetchone()
+            tasks: list[dict[str, str]] = []
+            run_scopes: set[tuple[str, int]] = set()
+            for row in connection.execute(
+                "SELECT task_id, role_id, status, payload_json FROM tasks ORDER BY task_id"
+            ).fetchall():
+                try:
+                    payload = json.loads(row["payload_json"])
+                except (TypeError, json.JSONDecodeError) as exc:
+                    raise IntegrityError("Kernel task payload is not valid JSON") from exc
+                if not isinstance(payload, dict) or set(payload) != OrchestratorKernel.TASK_FIELDS:
+                    raise IntegrityError("Kernel task payload schema is not canonical")
+                context = payload.get("case_context")
+                if context is None:
+                    continue
+                if not isinstance(context, dict) or set(context) != {"case_id", "tax_year", "run_id"}:
+                    raise IntegrityError("Kernel case context schema is not canonical")
+                if context.get("run_id") == run_id:
+                    scope_case = context.get("case_id")
+                    scope_year = context.get("tax_year")
+                    if not isinstance(scope_case, str) or isinstance(scope_year, bool) or not isinstance(scope_year, int):
+                        raise IntegrityError("Kernel case context types are invalid")
+                    run_scopes.add((scope_case, scope_year))
+                if context != {"case_id": case_id, "tax_year": tax_year, "run_id": run_id}:
+                    continue
+                if row["task_id"] != payload["task_id"] or row["role_id"] != payload["role_id"]:
+                    raise IntegrityError("Kernel task identity differs from its canonical payload")
+                registered = connection.execute(
+                    "SELECT COUNT(*) AS count FROM audit_events WHERE event_type='TASK_REGISTERED' AND entity_type='TASK' AND entity_id=?",
+                    (row["task_id"],),
+                ).fetchone()["count"]
+                if registered != 1:
+                    raise IntegrityError("Kernel task registration audit is missing or ambiguous")
+                tasks.append({
+                    "task_id": row["task_id"],
+                    "role_id": row["role_id"],
+                    "status": row["status"],
+                })
+            if run_scopes - {(case_id, tax_year)}:
+                raise PermissionDenied("run identity is bound to a different case or tax year")
+            if not tasks:
+                raise PermissionDenied("no Kernel tasks exist for the exact requested scope")
+            return {
+                "schema_version": schema["version"],
+                "audit_integrity": "PASS",
+                "kill_switch": kill["state"] if kill else "UNKNOWN",
+                "case_id": case_id,
+                "tax_year": tax_year,
+                "run_id": run_id,
+                "tasks": tasks,
+            }
+        finally:
+            connection.close()

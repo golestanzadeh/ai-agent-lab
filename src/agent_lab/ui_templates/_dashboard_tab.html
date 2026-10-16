@@ -12,6 +12,13 @@
       <div class="notice-inline">{{ t.no_case }}</div>
     {% endif %}
     <div class="connection-info"><span>{{ t.related_service }}</span><strong>{{ page[2] }}</strong><small>{{ t.service_unverified }}</small></div>
+    {% if kernel_projection %}
+    <section class="data-list" aria-label="{{ t.kernel_title }}">
+      <div><strong>{{ t.kernel_title }}</strong><small>{{ t.kernel_readonly }}</small></div>
+      <div><strong>{{ t.kernel_run }}: {{ kernel_projection.run_id }}</strong><small>{{ t.kernel_kill_switch }}: {{ kernel_projection.kill_switch }}</small></div>
+      {% for task in kernel_projection.tasks %}<div><strong>{{ task.task_id }}</strong><small>{{ task.role_id }} · <span data-kernel-task-status="{{ task.status }}">{{ task.status }}</span></small></div>{% endfor %}
+    </section>
+    {% endif %}
     {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.content_approval }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.destination_approval }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.submission }}</button>{% endif %}
 
 {% if test_mode %}

@@ -1,5 +1,6 @@
 # Documentation Index
 
+- `ui25-kernel-read-only-projection-20261016.md` - synthetic-only Dashboard projection of exact, integrity-checked Kernel case/run/task status without dispatch.
 - `ui25-2025-canonical-test-backend-20261016.md` - synthetic 2025 UI create/persist/reopen slice using canonical Case Registry and CaseState models.
 - `postgresql-persistence-poc-final-acceptance-20261016.md` - executable PostgreSQL 18 persistence PoC, six scoped acceptance decisions and C09 boundary.
 - `postgresql-local-lab-verified-20261016.md` - verified PostgreSQL 18 local Docker lab runbook and non-operational C09 boundary.

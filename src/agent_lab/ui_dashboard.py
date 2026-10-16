@@ -33,6 +33,7 @@ class DashboardUnavailable(RuntimeError):
 
 
 ReadCases = Callable[[], tuple[DashboardCase, ...]]
+ReadKernelProjection = Callable[[str, int, str], object]
 
 UI_TEXT = {
     "fa-IR": {
@@ -78,6 +79,9 @@ UI_TEXT = {
         "test_doc_label": "عنوان مدرک", "test_doc_file": "فایل آزمایشی (حداکثر ۲ مگابایت)",
         "test_doc_submit": "ثبت و بررسی تکراری", "test_doc_list": "مدارک ثبت‌شده",
         "test_doc_empty": "هنوز مدرکی ثبت نشده است.",
+        "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
+        "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
+        "kernel_readonly": "این وضعیت مستقیماً و فقط‌خواندنی از Kernel خوانده شده است؛ هیچ وظیفه‌ای اجرا نشده است.",
         "status_labels": {
             "CREATED": "ایجادشده", "ACTIVE": "فعال", "PROCESSING": "در حال پردازش",
             "REVIEW_REQUIRED": "نیازمند بررسی", "COMPLETED": "تکمیل‌شده",
@@ -138,6 +142,9 @@ UI_TEXT = {
         "test_doc_label": "Dokumenttitel", "test_doc_file": "Testdatei (maximal 2 MB)",
         "test_doc_submit": "Registrieren und Duplikat prüfen", "test_doc_list": "Registrierte Dokumente",
         "test_doc_empty": "Noch kein Dokument registriert.",
+        "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
+        "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
+        "kernel_readonly": "Dieser Status wurde direkt und schreibgeschützt aus dem Kernel gelesen; keine Aufgabe wurde ausgeführt.",
         "status_labels": {
             "CREATED": "Erstellt", "ACTIVE": "Aktiv", "PROCESSING": "In Bearbeitung",
             "REVIEW_REQUIRED": "Prüfung erforderlich", "COMPLETED": "Abgeschlossen",
@@ -158,7 +165,10 @@ UI_TEXT = {
 }
 
 
-def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None) -> FastAPI:
+def create_dashboard_app(
+    *, read_cases: ReadCases | None = None, test_store=None,
+    read_kernel_projection: ReadKernelProjection | None = None,
+) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 
     This is not a substitute for the Kernel's permission or persistence layer.
@@ -166,6 +176,8 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
     """
     if test_store is not None and read_cases is not None:
         raise ValueError("test store and live case resolver must never be mixed")
+    if read_kernel_projection is not None and test_store is None:
+        raise ValueError("Kernel UI projection is restricted to the isolated test dashboard")
     if test_store is not None:
         read_cases = test_store.cases
     app = FastAPI(title="AI-Tax-Agent Dashboard", docs_url=None, redoc_url=None, openapi_url=None)
@@ -187,7 +199,10 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
         return response
 
     @app.get("/", response_class=HTMLResponse)
-    async def dashboard(request: Request, case_id: str | None = None, tab: str = "overview", lang: str = "fa-IR"):
+    async def dashboard(
+        request: Request, case_id: str | None = None, run_id: str | None = None,
+        tab: str = "overview", lang: str = "fa-IR",
+    ):
         tabs = {"overview", "cases", "family", "documents", "analysis", "issues", "result", "declaration", "approval", "activity"}
         if tab not in tabs:
             raise HTTPException(status_code=404, detail="Unknown workspace tab")
@@ -220,9 +235,18 @@ def create_dashboard_app(*, read_cases: ReadCases | None = None, test_store=None
         detail = None
         if test_store is not None and selected is not None:
             detail = test_store.detail(selected.case_id)
+        kernel_projection = None
+        if read_kernel_projection is not None and selected is not None and tab in {"analysis", "activity"}:
+            if run_id is None:
+                raise HTTPException(status_code=400, detail="Exact run_id is required for Kernel status")
+            try:
+                kernel_projection = read_kernel_projection(selected.case_id, selected.tax_year, run_id)
+            except Exception as exc:
+                raise HTTPException(status_code=403, detail="Kernel scope is unavailable or unauthorized") from exc
         return templates.TemplateResponse(request=request, name="dashboard.html", context={
             "state": state, "cases": cases, "selected": selected, "tab": tab,
             "test_mode": test_store is not None, "detail": detail, "lang": lang, "t": UI_TEXT[lang],
+            "run_id": run_id, "kernel_projection": kernel_projection,
         })
 
     def require_test():
