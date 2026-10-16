@@ -15,20 +15,20 @@
     {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.content_approval }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.destination_approval }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.submission }}</button>{% endif %}
 
 {% if test_mode %}
-<section class="test-console" aria-label="Functional test controls">
-  <div class="test-banner"><strong>محیط تست عملکردی (TEST ONLY)</strong><p>داده‌های این بخش آزمایشی و محلی هستند. این محیط به پرونده‌های واقعی، Kernel اجرایی یا ELSTER متصل نیست. فایل واقعی مالیاتی بارگذاری نکنید.</p></div>
+<section class="test-console" aria-label="{{ t.test_controls }}">
+  <div class="test-banner"><strong>{{ t.test_only_title }}</strong><p>{{ t.test_only_body }}</p></div>
   {% if tab == "cases" %}
-  <h3>ساخت پروندهٔ آزمایشی</h3>
-  <form method="post" action="/test/cases" class="test-form"><label>شناسه (با TEST- شروع شود)<input name="case_id" required pattern="TEST-[A-Za-z0-9_-]+" placeholder="TEST-2025-01"></label><label>سال مالیاتی<input name="tax_year" type="number" min="2000" max="2100" value="2025" required></label><button>ایجاد پروندهٔ آزمایشی</button></form>
+  <h3>{{ t.test_create_case }}</h3>
+  <form method="post" action="/test/cases" class="test-form"><label>{{ t.test_case_id }}<input name="case_id" required pattern="TEST-[A-Za-z0-9_-]+" placeholder="TEST-2025-01"></label><label>{{ t.test_tax_year }}<input name="tax_year" type="number" min="2000" max="2100" value="2025" required></label><button>{{ t.test_create }}</button></form>
   {% endif %}
   {% if cases %}
-  <nav class="test-case-nav" aria-label="انتخاب پروندهٔ آزمایشی">{% for item in cases %}<a href="/?tab={{ tab }}&case_id={{ item.case_id|urlencode }}" class="{{ 'chosen' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }} · {{ item.tax_year }}</a>{% endfor %}</nav>
+  <nav class="test-case-nav" aria-label="{{ t.test_choose_case }}">{% for item in cases %}<a href="/?tab={{ tab }}&case_id={{ item.case_id|urlencode }}&lang={{ lang }}" class="{{ 'chosen' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }} · {{ item.tax_year }}</a>{% endfor %}</nav>
   {% endif %}
   {% if selected and detail %}
     {% if tab == "documents" %}
-    <h3>ثبت هش مدرک آزمایشی</h3><p>فایل فقط برای محاسبهٔ SHA-256 خوانده می‌شود؛ محتوای آن ذخیره نمی‌شود.</p>
-    <form method="post" action="/test/documents" enctype="multipart/form-data" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>عنوان مدرک<input name="label" required maxlength="100"></label><label>فایل آزمایشی (حداکثر ۲ مگابایت)<input name="document" type="file" required></label><button>ثبت و بررسی تکراری</button></form>
-    <h3>مدارک ثبت‌شده</h3><div class="data-list">{% for label,digest in detail.documents %}<div><strong>{{ label }}</strong><small>SHA-256: {{ digest[:16] }}…</small></div>{% else %}<p>هنوز مدرکی ثبت نشده است.</p>{% endfor %}</div>
+    <h3>{{ t.test_doc_register }}</h3><p>{{ t.test_doc_help }}</p>
+    <form method="post" action="/test/documents" enctype="multipart/form-data" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>{{ t.test_doc_label }}<input name="label" required maxlength="100"></label><label>{{ t.test_doc_file }}<input name="document" type="file" required></label><button>{{ t.test_doc_submit }}</button></form>
+    <h3>{{ t.test_doc_list }}</h3><div class="data-list">{% for label,digest in detail.documents %}<div><strong>{{ label }}</strong><small>SHA-256: {{ digest[:16] }}…</small></div>{% else %}<p>{{ t.test_doc_empty }}</p>{% endfor %}</div>
     {% elif tab == "issues" %}
     <h3>ثبت پرسش آزمایشی</h3><form method="post" action="/test/issues" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><label>پرسش<input name="question" required maxlength="500"></label><button>ثبت پرسش</button></form>
     <h3>پرسش‌های پرونده</h3><div class="data-list">{% for issue_id,question,answer,state in detail.issues %}<div><strong>{{ question }}</strong><small>{{ state }} {% if answer %} · {{ answer }}{% endif %}</small>{% if state == "OPEN" %}<form method="post" action="/test/issues/answer" class="test-form"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><input type="hidden" name="issue_id" value="{{ issue_id }}"><label>پاسخ<input name="answer" required maxlength="2000"></label><button>ثبت پاسخ</button></form>{% endif %}</div>{% else %}<p>پرسشی ثبت نشده است.</p>{% endfor %}</div>

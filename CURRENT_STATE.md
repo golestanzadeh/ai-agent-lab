@@ -1,5 +1,9 @@
 # Current State
 
+## UI25 synthetic 2025 canonical backend slice — 2026-10-16
+
+The explicit test-only UI can create, persist and reopen a synthetic `TEST-*` 2025 case while reconstructing the existing `CaseRegistry` and `CaseStateStore`; Dashboard status is projected from validated canonical case state, not a raw UI row. German/Persian display and synthetic document digest persistence pass. Focused tests pass `45`; relevant regression passes `133`; full unit regression passes `1361 passed, 5 skipped`. This is synthetic technical evidence only. Real case creation/reopen, protected documents and Kernel execution remain blocked by the absent accepted durable live resolver and OI-0002/OI-0003 gates.
+
 ## PostgreSQL persistence PoC conditionally accepted — 2026-10-16
 
 The existing PostgreSQL 18.6 Docker lab passed a 29/29 synthetic acceptance harness plus migration-rollback, TCP-authentication and transient 10,000-row indexed probes. PostgreSQL is conditionally accepted as a future backend and the lab is conditionally accepted for isolated synthetic development. Integration is not verified; protected production and C09 are rejected for this configuration because privileged audit/snapshot rollback remains possible, no independent freshness witness exists and credential custody requires hardening. SQLite remains the frozen current application authority; no parallel live database or protected integration was created.

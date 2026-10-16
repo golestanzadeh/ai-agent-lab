@@ -6,10 +6,22 @@ Only explicitly TEST-prefixed cases and metadata are accepted. No private PDFs.
 from __future__ import annotations
 
 import hashlib
+from datetime import datetime, timezone
 from pathlib import Path
 import sqlite3
 from threading import RLock
 
+from agent_lab.case_registry import (
+    AssessmentMode,
+    CaseRecord,
+    CaseRegistry,
+    CaseType,
+    LifecycleStatus,
+    OwnerType,
+    StorageScopeReference,
+    TaxPeriod,
+)
+from agent_lab.case_state import CaseState, CaseStateStore
 from agent_lab.ui_dashboard import DashboardCase
 
 
@@ -40,18 +52,65 @@ class FunctionalTestStore:
                     case_id TEXT NOT NULL, event TEXT NOT NULL,
                     recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
             """)
+        self._reload_backend()
+
+    def _reload_backend(self) -> None:
+        """Rebuild the canonical in-memory models from the isolated test snapshot."""
+        registry = CaseRegistry()
+        state_store = CaseStateStore(registry)
+        fixed_time = datetime(2000, 1, 1, tzinfo=timezone.utc)
+        for case_id, tax_year, status in self._db.execute(
+            "SELECT case_id,tax_year,status FROM test_case ORDER BY case_id"
+        ):
+            lifecycle = LifecycleStatus(status)
+            record = CaseRecord(
+                case_id=case_id,
+                owner_type=OwnerType.PERSON,
+                owner_id=f"TEST-OWNER-{case_id}",
+                tax_period=TaxPeriod("CALENDAR_YEAR", tax_year),
+                case_type=CaseType.INDIVIDUAL,
+                assessment_mode=AssessmentMode.UNKNOWN_PENDING_VERIFICATION,
+                lifecycle_status=lifecycle,
+                storage_scope_reference=StorageScopeReference(
+                    "functional-test", f"test://{case_id}"
+                ),
+                schema_version=1,
+                created_at=fixed_time,
+                updated_at=fixed_time,
+            )
+            registry.register(record, request_id=f"TEST-CREATE-{case_id}")
+            state_store.initialize_case(case_id)
+        registry.validate()
+        state_store.validate()
+        self._case_registry = registry
+        self._case_state_store = state_store
 
     def close(self):
         self._db.close()
 
     def cases(self) -> tuple[DashboardCase, ...]:
         with self._lock:
-            return tuple(DashboardCase(*row) for row in self._db.execute(
-                "SELECT case_id,tax_year,status FROM test_case ORDER BY tax_year DESC,case_id"))
+            self._case_registry.validate()
+            self._case_state_store.validate()
+            return tuple(
+                DashboardCase(
+                    record.case_id,
+                    record.tax_period.year,
+                    record.lifecycle_status.value,
+                )
+                for record in sorted(
+                    self._case_registry.all_records(),
+                    key=lambda item: (-item.tax_period.year, item.case_id),
+                )
+            )
+
+    def case_state(self, case_id: str) -> CaseState:
+        with self._lock:
+            self._check_case(case_id)
+            return self._case_state_store.get_state(case_id)
 
     def _check_case(self, case_id: str):
-        if not case_id.startswith("TEST-") or not self._db.execute(
-            "SELECT 1 FROM test_case WHERE case_id=?", (case_id,)).fetchone():
+        if not case_id.startswith("TEST-") or self._case_registry.get(case_id) is None:
             raise ValueError("unknown or unauthorized test case")
 
     def create_case(self, case_id: str, tax_year: int):
@@ -62,6 +121,8 @@ class FunctionalTestStore:
         with self._lock, self._db:
             self._db.execute("INSERT INTO test_case(case_id,tax_year) VALUES(?,?)", (case_id,tax_year))
             self._audit(case_id,"CASE_CREATED")
+        with self._lock:
+            self._reload_backend()
 
     def _audit(self, case_id: str, event: str):
         self._db.execute("INSERT INTO test_audit(case_id,event) VALUES(?,?)",(case_id,event))

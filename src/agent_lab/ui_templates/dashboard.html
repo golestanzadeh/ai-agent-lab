@@ -27,7 +27,7 @@
   <main id="content" class="main">
     <header class="toolbar"><span class="breadcrumb">AI Tax Agent <span class="sep">/</span> {{ t[tab] }}</span><a class="language" href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}tab={{ tab }}&lang={{ t.switch_code }}">{{ t.switch }}</a><span class="privacy">◈ {{ t.privacy }}</span></header>
     <div class="page">
-      {% if test_mode %}<div class="test-banner"><strong>TEST ONLY · محیط آزمایش عملکردی</strong><p>پرونده‌های TEST واقعیِ مالیاتی نیستند. عملیات این محیط فقط در پایگاه دادهٔ آزمایشی محلی ثبت می‌شوند.</p></div>{% endif %}
+      {% if test_mode %}<div class="test-banner"><strong>{{ t.test_only_title }}</strong><p>{{ t.test_only_body }}</p></div>{% endif %}
       {% if tab != "overview" %}
       {% include "_dashboard_tab.html" %}
       {% else %}
