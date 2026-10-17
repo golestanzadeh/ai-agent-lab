@@ -25,6 +25,7 @@ from agent_lab.case_registry import (
 )
 from agent_lab.case_state import CaseState, CaseStateStore
 from agent_lab.ui_dashboard import DashboardCase
+from agent_lab.ui_synthetic_document_parser import CONTENT_TYPE, MAX_CONTENT_BYTES
 
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -36,6 +37,8 @@ class SyntheticDocumentMetadata:
     label: str
     digest: str
     reference: str
+    content_type: str | None = None
+    content: bytes | None = None
 
 
 class FunctionalTestStore:
@@ -54,6 +57,7 @@ class FunctionalTestStore:
                 CREATE TABLE IF NOT EXISTS test_document(
                     case_id TEXT NOT NULL REFERENCES test_case(case_id),
                     digest TEXT NOT NULL, label TEXT NOT NULL,
+                    content_type TEXT, content BLOB,
                     PRIMARY KEY(case_id,digest));
                 CREATE TABLE IF NOT EXISTS test_issue(
                     case_id TEXT NOT NULL REFERENCES test_case(case_id),
@@ -65,6 +69,13 @@ class FunctionalTestStore:
                     case_id TEXT NOT NULL, event TEXT NOT NULL,
                     recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
             """)
+            columns = {
+                row[1] for row in self._db.execute("PRAGMA table_info(test_document)")
+            }
+            if "content_type" not in columns:
+                self._db.execute("ALTER TABLE test_document ADD COLUMN content_type TEXT")
+            if "content" not in columns:
+                self._db.execute("ALTER TABLE test_document ADD COLUMN content BLOB")
         self._reload_backend()
 
     def _reload_backend(self) -> None:
@@ -140,13 +151,22 @@ class FunctionalTestStore:
     def _audit(self, case_id: str, event: str):
         self._db.execute("INSERT INTO test_audit(case_id,event) VALUES(?,?)",(case_id,event))
 
-    def add_document(self, case_id: str, label: str, data: bytes) -> bool:
-        if not data or len(data)>2_000_000 or not label.strip() or len(label)>100:
+    def add_document(
+        self, case_id: str, label: str, data: bytes,
+        content_type: str = CONTENT_TYPE,
+    ) -> bool:
+        if (
+            not data or len(data) > MAX_CONTENT_BYTES or content_type != CONTENT_TYPE
+            or not label.strip() or len(label) > 100
+        ):
             raise ValueError("invalid test document")
         digest=hashlib.sha256(data).hexdigest()
         with self._lock, self._db:
             self._check_case(case_id)
-            cur=self._db.execute("INSERT OR IGNORE INTO test_document VALUES(?,?,?)",(case_id,digest,label))
+            cur=self._db.execute(
+                "INSERT OR IGNORE INTO test_document(case_id,digest,label,content_type,content) VALUES(?,?,?,?,?)",
+                (case_id, digest, label, content_type, data),
+            )
             if cur.rowcount:
                 self._audit(case_id,"DOCUMENT_HASH_REGISTERED")
             return bool(cur.rowcount)
@@ -157,18 +177,30 @@ class FunctionalTestStore:
         with self._lock:
             self._check_case(case_id)
             rows = self._db.execute(
-                "SELECT label,digest FROM test_document WHERE case_id=? AND digest=?",
+                "SELECT label,digest,content_type,content FROM test_document WHERE case_id=? AND digest=?",
                 (case_id, digest),
             ).fetchall()
             if len(rows) != 1:
                 raise ValueError("document is not owned by the exact test case")
-            label, stored_digest = rows[0]
+            label, stored_digest, content_type, content = rows[0]
+            if content is not None and hashlib.sha256(content).hexdigest() != stored_digest:
+                raise ValueError("stored synthetic document content does not match its digest")
             return SyntheticDocumentMetadata(
                 case_id=case_id,
                 label=label,
                 digest=stored_digest,
                 reference=f"test-document://{case_id}/sha256:{stored_digest}",
+                content_type=content_type,
+                content=content,
             )
+
+    def resolve_document_content(self, case_id: str, digest: str) -> SyntheticDocumentMetadata:
+        document = self.resolve_document(case_id, digest)
+        if document.content_type != CONTENT_TYPE or document.content is None:
+            raise ValueError("synthetic document content is unavailable or unsupported")
+        if not document.content or len(document.content) > MAX_CONTENT_BYTES:
+            raise ValueError("stored synthetic document size is invalid")
+        return document
 
     def add_issue(self, case_id: str, question: str):
         if not question.strip() or len(question)>500:

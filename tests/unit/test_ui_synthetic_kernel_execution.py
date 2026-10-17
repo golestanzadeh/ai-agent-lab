@@ -188,7 +188,8 @@ def test_case_owned_document_digest_executes_through_kernel_and_survives_restart
             "SELECT payload_json FROM tasks"
         ).fetchone()[0])
         assert task["inputs"] == [
-            f"test-document://TEST-2025-DOC/sha256:{document[1]}"
+            f"test-document://TEST-2025-DOC/sha256:{document[1]}",
+            f"sha256:{document[1]}",
         ]
         assert "interpret" not in task["allowed_tools"]
         response_payload = json.loads(kernel._connection.execute(

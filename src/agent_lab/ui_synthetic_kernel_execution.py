@@ -9,10 +9,15 @@ from pathlib import Path
 from typing import Any
 
 from agent_lab.orchestrator_kernel import ContractError, OrchestratorKernel, PermissionDenied
+from agent_lab.ui_synthetic_document_parser import (
+    CONTENT_TYPE, PARSER_SCHEMA, SyntheticExtraction,
+    parse_synthetic_wage_statement,
+)
 
 
 AUTHORITY_REFERENCE = "human-authorization://UI25-05/synthetic-kernel-execution"
 DOCUMENT_AUTHORITY_REFERENCE = "human-authorization://UI25/synthetic-document-evidence"
+EXTRACTION_AUTHORITY_REFERENCE = "human-authorization://UI25-07/synthetic-content-extraction"
 WORKER_ID = "UI25-SYNTHETIC-WORKER-V1"
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -63,7 +68,9 @@ class SyntheticCaseKernelExecutor:
         kernel: OrchestratorKernel, *, manifest_id: str, case_id: str,
         tax_year: int, run_id: str, synthetic_value: int | None = None,
         document_reference: str | None = None, document_digest: str | None = None,
-    ) -> tuple[int | str, str, str]:
+        document_content: bytes | None = None, content_type: str | None = None,
+        expected_extraction_digest: str | None = None,
+    ) -> tuple[Any, str, str]:
         decision = kernel.permission_decision(
             manifest_id, "report_evidence", case_id=case_id,
             tax_year=tax_year, run_id=run_id,
@@ -82,7 +89,11 @@ class SyntheticCaseKernelExecutor:
                 "synthetic_value": synthetic_value, "deterministic_result": result,
             }
             summary = f"SYNTHETIC_RESULT={result}; WORKER={WORKER_ID}"
-        elif synthetic_value is None and document_reference is not None and document_digest is not None:
+        elif (
+            synthetic_value is None and document_reference is not None
+            and document_digest is not None and document_content is None
+            and content_type is None and expected_extraction_digest is None
+        ):
             SyntheticCaseKernelExecutor._validate_document_scope(
                 case_id, tax_year, run_id, document_reference, document_digest
             )
@@ -101,6 +112,42 @@ class SyntheticCaseKernelExecutor:
                 f"DOCUMENT_DIGEST=sha256:{document_digest}; "
                 f"CONTENT_INTERPRETATION=NOT_PERFORMED; WORKER={WORKER_ID}"
             )
+        elif (
+            synthetic_value is None and document_reference is not None
+            and document_digest is not None and document_content is not None
+            and content_type is not None and expected_extraction_digest is not None
+        ):
+            SyntheticCaseKernelExecutor._validate_document_scope(
+                case_id, tax_year, run_id, document_reference, document_digest
+            )
+            if hashlib.sha256(document_content).hexdigest() != document_digest:
+                raise ContractError("document bytes do not match the bound digest")
+            extraction = parse_synthetic_wage_statement(document_content, content_type)
+            if extraction.digest != expected_extraction_digest:
+                raise ContractError("structured extraction does not match the task input")
+            result = extraction.as_dict()
+            envelope = {
+                "operation": "EXTRACT_SYNTHETIC_DOCUMENT_CONTENT",
+                "worker_id": WORKER_ID, "case_id": case_id,
+                "tax_year": tax_year, "run_id": run_id,
+                "document_reference": document_reference,
+                "document_digest": f"sha256:{document_digest}",
+                "parser_schema": PARSER_SCHEMA,
+                "structured_extraction": result,
+                "structured_extraction_digest": extraction.digest,
+                "tax_interpretation": "NOT_PERFORMED",
+            }
+            summary = (
+                "SYNTHETIC_CONTENT_EXTRACTION=VALID; NOT_TAX_ANALYSIS; "
+                f"DOCUMENT_REFERENCE={document_reference}; "
+                f"DOCUMENT_DIGEST=sha256:{document_digest}; "
+                f"PARSER_SCHEMA={PARSER_SCHEMA}; EXTRACTION_DIGEST={extraction.digest}; "
+                f"DOCUMENT_TYPE={extraction.document_type}; TAX_YEAR={extraction.tax_year}; "
+                f"EMPLOYER_ID={extraction.employer_id}; "
+                f"GROSS_EMPLOYMENT_INCOME={extraction.gross_employment_income}; "
+                f"WITHHELD_WAGE_TAX={extraction.withheld_wage_tax}; "
+                f"CURRENCY={extraction.currency}; WORKER={WORKER_ID}"
+            )
         else:
             raise ContractError("exactly one bounded synthetic operation is required")
         evidence = "sha256:" + hashlib.sha256(
@@ -112,23 +159,50 @@ class SyntheticCaseKernelExecutor:
         self, *, case_id: str, tax_year: int, run_id: str,
         synthetic_value: int | None = None, document_reference: str | None = None,
         document_digest: str | None = None,
+        document_content: bytes | None = None, content_type: str | None = None,
     ) -> dict[str, Any]:
         if synthetic_value is not None and document_reference is None and document_digest is None:
             self._validate_scope(case_id, tax_year, run_id, synthetic_value)
-            operation_input = f"synthetic://ui25/value/{synthetic_value}"
+            operation_inputs = [f"synthetic://ui25/value/{synthetic_value}"]
             objective = "Execute one bounded deterministic UI25 synthetic calculation"
             acceptance = "deterministic synthetic result is durably recorded"
             authority_reference = AUTHORITY_REFERENCE
             response_test_name = "deterministic-synthetic-double"
-        elif synthetic_value is None and document_reference is not None and document_digest is not None:
+            expected_extraction: SyntheticExtraction | None = None
+        elif (
+            synthetic_value is None and document_reference is not None
+            and document_digest is not None and document_content is None
+            and content_type is None
+        ):
             self._validate_document_scope(
                 case_id, tax_year, run_id, document_reference, document_digest
             )
-            operation_input = document_reference
+            operation_inputs = [document_reference, f"sha256:{document_digest}"]
             objective = "Validate one case-owned synthetic document digest without interpreting content"
             acceptance = "case-owned synthetic document evidence is durably validated"
             authority_reference = DOCUMENT_AUTHORITY_REFERENCE
             response_test_name = "deterministic-synthetic-document-evidence-validation"
+            expected_extraction = None
+        elif (
+            synthetic_value is None and document_reference is not None
+            and document_digest is not None and document_content is not None
+            and content_type is not None
+        ):
+            self._validate_document_scope(
+                case_id, tax_year, run_id, document_reference, document_digest
+            )
+            if hashlib.sha256(document_content).hexdigest() != document_digest:
+                raise ContractError("document bytes do not match the bound digest")
+            expected_extraction = parse_synthetic_wage_statement(document_content, content_type)
+            operation_inputs = [
+                document_reference, f"sha256:{document_digest}",
+                f"parser://{PARSER_SCHEMA}",
+                f"extraction://{expected_extraction.digest}",
+            ]
+            objective = "Extract one bounded synthetic document without tax interpretation"
+            acceptance = "case-owned content produces a lineage-bound structured extraction"
+            authority_reference = EXTRACTION_AUTHORITY_REFERENCE
+            response_test_name = "deterministic-synthetic-content-extraction"
         else:
             raise ContractError("exactly one bounded synthetic operation is required")
         task_id, manifest_id, response_id = self._identities(case_id, tax_year, run_id)
@@ -140,7 +214,7 @@ class SyntheticCaseKernelExecutor:
             "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": WORKER_ID,
             "repository": "golestanzadeh/ai-agent-lab", "ref": "oi0002-identity-persistence",
             "case_context": context,
-            "inputs": [operation_input],
+            "inputs": operation_inputs,
             "expected_outputs": [f"kernel://ui25/result/{task_id}"],
             "allowed_tools": ["synthetic_ui25_deterministic_worker"],
             "permissions": ["report_evidence"],
@@ -191,6 +265,12 @@ class SyntheticCaseKernelExecutor:
                     and existing_context != context
                 ):
                     raise PermissionDenied("run identity is already bound to another case or year")
+                if (
+                    document_reference is not None
+                    and document_reference in existing.get("inputs", ())
+                    and existing_context != context
+                ):
+                    raise PermissionDenied("document reference is already bound to another run")
             # The explicit UI POST is the bounded Owner action represented here.
             kernel.set_kill_switch(
                 "RUNNING", actor_id="HUMAN_PROJECT_OWNER",
@@ -206,6 +286,10 @@ class SyntheticCaseKernelExecutor:
                     tax_year=tax_year, run_id=run_id, synthetic_value=synthetic_value,
                     document_reference=document_reference,
                     document_digest=document_digest,
+                    document_content=document_content, content_type=content_type,
+                    expected_extraction_digest=(
+                        expected_extraction.digest if expected_extraction is not None else None
+                    ),
                 )
                 response = {
                     "schema_version": 1, "response_id": response_id,
