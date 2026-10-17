@@ -25,10 +25,14 @@ def test_explicit_ui_action_executes_once_and_displays_durable_result_after_rest
     store.create_case("TEST-2025-EXEC", 2025)
     executor = SyntheticCaseKernelExecutor(kernel_database, CONTRACT_ROOT)
     projection = ReadOnlyKernelProjection(kernel_database)
-    client = TestClient(create_dashboard_app(
-        test_store=store, read_kernel_projection=projection.read,
-        execute_kernel_task=executor.execute,
-    ))
+    client = TestClient(
+        create_dashboard_app(
+            test_store=store, read_kernel_projection=projection.read,
+            execute_kernel_task=executor.execute,
+        ),
+        base_url="http://127.0.0.1:8766",
+        headers={"origin": "http://127.0.0.1:8766"},
+    )
 
     response = client.post("/test/kernel/execute", data={
         "case_id": "TEST-2025-EXEC", "run_id": "RUN-EXEC-001",

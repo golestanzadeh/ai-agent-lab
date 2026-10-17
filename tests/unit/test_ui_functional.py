@@ -11,6 +11,15 @@ from agent_lab.orchestrator_kernel import OrchestratorKernel
 
 
 CONTRACT_ROOT = Path(__file__).resolve().parents[2] / "contracts" / "orchestrator" / "v1"
+FUNCTIONAL_ORIGIN = "http://127.0.0.1:8766"
+
+
+def _functional_client(app):
+    return TestClient(
+        app,
+        base_url=FUNCTIONAL_ORIGIN,
+        headers={"origin": FUNCTIONAL_ORIGIN},
+    )
 
 
 def _kernel_task(*, case_id="TEST-2025-UI", tax_year=2025, run_id="RUN-2025-UI", task_id="TASK-UI-001"):
@@ -36,7 +45,7 @@ def _kernel_task(*, case_id="TEST-2025-UI", tax_year=2025, run_id="RUN-2025-UI",
 def test_functional_case_document_issue_audit_and_restart(tmp_path):
     path=tmp_path/"test.sqlite3"
     store=FunctionalTestStore(path)
-    client=TestClient(create_dashboard_app(test_store=store))
+    client=_functional_client(create_dashboard_app(test_store=store))
     assert client.get("/?tab=cases").status_code==200
     assert client.post("/test/cases",data={"case_id":"TEST-2025-A","tax_year":"2025"},follow_redirects=False).status_code==303
     assert client.post("/test/cases",data={"case_id":"TEST-2025-B","tax_year":"2025"},follow_redirects=False).status_code==303
@@ -69,7 +78,7 @@ def test_functional_case_document_issue_audit_and_restart(tmp_path):
 def test_2025_case_ui_uses_canonical_backend_and_is_bilingual(tmp_path):
     path = tmp_path / "test.sqlite3"
     store = FunctionalTestStore(path)
-    client = TestClient(create_dashboard_app(test_store=store))
+    client = _functional_client(create_dashboard_app(test_store=store))
     created = client.post(
         "/test/cases",
         data={"case_id": "TEST-2025-UI", "tax_year": "2025"},
@@ -127,6 +136,37 @@ def test_production_dashboard_rejects_test_mutations():
     assert "form-action 'none'" in client.get("/").headers["content-security-policy"]
 
 
+def test_functional_mutations_require_exact_loopback_origin_and_host(tmp_path):
+    store = FunctionalTestStore(tmp_path / "origin.sqlite3")
+    app = create_dashboard_app(test_store=store)
+    valid = _functional_client(app)
+    response = valid.post(
+        "/test/cases",
+        data={"case_id": "TEST-2025-ORIGIN", "tax_year": "2025"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert valid.get("/").headers["referrer-policy"] == "same-origin"
+
+    attacks = (
+        TestClient(app, base_url=FUNCTIONAL_ORIGIN),
+        TestClient(app, base_url=FUNCTIONAL_ORIGIN, headers={"origin": "null"}),
+        TestClient(app, base_url=FUNCTIONAL_ORIGIN, headers={"origin": "https://attacker.invalid"}),
+        TestClient(app, base_url="http://localhost:8766", headers={"origin": FUNCTIONAL_ORIGIN}),
+        TestClient(app, base_url="http://192.0.2.10:8766", headers={"origin": FUNCTIONAL_ORIGIN}),
+    )
+    for index, attacker in enumerate(attacks):
+        denied = attacker.post(
+            "/test/cases",
+            data={"case_id": f"TEST-2025-DENIED-{index}", "tax_year": "2025"},
+        )
+        assert denied.status_code == 403
+        assert denied.text == "Cross-origin mutation rejected"
+        assert denied.headers["content-security-policy"].startswith("default-src 'self'")
+    assert store.cases() == (DashboardCase("TEST-2025-ORIGIN", 2025, "CREATED"),)
+    store.close()
+
+
 def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(tmp_path):
     ui_database = tmp_path / "ui.sqlite3"
     kernel_database = tmp_path / "kernel.sqlite3"
@@ -136,7 +176,7 @@ def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(t
         kernel.register_task(_kernel_task(), gate_triggers=())
 
     projection = ReadOnlyKernelProjection(kernel_database)
-    client = TestClient(create_dashboard_app(
+    client = _functional_client(create_dashboard_app(
         test_store=store, read_kernel_projection=projection.read
     ))
     assert client.get("/", params={
@@ -166,7 +206,7 @@ def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(t
     store.close()
 
     reopened = FunctionalTestStore(ui_database)
-    restarted_client = TestClient(create_dashboard_app(
+    restarted_client = _functional_client(create_dashboard_app(
         test_store=reopened,
         read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
     ))
@@ -185,7 +225,7 @@ def test_dashboard_kernel_projection_rejects_year_and_case_mismatch(tmp_path):
     kernel_database = tmp_path / "kernel.sqlite3"
     with OrchestratorKernel(kernel_database, CONTRACT_ROOT) as kernel:
         kernel.register_task(_kernel_task(case_id="TEST-A", run_id="RUN-A"), gate_triggers=())
-    client = TestClient(create_dashboard_app(
+    client = _functional_client(create_dashboard_app(
         test_store=store,
         read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
     ))

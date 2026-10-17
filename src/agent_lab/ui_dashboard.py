@@ -198,14 +198,23 @@ def create_dashboard_app(
     async def security_headers(request: Request, call_next):
         if test_store is not None and request.method not in {"GET", "HEAD", "OPTIONS"}:
             origin = request.headers.get("origin")
-            if origin not in (None, "http://127.0.0.1:8766"):
+            host = request.headers.get("host")
+            if origin != "http://127.0.0.1:8766" or host != "127.0.0.1:8766":
                 from fastapi.responses import PlainTextResponse
-                return PlainTextResponse("Cross-origin mutation rejected", status_code=403)
-        response = await call_next(request)
+                response = PlainTextResponse("Cross-origin mutation rejected", status_code=403)
+            else:
+                response = await call_next(request)
+        else:
+            response = await call_next(request)
         for name, value in LOCAL_SECURITY_HEADERS.items():
             response.headers[name] = value
         if test_store is not None:
             response.headers["content-security-policy"] = response.headers["content-security-policy"].replace("form-action "+chr(39)+"none"+chr(39), "form-action "+chr(39)+"self"+chr(39))
+            # Chrome serializes a form POST's Origin as ``null`` when the
+            # source document uses the production ``no-referrer`` policy.
+            # This loopback-only app needs the browser to retain its exact
+            # same-origin identity so the mutation guard can stay fail-closed.
+            response.headers["referrer-policy"] = "same-origin"
         return response
 
     @app.get("/", response_class=HTMLResponse)
