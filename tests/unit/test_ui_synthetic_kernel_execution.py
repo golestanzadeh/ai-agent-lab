@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
@@ -143,3 +144,129 @@ def test_readback_rejects_response_rewrite_even_with_valid_json(tmp_path):
         )
     with pytest.raises(KernelProjectionUnavailable, match="bound to its audit"):
         ReadOnlyKernelProjection(database).read("TEST-A", 2025, "RUN-A")
+
+
+def test_case_owned_document_digest_executes_through_kernel_and_survives_restart(tmp_path):
+    ui_database = tmp_path / "ui.sqlite3"
+    kernel_database = tmp_path / "kernel.sqlite3"
+    store = FunctionalTestStore(ui_database)
+    store.create_case("TEST-2025-DOC", 2025)
+    store.add_document("TEST-2025-DOC", "Synthetic wage evidence", b"synthetic bytes only")
+    document = store.detail("TEST-2025-DOC")["documents"][0]
+    executor = SyntheticCaseKernelExecutor(kernel_database, CONTRACT_ROOT)
+    client = TestClient(
+        create_dashboard_app(
+            test_store=store,
+            read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
+            execute_kernel_task=executor.execute,
+        ),
+        base_url="http://127.0.0.1:8766",
+        headers={"origin": "http://127.0.0.1:8766"},
+    )
+
+    response = client.post(
+        "/test/kernel/documents/validate",
+        data={
+            "case_id": "TEST-2025-DOC", "run_id": "RUN-DOC-001",
+            "document_digest": document[1],
+        },
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    page = client.get(response.headers["location"])
+    assert page.status_code == 200
+    assert "SYNTHETIC_DOCUMENT_EVIDENCE=VALID" in page.text
+    assert f"test-document://TEST-2025-DOC/sha256:{document[1]}" in page.text
+    assert f"DOCUMENT_DIGEST=sha256:{document[1]}" in page.text
+    assert "CONTENT_INTERPRETATION=NOT_PERFORMED" in page.text
+    assert 'data-kernel-task-status="AWAITING_ACCEPTANCE"' in page.text
+
+    with OrchestratorKernel(kernel_database, CONTRACT_ROOT) as kernel:
+        kernel.verify_audit_chain()
+        assert kernel.kill_switch_state() == "HALTED"
+        task = json.loads(kernel._connection.execute(
+            "SELECT payload_json FROM tasks"
+        ).fetchone()[0])
+        assert task["inputs"] == [
+            f"test-document://TEST-2025-DOC/sha256:{document[1]}"
+        ]
+        assert "interpret" not in task["allowed_tools"]
+
+    store.close()
+    reopened = FunctionalTestStore(ui_database)
+    restart_page = TestClient(create_dashboard_app(
+        test_store=reopened,
+        read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
+        execute_kernel_task=executor.execute,
+    )).get("/", params={
+        "tab": "analysis", "case_id": "TEST-2025-DOC", "run_id": "RUN-DOC-001",
+    })
+    assert "SYNTHETIC_DOCUMENT_EVIDENCE=VALID" in restart_page.text
+    reopened.close()
+
+
+def test_document_execution_rejects_missing_altered_cross_case_and_replay(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    for case_id in ("TEST-DOC-A", "TEST-DOC-B"):
+        store.create_case(case_id, 2025)
+    store.add_document("TEST-DOC-A", "A", b"case A synthetic")
+    digest = store.detail("TEST-DOC-A")["documents"][0][1]
+    with pytest.raises(ValueError, match="owned"):
+        store.resolve_document("TEST-DOC-B", digest)
+    with pytest.raises(ValueError, match="malformed"):
+        store.resolve_document("TEST-DOC-A", "0" * 63)
+    with pytest.raises(ValueError, match="owned"):
+        store.resolve_document("TEST-DOC-A", "0" * 64)
+
+    executor = SyntheticCaseKernelExecutor(tmp_path / "kernel.sqlite3", CONTRACT_ROOT)
+    reference = f"test-document://TEST-DOC-A/sha256:{digest}"
+    result = executor.execute(
+        case_id="TEST-DOC-A", tax_year=2025, run_id="RUN-DOC-A",
+        document_reference=reference, document_digest=digest,
+    )
+    assert result["result"] == "VALID"
+    with pytest.raises(ContractError, match="already"):
+        executor.execute(
+            case_id="TEST-DOC-A", tax_year=2025, run_id="RUN-DOC-A",
+            document_reference=reference, document_digest=digest,
+        )
+    with pytest.raises(PermissionDenied, match="another case"):
+        executor.execute(
+            case_id="TEST-DOC-B", tax_year=2025, run_id="RUN-DOC-A",
+            document_reference=f"test-document://TEST-DOC-B/sha256:{digest}",
+            document_digest=digest,
+        )
+    with pytest.raises(PermissionDenied, match="2025"):
+        executor.execute(
+            case_id="TEST-DOC-A", tax_year=2024, run_id="RUN-DOC-YEAR",
+            document_reference=reference, document_digest=digest,
+        )
+    with pytest.raises(PermissionDenied, match="bound"):
+        executor.execute(
+            case_id="TEST-DOC-A", tax_year=2025, run_id="RUN-DOC-ALTERED",
+            document_reference=reference, document_digest="0" * 64,
+        )
+    store.close()
+
+
+def test_document_permission_denial_and_exception_restore_kill_switch(tmp_path, monkeypatch):
+    database = tmp_path / "kernel.sqlite3"
+    executor = SyntheticCaseKernelExecutor(database, CONTRACT_ROOT)
+    digest = "1" * 64
+    reference = f"test-document://TEST-DOC/sha256:{digest}"
+    monkeypatch.setattr(
+        OrchestratorKernel, "permission_decision",
+        lambda *args, **kwargs: SimpleNamespace(allowed=False),
+    )
+    with pytest.raises(PermissionDenied, match="denied"):
+        executor.execute(
+            case_id="TEST-DOC", tax_year=2025, run_id="RUN-DENIED",
+            document_reference=reference, document_digest=digest,
+        )
+    with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:
+        assert kernel.kill_switch_state() == "HALTED"
+        kernel.verify_audit_chain()
+        assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+        assert kernel._connection.execute(
+            "SELECT COUNT(*) FROM manifests WHERE state='ACTIVE'"
+        ).fetchone()[0] == 0

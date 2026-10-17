@@ -80,6 +80,7 @@ UI_TEXT = {
         "test_doc_label": "عنوان مدرک", "test_doc_file": "فایل آزمایشی (حداکثر ۲ مگابایت)",
         "test_doc_submit": "ثبت و بررسی تکراری", "test_doc_list": "مدارک ثبت‌شده",
         "test_doc_empty": "هنوز مدرکی ثبت نشده است.",
+        "test_doc_process": "اعتبارسنجی شاهد سند در Kernel", "test_doc_run": "شناسه اجرای سند",
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
         "kernel_readonly": "این وضعیت مستقیماً و فقط‌خواندنی از Kernel خوانده شده است؛ اجرا فقط با اقدام صریح کاربر آغاز می‌شود.",
@@ -146,6 +147,7 @@ UI_TEXT = {
         "test_doc_label": "Dokumenttitel", "test_doc_file": "Testdatei (maximal 2 MB)",
         "test_doc_submit": "Registrieren und Duplikat prüfen", "test_doc_list": "Registrierte Dokumente",
         "test_doc_empty": "Noch kein Dokument registriert.",
+        "test_doc_process": "Dokumentnachweis im Kernel validieren", "test_doc_run": "Dokument-Lauf-ID",
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
         "kernel_readonly": "Dieser Status wird direkt und schreibgeschützt aus dem Kernel gelesen; die Ausführung beginnt nur durch eine ausdrückliche Benutzeraktion.",
@@ -327,6 +329,29 @@ def create_dashboard_app(
             )
         except Exception as exc:
             raise HTTPException(status_code=400, detail="Synthetic Kernel execution rejected") from exc
+        return RedirectResponse(
+            "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
+        )
+
+    @app.post("/test/kernel/documents/validate")
+    async def validate_test_document_evidence(
+        case_id: str = Form(...), run_id: str = Form(...),
+        document_digest: str = Form(...),
+    ):
+        require_test()
+        if execute_kernel_task is None:
+            raise HTTPException(status_code=404, detail="Synthetic Kernel execution unavailable")
+        matching = tuple(item for item in test_store.cases() if item.case_id == case_id)
+        if len(matching) != 1:
+            raise HTTPException(status_code=400, detail="Unknown or ambiguous test case")
+        try:
+            document = test_store.resolve_document(case_id, document_digest)
+            execute_kernel_task(
+                case_id=case_id, tax_year=matching[0].tax_year, run_id=run_id,
+                document_reference=document.reference, document_digest=document.digest,
+            )
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail="Synthetic document evidence rejected") from exc
         return RedirectResponse(
             "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
         )

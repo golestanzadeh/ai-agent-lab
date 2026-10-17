@@ -12,8 +12,10 @@ from agent_lab.orchestrator_kernel import ContractError, OrchestratorKernel, Per
 
 
 AUTHORITY_REFERENCE = "human-authorization://UI25-05/synthetic-kernel-execution"
+DOCUMENT_AUTHORITY_REFERENCE = "human-authorization://UI25/synthetic-document-evidence"
 WORKER_ID = "UI25-SYNTHETIC-WORKER-V1"
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 def _canonical(value: Any) -> str:
@@ -39,6 +41,18 @@ class SyntheticCaseKernelExecutor:
             raise ContractError("synthetic value is outside the bounded range")
 
     @staticmethod
+    def _validate_document_scope(
+        case_id: str, tax_year: int, run_id: str,
+        document_reference: str, document_digest: str,
+    ) -> None:
+        SyntheticCaseKernelExecutor._validate_scope(case_id, tax_year, run_id, 0)
+        if not isinstance(document_digest, str) or not _SHA256.fullmatch(document_digest):
+            raise ContractError("document digest must be an exact lowercase SHA-256")
+        expected = f"test-document://{case_id}/sha256:{document_digest}"
+        if document_reference != expected:
+            raise PermissionDenied("document reference is not bound to the exact case and digest")
+
+    @staticmethod
     def _identities(case_id: str, tax_year: int, run_id: str) -> tuple[str, str, str]:
         scope = f"{case_id}:{tax_year}:{run_id}".encode("ascii")
         suffix = hashlib.sha256(scope).hexdigest()[:20].upper()
@@ -47,8 +61,9 @@ class SyntheticCaseKernelExecutor:
     @staticmethod
     def _run_worker(
         kernel: OrchestratorKernel, *, manifest_id: str, case_id: str,
-        tax_year: int, run_id: str, synthetic_value: int,
-    ) -> tuple[int, str]:
+        tax_year: int, run_id: str, synthetic_value: int | None = None,
+        document_reference: str | None = None, document_digest: str | None = None,
+    ) -> tuple[int | str, str, str]:
         decision = kernel.permission_decision(
             manifest_id, "report_evidence", case_id=case_id,
             tax_year=tax_year, run_id=run_id,
@@ -59,28 +74,71 @@ class SyntheticCaseKernelExecutor:
             manifest_id, tokens=0, tool_calls=1, cost_usd=0.0
         ).allowed:
             raise PermissionDenied("Kernel denied the fixed worker budget")
-        result = synthetic_value * 2
-        evidence = "sha256:" + hashlib.sha256(_canonical({
-            "worker_id": WORKER_ID, "case_id": case_id, "tax_year": tax_year,
-            "run_id": run_id, "synthetic_value": synthetic_value,
-            "deterministic_result": result,
-        }).encode("utf-8")).hexdigest()
-        return result, evidence
+        if synthetic_value is not None and document_reference is None and document_digest is None:
+            result = synthetic_value * 2
+            envelope = {
+                "operation": "DOUBLE_SYNTHETIC_INTEGER", "worker_id": WORKER_ID,
+                "case_id": case_id, "tax_year": tax_year, "run_id": run_id,
+                "synthetic_value": synthetic_value, "deterministic_result": result,
+            }
+            summary = f"SYNTHETIC_RESULT={result}; WORKER={WORKER_ID}"
+        elif synthetic_value is None and document_reference is not None and document_digest is not None:
+            SyntheticCaseKernelExecutor._validate_document_scope(
+                case_id, tax_year, run_id, document_reference, document_digest
+            )
+            result = "VALID"
+            envelope = {
+                "operation": "VALIDATE_SYNTHETIC_DOCUMENT_EVIDENCE",
+                "worker_id": WORKER_ID, "case_id": case_id,
+                "tax_year": tax_year, "run_id": run_id,
+                "document_reference": document_reference,
+                "document_digest": f"sha256:{document_digest}",
+                "content_interpretation": "NOT_PERFORMED", "result": result,
+            }
+            summary = (
+                f"SYNTHETIC_DOCUMENT_EVIDENCE={result}; "
+                f"DOCUMENT_REFERENCE={document_reference}; "
+                f"DOCUMENT_DIGEST=sha256:{document_digest}; "
+                f"CONTENT_INTERPRETATION=NOT_PERFORMED; WORKER={WORKER_ID}"
+            )
+        else:
+            raise ContractError("exactly one bounded synthetic operation is required")
+        evidence = "sha256:" + hashlib.sha256(
+            _canonical(envelope).encode("utf-8")
+        ).hexdigest()
+        return result, evidence, summary
 
     def execute(
-        self, *, case_id: str, tax_year: int, run_id: str, synthetic_value: int
+        self, *, case_id: str, tax_year: int, run_id: str,
+        synthetic_value: int | None = None, document_reference: str | None = None,
+        document_digest: str | None = None,
     ) -> dict[str, Any]:
-        self._validate_scope(case_id, tax_year, run_id, synthetic_value)
+        if synthetic_value is not None and document_reference is None and document_digest is None:
+            self._validate_scope(case_id, tax_year, run_id, synthetic_value)
+            operation_input = f"synthetic://ui25/value/{synthetic_value}"
+            objective = "Execute one bounded deterministic UI25 synthetic calculation"
+            acceptance = "deterministic synthetic result is durably recorded"
+            authority_reference = AUTHORITY_REFERENCE
+        elif synthetic_value is None and document_reference is not None and document_digest is not None:
+            self._validate_document_scope(
+                case_id, tax_year, run_id, document_reference, document_digest
+            )
+            operation_input = document_reference
+            objective = "Validate one case-owned synthetic document digest without interpreting content"
+            acceptance = "case-owned synthetic document evidence is durably validated"
+            authority_reference = DOCUMENT_AUTHORITY_REFERENCE
+        else:
+            raise ContractError("exactly one bounded synthetic operation is required")
         task_id, manifest_id, response_id = self._identities(case_id, tax_year, run_id)
         now = datetime.now(timezone.utc)
         context = {"case_id": case_id, "tax_year": tax_year, "run_id": run_id}
         task = {
             "schema_version": 1, "task_id": task_id, "parent_task_id": None,
-            "objective": "Execute one bounded deterministic UI25 synthetic calculation",
+            "objective": objective,
             "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": WORKER_ID,
             "repository": "golestanzadeh/ai-agent-lab", "ref": "oi0002-identity-persistence",
             "case_context": context,
-            "inputs": [f"synthetic://ui25/value/{synthetic_value}"],
+            "inputs": [operation_input],
             "expected_outputs": [f"kernel://ui25/result/{task_id}"],
             "allowed_tools": ["synthetic_ui25_deterministic_worker"],
             "permissions": ["report_evidence"],
@@ -90,7 +148,7 @@ class SyntheticCaseKernelExecutor:
             ],
             "budget": {"token_limit": 1, "tool_call_limit": 1, "cost_limit_usd": 0.01},
             "timeout_seconds": 30, "max_retries": 0,
-            "acceptance_criteria": ["deterministic synthetic result is durably recorded"],
+            "acceptance_criteria": [acceptance],
             "stop_conditions": ["scope mismatch", "kill switch not RUNNING", "duplicate task"],
             "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"],
             "created_at": now.isoformat(), "expires_at": (now + timedelta(minutes=10)).isoformat(),
@@ -134,30 +192,32 @@ class SyntheticCaseKernelExecutor:
             # The explicit UI POST is the bounded Owner action represented here.
             kernel.set_kill_switch(
                 "RUNNING", actor_id="HUMAN_PROJECT_OWNER",
-                authority_reference=AUTHORITY_REFERENCE,
+                authority_reference=authority_reference,
             )
             try:
                 kernel.register_task(task, gate_triggers=())
                 kernel.register_manifest(manifest)
                 kernel.validate_manifest(manifest_id)
                 kernel.activate_manifest(manifest_id)
-                result, evidence = self._run_worker(
+                result, evidence, result_summary = self._run_worker(
                     kernel, manifest_id=manifest_id, case_id=case_id,
                     tax_year=tax_year, run_id=run_id, synthetic_value=synthetic_value,
+                    document_reference=document_reference,
+                    document_digest=document_digest,
                 )
                 response = {
                     "schema_version": 1, "response_id": response_id,
                     "task_id": task_id, "parent_task_id": None,
                     "role_id": task["role_id"], "actor_instance_id": WORKER_ID,
                     "status": "PASS",
-                    "result_summary": f"SYNTHETIC_RESULT={result}; WORKER={WORKER_ID}",
+                    "result_summary": result_summary,
                     "artifact_references": task["expected_outputs"],
                     "changed_paths_or_state": [f"kernel://response/{response_id}"],
                     "tests": [{
                         "name": "deterministic-synthetic-double", "outcome": "PASS",
                         "evidence_reference": evidence,
                     }],
-                    "evidence": [evidence], "authority_used": [AUTHORITY_REFERENCE],
+                    "evidence": [evidence], "authority_used": [authority_reference],
                     "costs": {"tokens_used": 0, "tool_calls_used": 1, "cost_usd": 0.0},
                     "unresolved_risks": [],
                     "recommended_next_action": "independent acceptance remains separate",

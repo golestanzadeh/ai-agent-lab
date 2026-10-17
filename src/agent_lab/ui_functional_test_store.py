@@ -6,6 +6,8 @@ Only explicitly TEST-prefixed cases and metadata are accepted. No private PDFs.
 from __future__ import annotations
 
 import hashlib
+import re
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 import sqlite3
@@ -23,6 +25,17 @@ from agent_lab.case_registry import (
 )
 from agent_lab.case_state import CaseState, CaseStateStore
 from agent_lab.ui_dashboard import DashboardCase
+
+
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+
+
+@dataclass(frozen=True, slots=True)
+class SyntheticDocumentMetadata:
+    case_id: str
+    label: str
+    digest: str
+    reference: str
 
 
 class FunctionalTestStore:
@@ -137,6 +150,25 @@ class FunctionalTestStore:
             if cur.rowcount:
                 self._audit(case_id,"DOCUMENT_HASH_REGISTERED")
             return bool(cur.rowcount)
+
+    def resolve_document(self, case_id: str, digest: str) -> SyntheticDocumentMetadata:
+        if not isinstance(digest, str) or not _SHA256.fullmatch(digest):
+            raise ValueError("malformed synthetic document digest")
+        with self._lock:
+            self._check_case(case_id)
+            rows = self._db.execute(
+                "SELECT label,digest FROM test_document WHERE case_id=? AND digest=?",
+                (case_id, digest),
+            ).fetchall()
+            if len(rows) != 1:
+                raise ValueError("document is not owned by the exact test case")
+            label, stored_digest = rows[0]
+            return SyntheticDocumentMetadata(
+                case_id=case_id,
+                label=label,
+                digest=stored_digest,
+                reference=f"test-document://{case_id}/sha256:{stored_digest}",
+            )
 
     def add_issue(self, case_id: str, question: str):
         if not question.strip() or len(question)>500:
