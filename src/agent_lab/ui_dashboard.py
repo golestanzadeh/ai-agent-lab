@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from agent_lab.ui_app import LOCAL_SECURITY_HEADERS, UI_ROOT
+from agent_lab.orchestrator_kernel import ContractError, KernelError, PermissionDenied
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,7 +89,7 @@ UI_TEXT = {
         "test_doc_format": "قالب پشتیبانی‌شده: text/plain با UTF-8 و شش خط دقیق DOCUMENT_TYPE، TAX_YEAR، EMPLOYER_ID، GROSS_EMPLOYMENT_INCOME، WITHHELD_WAGE_TAX و CURRENCY=EUR. PDF، تصویر، فایل بانکی و سند واقعی پشتیبانی نمی‌شود.",
         "test_doc_unavailable": "اجرای Kernel در این launcher فعال نیست؛ رابط را با launcher رسمی تست باز کنید.",
         "analysis_result_title": "فیلدهای استخراج‌شدهٔ تأییدشده", "analysis_find": "پس از استخراج موفق، نتیجه در همین بخش Analysis نمایش داده می‌شود.",
-        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unsupported_fixture": "استخراج انجام نشد: سند انتخاب‌شده fixture مصنوعی پشتیبانی‌شده نیست یا محتوا/digest آن معتبر نیست."},
+        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unsupported_fixture": "استخراج انجام نشد: سند انتخاب‌شده fixture مصنوعی پشتیبانی‌شده نیست یا محتوا/digest آن معتبر نیست.", "execution_conflict": "این شناسهٔ اجرا قبلاً استفاده شده یا با اجرای ثبت‌شده تعارض دارد. یک شناسهٔ اجرای یکتای تازه وارد کنید.", "kernel_denied": "Kernel این اجرا را به‌دلیل مرز مجوز یا وضعیت ایمنی رد کرد. وضعیت پرونده و شناسهٔ اجرا را بررسی کنید.", "kernel_unavailable": "اجرای مصنوعی به‌صورت ایمن متوقف شد زیرا یکپارچگی یا وضعیت Kernel قابل تأیید نبود."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "مرجع سند", "DOCUMENT_DIGEST": "digest سند", "PARSER_SCHEMA": "نسخهٔ parser", "EXTRACTION_DIGEST": "digest استخراج", "DOCUMENT_TYPE": "نوع سند", "TAX_YEAR": "سال مالیاتی", "EMPLOYER_ID": "شناسهٔ کارفرمای مصنوعی", "GROSS_EMPLOYMENT_INCOME": "درآمد ناخالص استخدام", "WITHHELD_WAGE_TAX": "مالیات حقوق کسرشده", "CURRENCY": "ارز"},
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
@@ -163,7 +164,7 @@ UI_TEXT = {
         "test_doc_format": "Unterstützt: text/plain, UTF-8, genau sechs Zeilen DOCUMENT_TYPE, TAX_YEAR, EMPLOYER_ID, GROSS_EMPLOYMENT_INCOME, WITHHELD_WAGE_TAX und CURRENCY=EUR. PDF, Bilder, Bankdateien und echte Dokumente werden nicht unterstützt.",
         "test_doc_unavailable": "Die Kernel-Ausführung ist in diesem Launcher nicht aktiv. Öffnen Sie die Oberfläche mit dem offiziellen Test-Launcher.",
         "analysis_result_title": "Verifizierte extrahierte Felder", "analysis_find": "Nach erfolgreicher Extraktion erscheint das Ergebnis hier im Bereich Analyse.",
-        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unsupported_fixture": "Extraktion fehlgeschlagen: Das gewählte Dokument ist kein unterstütztes synthetisches Fixture oder Inhalt/Digest ist ungültig."},
+        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unsupported_fixture": "Extraktion fehlgeschlagen: Das gewählte Dokument ist kein unterstütztes synthetisches Fixture oder Inhalt/Digest ist ungültig.", "execution_conflict": "Diese Lauf-ID wurde bereits verwendet oder steht im Konflikt mit einem registrierten Lauf. Verwenden Sie eine neue eindeutige Lauf-ID.", "kernel_denied": "Der Kernel hat die Ausführung wegen einer Berechtigungs- oder Sicherheitsgrenze abgelehnt. Prüfen Sie Fall und Lauf-ID.", "kernel_unavailable": "Die synthetische Ausführung wurde sicher gestoppt, weil Integrität oder Zustand des Kernels nicht bestätigt werden konnten."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "Dokumentreferenz", "DOCUMENT_DIGEST": "Dokument-Digest", "PARSER_SCHEMA": "Parser-Version", "EXTRACTION_DIGEST": "Extraktions-Digest", "DOCUMENT_TYPE": "Dokumenttyp", "TAX_YEAR": "Steuerjahr", "EMPLOYER_ID": "Synthetische Arbeitgeber-ID", "GROSS_EMPLOYMENT_INCOME": "Bruttoarbeitslohn", "WITHHELD_WAGE_TAX": "Einbehaltene Lohnsteuer", "CURRENCY": "Währung"},
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
@@ -295,6 +296,11 @@ def create_dashboard_app(
         if test_store is None:
             raise HTTPException(status_code=404, detail="Test operations unavailable")
 
+    def require_language(lang: str) -> str:
+        if lang not in UI_TEXT:
+            raise HTTPException(status_code=400, detail="Unsupported language")
+        return lang
+
     @app.post("/test/cases")
     async def create_test_case(case_id: str = Form(...), tax_year: int = Form(...)):
         require_test()
@@ -305,17 +311,21 @@ def create_dashboard_app(
         return RedirectResponse("/?tab=cases&case_id="+case_id, status_code=303)
 
     @app.post("/test/documents")
-    async def add_test_document(case_id: str = Form(...), label: str = Form(...), document: UploadFile = File(...)):
+    async def add_test_document(
+        case_id: str = Form(...), label: str = Form(...), lang: str = Form("fa-IR"),
+        document: UploadFile = File(...),
+    ):
         require_test()
+        lang = require_language(lang)
         data = await document.read(32_769)
         try:
             added = test_store.add_document(case_id, label, data, document.content_type or "")
         except ValueError:
             return RedirectResponse(
-                "/?" + urlencode({"tab": "documents", "case_id": case_id, "error": "unsupported_upload"}),
+                "/?" + urlencode({"tab": "documents", "case_id": case_id, "lang": lang, "error": "unsupported_upload"}),
                 status_code=303,
             )
-        return RedirectResponse("/?tab=documents&case_id="+case_id+"&added="+str(int(added)), status_code=303)
+        return RedirectResponse("/?" + urlencode({"tab": "documents", "case_id": case_id, "lang": lang, "added": int(added)}), status_code=303)
 
     @app.post("/test/issues")
     async def create_test_issue(case_id: str = Form(...), question: str = Form(...)):
@@ -360,9 +370,10 @@ def create_dashboard_app(
     @app.post("/test/kernel/documents/validate")
     async def validate_test_document_evidence(
         case_id: str = Form(...), run_id: str = Form(...),
-        document_digest: str = Form(...),
+        document_digest: str = Form(...), lang: str = Form("fa-IR"),
     ):
         require_test()
+        lang = require_language(lang)
         if execute_kernel_task is None:
             raise HTTPException(status_code=404, detail="Synthetic Kernel execution unavailable")
         matching = tuple(item for item in test_store.cases() if item.case_id == case_id)
@@ -377,15 +388,16 @@ def create_dashboard_app(
         except Exception as exc:
             raise HTTPException(status_code=400, detail="Synthetic document evidence rejected") from exc
         return RedirectResponse(
-            "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
+            "/?" + urlencode({"tab": "analysis", "case_id": case_id, "run_id": run_id, "lang": lang}), status_code=303
         )
 
     @app.post("/test/kernel/documents/extract")
     async def extract_test_document_content(
         case_id: str = Form(...), run_id: str = Form(...),
-        document_digest: str = Form(...),
+        document_digest: str = Form(...), lang: str = Form("fa-IR"),
     ):
         require_test()
+        lang = require_language(lang)
         if execute_kernel_task is None:
             raise HTTPException(status_code=404, detail="Synthetic Kernel execution unavailable")
         matching = tuple(item for item in test_store.cases() if item.case_id == case_id)
@@ -393,18 +405,33 @@ def create_dashboard_app(
             raise HTTPException(status_code=400, detail="Unknown or ambiguous test case")
         try:
             document = test_store.resolve_document_content(case_id, document_digest)
-            execute_kernel_task(
-                case_id=case_id, tax_year=matching[0].tax_year, run_id=run_id,
-                document_reference=document.reference, document_digest=document.digest,
-                document_content=document.content, content_type=document.content_type,
-            )
-        except Exception as exc:
-            return RedirectResponse(
-                "/?" + urlencode({"tab": "documents", "case_id": case_id, "error": "unsupported_fixture"}),
-                status_code=303,
-            )
+        except ValueError:
+            error = "unsupported_fixture"
+        else:
+            try:
+                execute_kernel_task(
+                    case_id=case_id, tax_year=matching[0].tax_year, run_id=run_id,
+                    document_reference=document.reference, document_digest=document.digest,
+                    document_content=document.content, content_type=document.content_type,
+                )
+            except ValueError:
+                error = "unsupported_fixture"
+            except ContractError:
+                error = "execution_conflict"
+            except PermissionDenied:
+                error = "kernel_denied"
+            except KernelError:
+                error = "kernel_unavailable"
+            except Exception:
+                error = "kernel_unavailable"
+            else:
+                return RedirectResponse(
+                    "/?" + urlencode({"tab": "analysis", "case_id": case_id, "run_id": run_id, "lang": lang}),
+                    status_code=303,
+                )
         return RedirectResponse(
-            "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
+            "/?" + urlencode({"tab": "documents", "case_id": case_id, "lang": lang, "error": error}),
+            status_code=303,
         )
 
     @app.get("/health")

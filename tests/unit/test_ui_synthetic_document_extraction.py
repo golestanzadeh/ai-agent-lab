@@ -143,13 +143,14 @@ def test_unsupported_upload_and_fixture_show_actionable_localized_errors(tmp_pat
     test_client = client(store, tmp_path / "kernel.sqlite3")
     rejected_upload = test_client.post(
         "/test/documents",
-        data={"case_id": "TEST-UX", "label": "Unsupported"},
+        data={"case_id": "TEST-UX", "label": "Unsupported", "lang": "de-DE"},
         files={"document": ("document.pdf", b"%PDF synthetic", "application/pdf")},
         follow_redirects=False,
     )
     assert rejected_upload.status_code == 303
     upload_page = test_client.get(rejected_upload.headers["location"])
-    assert "فقط فایل text/plain مصنوعی" in upload_page.text
+    assert "Erlaubt sind nur synthetische text/plain-Dateien" in upload_page.text
+    assert '<html lang="de-DE" dir="ltr">' in upload_page.text
     assert store.detail("TEST-UX")["documents"] == ()
 
     unsupported = b"not a supported synthetic fixture\n"
@@ -165,6 +166,44 @@ def test_unsupported_upload_and_fixture_show_actionable_localized_errors(tmp_pat
     assert "fixture مصنوعی پشتیبانی‌شده نیست" in extraction_page.text
     with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
         assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+        assert kernel.kill_switch_state() == "HALTED"
+        kernel.verify_audit_chain()
+    store.close()
+
+
+def test_german_success_redirect_and_replay_error_preserve_locale(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    content = fixture("TEST-EMPLOYER-UX", "12.00", "1.00")
+    store.add_document("TEST-UX", "Fixture", content, "text/plain")
+    digest = hashlib.sha256(content).hexdigest()
+    test_client = client(store, tmp_path / "kernel.sqlite3")
+    payload = {
+        "case_id": "TEST-UX", "run_id": "RUN-UX", "document_digest": digest,
+        "lang": "de-DE",
+    }
+
+    successful = test_client.post(
+        "/test/kernel/documents/extract", data=payload, follow_redirects=False,
+    )
+    assert successful.status_code == 303
+    assert "lang=de-DE" in successful.headers["location"]
+    analysis = test_client.get(successful.headers["location"])
+    assert '<html lang="de-DE" dir="ltr">' in analysis.text
+    assert "Verifizierte extrahierte Felder" in analysis.text
+
+    replay = test_client.post(
+        "/test/kernel/documents/extract", data=payload, follow_redirects=False,
+    )
+    assert replay.status_code == 303
+    assert "error=execution_conflict" in replay.headers["location"]
+    assert "lang=de-DE" in replay.headers["location"]
+    replay_page = test_client.get(replay.headers["location"])
+    assert "Diese Lauf-ID wurde bereits verwendet" in replay_page.text
+    assert "kein unterstütztes synthetisches Fixture" not in replay_page.text
+    assert '<html lang="de-DE" dir="ltr">' in replay_page.text
+    with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
+        assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 1
         assert kernel.kill_switch_state() == "HALTED"
         kernel.verify_audit_chain()
     store.close()
