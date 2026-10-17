@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from agent_lab.orchestrator_kernel import OrchestratorKernel, PermissionDenied
+from agent_lab.orchestrator_kernel import IntegrityError, OrchestratorKernel, PermissionDenied
 from agent_lab.ui_dashboard import create_dashboard_app
 from agent_lab.ui_functional_test_store import FunctionalTestStore
 from agent_lab.ui_kernel_projection import ReadOnlyKernelProjection
@@ -206,6 +206,56 @@ def test_german_success_redirect_and_replay_error_preserve_locale(tmp_path):
         assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 1
         assert kernel.kill_switch_state() == "HALTED"
         kernel.verify_audit_chain()
+    store.close()
+
+
+@pytest.mark.parametrize(("failure", "code", "message"), [
+    (PermissionDenied("synthetic denial"), "kernel_denied", "Kernel این اجرا را"),
+    (IntegrityError("synthetic integrity failure"), "kernel_unavailable", "یکپارچگی یا وضعیت Kernel"),
+])
+def test_kernel_failures_have_closed_privacy_safe_messages(tmp_path, failure, code, message):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    content = fixture("TEST-EMPLOYER-UX", "12.00", "1.00")
+    store.add_document("TEST-UX", "Fixture", content, "text/plain")
+    digest = hashlib.sha256(content).hexdigest()
+
+    def reject(**_kwargs):
+        raise failure
+
+    test_client = TestClient(
+        create_dashboard_app(
+            test_store=store, read_kernel_projection=lambda *_args: None,
+            execute_kernel_task=reject,
+        ),
+        base_url=ORIGIN, headers={"origin": ORIGIN},
+    )
+    response = test_client.post(
+        "/test/kernel/documents/extract",
+        data={
+            "case_id": "TEST-UX", "run_id": "RUN-UX",
+            "document_digest": digest, "lang": "fa-IR",
+        },
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert f"error={code}" in response.headers["location"]
+    page = test_client.get(response.headers["location"])
+    assert message in page.text
+    assert str(failure) not in page.text
+    store.close()
+
+
+def test_document_mutations_reject_unknown_locale(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    response = client(store, tmp_path / "kernel.sqlite3").post(
+        "/test/documents",
+        data={"case_id": "TEST-UX", "label": "Fixture", "lang": "en-US"},
+        files={"document": ("fixture.txt", fixture("TEST-EMPLOYER-UX", "12.00", "1.00"), "text/plain")},
+    )
+    assert response.status_code == 400
+    assert store.detail("TEST-UX")["documents"] == ()
     store.close()
 
 
