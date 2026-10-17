@@ -4,6 +4,7 @@ cd /d "%~dp0.."
 set "PYTHONPATH=%CD%\src"
 set "AI_TAX_UI_FUNCTIONAL_TEST=I_UNDERSTAND_TEST_ONLY"
 set "AI_TAX_UI_TEST_DB=%LOCALAPPDATA%\AI-Tax-Agent\ui-functional-test.sqlite3"
+set "AI_TAX_UI_KERNEL_DB=%LOCALAPPDATA%\AI-Tax-Agent\ui-functional-kernel.sqlite3"
 if not exist "%LOCALAPPDATA%\AI-Tax-Agent" mkdir "%LOCALAPPDATA%\AI-Tax-Agent"
 title AI Tax Agent - Isolated Functional Test
 echo Functional TEST ONLY - no real taxpayer documents.

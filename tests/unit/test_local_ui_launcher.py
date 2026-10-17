@@ -3,6 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LAUNCHER = ROOT / "scripts" / "start_local_ui.cmd"
+FUNCTIONAL_LAUNCHER = ROOT / "scripts" / "start_functional_ui_test.cmd"
 
 
 def _launcher_text() -> str:
@@ -39,3 +40,11 @@ def test_launcher_explains_the_visible_stop_boundary() -> None:
     text = _launcher_text()
     assert "Close this window to stop the local interface." in text
     assert "No external connection was attempted." in text
+
+
+def test_functional_launcher_connects_existing_test_store_and_kernel() -> None:
+    text = FUNCTIONAL_LAUNCHER.read_text(encoding="utf-8")
+    assert 'set "AI_TAX_UI_TEST_DB=%LOCALAPPDATA%\\AI-Tax-Agent\\ui-functional-test.sqlite3"' in text
+    assert 'set "AI_TAX_UI_KERNEL_DB=%LOCALAPPDATA%\\AI-Tax-Agent\\ui-functional-kernel.sqlite3"' in text
+    assert "agent_lab.ui_functional_test_app:create_functional_test_app --factory" in text
+    assert "--host 127.0.0.1" in text

@@ -75,12 +75,11 @@ def test_two_actual_fixtures_extract_distinct_values_through_kernel(tmp_path):
         assert response.status_code == 303
         page = client(store, kernel_database).get(response.headers["location"])
         for expected in (
-            "SYNTHETIC_CONTENT_EXTRACTION=VALID", "NOT_TAX_ANALYSIS",
-            f"PARSER_SCHEMA={PARSER_SCHEMA}", f"EMPLOYER_ID={employer}",
-            f"GROSS_EMPLOYMENT_INCOME={gross}", f"WITHHELD_WAGE_TAX={withheld}",
-            "CURRENCY=EUR",
+            "استخراج محتوای مصنوعی — تحلیل مالیاتی نیست",
+            PARSER_SCHEMA, employer, gross, withheld, "EUR",
         ):
             assert expected in page.text
+        assert "SYNTHETIC_CONTENT_EXTRACTION=VALID" not in page.text
         with OrchestratorKernel(kernel_database, CONTRACT_ROOT) as kernel:
             kernel.verify_audit_chain()
             assert kernel.kill_switch_state() == "HALTED"
@@ -106,8 +105,69 @@ def test_two_actual_fixtures_extract_distinct_values_through_kernel(tmp_path):
         restart_page = client(reopened, kernel_database).get(
             "/", params={"tab": "analysis", "case_id": case_id, "run_id": f"RUN-EXTRACT-{index}"}
         )
-        assert f"EMPLOYER_ID={employer}" in restart_page.text
+        assert employer in restart_page.text
         reopened.close()
+
+
+def test_document_actions_are_explicit_localized_and_hidden_without_kernel(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    content = fixture("TEST-EMPLOYER-UX", "12.00", "1.00")
+    store.add_document("TEST-UX", "Synthetic UX fixture", content, "text/plain")
+
+    unavailable = TestClient(
+        create_dashboard_app(test_store=store), base_url=ORIGIN,
+    ).get("/", params={"tab": "documents", "case_id": "TEST-UX", "lang": "fa-IR"})
+    assert "اجرای Kernel در این launcher فعال نیست" in unavailable.text
+    assert 'action="/test/kernel/documents/extract"' not in unavailable.text
+
+    available_client = client(store, tmp_path / "kernel.sqlite3")
+    for lang, validate_label, extract_label in (
+        ("fa-IR", "۲. فقط تطبیق digest در Kernel", "۳. استخراج فیلدهای fixture مصنوعی"),
+        ("de-DE", "2. Nur Digest im Kernel prüfen", "3. Felder aus synthetischem Fixture extrahieren"),
+    ):
+        page = available_client.get(
+            "/", params={"tab": "documents", "case_id": "TEST-UX", "lang": lang}
+        )
+        assert validate_label in page.text
+        assert extract_label in page.text
+        assert "PDF" in page.text
+        assert 'action="/test/kernel/documents/validate"' in page.text
+        assert 'action="/test/kernel/documents/extract"' in page.text
+    store.close()
+
+
+def test_unsupported_upload_and_fixture_show_actionable_localized_errors(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    test_client = client(store, tmp_path / "kernel.sqlite3")
+    rejected_upload = test_client.post(
+        "/test/documents",
+        data={"case_id": "TEST-UX", "label": "Unsupported"},
+        files={"document": ("document.pdf", b"%PDF synthetic", "application/pdf")},
+        follow_redirects=False,
+    )
+    assert rejected_upload.status_code == 303
+    upload_page = test_client.get(rejected_upload.headers["location"])
+    assert "فقط فایل text/plain مصنوعی" in upload_page.text
+    assert store.detail("TEST-UX")["documents"] == ()
+
+    unsupported = b"not a supported synthetic fixture\n"
+    store.add_document("TEST-UX", "Unsupported text", unsupported, "text/plain")
+    digest = hashlib.sha256(unsupported).hexdigest()
+    rejected_extraction = test_client.post(
+        "/test/kernel/documents/extract",
+        data={"case_id": "TEST-UX", "run_id": "RUN-UX", "document_digest": digest},
+        follow_redirects=False,
+    )
+    assert rejected_extraction.status_code == 303
+    extraction_page = test_client.get(rejected_extraction.headers["location"])
+    assert "fixture مصنوعی پشتیبانی‌شده نیست" in extraction_page.text
+    with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
+        assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+        assert kernel.kill_switch_state() == "HALTED"
+        kernel.verify_audit_chain()
+    store.close()
 
 
 @pytest.mark.parametrize("content", [

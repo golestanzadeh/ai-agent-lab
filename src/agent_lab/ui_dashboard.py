@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Callable
+from urllib.parse import urlencode
 
 from fastapi import FastAPI, HTTPException, Request, Form, UploadFile, File
 from fastapi.responses import RedirectResponse
@@ -76,12 +77,19 @@ UI_TEXT = {
         "test_controls": "کنترل‌های تست عملکردی", "test_create_case": "ساخت پروندهٔ آزمایشی",
         "test_case_id": "شناسه (با TEST- شروع شود)", "test_tax_year": "سال مالیاتی",
         "test_create": "ایجاد پروندهٔ آزمایشی", "test_choose_case": "انتخاب پروندهٔ آزمایشی",
-        "test_doc_register": "ثبت هش مدرک آزمایشی", "test_doc_help": "فایل فقط برای محاسبهٔ SHA-256 خوانده می‌شود؛ محتوای آن ذخیره نمی‌شود.",
+        "test_doc_register": "۱. ثبت سند مصنوعی", "test_doc_help": "فقط فایل متنی UTF-8 مصنوعی تا ۳۲ کیلوبایت مجاز است. byteهای آن فقط در پایگاه محلی تست برای بازخوانی ذخیره می‌شوند و هیچ ارسال خارجی انجام نمی‌شود.",
         "test_doc_label": "عنوان مدرک", "test_doc_file": "فایل UTF-8 آزمایشی (حداکثر ۳۲ کیلوبایت)",
         "test_doc_submit": "ثبت و بررسی تکراری", "test_doc_list": "مدارک ثبت‌شده",
         "test_doc_empty": "هنوز مدرکی ثبت نشده است.",
-        "test_doc_process": "اعتبارسنجی شاهد سند در Kernel", "test_doc_run": "شناسه اجرای سند",
-        "test_doc_extract": "استخراج محتوای مصنوعی", "synthetic_extraction_label": "استخراج محتوای مصنوعی — تحلیل مالیاتی نیست",
+        "test_doc_process": "۲. فقط تطبیق digest در Kernel", "test_doc_run": "شناسه اجرای یکتا",
+        "test_doc_extract": "۳. استخراج فیلدهای fixture مصنوعی", "synthetic_extraction_label": "استخراج محتوای مصنوعی — تحلیل مالیاتی نیست",
+        "test_doc_validate_help": "فقط مالکیت سند و تطابق digest را بررسی می‌کند؛ محتوایی استخراج نمی‌شود.",
+        "test_doc_extract_help": "byteهای سند را با قالب بستهٔ fixture خوانده، فیلدها را استخراج می‌کند و شما را مستقیم به نتیجهٔ Analysis می‌برد.",
+        "test_doc_format": "قالب پشتیبانی‌شده: text/plain با UTF-8 و شش خط دقیق DOCUMENT_TYPE، TAX_YEAR، EMPLOYER_ID، GROSS_EMPLOYMENT_INCOME، WITHHELD_WAGE_TAX و CURRENCY=EUR. PDF، تصویر، فایل بانکی و سند واقعی پشتیبانی نمی‌شود.",
+        "test_doc_unavailable": "اجرای Kernel در این launcher فعال نیست؛ رابط را با launcher رسمی تست باز کنید.",
+        "analysis_result_title": "فیلدهای استخراج‌شدهٔ تأییدشده", "analysis_find": "پس از استخراج موفق، نتیجه در همین بخش Analysis نمایش داده می‌شود.",
+        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unsupported_fixture": "استخراج انجام نشد: سند انتخاب‌شده fixture مصنوعی پشتیبانی‌شده نیست یا محتوا/digest آن معتبر نیست."},
+        "extraction_fields": {"DOCUMENT_REFERENCE": "مرجع سند", "DOCUMENT_DIGEST": "digest سند", "PARSER_SCHEMA": "نسخهٔ parser", "EXTRACTION_DIGEST": "digest استخراج", "DOCUMENT_TYPE": "نوع سند", "TAX_YEAR": "سال مالیاتی", "EMPLOYER_ID": "شناسهٔ کارفرمای مصنوعی", "GROSS_EMPLOYMENT_INCOME": "درآمد ناخالص استخدام", "WITHHELD_WAGE_TAX": "مالیات حقوق کسرشده", "CURRENCY": "ارز"},
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
         "kernel_readonly": "این وضعیت مستقیماً و فقط‌خواندنی از Kernel خوانده شده است؛ اجرا فقط با اقدام صریح کاربر آغاز می‌شود.",
@@ -144,12 +152,19 @@ UI_TEXT = {
         "test_controls": "Funktionstest-Steuerung", "test_create_case": "Testfall anlegen",
         "test_case_id": "Kennung (muss mit TEST- beginnen)", "test_tax_year": "Steuerjahr",
         "test_create": "Testfall erstellen", "test_choose_case": "Testfall auswählen",
-        "test_doc_register": "Hash eines Testdokuments registrieren", "test_doc_help": "Die Datei wird nur zur SHA-256-Berechnung gelesen; ihr Inhalt wird nicht gespeichert.",
+        "test_doc_register": "1. Synthetisches Dokument registrieren", "test_doc_help": "Erlaubt sind nur synthetische UTF-8-Textdateien bis 32 KB. Die Bytes bleiben ausschließlich in der lokalen Testdatenbank; es erfolgt keine externe Übertragung.",
         "test_doc_label": "Dokumenttitel", "test_doc_file": "UTF-8-Testdatei (maximal 32 KB)",
         "test_doc_submit": "Registrieren und Duplikat prüfen", "test_doc_list": "Registrierte Dokumente",
         "test_doc_empty": "Noch kein Dokument registriert.",
-        "test_doc_process": "Dokumentnachweis im Kernel validieren", "test_doc_run": "Dokument-Lauf-ID",
-        "test_doc_extract": "Synthetischen Inhalt extrahieren", "synthetic_extraction_label": "SYNTHETISCHE INHALTSEXTRAKTION — KEINE STEUERANALYSE",
+        "test_doc_process": "2. Nur Digest im Kernel prüfen", "test_doc_run": "Eindeutige Lauf-ID",
+        "test_doc_extract": "3. Felder aus synthetischem Fixture extrahieren", "synthetic_extraction_label": "SYNTHETISCHE INHALTSEXTRAKTION — KEINE STEUERANALYSE",
+        "test_doc_validate_help": "Prüft nur Dokumentbesitz und Digest; es wird kein Inhalt extrahiert.",
+        "test_doc_extract_help": "Liest die Bytes im geschlossenen Fixture-Format, extrahiert Felder und öffnet anschließend direkt das Ergebnis in Analyse.",
+        "test_doc_format": "Unterstützt: text/plain, UTF-8, genau sechs Zeilen DOCUMENT_TYPE, TAX_YEAR, EMPLOYER_ID, GROSS_EMPLOYMENT_INCOME, WITHHELD_WAGE_TAX und CURRENCY=EUR. PDF, Bilder, Bankdateien und echte Dokumente werden nicht unterstützt.",
+        "test_doc_unavailable": "Die Kernel-Ausführung ist in diesem Launcher nicht aktiv. Öffnen Sie die Oberfläche mit dem offiziellen Test-Launcher.",
+        "analysis_result_title": "Verifizierte extrahierte Felder", "analysis_find": "Nach erfolgreicher Extraktion erscheint das Ergebnis hier im Bereich Analyse.",
+        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unsupported_fixture": "Extraktion fehlgeschlagen: Das gewählte Dokument ist kein unterstütztes synthetisches Fixture oder Inhalt/Digest ist ungültig."},
+        "extraction_fields": {"DOCUMENT_REFERENCE": "Dokumentreferenz", "DOCUMENT_DIGEST": "Dokument-Digest", "PARSER_SCHEMA": "Parser-Version", "EXTRACTION_DIGEST": "Extraktions-Digest", "DOCUMENT_TYPE": "Dokumenttyp", "TAX_YEAR": "Steuerjahr", "EMPLOYER_ID": "Synthetische Arbeitgeber-ID", "GROSS_EMPLOYMENT_INCOME": "Bruttoarbeitslohn", "WITHHELD_WAGE_TAX": "Einbehaltene Lohnsteuer", "CURRENCY": "Währung"},
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
         "kernel_readonly": "Dieser Status wird direkt und schreibgeschützt aus dem Kernel gelesen; die Ausführung beginnt nur durch eine ausdrückliche Benutzeraktion.",
@@ -224,13 +239,15 @@ def create_dashboard_app(
     @app.get("/", response_class=HTMLResponse)
     async def dashboard(
         request: Request, case_id: str | None = None, run_id: str | None = None,
-        tab: str = "overview", lang: str = "fa-IR",
+        tab: str = "overview", lang: str = "fa-IR", error: str | None = None,
     ):
         tabs = {"overview", "cases", "family", "documents", "analysis", "issues", "result", "declaration", "approval", "activity"}
         if tab not in tabs:
             raise HTTPException(status_code=404, detail="Unknown workspace tab")
         if lang not in UI_TEXT:
             raise HTTPException(status_code=404, detail="Unsupported language")
+        if error is not None and error not in UI_TEXT[lang]["ui_errors"]:
+            raise HTTPException(status_code=404, detail="Unknown UI error")
         state = "unavailable"
         cases: tuple[DashboardCase, ...] = ()
         selected = None
@@ -270,6 +287,8 @@ def create_dashboard_app(
             "state": state, "cases": cases, "selected": selected, "tab": tab,
             "test_mode": test_store is not None, "detail": detail, "lang": lang, "t": UI_TEXT[lang],
             "run_id": run_id, "kernel_projection": kernel_projection,
+            "ui_error": UI_TEXT[lang]["ui_errors"].get(error),
+            "kernel_execution_available": execute_kernel_task is not None,
         })
 
     def require_test():
@@ -292,7 +311,10 @@ def create_dashboard_app(
         try:
             added = test_store.add_document(case_id, label, data, document.content_type or "")
         except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid test document or case")
+            return RedirectResponse(
+                "/?" + urlencode({"tab": "documents", "case_id": case_id, "error": "unsupported_upload"}),
+                status_code=303,
+            )
         return RedirectResponse("/?tab=documents&case_id="+case_id+"&added="+str(int(added)), status_code=303)
 
     @app.post("/test/issues")
@@ -377,7 +399,10 @@ def create_dashboard_app(
                 document_content=document.content, content_type=document.content_type,
             )
         except Exception as exc:
-            raise HTTPException(status_code=400, detail="Synthetic content extraction rejected") from exc
+            return RedirectResponse(
+                "/?" + urlencode({"tab": "documents", "case_id": case_id, "error": "unsupported_fixture"}),
+                status_code=303,
+            )
         return RedirectResponse(
             "/?tab=analysis&case_id="+case_id+"&run_id="+run_id, status_code=303
         )

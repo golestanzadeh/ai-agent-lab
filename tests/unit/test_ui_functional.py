@@ -107,7 +107,7 @@ def test_2025_case_ui_uses_canonical_backend_and_is_bilingual(tmp_path):
     de_documents = client.get(
         "/", params={"tab": "documents", "case_id": "TEST-2025-UI", "lang": "de-DE"}
     ).text
-    assert "Hash eines Testdokuments registrieren" in de_documents
+    assert "Synthetisches Dokument registrieren" in de_documents
     assert "Synthetic 2025 evidence" in de_documents
     store.close()
 
