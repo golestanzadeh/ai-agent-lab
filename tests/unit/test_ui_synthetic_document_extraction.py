@@ -259,6 +259,32 @@ def test_document_mutations_reject_unknown_locale(tmp_path):
     store.close()
 
 
+def test_german_digest_validation_failure_is_localized_and_fail_closed(tmp_path):
+    store = FunctionalTestStore(tmp_path / "ui.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    test_client = client(store, tmp_path / "kernel.sqlite3")
+    response = test_client.post(
+        "/test/kernel/documents/validate",
+        data={
+            "case_id": "TEST-UX", "run_id": "RUN-VALIDATE",
+            "document_digest": "0" * 64, "lang": "de-DE",
+        },
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert "error=unknown_document" in response.headers["location"]
+    assert "lang=de-DE" in response.headers["location"]
+    page = test_client.get(response.headers["location"])
+    assert '<html lang="de-DE" dir="ltr">' in page.text
+    assert "Dokument oder Digest ist im ausgewählten Fall nicht registriert" in page.text
+    assert "Synthetic document evidence rejected" not in page.text
+    with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
+        assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+        assert kernel.kill_switch_state() == "HALTED"
+        kernel.verify_audit_chain()
+    store.close()
+
+
 @pytest.mark.parametrize("content", [
     b"\xff\n",
     fixture("TEST-EMPLOYER-A", "1.00", "0.00").replace(b"TAX_YEAR=2025", b"TAX_YEAR=2024"),
