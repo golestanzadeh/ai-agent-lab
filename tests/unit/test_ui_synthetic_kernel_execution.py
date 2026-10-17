@@ -191,6 +191,14 @@ def test_case_owned_document_digest_executes_through_kernel_and_survives_restart
             f"test-document://TEST-2025-DOC/sha256:{document[1]}"
         ]
         assert "interpret" not in task["allowed_tools"]
+        response_payload = json.loads(kernel._connection.execute(
+            "SELECT payload_json FROM responses"
+        ).fetchone()[0])
+        assert response_payload["tests"] == [{
+            "name": "deterministic-synthetic-document-evidence-validation",
+            "outcome": "PASS",
+            "evidence_reference": response_payload["evidence"][0],
+        }]
 
     store.close()
     reopened = FunctionalTestStore(ui_database)

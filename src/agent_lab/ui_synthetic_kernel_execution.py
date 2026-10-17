@@ -119,6 +119,7 @@ class SyntheticCaseKernelExecutor:
             objective = "Execute one bounded deterministic UI25 synthetic calculation"
             acceptance = "deterministic synthetic result is durably recorded"
             authority_reference = AUTHORITY_REFERENCE
+            response_test_name = "deterministic-synthetic-double"
         elif synthetic_value is None and document_reference is not None and document_digest is not None:
             self._validate_document_scope(
                 case_id, tax_year, run_id, document_reference, document_digest
@@ -127,6 +128,7 @@ class SyntheticCaseKernelExecutor:
             objective = "Validate one case-owned synthetic document digest without interpreting content"
             acceptance = "case-owned synthetic document evidence is durably validated"
             authority_reference = DOCUMENT_AUTHORITY_REFERENCE
+            response_test_name = "deterministic-synthetic-document-evidence-validation"
         else:
             raise ContractError("exactly one bounded synthetic operation is required")
         task_id, manifest_id, response_id = self._identities(case_id, tax_year, run_id)
@@ -214,7 +216,7 @@ class SyntheticCaseKernelExecutor:
                     "artifact_references": task["expected_outputs"],
                     "changed_paths_or_state": [f"kernel://response/{response_id}"],
                     "tests": [{
-                        "name": "deterministic-synthetic-double", "outcome": "PASS",
+                        "name": response_test_name, "outcome": "PASS",
                         "evidence_reference": evidence,
                     }],
                     "evidence": [evidence], "authority_used": [authority_reference],
