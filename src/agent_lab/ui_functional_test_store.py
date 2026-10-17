@@ -26,6 +26,13 @@ from agent_lab.case_registry import (
 from agent_lab.case_state import CaseState, CaseStateStore
 from agent_lab.ui_dashboard import DashboardCase
 from agent_lab.ui_synthetic_document_parser import CONTENT_TYPE, MAX_CONTENT_BYTES
+from agent_lab.ui_synthetic_document_errors import (
+    SyntheticDocumentContentMissing,
+    SyntheticDocumentDigestMismatch,
+    SyntheticDocumentFixtureInvalid,
+    SyntheticDocumentFormatUnsupported,
+    SyntheticDocumentNotFound,
+)
 
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -173,7 +180,7 @@ class FunctionalTestStore:
 
     def resolve_document(self, case_id: str, digest: str) -> SyntheticDocumentMetadata:
         if not isinstance(digest, str) or not _SHA256.fullmatch(digest):
-            raise ValueError("malformed synthetic document digest")
+            raise SyntheticDocumentNotFound("malformed synthetic document digest")
         with self._lock:
             self._check_case(case_id)
             rows = self._db.execute(
@@ -181,10 +188,12 @@ class FunctionalTestStore:
                 (case_id, digest),
             ).fetchall()
             if len(rows) != 1:
-                raise ValueError("document is not owned by the exact test case")
+                raise SyntheticDocumentNotFound("document is not owned by the exact test case")
             label, stored_digest, content_type, content = rows[0]
             if content is not None and hashlib.sha256(content).hexdigest() != stored_digest:
-                raise ValueError("stored synthetic document content does not match its digest")
+                raise SyntheticDocumentDigestMismatch(
+                    "stored synthetic document content does not match its digest"
+                )
             return SyntheticDocumentMetadata(
                 case_id=case_id,
                 label=label,
@@ -196,10 +205,12 @@ class FunctionalTestStore:
 
     def resolve_document_content(self, case_id: str, digest: str) -> SyntheticDocumentMetadata:
         document = self.resolve_document(case_id, digest)
-        if document.content_type != CONTENT_TYPE or document.content is None:
-            raise ValueError("synthetic document content is unavailable or unsupported")
+        if document.content is None:
+            raise SyntheticDocumentContentMissing("synthetic document content is unavailable")
+        if document.content_type != CONTENT_TYPE:
+            raise SyntheticDocumentFormatUnsupported("synthetic document content type is unsupported")
         if not document.content or len(document.content) > MAX_CONTENT_BYTES:
-            raise ValueError("stored synthetic document size is invalid")
+            raise SyntheticDocumentFixtureInvalid("stored synthetic document size is invalid")
         return document
 
     def add_issue(self, case_id: str, question: str):
@@ -223,8 +234,24 @@ class FunctionalTestStore:
     def detail(self, case_id: str) -> dict:
         with self._lock:
             self._check_case(case_id)
+            document_rows = tuple(self._db.execute(
+                "SELECT label,digest,content_type,content FROM test_document WHERE case_id=? ORDER BY label",
+                (case_id,),
+            ))
+            extraction_readiness = {}
+            for _label, digest, content_type, content in document_rows:
+                if content is None:
+                    readiness = "MISSING_CONTENT"
+                elif content_type != CONTENT_TYPE:
+                    readiness = "UNSUPPORTED_FORMAT"
+                elif hashlib.sha256(content).hexdigest() != digest:
+                    readiness = "DIGEST_MISMATCH"
+                else:
+                    readiness = "READY"
+                extraction_readiness[digest] = readiness
             return {
-                "documents": tuple(self._db.execute("SELECT label,digest FROM test_document WHERE case_id=? ORDER BY label",(case_id,))),
+                "documents": tuple((label, digest) for label, digest, _type, _content in document_rows),
+                "extraction_readiness": extraction_readiness,
                 "issues": tuple(self._db.execute("SELECT issue_id,question,answer,state FROM test_issue WHERE case_id=? ORDER BY issue_id",(case_id,))),
                 "activity": tuple(self._db.execute("SELECT event,recorded_at FROM test_audit WHERE case_id=? ORDER BY event_id DESC",(case_id,))),
             }

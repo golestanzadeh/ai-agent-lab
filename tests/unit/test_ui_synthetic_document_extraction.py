@@ -21,6 +21,8 @@ from agent_lab.ui_synthetic_kernel_execution import SyntheticCaseKernelExecutor
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_ROOT = ROOT / "contracts" / "orchestrator" / "v1"
 ORIGIN = "http://127.0.0.1:8766"
+OWNER_RETEST_FIXTURE = ROOT / "tests" / "fixtures" / "ui25" / "synthetic-wage-statement-owner-retest.txt"
+OWNER_RETEST_SHA256 = "fe830b1d6131d9ad420e164f928f03bb1a56b90abdf38b11ea7a63453d5c65e4"
 
 
 def fixture(employer: str, gross: str, withheld: str) -> bytes:
@@ -45,6 +47,17 @@ def client(store: FunctionalTestStore, kernel_database: Path) -> TestClient:
         base_url=ORIGIN,
         headers={"origin": ORIGIN},
     )
+
+
+def test_owner_retest_fixture_is_canonical_and_stable():
+    content = OWNER_RETEST_FIXTURE.read_bytes()
+    assert b"\r" not in content
+    assert content.endswith(b"\n")
+    assert hashlib.sha256(content).hexdigest() == OWNER_RETEST_SHA256
+    parsed = parse_synthetic_wage_statement(content, "text/plain")
+    assert parsed.employer_id == "TEST-EMPLOYER-OWNER"
+    assert parsed.gross_employment_income == "55000.00"
+    assert parsed.withheld_wage_tax == "10250.00"
 
 
 def test_two_actual_fixtures_extract_distinct_values_through_kernel(tmp_path):
@@ -163,7 +176,7 @@ def test_unsupported_upload_and_fixture_show_actionable_localized_errors(tmp_pat
     )
     assert rejected_extraction.status_code == 303
     extraction_page = test_client.get(rejected_extraction.headers["location"])
-    assert "fixture مصنوعی پشتیبانی‌شده نیست" in extraction_page.text
+    assert "قرارداد شش‌فیلدی ui25.synthetic-wage-statement/1" in extraction_page.text
     with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
         assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
         assert kernel.kill_switch_state() == "HALTED"
@@ -282,6 +295,81 @@ def test_german_digest_validation_failure_is_localized_and_fail_closed(tmp_path)
         assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
         assert kernel.kill_switch_state() == "HALTED"
         kernel.verify_audit_chain()
+    store.close()
+
+
+def test_legacy_digest_only_document_cannot_offer_extraction(tmp_path):
+    database = tmp_path / "ui.sqlite3"
+    store = FunctionalTestStore(database)
+    store.create_case("TEST-UX", 2025)
+    content = fixture("TEST-EMPLOYER-UX", "12.00", "1.00")
+    store.add_document("TEST-UX", "Legacy metadata", content, "text/plain")
+    digest = hashlib.sha256(content).hexdigest()
+    store._db.execute(
+        "UPDATE test_document SET content=NULL,content_type=NULL WHERE case_id=? AND digest=?",
+        ("TEST-UX", digest),
+    )
+    store._db.commit()
+    test_client = client(store, tmp_path / "kernel.sqlite3")
+
+    page = test_client.get(
+        "/", params={"tab": "documents", "case_id": "TEST-UX", "lang": "fa-IR"}
+    )
+    assert "محتوای این رکورد قدیمی ذخیره نشده است" in page.text
+    assert 'action="/test/kernel/documents/validate"' in page.text
+    assert 'action="/test/kernel/documents/extract"' not in page.text
+
+    forced = test_client.post(
+        "/test/kernel/documents/extract",
+        data={
+            "case_id": "TEST-UX", "run_id": "RUN-LEGACY",
+            "document_digest": digest, "lang": "fa-IR",
+        },
+        follow_redirects=False,
+    )
+    assert forced.status_code == 303
+    assert "error=missing_content" in forced.headers["location"]
+    forced_page = test_client.get(forced.headers["location"])
+    assert "byteهای محتوا ذخیره نشده‌اند" in forced_page.text
+    with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
+        assert kernel._connection.execute("SELECT COUNT(*) FROM tasks").fetchone()[0] == 0
+        assert kernel._connection.execute("SELECT COUNT(*) FROM responses").fetchone()[0] == 0
+        assert kernel.kill_switch_state() == "HALTED"
+        kernel.verify_audit_chain()
+    store.close()
+
+
+@pytest.mark.parametrize(("mutation", "error_code"), [
+    (("content_type", "application/pdf"), "unsupported_format"),
+    (("content", b"altered"), "digest_mismatch"),
+])
+def test_persisted_format_and_digest_failures_are_distinct(tmp_path, mutation, error_code):
+    store = FunctionalTestStore(tmp_path / f"{error_code}.sqlite3")
+    store.create_case("TEST-UX", 2025)
+    content = fixture("TEST-EMPLOYER-UX", "12.00", "1.00")
+    store.add_document("TEST-UX", "Fixture", content, "text/plain")
+    digest = hashlib.sha256(content).hexdigest()
+    column, value = mutation
+    store._db.execute(
+        f"UPDATE test_document SET {column}=? WHERE case_id=? AND digest=?",
+        (value, "TEST-UX", digest),
+    )
+    store._db.commit()
+    test_client = client(store, tmp_path / f"kernel-{error_code}.sqlite3")
+    response = test_client.post(
+        "/test/kernel/documents/extract",
+        data={
+            "case_id": "TEST-UX", "run_id": "RUN-FAIL",
+            "document_digest": digest, "lang": "de-DE",
+        },
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert f"error={error_code}" in response.headers["location"]
+    assert "lang=de-DE" in response.headers["location"]
+    page = test_client.get(response.headers["location"])
+    assert '<html lang="de-DE" dir="ltr">' in page.text
+    assert str(value) not in page.text
     store.close()
 
 

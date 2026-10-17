@@ -13,6 +13,13 @@ from fastapi.templating import Jinja2Templates
 
 from agent_lab.ui_app import LOCAL_SECURITY_HEADERS, UI_ROOT
 from agent_lab.orchestrator_kernel import ContractError, KernelError, PermissionDenied
+from agent_lab.ui_synthetic_document_errors import (
+    SyntheticDocumentContentMissing,
+    SyntheticDocumentDigestMismatch,
+    SyntheticDocumentFixtureInvalid,
+    SyntheticDocumentFormatUnsupported,
+    SyntheticDocumentNotFound,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,8 +95,9 @@ UI_TEXT = {
         "test_doc_extract_help": "byteهای سند را با قالب بستهٔ fixture خوانده، فیلدها را استخراج می‌کند و شما را مستقیم به نتیجهٔ Analysis می‌برد.",
         "test_doc_format": "قالب پشتیبانی‌شده: text/plain با UTF-8 و شش خط دقیق DOCUMENT_TYPE، TAX_YEAR، EMPLOYER_ID، GROSS_EMPLOYMENT_INCOME، WITHHELD_WAGE_TAX و CURRENCY=EUR. PDF، تصویر، فایل بانکی و سند واقعی پشتیبانی نمی‌شود.",
         "test_doc_unavailable": "اجرای Kernel در این launcher فعال نیست؛ رابط را با launcher رسمی تست باز کنید.",
+        "extraction_readiness": {"MISSING_CONTENT": "محتوای این رکورد قدیمی ذخیره نشده است؛ فقط اعتبارسنجی digest ممکن است.", "UNSUPPORTED_FORMAT": "قالب ذخیره‌شده برای استخراج مصنوعی پشتیبانی نمی‌شود.", "DIGEST_MISMATCH": "استخراج مسدود است: digest محتوای ذخیره‌شده تطابق ندارد."},
         "analysis_result_title": "فیلدهای استخراج‌شدهٔ تأییدشده", "analysis_find": "پس از استخراج موفق، نتیجه در همین بخش Analysis نمایش داده می‌شود.",
-        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unknown_document": "اعتبارسنجی انجام نشد: سند یا digest در پروندهٔ انتخابی ثبت نشده است.", "unsupported_fixture": "استخراج انجام نشد: سند انتخاب‌شده fixture مصنوعی پشتیبانی‌شده نیست یا محتوا/digest آن معتبر نیست.", "execution_conflict": "این شناسهٔ اجرا قبلاً استفاده شده یا با اجرای ثبت‌شده تعارض دارد. یک شناسهٔ اجرای یکتای تازه وارد کنید.", "kernel_denied": "Kernel این اجرا را به‌دلیل مرز مجوز یا وضعیت ایمنی رد کرد. وضعیت پرونده و شناسهٔ اجرا را بررسی کنید.", "kernel_unavailable": "اجرای مصنوعی به‌صورت ایمن متوقف شد زیرا یکپارچگی یا وضعیت Kernel قابل تأیید نبود."},
+        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unknown_document": "اعتبارسنجی انجام نشد: سند یا digest در پروندهٔ انتخابی ثبت نشده است.", "missing_content": "استخراج ممکن نیست: این رکورد قدیمی فقط metadata و digest دارد و byteهای محتوا ذخیره نشده‌اند.", "unsupported_format": "استخراج ممکن نیست: قالب ذخیره‌شده text/plain مصنوعی پشتیبانی‌شده نیست.", "digest_mismatch": "استخراج مسدود شد: SHA-256 محتوای ذخیره‌شده با digest ثبت‌شده تطابق ندارد.", "invalid_fixture": "استخراج انجام نشد: bytes ذخیره‌شده با قرارداد شش‌فیلدی ui25.synthetic-wage-statement/1 مطابقت ندارند.", "execution_conflict": "این شناسهٔ اجرا قبلاً استفاده شده یا با اجرای ثبت‌شده تعارض دارد. یک شناسهٔ اجرای یکتای تازه وارد کنید.", "kernel_denied": "Kernel این اجرا را به‌دلیل مرز مجوز یا وضعیت ایمنی رد کرد. وضعیت پرونده و شناسهٔ اجرا را بررسی کنید.", "kernel_unavailable": "اجرای مصنوعی به‌صورت ایمن متوقف شد زیرا یکپارچگی یا وضعیت Kernel قابل تأیید نبود."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "مرجع سند", "DOCUMENT_DIGEST": "digest سند", "PARSER_SCHEMA": "نسخهٔ parser", "EXTRACTION_DIGEST": "digest استخراج", "DOCUMENT_TYPE": "نوع سند", "TAX_YEAR": "سال مالیاتی", "EMPLOYER_ID": "شناسهٔ کارفرمای مصنوعی", "GROSS_EMPLOYMENT_INCOME": "درآمد ناخالص استخدام", "WITHHELD_WAGE_TAX": "مالیات حقوق کسرشده", "CURRENCY": "ارز"},
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
@@ -163,8 +171,9 @@ UI_TEXT = {
         "test_doc_extract_help": "Liest die Bytes im geschlossenen Fixture-Format, extrahiert Felder und öffnet anschließend direkt das Ergebnis in Analyse.",
         "test_doc_format": "Unterstützt: text/plain, UTF-8, genau sechs Zeilen DOCUMENT_TYPE, TAX_YEAR, EMPLOYER_ID, GROSS_EMPLOYMENT_INCOME, WITHHELD_WAGE_TAX und CURRENCY=EUR. PDF, Bilder, Bankdateien und echte Dokumente werden nicht unterstützt.",
         "test_doc_unavailable": "Die Kernel-Ausführung ist in diesem Launcher nicht aktiv. Öffnen Sie die Oberfläche mit dem offiziellen Test-Launcher.",
+        "extraction_readiness": {"MISSING_CONTENT": "Für diesen älteren Eintrag wurden keine Inhaltsbytes gespeichert; nur Digest-Validierung ist möglich.", "UNSUPPORTED_FORMAT": "Das gespeicherte Format wird für die synthetische Extraktion nicht unterstützt.", "DIGEST_MISMATCH": "Extraktion gesperrt: Der Digest der gespeicherten Bytes stimmt nicht überein."},
         "analysis_result_title": "Verifizierte extrahierte Felder", "analysis_find": "Nach erfolgreicher Extraktion erscheint das Ergebnis hier im Bereich Analyse.",
-        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unknown_document": "Validierung fehlgeschlagen: Dokument oder Digest ist im ausgewählten Fall nicht registriert.", "unsupported_fixture": "Extraktion fehlgeschlagen: Das gewählte Dokument ist kein unterstütztes synthetisches Fixture oder Inhalt/Digest ist ungültig.", "execution_conflict": "Diese Lauf-ID wurde bereits verwendet oder steht im Konflikt mit einem registrierten Lauf. Verwenden Sie eine neue eindeutige Lauf-ID.", "kernel_denied": "Der Kernel hat die Ausführung wegen einer Berechtigungs- oder Sicherheitsgrenze abgelehnt. Prüfen Sie Fall und Lauf-ID.", "kernel_unavailable": "Die synthetische Ausführung wurde sicher gestoppt, weil Integrität oder Zustand des Kernels nicht bestätigt werden konnten."},
+        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unknown_document": "Validierung fehlgeschlagen: Dokument oder Digest ist im ausgewählten Fall nicht registriert.", "missing_content": "Extraktion nicht möglich: Dieser ältere Eintrag enthält nur Metadaten und Digest; Inhaltsbytes wurden nicht gespeichert.", "unsupported_format": "Extraktion nicht möglich: Das gespeicherte Format ist kein unterstütztes synthetisches text/plain.", "digest_mismatch": "Extraktion gesperrt: SHA-256 der gespeicherten Bytes stimmt nicht mit dem registrierten Digest überein.", "invalid_fixture": "Extraktion fehlgeschlagen: Die gespeicherten Bytes erfüllen den Sechs-Felder-Vertrag ui25.synthetic-wage-statement/1 nicht.", "execution_conflict": "Diese Lauf-ID wurde bereits verwendet oder steht im Konflikt mit einem registrierten Lauf. Verwenden Sie eine neue eindeutige Lauf-ID.", "kernel_denied": "Der Kernel hat die Ausführung wegen einer Berechtigungs- oder Sicherheitsgrenze abgelehnt. Prüfen Sie Fall und Lauf-ID.", "kernel_unavailable": "Die synthetische Ausführung wurde sicher gestoppt, weil Integrität oder Zustand des Kernels nicht bestätigt werden konnten."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "Dokumentreferenz", "DOCUMENT_DIGEST": "Dokument-Digest", "PARSER_SCHEMA": "Parser-Version", "EXTRACTION_DIGEST": "Extraktions-Digest", "DOCUMENT_TYPE": "Dokumenttyp", "TAX_YEAR": "Steuerjahr", "EMPLOYER_ID": "Synthetische Arbeitgeber-ID", "GROSS_EMPLOYMENT_INCOME": "Bruttoarbeitslohn", "WITHHELD_WAGE_TAX": "Einbehaltene Lohnsteuer", "CURRENCY": "Währung"},
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
@@ -420,8 +429,16 @@ def create_dashboard_app(
             raise HTTPException(status_code=400, detail="Unknown or ambiguous test case")
         try:
             document = test_store.resolve_document_content(case_id, document_digest)
-        except ValueError:
-            error = "unsupported_fixture"
+        except SyntheticDocumentContentMissing:
+            error = "missing_content"
+        except SyntheticDocumentFormatUnsupported:
+            error = "unsupported_format"
+        except SyntheticDocumentDigestMismatch:
+            error = "digest_mismatch"
+        except SyntheticDocumentNotFound:
+            error = "unknown_document"
+        except SyntheticDocumentFixtureInvalid:
+            error = "invalid_fixture"
         else:
             try:
                 execute_kernel_task(
@@ -430,7 +447,7 @@ def create_dashboard_app(
                     document_content=document.content, content_type=document.content_type,
                 )
             except ValueError:
-                error = "unsupported_fixture"
+                error = "invalid_fixture"
             except ContractError:
                 error = "execution_conflict"
             except PermissionDenied:
