@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -179,6 +180,7 @@ class OrchestratorKernel:
         self._connection = sqlite3.connect(self.database_path)
         self._connection.row_factory = sqlite3.Row
         self._connection.execute("PRAGMA foreign_keys = ON")
+        self._atomic_execution_active = False
         self._initialize_schema()
 
     def __enter__(self) -> "OrchestratorKernel":
@@ -189,6 +191,31 @@ class OrchestratorKernel:
 
     def close(self) -> None:
         self._connection.close()
+
+    @contextmanager
+    def atomic_execution(self):
+        """Make one bounded in-process execution durable as a single SQLite commit."""
+        if self._atomic_execution_active or self._connection.in_transaction:
+            raise StateTransitionError("nested or ambiguous atomic execution is forbidden")
+        self._connection.execute("BEGIN IMMEDIATE")
+        self._atomic_execution_active = True
+        try:
+            yield
+        except BaseException:
+            self._connection.rollback()
+            raise
+        else:
+            self._connection.commit()
+        finally:
+            self._atomic_execution_active = False
+
+    @contextmanager
+    def _write_scope(self):
+        if self._atomic_execution_active:
+            yield
+        else:
+            with self._connection:
+                yield
 
     def _load_contracts(self) -> dict[str, dict[str, Any]]:
         loaded: dict[str, dict[str, Any]] = {}
@@ -806,7 +833,7 @@ class OrchestratorKernel:
             raise ContractError("unknown Human Gate trigger")
         if payload["task_id"] in dependencies:
             raise ContractError("task cannot depend on itself")
-        with self._connection:
+        with self._write_scope():
             if payload["parent_task_id"] is not None and self._connection.execute(
                 "SELECT 1 FROM tasks WHERE task_id=?", (payload["parent_task_id"],)
             ).fetchone() is None:
@@ -1008,7 +1035,7 @@ class OrchestratorKernel:
 
     def register_manifest(self, payload: dict[str, Any]) -> str:
         self._validate_manifest_payload(payload)
-        with self._connection:
+        with self._write_scope():
             try:
                 self._connection.execute(
                     """
@@ -1060,7 +1087,7 @@ class OrchestratorKernel:
         transitions = self.lifecycle["transitions"]
         if new_state not in self.lifecycle["states"] or new_state not in transitions.get(current, []):
             raise StateTransitionError(f"transition {current}->{new_state} is not allowed")
-        with self._connection:
+        with self._write_scope():
             updated = self._connection.execute(
                 "UPDATE manifests SET state=? WHERE manifest_id=? AND state=?",
                 (new_state, manifest_id, current),
@@ -1095,7 +1122,7 @@ class OrchestratorKernel:
             manifest_id, "ACTIVE", actor_id="AGENT_FACTORY_KERNEL",
             reason="all deterministic activation requirements passed",
         )
-        with self._connection:
+        with self._write_scope():
             self._connection.execute(
                 "UPDATE tasks SET status='ACTIVE' WHERE task_id=? AND status='REGISTERED'",
                 (row["task_id"],),
@@ -1228,7 +1255,7 @@ class OrchestratorKernel:
         if manifest_target != manifest["state"] and manifest_target not in self.lifecycle["transitions"].get(manifest["state"], []):
             raise StateTransitionError(f"response cannot transition manifest to {manifest_target}")
         task_target = "AWAITING_ACCEPTANCE" if payload["status"] == "PASS" else payload["status"]
-        with self._connection:
+        with self._write_scope():
             try:
                 self._connection.execute(
                     "INSERT INTO responses(response_id, task_id, manifest_id, status, payload_json, created_at) VALUES(?, ?, ?, ?, ?, ?)",
@@ -1487,7 +1514,7 @@ class OrchestratorKernel:
             or new_usage["cost_usd"] > limits["cost_limit_usd"]
             or new_usage["child_tasks_created"] > self.execution_policy["hard_limits"]["max_child_tasks"]
         )
-        with self._connection:
+        with self._write_scope():
             if exceeded:
                 self._connection.execute(
                     "UPDATE manifests SET state='BLOCKED' WHERE manifest_id=? AND state='ACTIVE'",
@@ -1568,7 +1595,7 @@ class OrchestratorKernel:
             raise PermissionDenied("actor may not pause dispatch")
         if new_state == "HALTED" and actor_id not in {"HUMAN_PROJECT_OWNER", "MASTER_PROJECT_ORCHESTRATOR"} | CONTROL_ROLES:
             raise PermissionDenied("actor may not halt")
-        with self._connection:
+        with self._write_scope():
             self._connection.execute(
                 "UPDATE kill_switch SET state=?, updated_at=?, authority_reference=? WHERE singleton=1",
                 (new_state, _utc_now().isoformat(), authority_reference),

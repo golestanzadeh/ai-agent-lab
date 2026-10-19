@@ -8,7 +8,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from agent_lab.orchestrator_kernel import ContractError, OrchestratorKernel, PermissionDenied
+from agent_lab.orchestrator_kernel import (
+    ContractError, IntegrityError, OrchestratorKernel, PermissionDenied,
+)
 from agent_lab.ui_synthetic_document_parser import (
     CONTENT_TYPE, PARSER_SCHEMA, SyntheticExtraction,
     parse_synthetic_wage_statement,
@@ -62,6 +64,17 @@ class SyntheticCaseKernelExecutor:
         scope = f"{case_id}:{tax_year}:{run_id}".encode("ascii")
         suffix = hashlib.sha256(scope).hexdigest()[:20].upper()
         return f"TASK-UI25-{suffix}", f"MAN-UI25-{suffix}", f"RESP-UI25-{suffix}"
+
+    @staticmethod
+    def _recovery_identities(case_id: str, tax_year: int, run_id: str) -> tuple[str, str, str]:
+        scope = f"{case_id}:{tax_year}:{run_id}:RECOVERY:1".encode("ascii")
+        suffix = hashlib.sha256(scope).hexdigest()[:20].upper()
+        return f"TASK-UI25-R-{suffix}", f"MAN-UI25-R-{suffix}", f"RESP-UI25-R-{suffix}"
+
+    @staticmethod
+    def _actor_instance_id(task_id: str) -> str:
+        suffix = hashlib.sha256(task_id.encode("ascii")).hexdigest()[:16].upper()
+        return f"{WORKER_ID}-{suffix}"
 
     @staticmethod
     def _run_worker(
@@ -205,60 +218,54 @@ class SyntheticCaseKernelExecutor:
             response_test_name = "deterministic-synthetic-content-extraction"
         else:
             raise ContractError("exactly one bounded synthetic operation is required")
-        task_id, manifest_id, response_id = self._identities(case_id, tax_year, run_id)
-        now = datetime.now(timezone.utc)
+        base_task_id, base_manifest_id, base_response_id = self._identities(
+            case_id, tax_year, run_id
+        )
         context = {"case_id": case_id, "tax_year": tax_year, "run_id": run_id}
-        task = {
-            "schema_version": 1, "task_id": task_id, "parent_task_id": None,
-            "objective": objective,
-            "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": WORKER_ID,
-            "repository": "golestanzadeh/ai-agent-lab", "ref": "oi0002-identity-persistence",
-            "case_context": context,
-            "inputs": operation_inputs,
-            "expected_outputs": [f"kernel://ui25/result/{task_id}"],
-            "allowed_tools": ["synthetic_ui25_deterministic_worker"],
-            "permissions": ["report_evidence"],
-            "forbidden_actions": [
-                "external_transfer", "use_real_data", "protected_persistence",
-                "agent_spawn", "subprocess", "network_io",
-            ],
-            "budget": {"token_limit": 1, "tool_call_limit": 1, "cost_limit_usd": 0.01},
-            "timeout_seconds": 30, "max_retries": 0,
-            "acceptance_criteria": [acceptance],
-            "stop_conditions": ["scope mismatch", "kill switch not RUNNING", "duplicate task"],
-            "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"],
-            "created_at": now.isoformat(), "expires_at": (now + timedelta(minutes=10)).isoformat(),
-            "status": "REGISTERED",
-        }
-        manifest = {
-            "schema_version": 1, "manifest_id": manifest_id,
-            "role_id": task["role_id"], "actor_instance_id": task["actor_instance_id"],
-            "task_id": task_id, "parent_task_id": None,
-            "scope": {
-                "repository": task["repository"], "ref": task["ref"],
-                "allowed_paths": [], "case_context": context,
-            },
-            "inputs": task["inputs"], "expected_outputs": task["expected_outputs"],
-            "allowed_tools": task["allowed_tools"], "requested_access_tiers": ["A1"],
-            "requested_capabilities": task["permissions"],
-            "forbidden_actions": task["forbidden_actions"], "budget": task["budget"],
-            "timeout_seconds": task["timeout_seconds"], "max_retries": 0,
-            "stop_conditions": task["stop_conditions"],
-            "escalation_route": task["escalation_route"],
-            "issued_at": task["created_at"], "expires_at": task["expires_at"],
-            "status": "PROPOSED",
-        }
         with OrchestratorKernel(self.database_path, self.contract_root) as kernel:
             kernel.verify_audit_chain()
             if kernel.kill_switch_state() != "HALTED":
                 raise PermissionDenied("one-shot synthetic execution requires the HALTED boundary")
+            parent_task_id = None
+            task_id, manifest_id, response_id = (
+                base_task_id, base_manifest_id, base_response_id
+            )
+            base_row = kernel._connection.execute(
+                "SELECT status,payload_json FROM tasks WHERE task_id=?", (base_task_id,)
+            ).fetchone()
+            if base_row is not None:
+                existing = json.loads(base_row["payload_json"])
+                if (
+                    existing.get("case_context") != context
+                    or existing.get("inputs") != operation_inputs
+                    or existing.get("objective") != objective
+                ):
+                    raise PermissionDenied("existing task identity is not bound to this exact operation")
+                manifests = kernel._connection.execute(
+                    "SELECT COUNT(*) FROM manifests WHERE task_id=?", (base_task_id,)
+                ).fetchone()[0]
+                responses = kernel._connection.execute(
+                    "SELECT COUNT(*) FROM responses WHERE task_id=?", (base_task_id,)
+                ).fetchone()[0]
+                if responses:
+                    raise ContractError("synthetic run is already completed; replay rejected")
+                if manifests > 1:
+                    raise IntegrityError("incomplete synthetic run has ambiguous manifests")
+                parent_task_id = base_task_id
+                task_id, manifest_id, response_id = self._recovery_identities(
+                    case_id, tax_year, run_id
+                )
+                if kernel._connection.execute(
+                    "SELECT 1 FROM tasks WHERE task_id=?", (task_id,)
+                ).fetchone() is not None:
+                    raise ContractError("synthetic recovery was already attempted; replay rejected")
             for row in kernel._connection.execute(
                 "SELECT task_id, payload_json FROM tasks ORDER BY task_id"
             ).fetchall():
                 existing = json.loads(row["payload_json"])
                 existing_context = existing.get("case_context")
-                if row["task_id"] == task_id:
-                    raise ContractError("synthetic task identity was already executed or registered")
+                if row["task_id"] in {base_task_id, task_id}:
+                    continue
                 if (
                     isinstance(existing_context, dict)
                     and existing_context.get("run_id") == run_id
@@ -271,12 +278,54 @@ class SyntheticCaseKernelExecutor:
                     and existing_context != context
                 ):
                     raise PermissionDenied("document reference is already bound to another run")
+            now = datetime.now(timezone.utc)
+            actor_instance_id = self._actor_instance_id(task_id)
+            task = {
+                "schema_version": 1, "task_id": task_id, "parent_task_id": parent_task_id,
+                "objective": objective,
+                "role_id": "IMPLEMENTATION_AGENT", "actor_instance_id": actor_instance_id,
+                "repository": "golestanzadeh/ai-agent-lab", "ref": "oi0002-identity-persistence",
+                "case_context": context,
+                "inputs": operation_inputs,
+                "expected_outputs": [f"kernel://ui25/result/{task_id}"],
+                "allowed_tools": ["synthetic_ui25_deterministic_worker"],
+                "permissions": ["report_evidence"],
+                "forbidden_actions": [
+                    "external_transfer", "use_real_data", "protected_persistence",
+                    "agent_spawn", "subprocess", "network_io",
+                ],
+                "budget": {"token_limit": 1, "tool_call_limit": 1, "cost_limit_usd": 0.01},
+                "timeout_seconds": 30, "max_retries": 0,
+                "acceptance_criteria": [acceptance],
+                "stop_conditions": ["scope mismatch", "kill switch not RUNNING", "duplicate task"],
+                "escalation_route": ["MASTER_PROJECT_ORCHESTRATOR", "HUMAN_PROJECT_OWNER"],
+                "created_at": now.isoformat(), "expires_at": (now + timedelta(minutes=10)).isoformat(),
+                "status": "REGISTERED",
+            }
+            manifest = {
+                "schema_version": 1, "manifest_id": manifest_id,
+                "role_id": task["role_id"], "actor_instance_id": actor_instance_id,
+                "task_id": task_id, "parent_task_id": parent_task_id,
+                "scope": {
+                    "repository": task["repository"], "ref": task["ref"],
+                    "allowed_paths": [], "case_context": context,
+                },
+                "inputs": task["inputs"], "expected_outputs": task["expected_outputs"],
+                "allowed_tools": task["allowed_tools"], "requested_access_tiers": ["A1"],
+                "requested_capabilities": task["permissions"],
+                "forbidden_actions": task["forbidden_actions"], "budget": task["budget"],
+                "timeout_seconds": task["timeout_seconds"], "max_retries": 0,
+                "stop_conditions": task["stop_conditions"],
+                "escalation_route": task["escalation_route"],
+                "issued_at": task["created_at"], "expires_at": task["expires_at"],
+                "status": "PROPOSED",
+            }
             # The explicit UI POST is the bounded Owner action represented here.
-            kernel.set_kill_switch(
-                "RUNNING", actor_id="HUMAN_PROJECT_OWNER",
-                authority_reference=authority_reference,
-            )
-            try:
+            with kernel.atomic_execution():
+                kernel.set_kill_switch(
+                    "RUNNING", actor_id="HUMAN_PROJECT_OWNER",
+                    authority_reference=authority_reference,
+                )
                 kernel.register_task(task, gate_triggers=())
                 kernel.register_manifest(manifest)
                 kernel.validate_manifest(manifest_id)
@@ -293,8 +342,8 @@ class SyntheticCaseKernelExecutor:
                 )
                 response = {
                     "schema_version": 1, "response_id": response_id,
-                    "task_id": task_id, "parent_task_id": None,
-                    "role_id": task["role_id"], "actor_instance_id": WORKER_ID,
+                    "task_id": task_id, "parent_task_id": parent_task_id,
+                    "role_id": task["role_id"], "actor_instance_id": actor_instance_id,
                     "status": "PASS",
                     "result_summary": result_summary,
                     "artifact_references": task["expected_outputs"],
@@ -310,13 +359,13 @@ class SyntheticCaseKernelExecutor:
                     "human_required": False, "created_at": datetime.now(timezone.utc).isoformat(),
                 }
                 kernel.record_response(manifest_id, response)
-                kernel.verify_audit_chain()
-            finally:
                 kernel.set_kill_switch(
                     "HALTED", actor_id="MASTER_PROJECT_ORCHESTRATOR",
                     authority_reference="ui25://synthetic-one-shot-complete",
                 )
+                kernel.verify_audit_chain()
         return {
             "task_id": task_id, "run_id": run_id, "result": result,
             "evidence": evidence, "status": "AWAITING_ACCEPTANCE",
+            "recovered_from_task_id": parent_task_id,
         }
