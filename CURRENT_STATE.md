@@ -1,5 +1,19 @@
 # Current State
 
+<!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
+<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+
+## Authoritative current snapshot — 2026-10-20
+
+The currently demonstrated product is a bilingual, owner-tested **synthetic** case/document/Kernel workflow. The bounded UI25-10 navigation/conflict increment is `TECHNICAL_PASS / INDEPENDENT_PASS / OWNER_BROWSER_PASS / SYNTHETIC_ONLY`; UI25-05's bounded synthetic Kernel implementation also has independent PASS (`93` focused and `148` related regression tests). UI25-11 is Owner-accepted for its bounded bilingual shell. None of these results accepts real taxpayer processing, protected persistence, operational IPC/C09, production provider extraction, tax calculation/declaration, ELSTER or release.
+
+The labels UI25-05 through UI25-10 used by October bounded execution orders are increment labels. They do not close the same-numbered full packages in the formal UI25 plan. Formal UI25-10 Approval/Export remains disabled and unaccepted.
+
+OI-0002 remains open on operational Kernel↔Identity continuity. The actual host cannot supply the ADR's TPM freshness counter and GitHub history is not an independent anti-rollback witness. Exact next action: `OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`. After that decision, revise the operational ADR, obtain independent architecture/security PASS, implement the frozen C01–C13 campaign, and only then consider OI-0002 closure. OI-0003, CASE-001 lineage/annual gates OI-0004–OI-0008, integrated DR-05 OI-0012, real 2025 processing and external submission remain dependency-gated. OI-0009–0011 are optional non-critical operational enhancements.
+
+All dated sections below are a chronological evidence ledger. Earlier pending, failed, blocked or next-action statements are historical when superseded by the snapshot above or a later accepted record; they are not current authorization.
+
 ## UI25-05 synthetic execution — 2026-10-16
 
 One explicit functional-UI action now executes one deterministic, bounded `TEST-*`/2025 task using the existing Kernel and fixed test worker, then displays the durable Kernel result after restart. Duplicate, unauthorized scope, cross-case run, non-HALTED start, halted Kill Switch and response tampering fail closed. Focused verification passes `93`, relevant regression passes `148`, and complete unit regression passes `1371 passed, 5 skipped`. Status: **TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING**; the task itself remains `AWAITING_ACCEPTANCE`. Evidence: `docs/ui25-05-synthetic-kernel-execution-20261016.md`.

@@ -1,10 +1,17 @@
 import re
+import subprocess
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / "docs"
 INDEX = DOCS / "README.md"
+CANONICAL_STATE_FILES = (
+    ROOT / "PROJECT_CHECKPOINT.md",
+    ROOT / "CURRENT_STATE.md",
+    ROOT / "ROADMAP.md",
+    ROOT / "OPEN_ITEMS.md",
+)
 
 
 def _indexed_markdown_names() -> set[str]:
@@ -134,3 +141,73 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 
     current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
     assert "Mapping and executable plausibility validation remain fail-closed" not in current
+
+
+def test_canonical_state_markers_are_identical() -> None:
+    expected = {
+        "CURRENT_PROJECT_STAGE": "SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED",
+        "CURRENT_NEXT_ACTION": "OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY",
+        "CURRENT_OPEN_ITEM_RANGE": "OI-0002..OI-0012",
+    }
+    for path in CANONICAL_STATE_FILES:
+        text = path.read_text(encoding="utf-8")
+        for key, value in expected.items():
+            assert f"<!-- {key}: {value} -->" in text, path
+
+
+def test_open_item_ids_are_unique_and_active_closed_are_disjoint() -> None:
+    text = (ROOT / "OPEN_ITEMS.md").read_text(encoding="utf-8")
+    active, closed = text.split("## Closed items (not active)", 1)
+    active_ids = re.findall(r"^\| (OI-\d{4}) \|", active, flags=re.MULTILINE)
+    closed_ids = re.findall(r"^- `(OI-\d{4})`", closed, flags=re.MULTILINE)
+    assert len(active_ids) == len(set(active_ids))
+    assert set(active_ids).isdisjoint(closed_ids)
+    assert active_ids == [f"OI-{number:04d}" for number in range(2, 13)]
+
+
+def test_current_acceptance_does_not_close_formal_ui25_packages() -> None:
+    for path in CANONICAL_STATE_FILES:
+        text = path.read_text(encoding="utf-8")
+        assert "increment" in text.lower(), path
+        assert "formal ui25-10" in text.lower(), path
+        assert "approval/export" in text.lower(), path
+
+    plan = (DOCS / "ui25-execution-and-acceptance-plan.md").read_text(
+        encoding="utf-8"
+    )
+    assert "UI25-05 synthetic worker is not automatic intake dispatch" in plan
+    assert "Formal Approval/Export remains disabled and unaccepted" in plan
+
+
+def test_current_governance_commit_references_resolve() -> None:
+    checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
+    required = (
+        "9b4cec532c97483cbf072c4fc90e8bcd3cf89538",
+        "f0845868218db3f0b46fc46f3c835008fed6a097",
+        "4161997720fd51c9b7a9a2feebf7c096e554a8c9",
+    )
+    for commit in required:
+        assert commit in checkpoint
+        result = subprocess.run(
+            ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+        )
+        assert result.returncode == 0, commit
+
+
+def test_mandatory_current_documents_and_links_exist() -> None:
+    mandatory = (
+        ROOT / "AGENTS.md",
+        ROOT / "PROJECT_CHECKPOINT.md",
+        ROOT / "OPEN_ITEMS.md",
+        ROOT / "CURRENT_STATE.md",
+        ROOT / "ROADMAP.md",
+        ROOT / "DECISIONS.md",
+        DOCS / "ui25-execution-and-acceptance-plan.md",
+        DOCS / "oi-0002-final-closure-matrix-20261012.md",
+        DOCS / "case001-declaration-readiness-2024.md",
+        DOCS / "case001-declaration-readiness-2024.json",
+    )
+    assert all(path.is_file() for path in mandatory)

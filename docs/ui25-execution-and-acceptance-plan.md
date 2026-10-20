@@ -1,5 +1,11 @@
 # UI25 — UI-led Product Completion and 2025 End-to-End Acceptance
 
+## Current truth overlay — 2026-10-20
+
+The package table below remains the formal UI25 scope. October execution-order labels `UI25-05` through `UI25-10` were used for smaller bounded synthetic increments and are not full-package acceptance. The independently accepted UI25-05 synthetic worker is not automatic intake dispatch; the Owner-accepted UI25-10 navigation/conflict increment is not UI25-10 Approval/Export. Formal Approval/Export remains disabled and unaccepted.
+
+The bounded bilingual shell (UI25-11) is Owner-accepted, and the seven UI25-10 increment browser scenarios are Owner-accepted for exact synthetic scope. Real case creation, protected documents, provider extraction, tax analysis, calculation, declaration, approval/export and end-to-end 2025 acceptance remain open. Exact operational prerequisite is OI-0002/OI-0003; OI-0002 first requires `OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`, revised ADR independent PASS and the frozen C01–C13 campaign.
+
 Date: 2026-10-09
 Status: OWNER-APPROVED PLAN / PARTIALLY EXECUTED (synthetic-only increments)
 Owner direction: complete and test the existing UI tab by tab, connect it to existing real project components, fix discovered implementation or architectural defects in the same workstream, and then validate a full 2025 case through the UI.
@@ -29,7 +35,7 @@ No replacement Kernel, scheduler, case registry, database or checkpoint. Reuse t
 
 Current bounded evidence: UI25-01 now includes a synthetic-only, strictly read-only projection of genuine existing Kernel case/run/task status. It does not accept the live resolver, protected persistence, automatic dispatch or real 2025 workflow. See `docs/ui25-kernel-read-only-projection-20261016.md`.
 
-UI25-05 bounded evidence: one explicit user action can execute one fixed deterministic synthetic worker through the existing Kernel and display its durable response. This is not automatic intake dispatch, real-case execution or package acceptance; independent review and Owner UI confirmation remain outstanding. See `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
+UI25-05 bounded evidence: one explicit user action can execute one fixed deterministic synthetic worker through the existing Kernel and display its durable response. The implementation has independent PASS (`93` focused, `148` related regression), but this is not automatic intake dispatch, real-case execution or formal package acceptance. Owner browser evidence is limited to the later seven UI25-10 increment scenarios. See `docs/ui25-05-synthetic-kernel-execution-20261016.md` and `PROJECT_CHECKPOINT.md`.
 
 ## Incremental evidence invariant
 A tax-year case remains open to later evidence, including after an earlier result is approved. New documents cause scoped re-extraction and dependency-aware versioned reanalysis; preserve accepted historical snapshots, explain changed figures, and require a new Owner approval where affected. Never silently modify a submitted declaration or automatically file an amendment.
@@ -46,4 +52,5 @@ A tax-year case remains open to later evidence, including after an earlier resul
 All project Constitution and existing gates remain in force. No taxpayer data/secrets in public GitHub. No new unapproved external endpoint or publication. Existing registered Gemini API is authorized only for its previously approved initial analysis/translation/interpretation prompt, subject to provider privacy/retention verification for protected real data. ELSTER/ERiC/Finanzamt submission requires both independent Owner approvals. No implicit production, real-data or blocked-gate release.
 
 ## Next step
-UI25-00: inspect and launch the actual existing UI, inventory each tab and its service bindings, and produce a short evidence-based gap list. No product functionality is asserted complete by this planning document.
+
+The UI25-00 inventory is complete. Current mandatory dependency action is Owner selection of a portable independently non-rollbackable freshness/restore authority, followed by revised operational ADR independent PASS and OI-0002 C01–C13 implementation/acceptance. Separately authorized synthetic usability work may continue because C09 is not a global stop, but it cannot be promoted to formal real-data package acceptance.

@@ -1,5 +1,25 @@
 # Roadmap
 
+## Authoritative remaining path — 2026-10-20
+
+<!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
+<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+
+Last reconciled: **2026-10-20**
+
+The current accepted experience is synthetic-only. October execution-order labels UI25-05 through UI25-10 identify bounded increments; they do **not** mean that the same-numbered formal packages below are complete. The UI25-10 navigation/conflict increment is Owner-browser accepted, while formal UI25-10 Approval/Export remains disabled and unaccepted.
+
+Mandatory remaining path:
+
+1. Owner selects and authorizes a portable, independently non-rollbackable freshness/restore authority (`OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`).
+2. Revise and independently accept the operational Kernel↔Identity ADR; then implement and independently verify frozen OI-0002 C01–C13.
+3. Complete protected OI-0003, then CASE-001 lineage and annual-review gates OI-0004–OI-0008, followed by integrated DR-05 (OI-0012).
+4. Complete the formal real-data UI25 packages through Owner end-to-end 2025 acceptance. Production provider use, calculation/declaration and Approval/Export each retain their own evidence and Human Gates.
+5. ELSTER/external transmission remains a separate two-stage Owner approval; it is not authorized by completion of the UI.
+
+C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009–OI-0011 are optional operational enhancements, not mandatory product-critical blockers. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
+
 ## Local development versus operational IPC acceptance — 2026-10-14
 
 Continue prerequisite-ready UI, contract, portability and synthetic verification work on the current Windows/Python/Docker baseline without requiring TPM. The TPM-bound ADR is retained as an unaccepted operational profile, not a development prerequisite. No replacement anti-rollback authority is approved. Any development-only IPC slice must remain incapable of protected mutation/finality/restore and must not be represented as C09 or OI-0002 acceptance. Migration to a replacement laptop/VPS remains an explicit verified operation, never silent reinitialization.
@@ -32,9 +52,9 @@ UI25-01 bounded usability/accessibility increments: German/Persian lifecycle-sta
 
 UI25-01 bounded presentation audit: independent PASS at exact commit `6dd95f5c58230bf41c7e8ae81e79d46c11844b88` after localized mobile/tablet navigation names were added (`19` focused; `93` relevant regression). Real resolver acceptance remains outstanding. The authenticated IPC critical path is now `BLOCKED_ARCHITECTURE`: elevated read-only evidence verifies the required TPM NV counter is unavailable on this host. Next IPC action is an explicit Owner architecture decision selecting a different independently non-rollbackable freshness authority, followed by ADR revision and independent security review; implementation remains forbidden before that PASS.
 
-This file contains remaining work only. Completed evidence belongs in `PROJECT_CHECKPOINT.md`, `DECISIONS.md`, focused documents, and Git history.
+The authoritative remaining path is the 2026-10-20 section above. The dated material below is retained as a historical/planning ledger; completed evidence remains authoritative only in `PROJECT_CHECKPOINT.md`, accepted focused documents and Git history.
 
-Last reconciled: **2026-10-09**
+Historical reconciliation marker: **2026-10-09** (superseded by the current marker above)
 
 
 ## Supervisor loop validation — 2026-10-07

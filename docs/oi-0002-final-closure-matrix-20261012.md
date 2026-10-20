@@ -1,5 +1,7 @@
 # OI-0002 final closure matrix and UI recovery handoff
 
+> **Current-status overlay (2026-10-20):** this document freezes the C01–C13 acceptance contract and preserves its 2026-10-12 evidence; its capacity data, UI continuation and “next executable” statements are historical. Later host diagnosis established that the TPM-bound freshness design is unsupported on this machine, and GitHub is not an independent anti-rollback authority. OI-0002 therefore remains OPEN pending `OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`, ADR revision, independent architecture/security PASS and the operational C01–C13 campaign. Later synthetic UI increments and UI25-11 Owner acceptance do not alter this frozen matrix or constitute operational acceptance.
+
 Date: 2026-10-12  
 Authority: Owner instruction `OI-0002 Final Closure and UI Delivery Recovery`  
 Recovery baseline: `03425904661640d52e1ec158404719748164475c`  

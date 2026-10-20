@@ -1,3 +1,28 @@
+# Authoritative current project truth — 2026-10-20
+
+<!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
+<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+
+This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
+
+Current accepted scope is limited to independently reviewed synthetic and non-operational components: OI-0002 REMEDIATION-02 and four-principal custody evidence; canonical IPC wire, envelope and correlation validators; the bounded UI25-11 bilingual shell; and the October UI25 synthetic case/document/Kernel increments through the seven Owner-observed UI25-10 UX scenarios. These results do not establish protected persistence, real taxpayer processing, operational IPC, C09, production Gemini extraction, tax calculation/declaration acceptance, ELSTER transmission or product release.
+
+The October labels `UI25-05` through `UI25-10` on bounded execution orders are increment identifiers, not acceptance of the same-numbered formal packages in `docs/ui25-execution-and-acceptance-plan.md`. In particular, the accepted UI25-10 navigation/conflict increment is not formal UI25-10 Approval/Export, which remains disabled and unaccepted. This namespace distinction applies to all current-state, roadmap and open-item interpretation.
+
+The mandatory critical path is:
+
+1. **Operational Kernel↔Identity foundation:** C09 and OI-0002 remain open. The host has no usable TPM freshness counter and GitHub branch history is not an independent anti-rollback authority. Exact next action is an Owner architecture decision selecting a portable, independently non-rollbackable freshness/restore authority; then revise the ADR, obtain independent architecture/security PASS, implement and execute the frozen C01–C13 operational campaign.
+2. **Protected case identity and facts:** complete OI-0003 only after OI-0002.
+3. **CASE-001 lineage and annual review:** resolve OI-0004 through OI-0008 in dependency order, then perform the separately tracked integrated DR-05 gate OI-0012. Do not revive superseded historical PASS labels as current lineage.
+4. **Real 2025 product:** only after the accepted protected resolver may formal UI25 case, document, provider extraction, analysis, calculation, result and end-to-end packages process real data. ELSTER/export remains a distinct two-stage Human Gate.
+
+OI-0009 through OI-0011 are optional operational enhancements and are not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
+
+The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
+
+Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
+
 # UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
 
 The bounded UI25-10 Owner browser acceptance at implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538` and documentation commit `4161997720fd51c9b7a9a2feebf7c096e554a8c9` was reconciled against every active row in `OPEN_ITEMS.md`. None of `OI-0002` through `OI-0011` is resolved by the seven accepted synthetic browser scenarios, so no active row was removed or weakened. UI25-10 is recorded only in the closed section with its exact scope; untested browser paths, real taxpayer processing, Gemini production extraction, Protected Persistence, operational IPC/C09, ELSTER/external submission and unrelated Kernel/product capabilities remain unaccepted.

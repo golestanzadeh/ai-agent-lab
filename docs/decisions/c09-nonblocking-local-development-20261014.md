@@ -1,7 +1,9 @@
 # C09 nonblocking local development decision
 
 Date: 2026-10-14
-Authority: Owner direction in ChatGPT conversation; implementation disposition pending canonical checkpoint integration.
+Authority: Owner direction in ChatGPT conversation; incorporated into the canonical checkpoint on 2026-10-14.
+
+Current integration note (2026-10-20): this decision is incorporated in the canonical checkpoint. Its former steps 1–3 (governance reconciliation, dependency inventory and selection/execution of safe synthetic packages) have been completed repeatedly. C09 itself remains OPEN / NOT ACCEPTED. The exact operational architecture action is Owner selection of a portable independently non-rollbackable freshness/restore authority; no replacement has been approved.
 
 ## Scope
 
