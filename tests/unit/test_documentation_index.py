@@ -211,3 +211,13 @@ def test_mandatory_current_documents_and_links_exist() -> None:
         DOCS / "case001-declaration-readiness-2024.json",
     )
     assert all(path.is_file() for path in mandatory)
+
+
+def test_ui25_11_acceptance_is_not_promoted_to_independent_pass() -> None:
+    checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    for text in (checkpoint, current):
+        snapshot = text.split("## UI25-05 synthetic execution", 1)[0]
+        assert "UI25-11" in snapshot
+        assert "no independent UI25-11 review is claimed" in snapshot
+        assert "UI25-11: INDEPENDENT_PASS" not in snapshot

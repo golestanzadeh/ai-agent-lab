@@ -6,7 +6,7 @@
 
 ## Authoritative current snapshot — 2026-10-20
 
-The currently demonstrated product is a bilingual, owner-tested **synthetic** case/document/Kernel workflow. The bounded UI25-10 navigation/conflict increment is `TECHNICAL_PASS / INDEPENDENT_PASS / OWNER_BROWSER_PASS / SYNTHETIC_ONLY`; UI25-05's bounded synthetic Kernel implementation also has independent PASS (`93` focused and `148` related regression tests). UI25-11 is Owner-accepted for its bounded bilingual shell. None of these results accepts real taxpayer processing, protected persistence, operational IPC/C09, production provider extraction, tax calculation/declaration, ELSTER or release.
+The currently demonstrated product is a bilingual, owner-tested **synthetic** case/document/Kernel workflow. The bounded UI25-10 navigation/conflict increment is `TECHNICAL_PASS / INDEPENDENT_PASS / OWNER_BROWSER_PASS / SYNTHETIC_ONLY`; UI25-05's bounded synthetic Kernel implementation also has independent PASS (`93` focused and `148` related regression tests). UI25-11 has technical PASS and Owner-reported device acceptance for its bounded bilingual shell; no independent UI25-11 review is claimed. None of these results accepts real taxpayer processing, protected persistence, operational IPC/C09, production provider extraction, tax calculation/declaration, ELSTER or release.
 
 The labels UI25-05 through UI25-10 used by October bounded execution orders are increment labels. They do not close the same-numbered full packages in the formal UI25 plan. Formal UI25-10 Approval/Export remains disabled and unaccepted.
 
