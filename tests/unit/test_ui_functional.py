@@ -179,9 +179,11 @@ def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(t
     client = _functional_client(create_dashboard_app(
         test_store=store, read_kernel_projection=projection.read
     ))
-    assert client.get("/", params={
+    missing = client.get("/", params={
         "tab": "analysis", "case_id": "TEST-2025-UI"
-    }).status_code == 400
+    })
+    assert missing.status_code == 200
+    assert 'data-kernel-run-state="missing"' in missing.text
     page = client.get("/", params={
         "tab": "analysis", "case_id": "TEST-2025-UI", "run_id": "RUN-2025-UI",
         "lang": "fa-IR",
@@ -200,9 +202,12 @@ def test_dashboard_projects_genuine_kernel_status_with_exact_scope_and_restart(t
     assert "ausdrückliche Benutzeraktion" in german.text
     assert "run_id=RUN-2025-UI" in german.text
 
-    assert client.get("/", params={
+    wrong = client.get("/", params={
         "tab": "analysis", "case_id": "TEST-2025-UI", "run_id": "RUN-WRONG"
-    }).status_code == 403
+    })
+    assert wrong.status_code == 200
+    assert 'data-kernel-run-state="invalid"' in wrong.text
+    assert "TASK-UI-001" not in wrong.text
     store.close()
 
     reopened = FunctionalTestStore(ui_database)
@@ -229,7 +234,10 @@ def test_dashboard_kernel_projection_rejects_year_and_case_mismatch(tmp_path):
         test_store=store,
         read_kernel_projection=ReadOnlyKernelProjection(kernel_database).read,
     ))
-    assert client.get("/", params={
+    mismatch = client.get("/", params={
         "tab": "analysis", "case_id": "TEST-B", "run_id": "RUN-A"
-    }).status_code == 403
+    })
+    assert mismatch.status_code == 200
+    assert 'data-kernel-run-state="invalid"' in mismatch.text
+    assert "TASK-UI25-READ" not in mismatch.text
     store.close()

@@ -209,10 +209,11 @@ def test_german_success_redirect_and_replay_error_preserve_locale(tmp_path):
         "/test/kernel/documents/extract", data=payload, follow_redirects=False,
     )
     assert replay.status_code == 303
-    assert "error=execution_conflict" in replay.headers["location"]
+    assert "error=run_already_completed" in replay.headers["location"]
+    assert "tab=analysis" in replay.headers["location"]
     assert "lang=de-DE" in replay.headers["location"]
     replay_page = test_client.get(replay.headers["location"])
-    assert "Diese Lauf-ID wurde bereits verwendet" in replay_page.text
+    assert "Dieser Lauf ist bereits abgeschlossen" in replay_page.text
     assert "kein unterstütztes synthetisches Fixture" not in replay_page.text
     assert '<html lang="de-DE" dir="ltr">' in replay_page.text
     with OrchestratorKernel(tmp_path / "kernel.sqlite3", CONTRACT_ROOT) as kernel:
@@ -223,7 +224,7 @@ def test_german_success_redirect_and_replay_error_preserve_locale(tmp_path):
 
 
 @pytest.mark.parametrize(("failure", "code", "message"), [
-    (PermissionDenied("synthetic denial"), "kernel_denied", "Kernel این اجرا را"),
+    (PermissionDenied("synthetic denial"), "permission_rejected", "Permission Matrix"),
     (IntegrityError("synthetic integrity failure"), "kernel_unavailable", "یکپارچگی یا وضعیت Kernel"),
 ])
 def test_kernel_failures_have_closed_privacy_safe_messages(tmp_path, failure, code, message):

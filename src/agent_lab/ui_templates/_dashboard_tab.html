@@ -19,6 +19,13 @@
       {% for task in kernel_projection.tasks %}<div><strong>{{ task.task_id }}</strong><small>{{ task.role_id }} · <span data-kernel-task-status="{{ task.status }}">{{ task.status }}</span> · {{ t.kernel_pending }}</small>{% if task.extraction_fields %}<section class="extraction-result" aria-label="{{ t.analysis_result_title }}"><h3>{{ t.synthetic_extraction_label }}</h3><p>{{ t.analysis_result_title }}</p><dl>{% for key,value in task.extraction_fields %}<div><dt>{{ t.extraction_fields[key] }}</dt><dd>{{ value }}</dd></div>{% endfor %}</dl></section>{% elif task.result_summary %}<small>{{ t.kernel_result }}: <span data-kernel-result>{{ task.result_summary }}</span></small>{% endif %}</div>{% endfor %}
     </section>
     {% endif %}
+    {% if tab == "analysis" and selected and kernel_projection_error %}
+    <section class="notice-inline" role="status" data-kernel-run-state="{{ kernel_projection_error }}">
+      <strong>{{ t.analysis_select_run }}</strong>
+      <p>{{ t.analysis_run_missing if kernel_projection_error == "missing" else t.analysis_run_invalid }}</p>
+      {% if test_mode %}<form method="get" action="/" class="test-form"><input type="hidden" name="tab" value="analysis"><input type="hidden" name="case_id" value="{{ selected.case_id }}"><input type="hidden" name="lang" value="{{ lang }}"><label>{{ t.kernel_run_id }}<input name="run_id" required pattern="[A-Za-z0-9_-]{1,128}" value="{{ run_id or '' }}"></label><button>{{ t.analysis_open_run }}</button></form>{% endif %}
+    </section>
+    {% endif %}
     {% if tab == "approval" %}<div class="gate-steps"><div><strong>{{ t.content_approval }}</strong><span>{{ t.not_recorded }}</span></div><div><strong>{{ t.destination_approval }}</strong><span>{{ t.not_recorded }}</span></div></div><button type="button" disabled class="disabled-action">{{ t.submission }}</button>{% endif %}
 
 {% if test_mode %}

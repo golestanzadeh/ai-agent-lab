@@ -29,6 +29,44 @@ def _canonical(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+class SyntheticExecutionConflict(ContractError):
+    """Stable, privacy-safe UI classification for an existing synthetic run."""
+
+
+class SyntheticRunReplay(SyntheticExecutionConflict):
+    def __init__(self, run_id: str):
+        super().__init__("synthetic run already has a durable response")
+        self.run_id = run_id
+
+
+class SyntheticIncompleteRun(SyntheticExecutionConflict):
+    def __init__(self, run_id: str):
+        super().__init__("synthetic run has an incomplete recovery attempt")
+        self.run_id = run_id
+
+
+class SyntheticDocumentRunConflict(PermissionDenied):
+    def __init__(self, run_id: str):
+        super().__init__("document is already bound to another run in the exact case scope")
+        self.run_id = run_id
+
+
+class SyntheticRunScopeConflict(PermissionDenied):
+    """A run identity is already bound outside the requested exact scope."""
+
+
+class SyntheticPermissionMatrixRejected(PermissionDenied):
+    """The Kernel Permission Matrix rejected the bounded worker."""
+
+
+class SyntheticKillSwitchRejected(PermissionDenied):
+    """The Kernel Kill Switch rejected execution."""
+
+
+class SyntheticBudgetRejected(PermissionDenied):
+    """The Kernel budget rejected execution."""
+
+
 class SyntheticCaseKernelExecutor:
     """Explicit one-task adapter; it is neither a scheduler nor an authority store."""
 
@@ -89,11 +127,11 @@ class SyntheticCaseKernelExecutor:
             tax_year=tax_year, run_id=run_id,
         )
         if not decision.allowed:
-            raise PermissionDenied("Kernel denied the fixed synthetic worker")
+            raise SyntheticPermissionMatrixRejected("Kernel denied the fixed synthetic worker")
         if not kernel.consume_budget(
             manifest_id, tokens=0, tool_calls=1, cost_usd=0.0
         ).allowed:
-            raise PermissionDenied("Kernel denied the fixed worker budget")
+            raise SyntheticBudgetRejected("Kernel denied the fixed worker budget")
         if synthetic_value is not None and document_reference is None and document_digest is None:
             result = synthetic_value * 2
             envelope = {
@@ -225,7 +263,9 @@ class SyntheticCaseKernelExecutor:
         with OrchestratorKernel(self.database_path, self.contract_root) as kernel:
             kernel.verify_audit_chain()
             if kernel.kill_switch_state() != "HALTED":
-                raise PermissionDenied("one-shot synthetic execution requires the HALTED boundary")
+                raise SyntheticKillSwitchRejected(
+                    "one-shot synthetic execution requires the HALTED boundary"
+                )
             parent_task_id = None
             task_id, manifest_id, response_id = (
                 base_task_id, base_manifest_id, base_response_id
@@ -248,7 +288,7 @@ class SyntheticCaseKernelExecutor:
                     "SELECT COUNT(*) FROM responses WHERE task_id=?", (base_task_id,)
                 ).fetchone()[0]
                 if responses:
-                    raise ContractError("synthetic run is already completed; replay rejected")
+                    raise SyntheticRunReplay(run_id)
                 if manifests > 1:
                     raise IntegrityError("incomplete synthetic run has ambiguous manifests")
                 parent_task_id = base_task_id
@@ -258,7 +298,12 @@ class SyntheticCaseKernelExecutor:
                 if kernel._connection.execute(
                     "SELECT 1 FROM tasks WHERE task_id=?", (task_id,)
                 ).fetchone() is not None:
-                    raise ContractError("synthetic recovery was already attempted; replay rejected")
+                    recovery_responses = kernel._connection.execute(
+                        "SELECT COUNT(*) FROM responses WHERE task_id=?", (task_id,)
+                    ).fetchone()[0]
+                    if recovery_responses:
+                        raise SyntheticRunReplay(run_id)
+                    raise SyntheticIncompleteRun(run_id)
             for row in kernel._connection.execute(
                 "SELECT task_id, payload_json FROM tasks ORDER BY task_id"
             ).fetchall():
@@ -271,13 +316,24 @@ class SyntheticCaseKernelExecutor:
                     and existing_context.get("run_id") == run_id
                     and existing_context != context
                 ):
-                    raise PermissionDenied("run identity is already bound to another case or year")
+                    raise SyntheticRunScopeConflict(
+                        "run identity is already bound to another case or year"
+                    )
                 if (
                     document_reference is not None
                     and document_reference in existing.get("inputs", ())
                     and existing_context != context
                 ):
-                    raise PermissionDenied("document reference is already bound to another run")
+                    if (
+                        isinstance(existing_context, dict)
+                        and existing_context.get("case_id") == case_id
+                        and existing_context.get("tax_year") == tax_year
+                        and isinstance(existing_context.get("run_id"), str)
+                    ):
+                        raise SyntheticDocumentRunConflict(existing_context["run_id"])
+                    raise SyntheticRunScopeConflict(
+                        "document reference is already bound outside the exact case scope"
+                    )
             now = datetime.now(timezone.utc)
             actor_instance_id = self._actor_instance_id(task_id)
             task = {

@@ -12,13 +12,22 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from agent_lab.ui_app import LOCAL_SECURITY_HEADERS, UI_ROOT
-from agent_lab.orchestrator_kernel import ContractError, KernelError, PermissionDenied
+from agent_lab.orchestrator_kernel import ContractError, PermissionDenied
 from agent_lab.ui_synthetic_document_errors import (
     SyntheticDocumentContentMissing,
     SyntheticDocumentDigestMismatch,
     SyntheticDocumentFixtureInvalid,
     SyntheticDocumentFormatUnsupported,
     SyntheticDocumentNotFound,
+)
+from agent_lab.ui_synthetic_kernel_execution import (
+    SyntheticBudgetRejected,
+    SyntheticDocumentRunConflict,
+    SyntheticIncompleteRun,
+    SyntheticKillSwitchRejected,
+    SyntheticPermissionMatrixRejected,
+    SyntheticRunReplay,
+    SyntheticRunScopeConflict,
 )
 
 
@@ -97,7 +106,10 @@ UI_TEXT = {
         "test_doc_unavailable": "اجرای Kernel در این launcher فعال نیست؛ رابط را با launcher رسمی تست باز کنید.",
         "extraction_readiness": {"MISSING_CONTENT": "محتوای این رکورد قدیمی ذخیره نشده است؛ فقط اعتبارسنجی digest ممکن است.", "UNSUPPORTED_FORMAT": "قالب ذخیره‌شده برای استخراج مصنوعی پشتیبانی نمی‌شود.", "DIGEST_MISMATCH": "استخراج مسدود است: digest محتوای ذخیره‌شده تطابق ندارد."},
         "analysis_result_title": "فیلدهای استخراج‌شدهٔ تأییدشده", "analysis_find": "پس از استخراج موفق، نتیجه در همین بخش Analysis نمایش داده می‌شود.",
-        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unknown_document": "اعتبارسنجی انجام نشد: سند یا digest در پروندهٔ انتخابی ثبت نشده است.", "missing_content": "استخراج ممکن نیست: این رکورد قدیمی فقط metadata و digest دارد و byteهای محتوا ذخیره نشده‌اند.", "unsupported_format": "استخراج ممکن نیست: قالب ذخیره‌شده text/plain مصنوعی پشتیبانی‌شده نیست.", "digest_mismatch": "استخراج مسدود شد: SHA-256 محتوای ذخیره‌شده با digest ثبت‌شده تطابق ندارد.", "invalid_fixture": "استخراج انجام نشد: bytes ذخیره‌شده با قرارداد شش‌فیلدی ui25.synthetic-wage-statement/1 مطابقت ندارند.", "execution_conflict": "این شناسهٔ اجرا قبلاً استفاده شده یا با اجرای ثبت‌شده تعارض دارد. یک شناسهٔ اجرای یکتای تازه وارد کنید.", "kernel_denied": "Kernel این اجرا را به‌دلیل مرز مجوز یا وضعیت ایمنی رد کرد. وضعیت پرونده و شناسهٔ اجرا را بررسی کنید.", "kernel_unavailable": "اجرای مصنوعی به‌صورت ایمن متوقف شد زیرا یکپارچگی یا وضعیت Kernel قابل تأیید نبود."},
+        "analysis_run_missing": "برای مشاهدهٔ نتیجه، شناسهٔ دقیق یک اجرای موجود را وارد کنید. هیچ اجرا به‌طور خودکار انتخاب یا اجرا نمی‌شود.",
+        "analysis_run_invalid": "این اجرا برای پرونده و سال انتخاب‌شده در دسترس نیست. شناسهٔ اجرا را بررسی کنید؛ اطلاعات پروندهٔ دیگری نمایش داده نمی‌شود.",
+        "analysis_select_run": "بازکردن اجرای موجود", "analysis_open_run": "نمایش نتیجهٔ اجرا",
+        "ui_errors": {"unsupported_upload": "ثبت انجام نشد: فقط فایل text/plain مصنوعی تا ۳۲ کیلوبایت مجاز است.", "unknown_document": "اعتبارسنجی انجام نشد: سند یا digest در پروندهٔ انتخابی ثبت نشده است.", "missing_content": "استخراج ممکن نیست: این رکورد قدیمی فقط metadata و digest دارد و byteهای محتوا ذخیره نشده‌اند.", "unsupported_format": "استخراج ممکن نیست: قالب ذخیره‌شده text/plain مصنوعی پشتیبانی‌شده نیست.", "digest_mismatch": "استخراج مسدود شد: SHA-256 محتوای ذخیره‌شده با digest ثبت‌شده تطابق ندارد.", "invalid_fixture": "استخراج انجام نشد: bytes ذخیره‌شده با قرارداد شش‌فیلدی ui25.synthetic-wage-statement/1 مطابقت ندارند.", "run_already_completed": "این اجرا قبلاً تکمیل شده است؛ نتیجهٔ موجود بدون اجرای دوباره در ادامه نمایش داده می‌شود.", "document_bound_run": "این سند قبلاً به اجرای نمایش‌داده‌شده متصل شده است. تغییر شناسهٔ اجرا مجوز پردازش دوباره ایجاد نمی‌کند.", "run_scope_conflict": "این شناسهٔ اجرا به پرونده یا سال دیگری متصل است و در این محدوده قابل استفاده نیست.", "incomplete_run": "این اجرا ناقص است و نتیجهٔ تکمیل‌شده‌ای ندارد. بازیابی خودکار انجام نشد؛ فقط مسیر بازیابی مجاز همان اجرا قابل استفاده است.", "permission_rejected": "Permission Matrix اجرای مصنوعی را رد کرد. هیچ وظیفه یا نتیجهٔ جدیدی ایجاد نشد.", "kill_switch_rejected": "Kill Switch اجازهٔ شروع اجرا را نداد. هیچ وظیفه یا نتیجهٔ جدیدی ایجاد نشد.", "budget_rejected": "بودجهٔ محدود Kernel اجازهٔ اجرا را نداد. هیچ وظیفه یا نتیجهٔ جدیدی ایجاد نشد.", "kernel_unavailable": "اجرای مصنوعی به‌صورت ایمن متوقف شد زیرا یکپارچگی یا وضعیت Kernel قابل تأیید نبود."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "مرجع سند", "DOCUMENT_DIGEST": "digest سند", "PARSER_SCHEMA": "نسخهٔ parser", "EXTRACTION_DIGEST": "digest استخراج", "DOCUMENT_TYPE": "نوع سند", "TAX_YEAR": "سال مالیاتی", "EMPLOYER_ID": "شناسهٔ کارفرمای مصنوعی", "GROSS_EMPLOYMENT_INCOME": "درآمد ناخالص استخدام", "WITHHELD_WAGE_TAX": "مالیات حقوق کسرشده", "CURRENCY": "ارز"},
         "kernel_title": "وضعیت واقعی Kernel", "kernel_run": "اجرای Kernel",
         "kernel_kill_switch": "کلید توقف", "kernel_tasks": "وظایف ثبت‌شده",
@@ -173,7 +185,10 @@ UI_TEXT = {
         "test_doc_unavailable": "Die Kernel-Ausführung ist in diesem Launcher nicht aktiv. Öffnen Sie die Oberfläche mit dem offiziellen Test-Launcher.",
         "extraction_readiness": {"MISSING_CONTENT": "Für diesen älteren Eintrag wurden keine Inhaltsbytes gespeichert; nur Digest-Validierung ist möglich.", "UNSUPPORTED_FORMAT": "Das gespeicherte Format wird für die synthetische Extraktion nicht unterstützt.", "DIGEST_MISMATCH": "Extraktion gesperrt: Der Digest der gespeicherten Bytes stimmt nicht überein."},
         "analysis_result_title": "Verifizierte extrahierte Felder", "analysis_find": "Nach erfolgreicher Extraktion erscheint das Ergebnis hier im Bereich Analyse.",
-        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unknown_document": "Validierung fehlgeschlagen: Dokument oder Digest ist im ausgewählten Fall nicht registriert.", "missing_content": "Extraktion nicht möglich: Dieser ältere Eintrag enthält nur Metadaten und Digest; Inhaltsbytes wurden nicht gespeichert.", "unsupported_format": "Extraktion nicht möglich: Das gespeicherte Format ist kein unterstütztes synthetisches text/plain.", "digest_mismatch": "Extraktion gesperrt: SHA-256 der gespeicherten Bytes stimmt nicht mit dem registrierten Digest überein.", "invalid_fixture": "Extraktion fehlgeschlagen: Die gespeicherten Bytes erfüllen den Sechs-Felder-Vertrag ui25.synthetic-wage-statement/1 nicht.", "execution_conflict": "Diese Lauf-ID wurde bereits verwendet oder steht im Konflikt mit einem registrierten Lauf. Verwenden Sie eine neue eindeutige Lauf-ID.", "kernel_denied": "Der Kernel hat die Ausführung wegen einer Berechtigungs- oder Sicherheitsgrenze abgelehnt. Prüfen Sie Fall und Lauf-ID.", "kernel_unavailable": "Die synthetische Ausführung wurde sicher gestoppt, weil Integrität oder Zustand des Kernels nicht bestätigt werden konnten."},
+        "analysis_run_missing": "Geben Sie die genaue Kennung eines vorhandenen Laufs ein. Es wird kein Lauf automatisch ausgewählt oder ausgeführt.",
+        "analysis_run_invalid": "Dieser Lauf ist für den ausgewählten Steuerfall und das Steuerjahr nicht verfügbar. Es werden keine Daten eines anderen Falls angezeigt.",
+        "analysis_select_run": "Vorhandenen Lauf öffnen", "analysis_open_run": "Laufergebnis anzeigen",
+        "ui_errors": {"unsupported_upload": "Registrierung fehlgeschlagen: Erlaubt sind nur synthetische text/plain-Dateien bis 32 KB.", "unknown_document": "Validierung fehlgeschlagen: Dokument oder Digest ist im ausgewählten Fall nicht registriert.", "missing_content": "Extraktion nicht möglich: Dieser ältere Eintrag enthält nur Metadaten und Digest; Inhaltsbytes wurden nicht gespeichert.", "unsupported_format": "Extraktion nicht möglich: Das gespeicherte Format ist kein unterstütztes synthetisches text/plain.", "digest_mismatch": "Extraktion gesperrt: SHA-256 der gespeicherten Bytes stimmt nicht mit dem registrierten Digest überein.", "invalid_fixture": "Extraktion fehlgeschlagen: Die gespeicherten Bytes erfüllen den Sechs-Felder-Vertrag ui25.synthetic-wage-statement/1 nicht.", "run_already_completed": "Dieser Lauf ist bereits abgeschlossen; das vorhandene Ergebnis wird unten ohne erneute Ausführung angezeigt.", "document_bound_run": "Dieses Dokument ist bereits an den angezeigten Lauf gebunden. Eine andere Lauf-ID erlaubt keine erneute Verarbeitung.", "run_scope_conflict": "Diese Lauf-ID ist an einen anderen Steuerfall oder ein anderes Steuerjahr gebunden und hier nicht verwendbar.", "incomplete_run": "Dieser Lauf ist unvollständig und hat kein abgeschlossenes Ergebnis. Es wurde keine automatische Wiederherstellung gestartet.", "permission_rejected": "Die Permission Matrix hat die synthetische Ausführung abgelehnt. Es wurde keine neue Aufgabe oder Antwort angelegt.", "kill_switch_rejected": "Der Kill Switch hat den Start abgelehnt. Es wurde keine neue Aufgabe oder Antwort angelegt.", "budget_rejected": "Das begrenzte Kernel-Budget hat die Ausführung abgelehnt. Es wurde keine neue Aufgabe oder Antwort angelegt.", "kernel_unavailable": "Die synthetische Ausführung wurde sicher gestoppt, weil Integrität oder Zustand des Kernels nicht bestätigt werden konnten."},
         "extraction_fields": {"DOCUMENT_REFERENCE": "Dokumentreferenz", "DOCUMENT_DIGEST": "Dokument-Digest", "PARSER_SCHEMA": "Parser-Version", "EXTRACTION_DIGEST": "Extraktions-Digest", "DOCUMENT_TYPE": "Dokumenttyp", "TAX_YEAR": "Steuerjahr", "EMPLOYER_ID": "Synthetische Arbeitgeber-ID", "GROSS_EMPLOYMENT_INCOME": "Bruttoarbeitslohn", "WITHHELD_WAGE_TAX": "Einbehaltene Lohnsteuer", "CURRENCY": "Währung"},
         "kernel_title": "Echter Kernel-Status", "kernel_run": "Kernel-Lauf",
         "kernel_kill_switch": "Kill Switch", "kernel_tasks": "Registrierte Aufgaben",
@@ -286,20 +301,47 @@ def create_dashboard_app(
         if test_store is not None and selected is not None:
             detail = test_store.detail(selected.case_id)
         kernel_projection = None
+        kernel_projection_error = None
         if read_kernel_projection is not None and selected is not None and tab in {"analysis", "activity"}:
             if run_id is None:
-                raise HTTPException(status_code=400, detail="Exact run_id is required for Kernel status")
-            try:
-                kernel_projection = read_kernel_projection(selected.case_id, selected.tax_year, run_id)
-            except Exception as exc:
-                raise HTTPException(status_code=403, detail="Kernel scope is unavailable or unauthorized") from exc
+                kernel_projection_error = "missing"
+            else:
+                try:
+                    kernel_projection = read_kernel_projection(selected.case_id, selected.tax_year, run_id)
+                except Exception:
+                    kernel_projection_error = "invalid"
         return templates.TemplateResponse(request=request, name="dashboard.html", context={
             "state": state, "cases": cases, "selected": selected, "tab": tab,
             "test_mode": test_store is not None, "detail": detail, "lang": lang, "t": UI_TEXT[lang],
             "run_id": run_id, "kernel_projection": kernel_projection,
+            "kernel_projection_error": kernel_projection_error,
             "ui_error": UI_TEXT[lang]["ui_errors"].get(error),
             "kernel_execution_available": execute_kernel_task is not None,
         })
+
+    def execution_error_redirect(exc: Exception, *, case_id: str, lang: str):
+        params = {"case_id": case_id, "lang": lang}
+        if isinstance(exc, SyntheticRunReplay):
+            params.update(tab="analysis", run_id=exc.run_id, error="run_already_completed")
+        elif isinstance(exc, SyntheticDocumentRunConflict):
+            params.update(tab="analysis", run_id=exc.run_id, error="document_bound_run")
+        elif isinstance(exc, SyntheticIncompleteRun):
+            params.update(tab="analysis", run_id=exc.run_id, error="incomplete_run")
+        elif isinstance(exc, SyntheticRunScopeConflict):
+            params.update(tab="documents", error="run_scope_conflict")
+        elif isinstance(exc, SyntheticPermissionMatrixRejected):
+            params.update(tab="documents", error="permission_rejected")
+        elif isinstance(exc, SyntheticKillSwitchRejected):
+            params.update(tab="documents", error="kill_switch_rejected")
+        elif isinstance(exc, SyntheticBudgetRejected):
+            params.update(tab="documents", error="budget_rejected")
+        elif isinstance(exc, PermissionDenied):
+            params.update(tab="documents", error="permission_rejected")
+        elif isinstance(exc, ContractError):
+            params.update(tab="documents", error="kernel_unavailable")
+        else:
+            params.update(tab="documents", error="kernel_unavailable")
+        return RedirectResponse("/?" + urlencode(params), status_code=303)
 
     def require_test():
         if test_store is None:
@@ -398,14 +440,8 @@ def create_dashboard_app(
                     case_id=case_id, tax_year=matching[0].tax_year, run_id=run_id,
                     document_reference=document.reference, document_digest=document.digest,
                 )
-            except ContractError:
-                error = "execution_conflict"
-            except PermissionDenied:
-                error = "kernel_denied"
-            except KernelError:
-                error = "kernel_unavailable"
-            except Exception:
-                error = "kernel_unavailable"
+            except Exception as exc:
+                return execution_error_redirect(exc, case_id=case_id, lang=lang)
             else:
                 return RedirectResponse(
                     "/?" + urlencode({"tab": "analysis", "case_id": case_id, "run_id": run_id, "lang": lang}), status_code=303
@@ -448,14 +484,8 @@ def create_dashboard_app(
                 )
             except ValueError:
                 error = "invalid_fixture"
-            except ContractError:
-                error = "execution_conflict"
-            except PermissionDenied:
-                error = "kernel_denied"
-            except KernelError:
-                error = "kernel_unavailable"
-            except Exception:
-                error = "kernel_unavailable"
+            except Exception as exc:
+                return execution_error_redirect(exc, case_id=case_id, lang=lang)
             else:
                 return RedirectResponse(
                     "/?" + urlencode({"tab": "analysis", "case_id": case_id, "run_id": run_id, "lang": lang}),

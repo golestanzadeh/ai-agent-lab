@@ -176,7 +176,7 @@ def test_restart_recovers_exact_legacy_orphan_once_without_rewriting_history(tmp
         assert kernel._connection.execute("SELECT COUNT(*) FROM budget_usage").fetchone()[0] == 1
         assert kernel.kill_switch_state() == "HALTED"
 
-    with pytest.raises(ContractError, match="recovery was already attempted"):
+    with pytest.raises(ContractError, match="durable response"):
         _extraction(executor, run_id="RUN-LEGACY-ORPHAN")
     assert _counts(database) == {
         "tasks": 2, "manifests": 1, "responses": 1, "budget": 1,
@@ -265,7 +265,7 @@ def test_ui_recovers_legacy_orphan_and_restart_projects_verified_result(tmp_path
         follow_redirects=False,
     )
     assert replay.status_code == 303
-    assert "error=execution_conflict" in replay.headers["location"]
+    assert "error=run_already_completed" in replay.headers["location"]
     assert _counts(kernel_database) == {
         "tasks": 2, "manifests": 1, "responses": 1, "budget": 1,
         "kill_switch": "HALTED",
