@@ -1,3 +1,9 @@
+# UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
+
+The bounded UI25-10 Owner browser acceptance at implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538` and documentation commit `4161997720fd51c9b7a9a2feebf7c096e554a8c9` was reconciled against every active row in `OPEN_ITEMS.md`. None of `OI-0002` through `OI-0011` is resolved by the seven accepted synthetic browser scenarios, so no active row was removed or weakened. UI25-10 is recorded only in the closed section with its exact scope; untested browser paths, real taxpayer processing, Gemini production extraction, Protected Persistence, operational IPC/C09, ELSTER/external submission and unrelated Kernel/product capabilities remain unaccepted.
+
+Standing documentation rule: every future stage transition must assess and synchronize both `PROJECT_CHECKPOINT.md` and `OPEN_ITEMS.md` in the same governed change set. If no active row changes, that no-change assessment must be explicit; historical evidence and unresolved prerequisites must not be silently removed or revived. Exact continuation remains Owner selection and authorization of the next bounded stage; this reconciliation authorizes no implementation.
+
 # UI25-10 Analysis navigation and execution-conflict UX — 2026-10-20
 
 The Owner confirmed the UI25-09 recovery run `RUN-OWNER-UI25-08-004` for synthetic case `TEST-2025-02` / 2025: structured extraction displayed, survived refresh and reopening, same-run replay was rejected, and the same document with a new run ID was rejected. This supersedes UI25-09's `OWNER_BROWSER_RETEST_PENDING` for that bounded recovery; it does not accept real-data or operational execution.

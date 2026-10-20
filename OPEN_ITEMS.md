@@ -4,7 +4,7 @@ Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner 
 
 ## Lifecycle (proposal recorded, automatic enforcement not implemented)
 
-At every governed recovery and package boundary, reconcile active gates with the **latest** independent evidence, not historical checkpoint labels. Register only the **unresolved part** with a stable ID, exact next action, dependencies and acceptance authority. A later accepted PASS supersedes an earlier FAIL; do not reopen it. On formal independent PASS, first commit evidence and update checkpoint/plan, then remove the row from this active list in a committed change; Git history preserves the record. New unresolved gates get new sequential IDs. An unattended periodic schedule requires separate authorization; none is created here. Protected taxpayer facts and credentials never belong in Git.
+At every governed recovery and package boundary, reconcile active gates with the **latest** independent evidence, not historical checkpoint labels. Register only the **unresolved part** with a stable ID, exact next action, dependencies and acceptance authority. A later accepted PASS supersedes an earlier FAIL; do not reopen it. On formal independent PASS, first commit evidence and update checkpoint/plan, then remove the row from this active list in a committed change; Git history preserves the record. New unresolved gates get new sequential IDs. Every future stage transition must assess and synchronize both `PROJECT_CHECKPOINT.md` and this file in the same governed change set; when no active row is resolved, preserve the rows and explicitly record that result. An unattended periodic schedule requires separate authorization; none is created here. Protected taxpayer facts and credentials never belong in Git.
 
 ## Verified active items
 
@@ -24,6 +24,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 ## Closed items (not active)
 
 - `OI-0001` DOC-INDEX-CI-REPAIR: `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE` on 2026-10-08. Explicit Owner decision; 68 tests PASS and two GitHub Actions runs SUCCESS. This is **not** a claim of formal independent reviewer acceptance. Closure evidence: `docs/doc-index-ci-repair-plan-20261008.md`, commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. ID is never reused.
+- `UI25-10` Analysis navigation and execution-conflict UX: `TECHNICAL_PASS / INDEPENDENT_PASS / OWNER_BROWSER_PASS / SYNTHETIC_ONLY` on 2026-10-20 for implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538` and accepted case/run `TEST-2025-02` / `RUN-OWNER-UI25-08-004`. Closure covers only the seven Owner-observed scenarios recorded in `PROJECT_CHECKPOINT.md`: Documents → Analysis navigation, selected-Run preservation, six synthetic fields, Persian/German switching, result preservation across language changes, completed-run Replay, and same-document/new-run conflict behavior. No active `OI-0002`–`OI-0011` row is resolved by this bounded UI acceptance; all listed dependencies, security gates and untested browser scenarios remain open or outside this acceptance.
 
 ## Superseded / intentionally excluded
 
@@ -37,4 +38,4 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Mandatory review
 
-Read newest checkpoint and governing evidence; test each row against later accepted records; add genuinely new unaccepted gates; never dispatch work just because it appears here. Upon formal PASS, update plan and checkpoint with exact evidence and commit, then delete only the resolved active row. No automated schedule or additional execution authority is created by this document.
+Read newest checkpoint and governing evidence; test each row against later accepted records; add genuinely new unaccepted gates; never dispatch work just because it appears here. Upon formal PASS, update plan and checkpoint with exact evidence and commit, then delete only the resolved active row. Every stage transition must assess and synchronize `PROJECT_CHECKPOINT.md` and `OPEN_ITEMS.md` together, including an explicit no-row-change result when applicable. No automated schedule or additional execution authority is created by this document.

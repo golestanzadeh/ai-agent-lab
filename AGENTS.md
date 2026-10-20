@@ -14,6 +14,7 @@ For every new ChatGPT conversation, Codex session, or Agent process concerning t
 4. When older records conflict with a later human-confirmed checkpoint, expose and reconcile the conflict; do not silently revive the older state.
 5. Never fabricate details that were not durably recovered. Mark them unknown/not recovered.
 6. Update the checkpoint in the same governed change set whenever a stage is accepted, closed, blocked, resumed, or materially changed.
+7. For every future stage transition, assess and synchronize both `PROJECT_CHECKPOINT.md` and `OPEN_ITEMS.md` in the same governed change set. If the transition resolves no active open-item row, preserve the rows and record that outcome rather than silently omitting the assessment.
 
 A task handoff is incomplete until durable project state—not chat memory alone—contains the result and exact continuation point.
 
