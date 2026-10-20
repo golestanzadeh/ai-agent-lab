@@ -147,7 +147,7 @@ def test_canonical_state_markers_are_identical() -> None:
     expected = {
         "CURRENT_PROJECT_STAGE": "SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED",
         "CURRENT_NEXT_ACTION": "OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY",
-        "CURRENT_OPEN_ITEM_RANGE": "OI-0002..OI-0012",
+        "CURRENT_ACTIVE_OPEN_ITEMS": "OI-0002..OI-0008,OI-0010..OI-0012",
     }
     for path in CANONICAL_STATE_FILES:
         text = path.read_text(encoding="utf-8")
@@ -162,7 +162,29 @@ def test_open_item_ids_are_unique_and_active_closed_are_disjoint() -> None:
     closed_ids = re.findall(r"^- `(OI-\d{4})`", closed, flags=re.MULTILINE)
     assert len(active_ids) == len(set(active_ids))
     assert set(active_ids).isdisjoint(closed_ids)
-    assert active_ids == [f"OI-{number:04d}" for number in range(2, 13)]
+    assert active_ids == [
+        *(f"OI-{number:04d}" for number in range(2, 9)),
+        *(f"OI-{number:04d}" for number in range(10, 13)),
+    ]
+    assert "OI-0009" in closed_ids
+
+
+def test_oi_0009_is_owner_terminated_and_not_an_execution_dependency() -> None:
+    checkpoint = (ROOT / "PROJECT_CHECKPOINT.md").read_text(encoding="utf-8")
+    current = (ROOT / "CURRENT_STATE.md").read_text(encoding="utf-8")
+    roadmap = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
+    open_items = (ROOT / "OPEN_ITEMS.md").read_text(encoding="utf-8")
+    decision = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
+    design = (DOCS / "supervisor-loop-design.md").read_text(encoding="utf-8")
+
+    active, closed = open_items.split("## Closed items (not active)", 1)
+    assert "| OI-0009 |" not in active
+    assert "`OI-0009`" in closed
+    for text in (checkpoint, current, roadmap, closed, decision, design):
+        assert "OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE" in text
+    for text in (checkpoint, current, roadmap, closed, decision):
+        assert "not a technical PASS" in text or "not `TECHNICAL_PASS`" in text
+        assert "new explicit Owner directive" in text
 
 
 def test_current_acceptance_does_not_close_formal_ui25_packages() -> None:

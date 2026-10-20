@@ -2,7 +2,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
 
 ## Authoritative current snapshot — 2026-10-20
 
@@ -10,7 +10,7 @@ The currently demonstrated product is a bilingual, owner-tested **synthetic** ca
 
 The labels UI25-05 through UI25-10 used by October bounded execution orders are increment labels. They do not close the same-numbered full packages in the formal UI25 plan. Formal UI25-10 Approval/Export remains disabled and unaccepted.
 
-OI-0002 remains open on operational Kernel↔Identity continuity. The actual host cannot supply the ADR's TPM freshness counter and GitHub history is not an independent anti-rollback witness. Exact next action: `OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`. After that decision, revise the operational ADR, obtain independent architecture/security PASS, implement the frozen C01–C13 campaign, and only then consider OI-0002 closure. OI-0003, CASE-001 lineage/annual gates OI-0004–OI-0008, integrated DR-05 OI-0012, real 2025 processing and external submission remain dependency-gated. OI-0009–0011 are optional non-critical operational enhancements.
+OI-0002 remains open on operational Kernel↔Identity continuity. The actual host cannot supply the ADR's TPM freshness counter and GitHub history is not an independent anti-rollback witness. Exact next action: `OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`. After that decision, revise the operational ADR, obtain independent architecture/security PASS, implement the frozen C01–C13 campaign, and only then consider OI-0002 closure. OI-0003, CASE-001 lineage/annual gates OI-0004–OI-0008, integrated DR-05 OI-0012, real 2025 processing and external submission remain dependency-gated. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`, is not a technical PASS, and G2 MCP Events are not an execution dependency; only a new explicit Owner directive may reactivate it. OI-0010 and OI-0011 remain optional non-critical operational enhancements.
 
 All dated sections below are a chronological evidence ledger. Earlier pending, failed, blocked or next-action statements are historical when superseded by the snapshot above or a later accepted record; they are not current authorization.
 

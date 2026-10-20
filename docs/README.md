@@ -30,7 +30,7 @@ Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains 
 - `official-knowledge-index.md` — verified reusable official semantics and precise protected-source-free lookup.
 - `infrastructure-repair-20261004.md` — accepted limit-governance/index repair and preserved CASE-001 continuation.
 - `master-execution-graph.md` — versioned project graph, deterministic next-action projection, hot context, scheduler, and notification boundary.
-- `supervisor-loop-design.md` — bounded supervisor-loop design and G1–G4 validation gates.
+- `supervisor-loop-design.md` — historical bounded supervisor-loop design; OI-0009/G2-G4 are Owner-terminated and permanently out of scope unless a new explicit Owner directive reactivates them.
 - `supervisor-loop-g1-validation-20261007.md` — accepted read-only usage-telemetry validation evidence.
 - `owner-exception-notification-activation-20261005.json` — privacy-minimized evidence for the single authorized activation attempt.
 - `work-scheduler-migration-stop-20261005.json` — privacy-minimized missed-wake evidence and fail-closed Work Scheduled Task migration stop.

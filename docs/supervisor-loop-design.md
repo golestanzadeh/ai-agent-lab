@@ -1,6 +1,8 @@
 # Supervisor Loop Design
 
-Status: G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED
+Status: G1 HISTORICAL PASS / G2-G4 OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE
+
+Owner disposition (2026-10-20): OI-0009 and the G2 MCP event-delivery continuation are permanently outside the executable project scope. This is not a technical PASS for G2-G4. The design below is retained as historical evidence only, imposes no current dependency, and may be reactivated only by a new explicit Owner directive.
 Date: 2026-10-07
 Branch: `d022-supervisor-loop-design`
 

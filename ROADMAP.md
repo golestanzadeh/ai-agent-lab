@@ -4,7 +4,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
 
 Last reconciled: **2026-10-20**
 
@@ -18,7 +18,7 @@ Mandatory remaining path:
 4. Complete the formal real-data UI25 packages through Owner end-to-end 2025 acceptance. Production provider use, calculation/declaration and Approval/Export each retain their own evidence and Human Gates.
 5. ELSTER/external transmission remains a separate two-stage Owner approval; it is not authorized by completion of the UI.
 
-C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009–OI-0011 are optional operational enhancements, not mandatory product-critical blockers. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
+C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`, not a technical PASS; G2 MCP Events are removed from every execution dependency and may be reactivated only by a new explicit Owner directive. OI-0010 and OI-0011 are optional operational enhancements, not mandatory product-critical blockers. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
 
 ## Local development versus operational IPC acceptance — 2026-10-14
 
@@ -57,12 +57,14 @@ The authoritative remaining path is the 2026-10-20 section above. The dated mate
 Historical reconciliation marker: **2026-10-09** (superseded by the current marker above)
 
 
-## Supervisor loop validation — 2026-10-07
+## Historical supervisor loop validation — 2026-10-07; OI-0009 terminated 2026-10-20
+
+Current disposition: OI-0009 and its G2 MCP event-delivery continuation are `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. The following bullets preserve historical evidence only and define no current dependency or executable next step. Reactivation requires a new explicit Owner directive.
 
 - Design contract: `docs/supervisor-loop-design.md`.
-- Status: `G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED`.
+- Historical status at the time: `G1 PASS / G2-G4 LOCAL VALIDATION REQUIRED`; superseded for execution by the 2026-10-20 Owner termination.
 - G1 passed on the real Windows/ChatGPT account: authenticated `codex app-server` exposed unambiguous 300-minute and 10080-minute windows through `account/rateLimits/read`; the read-only normalized reader and ignored runtime snapshot are implemented and focused verification passes. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
-- Validate next in order: G2 MCP event delivery to one designated Work chat, G3 one-shot Work wake, then G4 synthetic end-to-end loop.
+- Historical planned order was G2 event delivery, G3 one-shot Work wake and G4 synthetic end-to-end loop; that continuation is now terminated and must not execute.
 - No MCP callback server, scheduler binding, credentials, Telegram adapter, or autonomous continuation is authorized before the corresponding smoke test passes.
 - The existing Deterministic Orchestrator Kernel remains execution authority; this work may close the recorded `NO_AUTHORITATIVE_SCHEDULER` boundary but must not introduce a second orchestrator.
 

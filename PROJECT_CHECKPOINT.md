@@ -2,7 +2,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_OPEN_ITEM_RANGE: OI-0002..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
 
@@ -17,11 +17,15 @@ The mandatory critical path is:
 3. **CASE-001 lineage and annual review:** resolve OI-0004 through OI-0008 in dependency order, then perform the separately tracked integrated DR-05 gate OI-0012. Do not revive superseded historical PASS labels as current lineage.
 4. **Real 2025 product:** only after the accepted protected resolver may formal UI25 case, document, provider extraction, analysis, calculation, result and end-to-end packages process real data. ELSTER/export remains a distinct two-stage Human Gate.
 
-OI-0009 through OI-0011 are optional operational enhancements and are not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
+OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical PASS and G2 MCP Events are not an execution dependency. Reactivation requires a new explicit Owner directive. OI-0010 and OI-0011 remain optional operational enhancements and are not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
 
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
+
+# OI-0009 permanent Owner termination — 2026-10-20
+
+By explicit final Owner directive, OI-0009 Supervisor-loop G2 MCP event delivery proof is **`OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`**. This is a scope decision, not `TECHNICAL_PASS`, acceptance evidence or proof of G2. OI-0009 is removed from the active projection; no current or future execution path depends on G2 MCP Events. Historical G1/G2 design and validation records remain preserved only as historical evidence. Reactivation is forbidden unless a new explicit Owner directive authorizes it. This transition changes no product code, infrastructure, scheduler, MCP runtime or execution authority.
 
 # UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
 
@@ -351,7 +355,7 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 - G1 is `PASS` on the actual Windows/ChatGPT account. Codex CLI `0.160.1` authenticated with the existing ChatGPT login, and local `codex app-server` returned unambiguous 300-minute and 10080-minute rate-limit windows through `account/rateLimits/read` without creating a model thread or project task.
 - A strict read-only normalizer now writes only non-secret usage telemetry to ignored `.runtime/usage/CODEX_USAGE.json` and adapts it to the existing deterministic `CapacityObservation`; no second Limit Guard or execution authority was created. Focused verification passed (`33 passed`) and the real local smoke created the ignored snapshot successfully. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
-- G2 MCP Event delivery remains unproven and is the next infrastructure gate. This infrastructure validation does not resolve or bypass the separate DR-04 Owner Human Gate below.
+- Historical 2026-10-07 state: G2 MCP Event delivery was unproven and was then described as the next infrastructure gate. This continuation is superseded by the 2026-10-20 permanent Owner termination of OI-0009 and is not executable.
 
 ### DR-04 authoritative rounding Human Gate — 2026-10-06
 
