@@ -4,7 +4,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Last reconciled: **2026-10-20**
 
@@ -18,7 +18,7 @@ Mandatory remaining path:
 4. Complete the formal real-data UI25 packages through Owner end-to-end 2025 acceptance. Production provider use, calculation/declaration and Approval/Export each retain their own evidence and Human Gates.
 5. ELSTER/external transmission remains a separate two-stage Owner approval; it is not authorized by completion of the UI.
 
-C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`, not a technical PASS; G2 MCP Events are removed from every execution dependency and may be reactivated only by a new explicit Owner directive. OI-0010 and OI-0011 are optional operational enhancements, not mandatory product-critical blockers. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
+C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not a technical PASS; outbound notification-provider activation is removed from every development, acceptance and release dependency. Either item may be reactivated only by a new explicit Owner directive. OI-0010 is an optional operational enhancement, not a mandatory product-critical blocker. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
 
 ## Local development versus operational IPC acceptance — 2026-10-14
 
@@ -139,7 +139,7 @@ Required checks include case isolation, privacy/security, restart/crash/retry/re
 ## Future-file register
 
 - `docs/dr04-rounding-human-gate-20261006.json` records the fail-closed DR-04 Owner gate: authoritative taxpayer-favorable whole-euro declaration inputs imply a EUR 32.00 section-35a credit and a projected EUR 134.00 successor refund, while the accepted EUR 133.83 result remains frozen until an exact Owner decision.
-- `src/agent_lab/owner_exception_notification.py`, `tests/unit/test_owner_exception_notification.py`, and `docs/owner-exception-notification-activation-20261005.json` are the authorized Constitution-v3 operational-exception sender boundary, deterministic validation tests, and privacy-minimized activation evidence. The sender accepts no arbitrary recipient, attachment, or free-form activation content.
+- `src/agent_lab/owner_exception_notification.py`, `tests/unit/test_owner_exception_notification.py`, and `docs/owner-exception-notification-activation-20261005.json` preserve the existing fail-closed Constitution-v3 sender boundary, deterministic validation tests and privacy-minimized failed activation evidence. OI-0011 activation is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`; no stage depends on it and reactivation requires a new explicit Owner directive.
 - `docs/dr04-token-paused-after-owner-notification-repair-20261005.json` is the governed hard-threshold continuation capsule created after the accepted relay/notification repair; it preserves DR-04 as the exact next action and arms only the sole reset-aligned guard.
 - `docs/work-scheduler-migration-stop-20261005.json` records the second missed wake, retirement of the non-authoritative Codex trigger, and the exact tooling prerequisite for a real local-project Work Scheduled Task wake test.
 

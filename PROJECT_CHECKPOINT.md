@@ -2,7 +2,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
 
@@ -17,7 +17,7 @@ The mandatory critical path is:
 3. **CASE-001 lineage and annual review:** resolve OI-0004 through OI-0008 in dependency order, then perform the separately tracked integrated DR-05 gate OI-0012. Do not revive superseded historical PASS labels as current lineage.
 4. **Real 2025 product:** only after the accepted protected resolver may formal UI25 case, document, provider extraction, analysis, calculation, result and end-to-end packages process real data. ELSTER/export remains a distinct two-stage Human Gate.
 
-OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical PASS and G2 MCP Events are not an execution dependency. Reactivation requires a new explicit Owner directive. OI-0010 and OI-0011 remain optional operational enhancements and are not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
+OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical PASS and G2 MCP Events are not an execution dependency. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`; it is not a technical PASS, and no development, acceptance or release stage depends on outbound notification-provider activation. Either item may be reactivated only by a new explicit Owner directive. OI-0010 remains an optional operational enhancement and is not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
 
@@ -26,6 +26,10 @@ Reconciliation audit: **12 contradiction classes detected; 12 resolved in the cu
 # OI-0009 permanent Owner termination — 2026-10-20
 
 By explicit final Owner directive, OI-0009 Supervisor-loop G2 MCP event delivery proof is **`OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`**. This is a scope decision, not `TECHNICAL_PASS`, acceptance evidence or proof of G2. OI-0009 is removed from the active projection; no current or future execution path depends on G2 MCP Events. Historical G1/G2 design and validation records remain preserved only as historical evidence. Reactivation is forbidden unless a new explicit Owner directive authorizes it. This transition changes no product code, infrastructure, scheduler, MCP runtime or execution authority.
+
+# OI-0011 Owner deferral — 2026-10-20
+
+By explicit final Owner directive, OI-0011 outbound operational exception notification provider activation is **`OWNER_DEFERRED / OPTIONAL / NONBLOCKING`**. This is not `TECHNICAL_PASS`, provider activation or delivery evidence. OI-0011 is removed from the active projection and from every development, acceptance and release dependency. The existing fail-closed code, security contract and failed activation evidence remain unchanged. Reactivation requires a new explicit Owner directive. No provider setup, message delivery, code change or infrastructure action occurred.
 
 # UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
 
@@ -365,6 +369,8 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 - DR-05 remains dependency-blocked. Exact next action is `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE`; after approval, repair the two remaining defects (execute/bind the ten reviewed plausibility rules and reject valid-but-unrelated lineage), run focused/regression tests, and repeat Independent Acceptance. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
 
 ### Owner operational exception notification amendment — 2026-10-05
+
+Current disposition: the activation continuation described in this historical section is superseded by the 2026-10-20 Owner deferral of OI-0011. It is optional, nonblocking and not executable without a new explicit Owner directive; existing contracts and evidence remain preserved.
 
 - The Owner explicitly approved Constitution v3 Article 1 clauses 15–17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.
 - The exact decision, risks, controls, and migration consequence are recorded in `DECISIONS.md`. Runtime notification remains fail-closed until the versioned successor contract, sender path, bounded audit/retry behavior, and Independent Acceptance are complete.

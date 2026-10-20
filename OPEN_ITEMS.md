@@ -2,7 +2,7 @@
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
-<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010..OI-0012 -->
+<!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
 
@@ -22,8 +22,11 @@ At every governed recovery and package boundary, reconcile active gates with the
 | OI-0007 | Package C bilingual annual questionnaire / UI (stage 6) | PLANNED, not accepted. | OI-0006; German/Persian RTL/LTR change review, explicit Owner annual approval, Kernel integration and independent PASS. | Recovery plan stage 6 |
 | OI-0008 | DR-04 final rounding/declaration acceptance (stage 7) | Part 1 successor EUR 134.00 implemented, historical EUR 133.83 preserved; ten rules, accepted-artifact lineage, full regression and independent PASS outstanding. | OI-0004/0005, Owner-ordered OI-0006/0007; execute rules, substitution tests, independent PASS. DR-05 downstream remains blocked. | Recovery plan stage 7; `docs/case001-dr04-acceptance-2024.md` |
 | OI-0010 | Authoritative continuation scheduler migration and wake proof (optional enhancement; nonblocking) | Checkpoint `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`; retired Codex trigger missed wake. It does not block manual governed development. | **Owner selection/operational authority:** only if desired, inspect live Work state; establish one authorized scheduler and `WAKE_TEST_PASS`, no duplicate. | `docs/work-scheduler-migration-stop-20261005.json`; `CURRENT_STATE.md` |
-| OI-0011 | Outbound operational exception notification provider activation (optional enhancement; nonblocking) | Sender activation FAILED due to protected provider configuration/permission; underlying contract and independent acceptance PASS. **Unrelated to incoming GitHub emails and not required for the product critical path.** | **Owner/provider authority:** only if capability remains desired, authorize provider setup and bounded real delivery proof, preserving Article 1. | Checkpoint “Owner operational exception notification amendment”; `DECISIONS.md` |
 | OI-0012 | DR-05 integrated CASE-001 declaration content proof (mandatory after stage 7) | `NOT_STARTED / DEPENDENCY_BLOCKED`. The governed definition requires all nine affirmative requirements to be case-bound, XSD-valid and locally plausible, with exclusions preserved and independent acceptance PASS. | OI-0003–OI-0008; after their accepted completion, execute the already authorized bounded integrated proof, recovery/isolation/regression tests and independent acceptance. Official ERiC/filing remains separately gated. | `docs/case001-declaration-readiness-2024.md` and JSON companion |
+
+## Owner-deferred decisions (not active)
+
+- `OI-0011` Outbound operational exception notification provider activation: **`OWNER_DEFERRED / OPTIONAL / NONBLOCKING`** on 2026-10-20 by explicit final Owner directive. This is not `TECHNICAL_PASS`, activation or delivery evidence. No development, acceptance or release stage depends on it. Existing fail-closed code, security contract and evidence remain unchanged. Reactivation requires a new explicit Owner directive; the ID is never reused.
 
 ## Closed items (not active)
 

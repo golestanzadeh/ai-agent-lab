@@ -1606,3 +1606,7 @@ Register the canonical CASE-001 bank CSV as one immutable `STRUCTURED_FINANCIAL_
 # Owner termination of OI-0009 — 2026-10-20
 
 The Owner permanently removed OI-0009 Supervisor-loop G2 MCP event delivery proof from the executable AI-Tax-Agent scope. Its disposition is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`, not `TECHNICAL_PASS`. No execution path may depend on G2 MCP Events. Historical design and G1 evidence remain preserved; reactivation requires a new explicit Owner directive. No product code or infrastructure change is authorized by this decision.
+
+# Owner deferral of OI-0011 — 2026-10-20
+
+The Owner removed OI-0011 outbound operational exception notification provider activation from the active project inventory. Its disposition is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not `TECHNICAL_PASS`. No development, acceptance or release stage may depend on it. Existing fail-closed code, the security contract and historical evidence remain unchanged. Reactivation requires a new explicit Owner directive; this decision authorizes no provider, code or infrastructure action.
