@@ -5,7 +5,7 @@ Status: `DESIGN_AND_LOCAL_PROOF_COMPLETE / C09_OPEN / OWNER_DECISION_REQUIRED`
 
 ## Result
 
-The isolated simulator demonstrates coordinated/local rollback detection, crash recovery, replay/fork/gap rejection, one-time restore authorization and object-version/delete-marker rejection across AT-C09-01..15. Result: `LOCAL_SIMULATION_PASS` (`15 passed`). It does not touch the operational Kernel↔Identity path, network, credentials or taxpayer data.
+The isolated simulator demonstrates coordinated/local rollback detection, crash recovery, replay/fork/gap rejection, one-time restore authorization and object-version/delete-marker rejection across AT-C09-01..15. Result: `LOCAL_SIMULATION_PASS` (`15 passed`). It does not touch the operational Kernelâ†”Identity path, network, credentials or taxpayer data.
 
 Global-head correctness is **conditionally specified, not operationally established**. A fixed sequence key plus provider conditional-create selects one successor per position under the provider's documented consistency model. The guarantee still depends on retention/policy enforcement, complete version inspection, independent authentication-key custody and provider/account trust. No live cloud behavior or administrative isolation was tested.
 
@@ -15,12 +15,12 @@ Prefer a bounded GCS Frankfurt live-test profile over S3 for the next architectu
 
 ## Effort estimate
 
-- revised ADR and independent review: 2–4 engineering days;
-- provider sandbox policy/configuration verifier and live negative campaign: 3–6 days;
-- operational adapter, durable staged receipt and recovery integration: 5–10 days;
-- four-principal regression, restore campaign and independent acceptance: 4–8 days.
+- revised ADR and independent review: 2â€“4 engineering days;
+- provider sandbox policy/configuration verifier and live negative campaign: 3â€“6 days;
+- operational adapter, durable staged receipt and recovery integration: 5â€“10 days;
+- four-principal regression, restore campaign and independent acceptance: 4â€“8 days.
 
-Total estimate: 14–28 engineering days, excluding Owner/provider-account lead time and remediation cycles.
+Total estimate: 14â€“28 engineering days, excluding Owner/provider-account lead time and remediation cycles.
 
 ## Required Owner decisions
 
@@ -31,3 +31,5 @@ Total estimate: 14–28 engineering days, excluding Owner/provider-account lead 
 5. Authorize a capped, synthetic-only live provider test and billing ceiling.
 
 Until those decisions and independent ADR PASS, `C09` and OI-0002 remain OPEN; protected persistence and operational IPC remain blocked.
+
+## Focused independent hardening (2026-10-21)\nLocal simulator now separates Owner restore authentication from witness authentication, verifies the actual Identity head before recovery finalization, and conditionally reconciles a proven Identity-ahead state without replaying Identity. Unverifiable base, witness outage, and mismatched Identity head remain fail-closed. 19 local simulator tests passed. This does not establish provider-enforced key custody, real GCS generation/retention semantics, or C09 operational acceptance. Next: one bounded synthetic-only GCS IAM/retention/conditional-create negative campaign after Owner approval.

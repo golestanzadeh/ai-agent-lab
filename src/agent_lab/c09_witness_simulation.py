@@ -162,8 +162,11 @@ class LocalState:
 class WitnessProtocolHarness:
     """Deterministic crash/recovery model; never used by operational code."""
 
-    def __init__(self, *, key: bytes = b"synthetic-witness-key", deployment_id: str = "DEPLOYMENT-SYNTHETIC") -> None:
+    def __init__(self, *, key: bytes = b"synthetic-witness-key", owner_key: bytes = b"synthetic-owner-restore-key", deployment_id: str = "DEPLOYMENT-SYNTHETIC") -> None:
+        if key == owner_key:
+            raise WitnessError("Owner and witness authentication keys must differ")
         self.key = key
+        self.owner_key = owner_key
         self.deployment_id = deployment_id
         self.store = SimulatedImmutableObjectStore()
         self.state = LocalState()
@@ -214,6 +217,10 @@ class WitnessProtocolHarness:
         record.verify(self.key)
         if self.state.pending is None or self.state.pending["operation_id"] != record.operation_id:
             raise WitnessError("witness does not match pending transaction")
+        if (self.state.identity_head != record.identity_head
+                or self.state.pending["identity_head"] != record.identity_head
+                or self.state.pending["kernel_head"] != record.kernel_head):
+            raise WitnessError("Identity or staged heads do not match witness")
         self.state.sequence = record.sequence
         self.state.kernel_head = record.kernel_head
         self.state.identity_head = record.identity_head
@@ -231,7 +238,24 @@ class WitnessProtocolHarness:
                 self._finalize(matching)
                 return "FINALIZED_FROM_WITNESS"
             if self.state.identity_head == pending["identity_head"]:
-                return "FAIL_CLOSED_IDENTITY_AHEAD"
+                # Only reconcile when the local finalized base exactly matches
+                # the externally authenticated head; never replay Identity.
+                base_ok = (
+                    (latest is None and self.state.epoch == 1 and self.state.sequence == 0
+                     and self.state.kernel_head == ZERO)
+                    or (latest is not None and
+                        (self.state.epoch, self.state.sequence, self.state.kernel_head)
+                        == (latest.epoch, latest.sequence, latest.kernel_head))
+                )
+                if not base_ok:
+                    raise WitnessError("unverifiable Identity-ahead base")
+                try:
+                    record = self._next_record(pending["operation_id"])
+                    self.store.conditional_create(record)
+                    self._finalize(record)
+                    return "RECONCILED_IDENTITY_AHEAD"
+                except WitnessError:
+                    return "FAIL_CLOSED_IDENTITY_AHEAD"
             self.state.pending = None
             self.state.finalized = True
             return "ABORTED_BEFORE_IDENTITY"
@@ -280,7 +304,7 @@ class WitnessProtocolHarness:
         if authorization_id in self.used_restore_authorizations or authorization["expires"] != "VALID":
             raise WitnessError("restore authorization reused or expired")
         unsigned = {key: authorization[key] for key in sorted(required - {"owner_mac"})}
-        expected = "hmac-sha256:" + hmac.new(self.key, b"AI-TAX-AGENT\x00C09-RESTORE\x00" + canonical_bytes(unsigned), hashlib.sha256).hexdigest()
+        expected = "hmac-sha256:" + hmac.new(self.owner_key, b"AI-TAX-AGENT\x00C09-RESTORE\x00" + canonical_bytes(unsigned), hashlib.sha256).hexdigest()
         if not hmac.compare_digest(expected, authorization["owner_mac"]):
             raise WitnessError("restore authorization authentication mismatch")
         records = self.verify_witness_chain()
@@ -324,5 +348,5 @@ class WitnessProtocolHarness:
             "target_kernel_head": digest(f"restore-kernel:{target_epoch}".encode()),
             "target_sequence": 1,
         }
-        value["owner_mac"] = "hmac-sha256:" + hmac.new(self.key, b"AI-TAX-AGENT\x00C09-RESTORE\x00" + canonical_bytes(value), hashlib.sha256).hexdigest()
+        value["owner_mac"] = "hmac-sha256:" + hmac.new(self.owner_key, b"AI-TAX-AGENT\x00C09-RESTORE\x00" + canonical_bytes(value), hashlib.sha256).hexdigest()
         return value

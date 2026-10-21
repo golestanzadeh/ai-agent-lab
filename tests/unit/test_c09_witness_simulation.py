@@ -33,9 +33,10 @@ def test_at_c09_04_crash_before_identity_commit_aborts_deterministically():
     assert harness.recover() == "ABORTED_BEFORE_IDENTITY"
 
 
-def test_at_c09_05_crash_after_identity_before_witness_fails_closed():
+def test_at_c09_05_crash_after_identity_before_witness_reconciles_when_proven():
     harness = WitnessProtocolHarness(); harness.execute("OP-1", crash_at="after_identity")
-    assert harness.recover() == "FAIL_CLOSED_IDENTITY_AHEAD"
+    assert harness.recover() == "RECONCILED_IDENTITY_AHEAD"
+    assert harness.recover() == "CONSISTENT"
 
 
 def test_at_c09_06_crash_after_witness_finalizes_from_witness():
@@ -106,3 +107,38 @@ def test_at_c09_15_object_version_and_delete_marker_ambiguity_rejected():
     replacement = replace(record,operation_id="REPLACEMENT",mac="").signed(harness.key)
     harness.store.conditional_create(replacement)
     with pytest.raises(WitnessError, match="version or delete-marker"): harness.verify_witness_chain()
+
+
+def test_owner_key_must_be_separate_from_witness_key():
+    with pytest.raises(WitnessError, match="must differ"):
+        WitnessProtocolHarness(key=b"same", owner_key=b"same")
+    harness = committed()
+    source = harness.verify_witness_chain()[-1].commitment
+    auth = harness.sign_restore("RESTORE-SEP", source_commitment=source, target_epoch=2)
+    harness.owner_key = b"wrong-owner-key"
+    with pytest.raises(WitnessError, match="authentication"):
+        harness.authorized_restore(auth)
+
+
+def test_witness_recovery_rejects_identity_head_mismatch():
+    harness = WitnessProtocolHarness()
+    harness.execute("OP-1", crash_at="after_witness")
+    harness.state.identity_head = ZERO
+    with pytest.raises(WitnessError, match="Identity or staged"):
+        harness.recover()
+
+
+def test_identity_ahead_with_witness_outage_fails_closed():
+    harness = WitnessProtocolHarness()
+    harness.execute("OP-1", crash_at="after_identity")
+    harness.store.available = False
+    with pytest.raises(WitnessError, match="unavailable"):
+        harness.recover()
+
+
+def test_identity_ahead_with_unverifiable_base_rejected():
+    harness = committed()
+    harness.execute("OP-2", crash_at="after_identity")
+    harness.state.kernel_head = ZERO
+    with pytest.raises(WitnessError, match="unverifiable"):
+        harness.recover()
