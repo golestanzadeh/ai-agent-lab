@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -12,7 +12,7 @@ The October labels `UI25-05` through `UI25-10` on bounded execution orders are i
 
 The mandatory critical path is:
 
-1. **Operational Kernel↔Identity foundation:** C09 and OI-0002 remain open. The host has no usable TPM freshness counter and GitHub branch history is not an independent anti-rollback authority. Exact next action is an Owner architecture decision selecting a portable, independently non-rollbackable freshness/restore authority; then revise the ADR, obtain independent architecture/security PASS, implement and execute the frozen C01–C13 operational campaign.
+1. **Operational Kernel↔Identity foundation:** C09 and OI-0002 remain open. A bounded provider-neutral witness protocol and 15-test local simulator now provide design evidence, with GCS Frankfurt preliminarily preferred over S3. No cloud behavior, custody or global-head guarantee is operationally proven. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; after Owner approval, revise the ADR, obtain independent architecture/security PASS, perform a capped synthetic live-provider campaign, and only then consider operational implementation of frozen C01–C13.
 2. **Protected case identity and facts:** complete OI-0003 only after OI-0002.
 3. **CASE-001 lineage and annual review:** resolve OI-0004 through OI-0008 in dependency order, then perform the separately tracked integrated DR-05 gate OI-0012. Do not revive superseded historical PASS labels as current lineage.
 4. **Real 2025 product:** only after the accepted protected resolver may formal UI25 case, document, provider extraction, analysis, calculation, result and end-to-end packages process real data. ELSTER/export remains a distinct two-stage Human Gate.
@@ -30,6 +30,12 @@ By explicit final Owner directive, OI-0009 Supervisor-loop G2 MCP event delivery
 # OI-0011 Owner deferral — 2026-10-20
 
 By explicit final Owner directive, OI-0011 outbound operational exception notification provider activation is **`OWNER_DEFERRED / OPTIONAL / NONBLOCKING`**. This is not `TECHNICAL_PASS`, provider activation or delivery evidence. OI-0011 is removed from the active projection and from every development, acceptance and release dependency. The existing fail-closed code, security contract and failed activation evidence remain unchanged. Reactivation requires a new explicit Owner directive. No provider setup, message delivery, code change or infrastructure action occurred.
+
+# OI-0002/C09 witness protocol design and local proof — 2026-10-21
+
+The authorized non-operational package specifies a privacy-minimized, authenticated witness record, exact sequence key, conditional-create append rule, Kernel-owned `PENDING → Identity commit → witness → COMMITTED` order, deterministic crash recovery and independently authorized epoch transition. An isolated simulator—not imported by production paths—passes AT-C09-01 through AT-C09-15 (`15 passed`), including coordinated/local rollback, crash boundaries, replay, concurrency, gaps/forks, outage, exact one-time restore, compromised writer and version/delete-marker attacks. Status is **`DESIGN_AND_LOCAL_PROOF_COMPLETE / LOCAL_SIMULATION_PASS / C09_OPEN`**.
+
+Official documentation supports GCS generation preconditions and strong global object/list consistency, and S3 conditional writes/strong consistency; both retention systems protect versions but do not alone create a linearizable global head. GCS Frankfurt is the preliminary lower-complexity candidate because it has no S3-style delete markers, but provider policy, immutable retention, independent key/admin custody, live concurrency/version behavior, billing and failure semantics remain unverified. No account, credential, paid service, cloud call, production path or protected data changed. OI-0002 remains active and no other `OPEN_ITEMS.md` row is resolved. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; implementation requires a revised ADR and independent architecture/security PASS.
 
 # UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
 

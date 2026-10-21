@@ -1,5 +1,6 @@
 # Documentation Index
 
+- `oi0002-c09-witness/` - non-operational witness protocol, threat model, crash/recovery matrix, AT-C09-01..15 evidence, provider/cost comparison and Owner decision report.
 - `ui25-05-synthetic-kernel-execution-20261016.md` - one-shot user-initiated synthetic Kernel worker, genuine UI result, security tests and remaining real-case gates.
 - `ui25-kernel-read-only-projection-20261016.md` - synthetic-only Dashboard projection of exact, integrity-checked Kernel case/run/task status without dispatch.
 - `ui25-2025-canonical-test-backend-20261016.md` - synthetic 2025 UI create/persist/reopen slice using canonical Case Registry and CaseState models.

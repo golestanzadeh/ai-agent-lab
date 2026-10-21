@@ -3,7 +3,7 @@
 ## Authoritative remaining path — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Last reconciled: **2026-10-20**
@@ -12,13 +12,15 @@ The current accepted experience is synthetic-only. October execution-order label
 
 Mandatory remaining path:
 
-1. Owner selects and authorizes a portable, independently non-rollbackable freshness/restore authority (`OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY`).
-2. Revise and independently accept the operational Kernel↔Identity ADR; then implement and independently verify frozen OI-0002 C01–C13.
+1. Owner decides whether to approve the proposed GCS Frankfurt witness/trust/cost profile or select the AWS alternate (`OWNER_DECIDE_C09_WITNESS_PROFILE`). The protocol and AT-C09-01..15 simulator are complete, but only locally.
+2. Revise and independently accept the operational Kernel↔Identity ADR; authorize and execute a capped synthetic live-provider campaign; only then implement and independently verify frozen OI-0002 C01–C13.
 3. Complete protected OI-0003, then CASE-001 lineage and annual-review gates OI-0004–OI-0008, followed by integrated DR-05 (OI-0012).
 4. Complete the formal real-data UI25 packages through Owner end-to-end 2025 acceptance. Production provider use, calculation/declaration and Approval/Export each retain their own evidence and Human Gates.
 5. ELSTER/external transmission remains a separate two-stage Owner approval; it is not authorized by completion of the UI.
 
 C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not a technical PASS; outbound notification-provider activation is removed from every development, acceptance and release dependency. Either item may be reactivated only by a new explicit Owner directive. OI-0010 is an optional operational enhancement, not a mandatory product-critical blocker. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
+
+Completed non-operational C09 design slice (2026-10-21): the six-file witness package in `docs/oi0002-c09-witness/` and isolated simulator define authenticated fixed-key sequencing, crash recovery, version-aware verification and Owner-authorized epoch transition. AT-C09-01..15 pass locally. This is `LOCAL_SIMULATION_PASS`, not operational acceptance; no cloud call or production integration occurred.
 
 ## Local development versus operational IPC acceptance — 2026-10-14
 

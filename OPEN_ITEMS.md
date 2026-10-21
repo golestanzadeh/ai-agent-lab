@@ -1,7 +1,7 @@
 # OPEN_ITEMS — Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_SELECT_PORTABLE_FRESHNESS_AUTHORITY -->
+<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | REMEDIATION-02 is Owner-accepted. Real-token Windows custody/effective-access and official Recovery-token verification PASS in sealed, SHA-256-bound protected run `run-20261012T174008Z`. Overall acceptance remains blocked: no reviewed operational Kernel↔Identity boundary or independently non-rollbackable freshness/restore authority exists; TPM is unavailable on this host and GitHub is not such an authority. | **Owner architecture authority:** select and authorize a portable freshness/restore authority; revise the ADR; obtain independent architecture/security PASS; implement and run frozen C01–C13 operational tests. Keep OI-0003 blocked. | `docs/oi-0002-remediation-02-report-20261011.md`; `docs/oi-0002-operational-deployment-stop-20261011.md`; `docs/oi-0002-final-closure-matrix-20261012.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | REMEDIATION-02/custody evidence PASS. Witness protocol and AT-C09-01..15 simulator are `LOCAL_SIMULATION_PASS`; C09 remains OPEN because provider behavior, retention/policy, independent key/admin custody and operational integration are unverified. | **Owner architecture authority:** decide GCS Frankfurt witness/trust/cost profile or alternate; then revised ADR independent PASS, capped synthetic live-provider tests, and only afterward operational C01–C13 implementation/campaign. Keep OI-0003 blocked. | `docs/oi0002-c09-witness/WITNESS_DECISION_REPORT.md`; `docs/oi-0002-final-closure-matrix-20261012.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |
