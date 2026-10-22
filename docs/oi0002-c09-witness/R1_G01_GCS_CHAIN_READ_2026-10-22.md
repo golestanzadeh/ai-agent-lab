@@ -19,3 +19,15 @@ Caveats: candidate code is unaccepted. R1 remains open.
 Exact continuation after push: install the repository-pinned requests dependency into the same isolated ignored target, preserve normal-user read access, and rerun only R1-G01 as attempt 2.
 
 `OPEN_ITEMS.md` assessment: no active row is resolved; OI-0002/C09 remain open and OI-0003 remains blocked.
+
+## Attempt 2
+
+Status: `FAIL / TEST ASSERTION DEFECT / R1 OPEN`.
+
+Environment preparation: installed repository-pinned `requests==2.34.2` and its dependencies into the ignored target, then applied read/execute ACL to the current sandbox SID; 1289 files processed with zero ACL failures.
+
+Observed evidence: exit 1; `1 failed, 2 warnings in 2.02s`. The chain reader returned records whose printed fields and MACs matched, but the test compared the operational `c09_witness_protocol.WitnessRecord` dataclass to the separate legacy simulator dataclass. Dataclass equality correctly returned false across different classes. The version-ambiguity branch was not reached after the first assertion failed.
+
+Interpretation: this is a fixture/assertion boundary defect, not a demonstrated chain-reader correctness failure. No provider call occurred; the session was mocked. No PASS is claimed.
+
+Exact continuation after push: compare returned and fixture records by exact canonical bytes instead of cross-class dataclass equality, then rerun only R1-G01 as attempt 3.
