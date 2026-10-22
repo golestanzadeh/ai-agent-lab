@@ -9,97 +9,17 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import json
-import re
 from dataclasses import dataclass, replace
 from typing import Any
 
-
-PROTOCOL = "ai-tax-agent.c09-witness/1"
-ZERO = "sha256:" + "0" * 64
-
-
-class WitnessError(RuntimeError):
-    """Fail-closed protocol or simulated storage error."""
-
-
-def canonical_bytes(value: dict[str, Any]) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-
-
-def digest(value: bytes) -> str:
-    return "sha256:" + hashlib.sha256(value).hexdigest()
-
-
-@dataclass(frozen=True, slots=True)
-class WitnessRecord:
-    protocol: str
-    deployment_id: str
-    epoch: int
-    sequence: int
-    previous_record: str
-    kernel_head: str
-    identity_head: str
-    backup_generation: int
-    operation_id: str
-    record_type: str = "COMMIT"
-    owner_authorization_digest: str | None = None
-    mac: str = ""
-
-    def unsigned(self) -> dict[str, Any]:
-        return {
-            "backup_generation": self.backup_generation,
-            "deployment_id": self.deployment_id,
-            "epoch": self.epoch,
-            "identity_head": self.identity_head,
-            "kernel_head": self.kernel_head,
-            "operation_id": self.operation_id,
-            "owner_authorization_digest": self.owner_authorization_digest,
-            "previous_record": self.previous_record,
-            "protocol": self.protocol,
-            "record_type": self.record_type,
-            "sequence": self.sequence,
-        }
-
-    def signed(self, key: bytes) -> "WitnessRecord":
-        tag = hmac.new(key, b"AI-TAX-AGENT\x00C09-WITNESS\x00" + canonical_bytes(self.unsigned()), hashlib.sha256).hexdigest()
-        return replace(self, mac="hmac-sha256:" + tag)
-
-    def verify(self, key: bytes) -> None:
-        if self.protocol != PROTOCOL or self.epoch < 1 or self.sequence < 1:
-            raise WitnessError("invalid witness contract")
-        if not re.fullmatch(r"[A-Z][A-Z0-9-]{2,63}", self.deployment_id):
-            raise WitnessError("invalid deployment identity")
-        if not re.fullmatch(r"[A-Z][A-Z0-9:-]{2,127}", self.operation_id):
-            raise WitnessError("invalid operation identity")
-        if self.record_type not in {"COMMIT", "RESTORE"}:
-            raise WitnessError("invalid record type")
-        if (self.record_type == "RESTORE") != (self.owner_authorization_digest is not None):
-            raise WitnessError("restore authorization binding mismatch")
-        sha256 = re.compile(r"sha256:[0-9a-f]{64}")
-        for value in (self.previous_record, self.kernel_head, self.identity_head):
-            if sha256.fullmatch(value) is None:
-                raise WitnessError("invalid record commitment")
-        if self.owner_authorization_digest is not None and sha256.fullmatch(self.owner_authorization_digest) is None:
-            raise WitnessError("invalid Owner authorization commitment")
-        if self.backup_generation < 0:
-            raise WitnessError("invalid backup generation")
-        expected = self.signed(key).mac
-        if not hmac.compare_digest(expected, self.mac):
-            raise WitnessError("invalid witness authentication")
-        if len(canonical_bytes({**self.unsigned(), "mac": self.mac})) > 4096:
-            raise WitnessError("witness record too large")
-
-    @property
-    def commitment(self) -> str:
-        return digest(self.to_bytes())
-
-    def to_bytes(self) -> bytes:
-        return canonical_bytes({**self.unsigned(), "mac": self.mac})
-
-    @property
-    def object_key(self) -> str:
-        return f"witness/v1/{self.deployment_id}/epoch-{self.epoch:020d}/sequence-{self.sequence:020d}.json"
+from .c09_witness_protocol import (
+    PROTOCOL,
+    ZERO,
+    WitnessError,
+    WitnessRecord,
+    canonical_bytes,
+    digest,
+)
 
 
 @dataclass(frozen=True, slots=True)

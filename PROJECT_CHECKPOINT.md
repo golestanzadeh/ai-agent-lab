@@ -1440,3 +1440,7 @@ R1-G01 attempt 2 collected but failed (`1 failed, 2 warnings`) because exact mat
 # C09-R1 GCS chain-read duplicated-type failure - 2026-10-22
 
 R1-G01 attempt 3 failed (`1 failed, 2 warnings`) after canonical-byte and generation-pin checks passed: the intended ambiguity error was raised from the shared protocol, but the test expected the simulator's duplicate error class. No PASS is claimed. Exact continuation after push is unifying simulator protocol types with the shared contract, then rerunning only R1-G01. OPEN_ITEMS.md was synchronized; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_G01_GCS_CHAIN_READ_2026-10-22.md`.
+
+# C09-R1 mocked GCS chain read PASS - 2026-10-22
+
+R1-G01 attempt 4 passed after simulator/shared protocol unification: `1 passed, 1 warning in 0.59s`, exit 0. Reader-only listing used `versions=true`; exact generations were pinned; canonical MAC/chain verification passed; duplicate version metadata failed closed. This is mocked evidence, not live multi-record GCS/provider-policy proof. Exact continuation after push is focused protocol/adapter/simulator regression. OPEN_ITEMS.md was reconciled; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_G01_GCS_CHAIN_READ_2026-10-22.md`.

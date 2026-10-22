@@ -41,3 +41,13 @@ Observed evidence: exit 1; `1 failed, 2 warnings in 0.95s`. Exact canonical-byte
 Interpretation: duplicated record/error definitions between simulator and shared protocol create a real compatibility hazard. The adapter behavior reached the intended fail-closed branch, but the overall test is FAIL and no R1-G01 PASS is claimed.
 
 Exact continuation after push: make the simulator import and use the shared protocol constants, record, error, canonical and digest definitions rather than duplicating them; then rerun only R1-G01 as attempt 4.
+
+## Attempt 4 - terminal result
+
+Status: `PASS / MOCKED GCS CHAIN READ / R1 OPEN`.
+
+Command: same exact R1-G01 node. Evidence: exit 0; `1 passed, 1 warning in 0.59s`. The simulator now imports the shared protocol record/error primitives. The adapter requested `versions=true` using only the reader credential, pinned downloads to generations `101` and `102`, decoded and verified canonical MAC records, verified the ordered chain, and rejected duplicate object metadata representing version ambiguity. The warning was the known pytest-cache path collision.
+
+Interpretation: mocked GCS JSON list/read behavior is fail closed for duplicate versions and generation-pinned for each record. This is not a live multi-record GCS test and does not prove provider listing completeness or IAM/retention policy.
+
+Exact continuation after push: run the focused protocol, adapter and simulator regression as one governed test transaction before durable receipt/Kernel integration work.
