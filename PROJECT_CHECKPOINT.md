@@ -1,7 +1,7 @@
-# Authoritative current project truth — 2026-10-20
+﻿# Authoritative current project truth â€” 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
+<!-- CURRENT_NEXT_ACTION: C09_R1_OPERATIONAL_WITNESS_INTEGRATION -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -12,7 +12,7 @@ The October labels `UI25-05` through `UI25-10` on bounded execution orders are i
 
 The mandatory critical path is:
 
-1. **Operational Kernel↔Identity foundation:** C09 and OI-0002 remain open. A bounded provider-neutral witness protocol and 15-test local simulator now provide design evidence, with GCS Frankfurt preliminarily preferred over S3. No cloud behavior, custody or global-head guarantee is operationally proven. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; after Owner approval, revise the ADR, obtain independent architecture/security PASS, perform a capped synthetic live-provider campaign, and only then consider operational implementation of frozen C01–C13.
+1. **Operational Kernelâ†”Identity foundation:** C09 and OI-0002 remain open. A bounded provider-neutral witness protocol and 15-test local simulator now provide design evidence, with GCS Frankfurt preliminarily preferred over S3. No cloud behavior, custody or global-head guarantee is operationally proven. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; after Owner approval, revise the ADR, obtain independent architecture/security PASS, perform a capped synthetic live-provider campaign, and only then consider operational implementation of frozen C01â€“C13.
 2. **Protected case identity and facts:** complete OI-0003 only after OI-0002.
 3. **CASE-001 lineage and annual review:** resolve OI-0004 through OI-0008 in dependency order, then perform the separately tracked integrated DR-05 gate OI-0012. Do not revive superseded historical PASS labels as current lineage.
 4. **Real 2025 product:** only after the accepted protected resolver may formal UI25 case, document, provider extraction, analysis, calculation, result and end-to-end packages process real data. ELSTER/export remains a distinct two-stage Human Gate.
@@ -23,27 +23,27 @@ The active projection is `OPEN_ITEMS.md`. Every stage transition must update or 
 
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
-# OI-0009 permanent Owner termination — 2026-10-20
+# OI-0009 permanent Owner termination â€” 2026-10-20
 
 By explicit final Owner directive, OI-0009 Supervisor-loop G2 MCP event delivery proof is **`OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`**. This is a scope decision, not `TECHNICAL_PASS`, acceptance evidence or proof of G2. OI-0009 is removed from the active projection; no current or future execution path depends on G2 MCP Events. Historical G1/G2 design and validation records remain preserved only as historical evidence. Reactivation is forbidden unless a new explicit Owner directive authorizes it. This transition changes no product code, infrastructure, scheduler, MCP runtime or execution authority.
 
-# OI-0011 Owner deferral — 2026-10-20
+# OI-0011 Owner deferral â€” 2026-10-20
 
 By explicit final Owner directive, OI-0011 outbound operational exception notification provider activation is **`OWNER_DEFERRED / OPTIONAL / NONBLOCKING`**. This is not `TECHNICAL_PASS`, provider activation or delivery evidence. OI-0011 is removed from the active projection and from every development, acceptance and release dependency. The existing fail-closed code, security contract and failed activation evidence remain unchanged. Reactivation requires a new explicit Owner directive. No provider setup, message delivery, code change or infrastructure action occurred.
 
-# OI-0002/C09 witness protocol design and local proof — 2026-10-21
+# OI-0002/C09 witness protocol design and local proof â€” 2026-10-21
 
-The authorized non-operational package specifies a privacy-minimized, authenticated witness record, exact sequence key, conditional-create append rule, Kernel-owned `PENDING → Identity commit → witness → COMMITTED` order, deterministic crash recovery and independently authorized epoch transition. An isolated simulator—not imported by production paths—passes AT-C09-01 through AT-C09-15 (`15 passed`), including coordinated/local rollback, crash boundaries, replay, concurrency, gaps/forks, outage, exact one-time restore, compromised writer and version/delete-marker attacks. Status is **`DESIGN_AND_LOCAL_PROOF_COMPLETE / LOCAL_SIMULATION_PASS / C09_OPEN`**.
+The authorized non-operational package specifies a privacy-minimized, authenticated witness record, exact sequence key, conditional-create append rule, Kernel-owned `PENDING â†’ Identity commit â†’ witness â†’ COMMITTED` order, deterministic crash recovery and independently authorized epoch transition. An isolated simulatorâ€”not imported by production pathsâ€”passes AT-C09-01 through AT-C09-15 (`15 passed`), including coordinated/local rollback, crash boundaries, replay, concurrency, gaps/forks, outage, exact one-time restore, compromised writer and version/delete-marker attacks. Status is **`DESIGN_AND_LOCAL_PROOF_COMPLETE / LOCAL_SIMULATION_PASS / C09_OPEN`**.
 
 Official documentation supports GCS generation preconditions and strong global object/list consistency, and S3 conditional writes/strong consistency; both retention systems protect versions but do not alone create a linearizable global head. GCS Frankfurt is the preliminary lower-complexity candidate because it has no S3-style delete markers, but provider policy, immutable retention, independent key/admin custody, live concurrency/version behavior, billing and failure semantics remain unverified. No account, credential, paid service, cloud call, production path or protected data changed. OI-0002 remains active and no other `OPEN_ITEMS.md` row is resolved. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; implementation requires a revised ADR and independent architecture/security PASS.
 
-# UI25-10 OPEN_ITEMS reconciliation and standing transition rule — 2026-10-20
+# UI25-10 OPEN_ITEMS reconciliation and standing transition rule â€” 2026-10-20
 
 The bounded UI25-10 Owner browser acceptance at implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538` and documentation commit `4161997720fd51c9b7a9a2feebf7c096e554a8c9` was reconciled against every active row in `OPEN_ITEMS.md`. None of `OI-0002` through `OI-0011` is resolved by the seven accepted synthetic browser scenarios, so no active row was removed or weakened. UI25-10 is recorded only in the closed section with its exact scope; untested browser paths, real taxpayer processing, Gemini production extraction, Protected Persistence, operational IPC/C09, ELSTER/external submission and unrelated Kernel/product capabilities remain unaccepted.
 
 Standing documentation rule: every future stage transition must assess and synchronize both `PROJECT_CHECKPOINT.md` and `OPEN_ITEMS.md` in the same governed change set. If no active row changes, that no-change assessment must be explicit; historical evidence and unresolved prerequisites must not be silently removed or revived. Exact continuation remains Owner selection and authorization of the next bounded stage; this reconciliation authorizes no implementation.
 
-# UI25-10 Analysis navigation and execution-conflict UX — 2026-10-20
+# UI25-10 Analysis navigation and execution-conflict UX â€” 2026-10-20
 
 The Owner confirmed the UI25-09 recovery run `RUN-OWNER-UI25-08-004` for synthetic case `TEST-2025-02` / 2025: structured extraction displayed, survived refresh and reopening, same-run replay was rejected, and the same document with a new run ID was rejected. This supersedes UI25-09's `OWNER_BROWSER_RETEST_PENDING` for that bounded recovery; it does not accept real-data or operational execution.
 
@@ -53,15 +53,15 @@ Stable typed synthetic-execution outcomes now distinguish completed replay, same
 
 Local verification passed **`73 passed`** focused tests, **`116 passed`** relevant UI/Kernel/audit tests and complete unit regression **`1415 passed, 5 skipped`**. Independent read-only review of exact commit `9b4cec532c97483cbf072c4fc90e8bcd3cf89538` returned **`INDEPENDENT_PASS / SYNTHETIC_ONLY`** with no findings; reviewer verification passed **`46 passed`** focused and **`188 passed`** relevant tests. Read-only navigation created no Task, Response or audit event; no Owner database or evidence was accessed or changed during automated verification.
 
-On 2026-10-20 the Owner explicitly accepted the bounded browser behavior of implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538`, after the independently verified checkpoint `f0845868218db3f0b46fc46f3c835008fed6a097`. In the actual browser with synthetic case `TEST-2025-02` and run `RUN-OWNER-UI25-08-004`, the Owner observed PASS for Documents → Analysis navigation, selected-Run preservation, display of all six extracted synthetic fields, Persian ↔ German switching, result preservation across language changes, completed-run Replay messaging/behavior, and same-document/new-run conflict messaging/behavior. This Owner-observed evidence is distinct from the automated and independent test evidence above.
+On 2026-10-20 the Owner explicitly accepted the bounded browser behavior of implementation `9b4cec532c97483cbf072c4fc90e8bcd3cf89538`, after the independently verified checkpoint `f0845868218db3f0b46fc46f3c835008fed6a097`. In the actual browser with synthetic case `TEST-2025-02` and run `RUN-OWNER-UI25-08-004`, the Owner observed PASS for Documents â†’ Analysis navigation, selected-Run preservation, display of all six extracted synthetic fields, Persian â†” German switching, result preservation across language changes, completed-run Replay messaging/behavior, and same-document/new-run conflict messaging/behavior. This Owner-observed evidence is distinct from the automated and independent test evidence above.
 
 Status: **`UI25-10: TECHNICAL_PASS / INDEPENDENT_PASS / OWNER_BROWSER_PASS / SYNTHETIC_ONLY`**. Owner acceptance is limited to the seven observed scenarios listed above. Manual browser behavior for Analysis without a Run ID, invalid direct links, switching between cases, browser Back/Forward, Permission Matrix/Kill Switch/budget denials and unexpected Kernel failures was not included in this Owner confirmation; those paths retain automated and independent verification only. This acceptance grants no real taxpayer-document processing, Gemini production extraction, ELSTER/external submission, Protected Persistence, C09, operational IPC, or unrelated Kernel/product capability acceptance. Exact continuation point: select and explicitly authorize the next bounded UI25 product stage; do not reopen UI25-10 or begin unrelated implementation automatically.
 
-# UI25-09 Kernel partial-execution recovery and safe retry — 2026-10-19
+# UI25-09 Kernel partial-execution recovery and safe retry â€” 2026-10-19
 
 The Owner-observed incomplete extraction was reproduced without modifying the Owner database. The failure sequence was deterministic: the task registration committed first, then manifest registration rejected the executor's reused fixed `actor_instance_id` under the existing unique constraint. This left the exact run as a durable `REGISTERED` task with no manifest or response while the Kill Switch remained `HALTED`. Read-only inspection confirmed that the historical task, audit chain, Permission Matrix and Owner document evidence remain intact.
 
-Implementation commit `365e14b16b6982b637b5cd0423ce394f22de8596` gives every bounded synthetic task a deterministic per-task actor instance and makes the complete one-shot sequence one SQLite transaction: `HALTED → RUNNING → task → manifest validation/activation → worker/budget → response → HALTED`. Exceptions at task registration, manifest registration, manifest validation, worker execution and response persistence roll back task, manifest, response, budget and audit writes together. A pre-existing legacy orphan is not deleted or rewritten; after exact case/year/run/objective/input verification, one deterministic child recovery task records the successor lineage. A second recovery or completed-run replay fails closed.
+Implementation commit `365e14b16b6982b637b5cd0423ce394f22de8596` gives every bounded synthetic task a deterministic per-task actor instance and makes the complete one-shot sequence one SQLite transaction: `HALTED â†’ RUNNING â†’ task â†’ manifest validation/activation â†’ worker/budget â†’ response â†’ HALTED`. Exceptions at task registration, manifest registration, manifest validation, worker execution and response persistence roll back task, manifest, response, budget and audit writes together. A pre-existing legacy orphan is not deleted or rewritten; after exact case/year/run/objective/input verification, one deterministic child recovery task records the successor lineage. A second recovery or completed-run replay fails closed.
 
 The real UI recovery path was exercised with synthetic fixtures: the legacy task remains `REGISTERED`, the recovery child reaches `AWAITING_ACCEPTANCE`, the structured six-field result is visible after application restart in Persian RTL and German LTR, and duplicate submission is rejected. Exact case/year/run/document/digest/parser/extraction binding, Permission Matrix, one-tool budget, audit integrity, production isolation, forbidden external/protected actions and Kill Switch restoration remain enforced. The Owner database was inspected read-only and was not mutated; Owner browser recovery remains pending.
 
@@ -69,7 +69,7 @@ Local verification passed **`8 passed`** recovery/fault-injection tests, **`93 p
 
 Status: **`TECHNICAL_PASS / INDEPENDENT_PASS / SYNTHETIC_ONLY / OWNER_BROWSER_RETEST_PENDING`**. Owner acceptance is not claimed. Exact Owner retest: restart the functional launcher, open synthetic case `TEST-2025-02`, choose the retained supported synthetic fixture, submit extraction with the original incomplete run ID `RUN-OWNER-UI25-08-004`, confirm the six structured fields appear in Analysis, refresh/restart and confirm readback, then confirm a second submission is rejected. Real taxpayer processing, protected persistence, operational IPC, C09, tax analysis and ELSTER remain disabled/unaccepted.
 
-# UI25-08 Owner extraction failure diagnosis and bounded repair — 2026-10-17
+# UI25-08 Owner extraction failure diagnosis and bounded repair â€” 2026-10-17
 
 Owner retest is recorded as **`OWNER_UI_RETEST_FAIL / CONTENT_STORED / EXTRACTION_REJECTED`** for synthetic case `TEST-2025-02`. Privacy-minimized read-only diagnosis of the exact `Synthetic Wage Retest` row verified `text/plain`, 159 retained bytes, stored/recomputed SHA-256 equality, strict UTF-8, LF-only lines, final newline, exact six-field ordering and parser PASS under `ui25.synthetic-wage-statement/1`. The live rendered form binds that row to the exact case, digest, `fa-IR` and `/test/kernel/documents/extract`. Storage, digest verification, fixture encoding/schema and the strict parser are not the failure source.
 
@@ -77,11 +77,11 @@ Read-only Kernel evidence contains one `TEST-2025-02` task for `RUN-OWNER-UX-002
 
 Implementation commit `36a196df24d96a650f9b2e933b1ae9bf1b079b0e` adds closed typed synthetic-document errors, exposes extraction only for rows with available `text/plain` bytes and matching digest, retains digest validation for legacy metadata-only rows, and localizes distinct missing-content, unsupported-format, digest-mismatch, invalid-fixture, not-found, replay/conflict, permission and Kernel-failure outcomes. It does not weaken the parser or create another worker, store or authority. A canonical LF-pinned fixture is available at `tests/fixtures/ui25/synthetic-wage-statement-owner-retest.txt`; it is 158 bytes with SHA-256 `fe830b1d6131d9ad420e164f928f03bb1a56b90abdf38b11ea7a63453d5c65e4`.
 
-Real-service verification using the functional launcher configuration and isolated temporary stores passed the complete upload → persisted bytes/digest → content resolver → strict parser → Kernel worker → audited response → structured Analysis path, followed by application restart/readback. Audit verification passed, one task/one response persisted and the Kill Switch remained `HALTED`. Local focused verification passes **`60 passed`** and relevant UI/Kernel/security regression passes **`168 passed`**. Independent review of exact `36a196df24d96a650f9b2e933b1ae9bf1b079b0e` returned **`INDEPENDENT_PASS / SYNTHETIC_ONLY`** with no findings; reviewer runs passed **`80 passed`** focused and **`359 passed, 1045 deselected`** relevant tests plus the live-form adversarial probe.
+Real-service verification using the functional launcher configuration and isolated temporary stores passed the complete upload â†’ persisted bytes/digest â†’ content resolver â†’ strict parser â†’ Kernel worker â†’ audited response â†’ structured Analysis path, followed by application restart/readback. Audit verification passed, one task/one response persisted and the Kill Switch remained `HALTED`. Local focused verification passes **`60 passed`** and relevant UI/Kernel/security regression passes **`168 passed`**. Independent review of exact `36a196df24d96a650f9b2e933b1ae9bf1b079b0e` returned **`INDEPENDENT_PASS / SYNTHETIC_ONLY`** with no findings; reviewer runs passed **`80 passed`** focused and **`359 passed, 1045 deselected`** relevant tests plus the live-form adversarial probe.
 
 Status: **`TECHNICAL_PASS / INDEPENDENT_PASS / SYNTHETIC_ONLY / OWNER_BROWSER_RETEST_PENDING`**. Owner must restart the functional launcher so the new code is loaded, select the canonical fixture row, use the action labelled step 3 and a fresh unique run ID, then confirm the structured Analysis view. This does not accept real documents, protected persistence, OCR/provider processing, tax analysis, operational IPC, C09 or ELSTER.
 
-# UI25 Owner UX remediation — 2026-10-17
+# UI25 Owner UX remediation â€” 2026-10-17
 
 Owner browser evidence is recorded exactly as **`OWNER_UI_TEST_PARTIAL / DOCUMENT_UPLOAD_PASS / EXTRACTION_NOT_OBSERVED / UNLABELED_ACTIONS`** for Persian case `TEST-2025-02`. The uploaded real document was outside the supported synthetic fixture contract; absence of extraction is not classified as a Kernel failure. Read-only, privacy-minimized inspection of the existing local functional-test SQLite schema found one document row with only `case_id`, digest and label columns, no content column, and no extraction event. Therefore that pre-remediation upload could retain filename/label and digest metadata, but not original bytes or extracted content. The inspected path has no external transmission code. No record or file was opened, copied, printed, changed or deleted.
 
@@ -93,17 +93,17 @@ Implementation commits `6d016c084dd317d4335d7f7f69f8936d06423c06`, `ca8126bd03fe
 
 Status: **`TECHNICAL_PASS / INDEPENDENT_PASS / SYNTHETIC_ONLY / OWNER_BROWSER_RETEST_PENDING`**. Owner retest must use a newly prepared supported synthetic fixture and a fresh unique run ID through `scripts/start_functional_ui_test.cmd`; the prior real-document record must not be deleted without explicit Owner authorization. Real document extraction, OCR/PDF, Gemini/provider calls, protected persistence, tax analysis, operational IPC, C09 and ELSTER remain disabled/unaccepted.
 
-# UI25-07 synthetic document content extraction — 2026-10-17
+# UI25-07 synthetic document content extraction â€” 2026-10-17
 
 Exact implementation commit `1922269ecb684984f0ef43dad90f5d0aa4fe5055` extends the independently accepted document-digest path with one closed `text/plain` UTF-8 fixture format. The existing `FunctionalTestStore` retains at most 32 KiB of explicitly synthetic bytes in its existing SQLite document row, keyed by exact `(case_id, digest)`. Retrieval requires `TEST-*`, exact ownership and supported content type, and recomputes SHA-256 before returning bytes. Existing databases migrate in place; legacy digest-only rows remain readable as metadata but fail closed for content extraction. No second database or storage authority exists.
 
-The fixed `UI25-SYNTHETIC-WORKER-V1` parses the actual retrieved bytes under the existing Kernel permission/budget/Kill Switch boundary. Schema `ui25.synthetic-wage-statement/1` requires exact ordered fields for synthetic document type, 2025, synthetic employer ID, gross employment income, withheld wage tax and EUR currency. Strict UTF-8/LF encoding, exact decimal syntax, bounds, cross-field consistency, duplicate/missing/unknown/reordered fields and unsupported type/year/currency all fail closed. The structured result preserves field-to-source-line lineage and has its own canonical SHA-256. Kernel task inputs and response evidence bind case/year/run, document reference, original digest, parser schema and extraction digest. The UI labels the result **SYNTHETIC CONTENT EXTRACTION — NOT TAX ANALYSIS** in German LTR and Persian RTL and displays fixture-derived values after restart.
+The fixed `UI25-SYNTHETIC-WORKER-V1` parses the actual retrieved bytes under the existing Kernel permission/budget/Kill Switch boundary. Schema `ui25.synthetic-wage-statement/1` requires exact ordered fields for synthetic document type, 2025, synthetic employer ID, gross employment income, withheld wage tax and EUR currency. Strict UTF-8/LF encoding, exact decimal syntax, bounds, cross-field consistency, duplicate/missing/unknown/reordered fields and unsupported type/year/currency all fail closed. The structured result preserves field-to-source-line lineage and has its own canonical SHA-256. Kernel task inputs and response evidence bind case/year/run, document reference, original digest, parser schema and extraction digest. The UI labels the result **SYNTHETIC CONTENT EXTRACTION â€” NOT TAX ANALYSIS** in German LTR and Persian RTL and displays fixture-derived values after restart.
 
 Two actual byte fixtures produced distinct verified results: `TEST-EMPLOYER-ALPHA / 55000.00 / 10250.00 EUR` and `TEST-EMPLOYER-BETA / 71234.56 / 14567.89 EUR`. Focused extraction/UI/Kernel verification passes **`27 passed`**; relevant UI/Kernel/audit regression passes **`161 passed`**. Independent reviewer inspected exact commit `1922269ecb684984f0ef43dad90f5d0aa4fe5055`, reproduced `12`, `20` and `347`-test subsets plus bilingual adversarial UI probes, found no defect and returned **`INDEPENDENT_PASS / SYNTHETIC_ONLY`**.
 
 Status: **`TECHNICAL_PASS / INDEPENDENT_PASS / SYNTHETIC_ONLY / OWNER_UI_ACCEPTANCE_PENDING`**. Real taxpayer documents, protected persistence, Gemini/provider calls, OCR/PDF, tax interpretation/calculation, operational IPC, C09 and ELSTER remain disabled/unaccepted. The precise next dependency toward provider-backed extraction is an Owner-approved provider/extraction contract and privacy boundary over an accepted protected case-scoped content resolver, including data minimization, credential custody, outbound authorization, provider result schema/lineage and independent security acceptance. This package grants none of those permissions.
 
-# UI25 synthetic document-to-Kernel evidence validation — 2026-10-17
+# UI25 synthetic document-to-Kernel evidence validation â€” 2026-10-17
 
 The existing functional UI, `FunctionalTestStore`, `UI25-SYNTHETIC-WORKER-V1`, Permission Matrix and Deterministic Orchestrator Kernel now provide one explicit synthetic-only document-evidence path. The store resolves an already registered lowercase SHA-256 only by exact `(case_id, digest)`, derives `test-document://<case_id>/sha256:<digest>`, and passes that immutable reference with exact `TEST-*` / 2025 / run scope to the existing worker. The Kernel task input, response summary and canonical evidence digest bind the same document reference and digest. The result is `SYNTHETIC_DOCUMENT_EVIDENCE=VALID` with `CONTENT_INTERPRETATION=NOT_PERFORMED`; it is metadata validation, not extraction or tax analysis. The bilingual Documents UI starts the operation and the Analysis UI displays the genuine Kernel task status, reference, digest and result after restart.
 
@@ -113,15 +113,15 @@ Implementation commit `aeeae8bcc0cc697337fba191d33630a3325674fc` initially recei
 
 Status: **`TECHNICAL_PASS / INDEPENDENT_PASS / SYNTHETIC_ONLY`**. This grants no document-content extraction, protected persistence, operational IPC, real-data, tax-analysis, C09 or submission acceptance. The exact missing capability toward actual document-content analysis is an Owner-authorized, case-scoped protected document-content resolver plus an independently accepted extraction/provider boundary with content lineage, privacy controls and result evidence. The current test store deliberately discards document bytes, and no digest may be interpreted as tax data.
 
-# UI25 loopback form-origin compatibility — 2026-10-17
+# UI25 loopback form-origin compatibility â€” 2026-10-17
 
 The Owner-reported `HTTP_403_ORIGIN_NULL` was reproduced in an actual Chrome tab against the isolated loopback functional-test service: the same-origin HTML form reached `POST /test/cases` with serialized `Origin: null` and the existing exact-origin guard correctly rejected it. Root cause was the functional page inheriting the production `Referrer-Policy: no-referrer`; for a Chrome form POST this suppresses the source origin into `null`, making a legitimate form indistinguishable from an opaque-origin request.
 
 The bounded correction changes only functional-test responses to `Referrer-Policy: same-origin`; production retains `no-referrer` and `form-action 'none'`. Functional mutations now require both exact `Origin: http://127.0.0.1:8766` and exact `Host: 127.0.0.1:8766`; missing/`null`/hostile origins, spoofed hosts and non-loopback hosts fail closed, and rejection responses retain the browser-security headers. Actual Chrome normal-mode verification created and reopened `TEST-2025-ORIGIN-FIXED` through the Persian UI. Automated functional/UI/security regression passes **`103 passed`**. Chrome Incognito remains **`OWNER_BROWSER_VERIFICATION_PENDING`** because the available controlled browser surface cannot start or attest an Incognito profile; no Incognito PASS is claimed.
 
-Status: **`TECHNICAL_PASS / SYNTHETIC_ONLY / OWNER_INCOGNITO_VERIFICATION_PENDING`**. This does not reopen or broaden UI25-05 acceptance, activate protected persistence, or change C09. Exact next executable package toward Documents → Analysis → Result is a bounded synthetic-only UI25 document-to-analysis binding: require an existing case-scoped synthetic document digest from `FunctionalTestStore`, bind that digest and exact case/year/run to the existing Kernel task input, display the genuine deterministic result, and reject missing, cross-case, altered or duplicate document references. It requires its own execution order and independent review; no real document bytes, operational IPC, new worker/authority, external I/O or submission is authorized here.
+Status: **`TECHNICAL_PASS / SYNTHETIC_ONLY / OWNER_INCOGNITO_VERIFICATION_PENDING`**. This does not reopen or broaden UI25-05 acceptance, activate protected persistence, or change C09. Exact next executable package toward Documents â†’ Analysis â†’ Result is a bounded synthetic-only UI25 document-to-analysis binding: require an existing case-scoped synthetic document digest from `FunctionalTestStore`, bind that digest and exact case/year/run to the existing Kernel task input, display the genuine deterministic result, and reject missing, cross-case, altered or duplicate document references. It requires its own execution order and independent review; no real document bytes, operational IPC, new worker/authority, external I/O or submission is authorized here.
 
-# UI25-05 independent acceptance / Owner browser test blocker — 2026-10-17
+# UI25-05 independent acceptance / Owner browser test blocker â€” 2026-10-17
 
 Independent reviewer `/root/ui25_05_independent_review` inspected exact implementation commit `c0f95b365af851fc20761eaac0d7b2f2b10219c7` in a separate review context and returned **`INDEPENDENT_PASS / SYNTHETIC_ONLY`** with no open defects. The reviewer reproduced the focused suite (`93 passed`) and related regression (`148 passed`) and independently verified production/test isolation, exact case/year/run authorization, Permission Matrix and Kernel budget enforcement, Kill Switch behavior, duplicate prevention, response digest binding, audit integrity and restart readback. An additional fault-injection review forced response-recording failure: the Kill Switch returned to `HALTED`, the active manifest was revoked, no partial response was recorded and audit integrity remained valid.
 
@@ -129,43 +129,43 @@ This accepts only the bounded synthetic implementation. Owner UI acceptance, pro
 
 The formerly proposed form-origin package is complete as recorded above. Do not repeat it; proceed only with the next explicitly authorized package.
 
-# UI25-05 one-shot synthetic Kernel execution — 2026-10-16
+# UI25-05 one-shot synthetic Kernel execution â€” 2026-10-16
 
-The functional UI now provides one explicit user-initiated vertical slice through the existing Kernel: exact registered `TEST-*` case / tax year 2025 / bounded run → fixed `UI25-SYNTHETIC-WORKER-V1` under the existing `IMPLEMENTATION_AGENT/report_evidence` permission → deterministic synthetic result → durable Kernel response/audit → genuine UI readback. The task remains `AWAITING_ACCEPTANCE`; no self-approval occurs. The Kill Switch returns to `HALTED` after the one-shot action.
+The functional UI now provides one explicit user-initiated vertical slice through the existing Kernel: exact registered `TEST-*` case / tax year 2025 / bounded run â†’ fixed `UI25-SYNTHETIC-WORKER-V1` under the existing `IMPLEMENTATION_AGENT/report_evidence` permission â†’ deterministic synthetic result â†’ durable Kernel response/audit â†’ genuine UI readback. The task remains `AWAITING_ACCEPTANCE`; no self-approval occurs. The Kill Switch returns to `HALTED` after the one-shot action.
 
 Production construction, non-test/year/run scope, cross-case run reuse, duplicate execution, non-HALTED start, direct worker invocation while halted and rewritten response content fail closed. Restart preserves exact task/result readback. No scheduler, second dispatcher, task registry, state database, protected persistence, external I/O or real data was introduced. Focused verification passes `93`; relevant regression passes `148`; complete unit regression passes `1371 passed, 5 skipped`. Status: **`TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING`**. Evidence: `docs/ui25-05-synthetic-kernel-execution-20261016.md`.
 
-# UI25 synthetic Dashboard reads genuine Kernel status — 2026-10-16
+# UI25 synthetic Dashboard reads genuine Kernel status â€” 2026-10-16
 
 The existing functional Dashboard now projects registered case/run/task status from the existing Deterministic Orchestrator Kernel through a strictly read-only, synthetic-only adapter. Exact `TEST-*` case, tax year and run bindings are mandatory; missing, unknown, inconsistent, cross-case, cross-year and reused run identities fail closed. The Kernel schema and complete audit hash chain are verified in the same read transaction as the scoped query, and every projected task requires exactly one registration audit. No task, manifest or agent is created, activated or dispatched; no second registry, scheduler, orchestrator, database or state store exists.
 
 Persian RTL and German LTR analysis/activity views display the genuine Kernel task ID, role, lifecycle status and kill-switch state and explicitly state that no task was executed. Focused integration/security/restart verification passes `54`; relevant regression passes `109`; complete unit regression passes `1366 passed, 5 skipped`. Status is **`TECHNICAL_PASS / SYNTHETIC_ONLY`**, not real-case or operational acceptance. Exact blocker toward the real 2025 end-to-end path remains an independently accepted durable live case/run resolver and protected persistence boundary; automatic dispatch remains separate and prohibited. Evidence: `docs/ui25-kernel-read-only-projection-20261016.md`.
 
-# UI25 synthetic 2025 case uses canonical backend models — 2026-10-16
+# UI25 synthetic 2025 case uses canonical backend models â€” 2026-10-16
 
 The smallest authorized UI-first slice now reuses the existing isolated `FunctionalTestStore` to reconstruct and validate the existing `CaseRegistry` and `CaseStateStore`; the Dashboard projects synthetic case status only from canonical `CaseRecord` state. A `TEST-*` 2025 case can be created through the UI, persisted, reopened after store restart and displayed in German LTR/Persian RTL. Synthetic document bytes are discarded after SHA-256 calculation; label/digest metadata persists and requires exact canonical case resolution. Corrupt lifecycle state, non-test identities, cross-case access and production test mutations fail closed. Focused verification passes `45`; relevant UI/backend regression passes `133`; complete unit regression passes `1361 passed, 5 skipped`.
 
 Status is **`TECHNICAL_PASS / SYNTHETIC_ONLY / REAL_CASE_BLOCKED`**, not UI25-01/02 acceptance. The test database is not promoted; no protected resolver, real identity, Kernel dispatch, PostgreSQL integration or ELSTER path was activated. Exact next executable package is a bounded synthetic-only UI-to-existing-Kernel case/run projection with no automatic dispatch; real 2025 creation/reopen remains blocked by the absent accepted durable live case resolver plus OI-0002/OI-0003 gates. Evidence: `docs/ui25-2025-canonical-test-backend-20261016.md`.
 
-# PostgreSQL Persistence PoC final technical acceptance — 2026-10-16
+# PostgreSQL Persistence PoC final technical acceptance â€” 2026-10-16
 
 The existing PostgreSQL 18.6 Docker lab was independently exercised with a guarded, synthetic-only schema and harness without creating another server/container or touching `public.lab_events`. The automated harness passed `29/29`: relational constraints, exact case/year RLS, CRUD, atomic commit/rollback, FK/unique/idempotency rejection, concurrent conflict, restart durability, controlled backup, isolated restore/readback and cleanup. A transient 10,000-row indexed workload and transactional migration rollback also passed. PostgreSQL is **CONDITIONALLY_ACCEPTED as a future database technology** and the existing lab is **CONDITIONALLY_ACCEPTED for isolated synthetic local development**; application integration remains `NOT_VERIFIED` because no adapter/cutover exists and the frozen contract still names SQLite as current authority.
 
 Protected production and C09 are **REJECTED for the tested configuration**. A PostgreSQL administrator successfully rewrote a synthetic audit row, an older internally consistent snapshot remains replayable, no independent freshness witness exists, and current lab credential custody is not production-grade. No protected persistence, Kernel integration or contract migration occurred. Exact continuation: Owner architecture decision, credential hardening, reviewed adapter plus one-authority migration, and independent freshness/operational security acceptance. Evidence: `docs/postgresql-persistence-poc-final-acceptance-20261016.md`.
 
-# Stateless IPC correlation/outcome validator independently accepted — 2026-10-16
+# Stateless IPC correlation/outcome validator independently accepted â€” 2026-10-16
 
 From exact remote baseline `f0926a0223136fc9908c5d5da585b6b67443dee7`, fresh authenticated telemetry (98% five-hour / 100% weekly) and the existing deterministic Limit Guard admitted one bounded non-operational package while preserving the 15-point reserve. Commit `6a8ca48e10bbaed96dadacc24609d5daa0f6724f` adds strict request/response correlation, a closed message/outcome matrix, eight privacy-minimized denial codes, full canonical response-digest binding and fail-closed malformed/ambiguous response handling. It reuses the accepted encoding/framing limits and creates no I/O, authentication, dispatch, persistence, mutation or finality surface.
 
 Focused verification passes `205`; relevant Kernel/Identity/continuity/evidence/custody regression passes `302`. Independent reviewer `/root/ipc_response_independent_review` reviewed the exact commit, reproduced both suites, found no defects and returned **`INDEPENDENT_IMPLEMENTATION_PASS`**. This is development-only acceptance and grants no C09, C01-C13 or operational IPC credit. The operational dependency matrix confirms that authenticated peer identity, Kernel-owned dispatch, protected persistence and rollback-resistant finality remain gated. No additional synthetic component has a demonstrated need. Exact next IPC action: Owner selection of a portable independently non-rollbackable freshness/restore authority, then ADR revision and independent security review. Evidence: `docs/oi0002-nonoperational-ipc-correlation-and-gap-matrix-20261016.md`.
 
-# Versioned non-operational IPC envelope independently accepted — 2026-10-14
+# Versioned non-operational IPC envelope independently accepted â€” 2026-10-14
 
 From baseline `f9a0a3f49710b68ba982e113ee7bc1830e62a1db`, the closed development contract `oi0002.kernel-identity-ipc-dev/1.0` now validates exact canonical envelopes without transport or execution. It enforces the complete field set, lowercase UUIDv4 transaction binding, CASE_YEAR-only synthetic scope, bounded identifiers/references, exact timestamps/digests/epochs, empty payloads, eight accepted domain operations and their six existing dedicated capabilities. PREPARE/COMMIT/GET/ABORT accept only the five mutation operations; READ accepts only the three read operations. Backup, restore, operational contract versions, unexpected fields, noncanonical bytes and every unapproved message/operation pair fail closed.
 
 The first independent review of implementation commit `6d0f6f724cc07b033c019405e89b791c3ce5d22c` returned FAIL for unconstrained `ABORT_PREPARED`/`GET_TRANSACTION` read combinations. Remediation commit `af99001d2dbe0f1cdfb9a136e870bd51d4019d10` adds an explicit matrix and exhaustive coverage of all 23 permitted and 17 forbidden pairs. Independent re-review returned **`INDEPENDENT_IMPLEMENTATION_PASS`**. Focused wire/envelope tests pass `114`; relevant Kernel/Identity/evidence/custody regression passes `211`. Status is strictly **NON-OPERATIONAL** with no C03-C12, C09 or OI-0002 acceptance credit. Evidence: `docs/oi0002-nonoperational-ipc-envelope-validator-20261014.md`.
 
-# Owner deployment baseline restored / development separated from operational IPC acceptance — 2026-10-14
+# Owner deployment baseline restored / development separated from operational IPC acceptance â€” 2026-10-14
 
 The Owner confirms that TPM and GitHub App investigations were conducted directly with ChatGPT and are complete historical diagnostics. Development continues on the existing Windows laptop with the existing Python/Docker architecture and a clean migration path to a replacement laptop or VPS. TPM or new hardware is not an ordinary-development prerequisite. GitHub remains source of truth for code/documentation but its branch head is not an accepted independent anti-rollback authority.
 
@@ -173,7 +173,7 @@ The mandatory-TPM IPC ADR is reconciled as an **unaccepted operational-acceptanc
 
 Independent review passed that separation with no required correction. The first admitted development-only IPC slice adds pure-Python strict canonical JSON and one-frame primitives, with no I/O, peer authentication, dispatch, persistence, transaction, mutation, finality, backup or restore surface. Exact ADR golden vectors, UTF-16 key ordering, complete-frame bounds, duplicate/noncanonical input, Unicode and numeric denial tests pass. Focused tests pass `21`; relevant Kernel/Identity regression passes `106`. Independent review returned PASS and explicitly awarded no C03-C12 or operational acceptance credit. Evidence: `docs/oi0002-nonoperational-ipc-wire-primitives-20261014.md`.
 
-# UI25-01 independent UI audit PASS / IPC host architecture blocker verified — 2026-10-14
+# UI25-01 independent UI audit PASS / IPC host architecture blocker verified â€” 2026-10-14
 
 Independent reviewer `/root/ui25_01_independent_audit` audited exact baseline `79dde300945eef063e19c75ff8f176107eff14be` and found one reproducible medium accessibility defect: at the <=900px breakpoint, visible navigation labels are hidden and links had no localized accessible names. Commit `6dd95f5c58230bf41c7e8ae81e79d46c11844b88` adds locale-derived `aria-label` values to all nine actionable links. The same independent reviewer re-reviewed that exact commit and returned **`UI25-01_INDEPENDENT_UI_AUDIT_PASS`**. Focused dashboard tests pass `19`; relevant UI/launcher regression passes `93`. This PASS covers the bounded fail-closed presentation audit only; UI25-01 real persistent case resolution remains gated.
 
@@ -181,7 +181,7 @@ The existing IPC ADR remediation is `ef8c2b4bb800dd04e7c92deb5deca841c53c9d16`; 
 
 Evidence and exact continuation: `docs/ui25-01-independent-audit-and-ipc-continuation-20261014.md`.
 
-# UI25-11 Owner accepted / UI25-01 lifecycle-status usability increment — 2026-10-14
+# UI25-11 Owner accepted / UI25-01 lifecycle-status usability increment â€” 2026-10-14
 
 The Owner completed and accepted UI25-11 hands-on desktop/mobile review in German LTR and Persian RTL, including language persistence, responsive navigation and continued inert approval/ELSTER behavior. **UI25-11 is TECHNICAL PASS / OWNER ACCEPTED** for that bounded product-shell scope; this does not accept C09, persistence, protected data or submission.
 
@@ -189,44 +189,44 @@ Fresh authenticated capacity was 79% five-hour and 84% weekly remaining. The exi
 
 Exact continuation: inspect the next C09-independent UI25 usability/accessibility gap under fresh Limit Guard admission. Real UI25-02..09 integration still requires its own accepted persistence/IPC prerequisites. C09 remains OPEN / NOT ACCEPTED and is not a global development stop.
 
-# C09 nonblocking policy synchronized / UI25-11 technical PASS — 2026-10-14
+# C09 nonblocking policy synchronized / UI25-11 technical PASS â€” 2026-10-14
 
-Owner policy is now canonical: **`C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED`**. C09 remains OPEN / NOT ACCEPTED and the frozen C01–C13 matrix, operational security gates, Human Gates and external-submission restrictions remain unchanged. Safe packages must be admitted by their own dependencies and Limit Guard rather than stopped globally by C09. `AGENTS.md`, `CURRENT_STATE.md`, `DECISIONS.md` and the two 2026-10-14 C09 decision records consistently carry this policy; no second checkpoint or authority exists.
+Owner policy is now canonical: **`C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED`**. C09 remains OPEN / NOT ACCEPTED and the frozen C01â€“C13 matrix, operational security gates, Human Gates and external-submission restrictions remain unchanged. Safe packages must be admitted by their own dependencies and Limit Guard rather than stopped globally by C09. `AGENTS.md`, `CURRENT_STATE.md`, `DECISIONS.md` and the two 2026-10-14 C09 decision records consistently carry this policy; no second checkpoint or authority exists.
 
 Recovery preserved the clean `d021-agent-case-provisioning` checkout and the unrelated dirty/behind `oi0002-identity-persistence` worktree. From clean remote policy baseline `a246e39`, the C09-independent UI25-11 package completed full German/Persian product-dashboard localization while retaining fail-closed data sourcing and inert ELSTER controls. Focused dashboard verification passes `10`; relevant UI/launcher regression passes `84`. **Status: UI25-11 TECHNICAL PASS / OWNER DEVICE ACCEPTANCE OUTSTANDING.** Evidence and exact continuation: `docs/ui25-11-bilingual-product-shell-20261014.md`.
 
-# OI-0002 final closure matrix frozen / capacity stop — 2026-10-12
+# OI-0002 final closure matrix frozen / capacity stop â€” 2026-10-12
 
-Owner authorized the bounded Kernel↔Identity Windows-local IPC correction and final closure campaign. Before implementation, the authoritative closure matrix was frozen in `docs/oi-0002-final-closure-matrix-20261012.md`, preserving REMEDIATION-02 acceptance, four-principal custody PASS, sealed run `run-20261012T174008Z` and existing regression evidence. Authenticated capacity was 45% five-hour and 67% weekly; with the mandatory 15-point reserve only 30 points were usable, while the complete ADR/review/implementation/operational campaign/final-review mission is conservatively estimated at 45–55 points. **Status: `BLOCKED_CAPACITY_BEFORE_IMPLEMENTATION`; no IPC code or reset credit was used.** Exact continuation after capacity readmission: ADR for the Owner-approved narrow authenticated local IPC → independent architecture/security PASS → implementation of matrix C03–C09/C11/C12 → real four-principal campaign → final independent PASS → closure if every criterion passes. The approved UI25 roadmap was recovered; safe synthetic/navigation/localization work is not intrinsically blocked, while the next real integration package after OI-0002 is UI25-02 using the accepted persistence interface. OI-0003 was not started.
+Owner authorized the bounded Kernelâ†”Identity Windows-local IPC correction and final closure campaign. Before implementation, the authoritative closure matrix was frozen in `docs/oi-0002-final-closure-matrix-20261012.md`, preserving REMEDIATION-02 acceptance, four-principal custody PASS, sealed run `run-20261012T174008Z` and existing regression evidence. Authenticated capacity was 45% five-hour and 67% weekly; with the mandatory 15-point reserve only 30 points were usable, while the complete ADR/review/implementation/operational campaign/final-review mission is conservatively estimated at 45â€“55 points. **Status: `BLOCKED_CAPACITY_BEFORE_IMPLEMENTATION`; no IPC code or reset credit was used.** Exact continuation after capacity readmission: ADR for the Owner-approved narrow authenticated local IPC â†’ independent architecture/security PASS â†’ implementation of matrix C03â€“C09/C11/C12 â†’ real four-principal campaign â†’ final independent PASS â†’ closure if every criterion passes. The approved UI25 roadmap was recovered; safe synthetic/navigation/localization work is not intrinsically blocked, while the next real integration package after OI-0002 is UI25-02 using the accepted persistence interface. OI-0003 was not started.
 
-# OI-0002 operational real-token PASS / architecture blocker — 2026-10-12
+# OI-0002 operational real-token PASS / architecture blocker â€” 2026-10-12
 
-The Owner authorized uninterrupted OI-0002 completion, removing the previous approval-only Human Gate. Four existing `AITax*` principals received only `SeBatchLogonRight`; limited temporary tasks used in-memory one-time random passwords, were deleted after execution, and account passwords were immediately rotated. Protected sealed evidence run `run-20261012T174008Z` proves the exact positive and negative effective-access matrix under all four real Windows tokens; each per-role result is SHA-256-bound in the controller summary. The official verifier under `AITaxRecovery` returned `OI0002_WINDOWS_CUSTODY_VERIFIED`; focused verification passes `106`. **Operational custody/effective access is PASS.** Final persistence/continuity acceptance remains **TECHNICAL_BLOCKER / NOT ACCEPTED**: `IdentityContinuityAuthority` is explicitly synthetic and requires direct in-process Kernel DB access, while `IdentityPersistence` has no reviewed authenticated Kernel client/IPC or continuity binding. Weakening ACL separation, Administrator substitution or synthetic callbacks cannot serve as operational proof. A separately approved Kernel↔Identity service contract is required before real-token restart, populated restore, rollback and continuity acceptance. OI-0002 remains OPEN and OI-0003 remains blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
+The Owner authorized uninterrupted OI-0002 completion, removing the previous approval-only Human Gate. Four existing `AITax*` principals received only `SeBatchLogonRight`; limited temporary tasks used in-memory one-time random passwords, were deleted after execution, and account passwords were immediately rotated. Protected sealed evidence run `run-20261012T174008Z` proves the exact positive and negative effective-access matrix under all four real Windows tokens; each per-role result is SHA-256-bound in the controller summary. The official verifier under `AITaxRecovery` returned `OI0002_WINDOWS_CUSTODY_VERIFIED`; focused verification passes `106`. **Operational custody/effective access is PASS.** Final persistence/continuity acceptance remains **TECHNICAL_BLOCKER / NOT ACCEPTED**: `IdentityContinuityAuthority` is explicitly synthetic and requires direct in-process Kernel DB access, while `IdentityPersistence` has no reviewed authenticated Kernel client/IPC or continuity binding. Weakening ACL separation, Administrator substitution or synthetic callbacks cannot serve as operational proof. A separately approved Kernelâ†”Identity service contract is required before real-token restart, populated restore, rollback and continuity acceptance. OI-0002 remains OPEN and OI-0003 remains blocked. Evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
 
-# OI-0002 final operational acceptance HUMAN_REQUIRED — 2026-10-12
+# OI-0002 final operational acceptance HUMAN_REQUIRED â€” 2026-10-12
 
 Owner-accepted REMEDIATION-02 was recovered at exact branch head `605e502d61556258d219c3ab2b6cf12372c2d451`; it remains accepted and was not reopened. Final operational recovery found all four distinct `AITax*` local principals present and enabled, but the current Codex token is not elevated and no OI-0002 Windows service or Scheduled Task is registered. The canonical `C:\ProgramData\AI-Tax-Agent\OI0002` and `OI0002-TEST` roots fail the official verifier with `OI0002_MANIFEST_MISSING`; access to `OI0002-TEST2` is denied to the current user, which is negative-access evidence only and cannot prove service-token effective access or operational persistence. Exact-SHA focused verification passes `104`; complete unit regression passes `1141 passed, 5 skipped`. No protected content, credential, ACL, service, task, database or backup was changed. **OI-0002 remains OPEN / NOT ACCEPTED; E-03/C-02/C-06 and OI-0003 remain blocked.** Human action required: provide an approved elevated execution context and approved credential-free/redacted token-launch mechanism for the four actual principals, then run the canonical disposable deployment, real persistence wiring, effective-access, restart, populated backup/restore, unauthorized-restore, rollback and audit-continuity exercises. A separate independent reviewer must inspect the resulting exact evidence before Owner disposition. Full evidence: `docs/oi-0002-operational-deployment-stop-20261011.md`.
 
-# OI-0002 REMEDIATION-02 REVIEW_READY — 2026-10-11
+# OI-0002 REMEDIATION-02 REVIEW_READY â€” 2026-10-11
 
-Owner authorized bounded implementation of F02/F05/F07. From clean baseline `691774e`, the existing Kernel now accepts an exact-digest versioned identity-administration contract with a dedicated role and six narrow capabilities; generic tax/derived-artifact roles no longer authorize identity operations. Evidence-backed effective-dated role correction preserves immutable HMAC-protected revisions and cardinality. Schema v1→v2 migration is one atomic transaction with rollback at five injected pre-commit boundaries, one-time signed commit-to-anchor reconciliation, audit-and-anchor-verified transactional receipt compatibility, exact protected legacy-audit preservation, populated-data preservation and fail-closed retention of unmigratable lineage. Five independent-review FAIL cycles found six bounded F05/F07 defects; all were corrected and preserved. The sixth independent review of exact SHA `6e97d20cc2411868bb038c1d894613b43a609bf1` returned **PASS** with focused `22` and relevant `90` reviewer tests. Implementation verification passes focused `46`, relevant `90`, and complete unit regression `1141 passed, 5 skipped`. This was the 2026-10-11 `INDEPENDENT_REVIEW_PASS / OWNER_ACCEPTANCE_READY` state; the Owner later accepted REMEDIATION-02 at commit `605e502d61556258d219c3ab2b6cf12372c2d451`. OI-0002 remains OPEN; operational Windows gates and OI-0003 remain blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
+Owner authorized bounded implementation of F02/F05/F07. From clean baseline `691774e`, the existing Kernel now accepts an exact-digest versioned identity-administration contract with a dedicated role and six narrow capabilities; generic tax/derived-artifact roles no longer authorize identity operations. Evidence-backed effective-dated role correction preserves immutable HMAC-protected revisions and cardinality. Schema v1â†’v2 migration is one atomic transaction with rollback at five injected pre-commit boundaries, one-time signed commit-to-anchor reconciliation, audit-and-anchor-verified transactional receipt compatibility, exact protected legacy-audit preservation, populated-data preservation and fail-closed retention of unmigratable lineage. Five independent-review FAIL cycles found six bounded F05/F07 defects; all were corrected and preserved. The sixth independent review of exact SHA `6e97d20cc2411868bb038c1d894613b43a609bf1` returned **PASS** with focused `22` and relevant `90` reviewer tests. Implementation verification passes focused `46`, relevant `90`, and complete unit regression `1141 passed, 5 skipped`. This was the 2026-10-11 `INDEPENDENT_REVIEW_PASS / OWNER_ACCEPTANCE_READY` state; the Owner later accepted REMEDIATION-02 at commit `605e502d61556258d219c3ab2b6cf12372c2d451`. OI-0002 remains OPEN; operational Windows gates and OI-0003 remain blocked. Evidence: `docs/oi-0002-remediation-02-report-20261011.md`.
 
-# OI-0002 operational deployment blocked — 2026-10-11
+# OI-0002 operational deployment blocked â€” 2026-10-11
 
 Recovery and Limit Guard passed at synchronized baseline `9923edb`; authenticated starting/ending capacity was 76%/47% five-hour and 96%/92% weekly. Windows custody tooling and SQLite consistent-snapshot integrity hardening are pushed through exact implementation SHA `c84d67da7c6b8e18863610a79a4440ab47a0d93a`; focused tests pass (`25`), concurrency stress passes (`30/30`), and full unit regression passes (`1119 passed, 5 skipped`). Actual deployment is **BLOCKED**: this host process is medium-integrity and not elevated, the safe preflight returned `OI0002_ELEVATION_REQUIRED`, and `C:\ProgramData\AI-Tax-Agent\OI0002` was not created. No service identity, ACL, secret, database or backup changed. Independent review withheld acceptance because no real effective-access, service wiring, restart, populated backup/restore or rollback evidence exists. **OI-0002 remains OPEN / NOT ACCEPTED; E-03/C-02/C-06, REMEDIATION-02 and OI-0003 remain BLOCKED.** Exact evidence and continuation: `docs/oi-0002-operational-deployment-stop-20261011.md`.
 
-# OI-0002 bounded review follow-up — 2026-10-11
+# OI-0002 bounded review follow-up â€” 2026-10-11
 
 Owner requested independent review, operational remediation and final acceptance. A separate bounded inspection confirmed that `identity_custody.py` explicitly implements a **synthetic-only** topology validator; its tests use synthetic principals and temporary paths. The earlier focused identity/continuity/evidence/custody/persistence tests passed (46), but no verified real service-account ACL, protected key custody, separated backup/recovery rehearsal or formally independent acceptance is recorded. Consequently **C-02/C-06 remain BLOCKED**, and E-03's live protected-provider integration remains unverified. **OI-0002 remains OPEN / NOT ACCEPTED**; no release, identity activation, or OI-0003 unblock is authorized. Do not confuse this evidence review with independent acceptance. Exact remaining work: implement and verify real protected deployment custody, independently assess the precise published security remediation, and obtain explicit Owner release of conditional gates. No new database or orchestrator is authorized.
 
 # Project Checkpoint
 
-## UI25 full functional completion governed stop — 2026-10-11
+## UI25 full functional completion governed stop â€” 2026-10-11
 
 Recovery passed on synchronized clean baseline `ffa8ae67825f485baf9bf8a429f61eee7bfb2866`; authenticated starting capacity was 98 percent five-hour and 100 percent weekly. The dashboard now supports German LTR and Persian RTL navigation and keeps Approval/Submission inert. Verification passes focused `32`, relevant UI/docs `42`, and full unit `1114 passed, 5 skipped`. Full completion is `BLOCKED_PREREQUISITE`, not PASS: the authoritative Case Registry/CaseStateStore remain in-memory, no approved durable live resolver is connected, OI-0002 remains unaccepted, OI-0003/Package A remains schema-blocked, and carryover/protected-evidence prerequisites remain closed. The port-8766 test store was not promoted. Exact continuation is in `docs/ui25-full-functional-completion-stop-20261011.md`: complete OI-0002 independent acceptance and Owner disposition, then OI-0003, before real UI25-02..09 integration. UI25-10 remains disabled; no submission, merge or release occurred.
 
 
-## Owner-approved UI25 continuation — 2026-10-09
+## Owner-approved UI25 continuation â€” 2026-10-09
 
 Owner approved UI-led incremental product completion and 2025 end-to-end testing, with real UI tabs connected to the existing Kernel, agents and persistence. Planned packages UI25-00..UI25-12 and acceptance contract: docs/ui25-execution-and-acceptance-plan.md and ROADMAP.md Track 3A. Limited internal development/testing and narrow Gemini API authority: docs/ui25-owner-internal-development-testing-authorization-20261009.md. **Planning only: no UI25 implementation, test PASS, Human Gate release or production activation is implied.** Next product task: UI25-00 inspect/run the existing UI and identify actual functional/synthetic gaps. Existing OI-0002 and other active gates remain unchanged; no ELSTER transmission without the two independent Owner approvals.
 
@@ -259,7 +259,7 @@ The human confirmed the following final state from the preceding project convers
 
 - CASE-001 for tax year 2024 completed its document, evidence, tax-analysis, opportunity, calculation-review, and Chief Agent review process.
 - The Chief Agent approved the completed 2024 analytical result and closed that preparation process.
-- Previously discussed CASE-001 facts and evidence—including driver/work information, EVG, spouse income/Minijob, school fees, household services and other reviewed items—must not automatically be reopened or requested again merely because an older D-024/D-025/D-028 document still labels them provisional or missing.
+- Previously discussed CASE-001 facts and evidenceâ€”including driver/work information, EVG, spouse income/Minijob, school fees, household services and other reviewed itemsâ€”must not automatically be reopened or requested again merely because an older D-024/D-025/D-028 document still labels them provisional or missing.
 - The only remaining product boundaries are:
   1. design and implementation of the controlled ELSTER/Finanzamt submission path;
   2. design and implementation of the user interface.
@@ -268,29 +268,29 @@ The human confirmed the following final state from the preceding project convers
 
 This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and the 2026-09-13 operational-readiness audit wherever they describe CASE-001 tax-analysis evidence gaps as currently open. Those older records remain historical evidence, not the current continuation point.
 
-## Active unresolved-gates register — Owner proposal recorded 2026-10-08
+## Active unresolved-gates register â€” Owner proposal recorded 2026-10-08
 
 **Required reference:** [OPEN_ITEMS.md](OPEN_ITEMS.md), initial inventory commit `59293d1229a6cbf8a4168a6b8fd7cc415f180564`. Eleven bounded unresolved or planned acceptance gates are registered with stable OI IDs, dependencies and authoritative evidence. This is a tracking projection, not an additional Kernel, scheduler, execution permission or checkpoint. At each governed recovery/package boundary reconcile it against **newest** accepted evidence and remove an item only after formal acceptance evidence and checkpoint/plan updates are committed. The automatic periodic reconciliation is a **proposal, not yet implemented**.
 
 **Supersession notice:** Earlier historical statements here or in the recovery plan that DOC-INDEX-CI-REPAIR was `NOT EXECUTED` are outdated. Its index and Constitution v3 compatibility fixes are committed; 68 relevant tests PASS and two inspected GitHub Actions runs succeeded. Owner observed no further GitHub notification emails after repairs began. Formal independent acceptance remains open as `OI-0001`; see `docs/doc-index-ci-repair-plan-20261008.md`. Earlier DR-04 rounding Human Gate and historical ERiC access pending are also superseded; do not resurrect them.
 
-**OI-0001 CLOSED — 2026-10-08:** Owner explicitly accepted DOC-INDEX-CI-REPAIR on verified technical evidence (68 tests PASS, Actions runs `37792324906` / `37792372732` SUCCESS, Owner-observed email quiet). Status `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, not a fabricated independent-review PASS. `OI-0001` was removed from active `OPEN_ITEMS.md` at commit `848ff06c14d8524c399d5c3f36c275dbe10a47d3`; full closure evidence in `docs/doc-index-ci-repair-plan-20261008.md` at commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. The seven-stage CASE-001 execution order is unchanged; next primary stage remains `OI-0002`.
+**OI-0001 CLOSED â€” 2026-10-08:** Owner explicitly accepted DOC-INDEX-CI-REPAIR on verified technical evidence (68 tests PASS, Actions runs `37792324906` / `37792372732` SUCCESS, Owner-observed email quiet). Status `CLOSED / OWNER_ACCEPTED_ON_TECHNICAL_EVIDENCE`, not a fabricated independent-review PASS. `OI-0001` was removed from active `OPEN_ITEMS.md` at commit `848ff06c14d8524c399d5c3f36c275dbe10a47d3`; full closure evidence in `docs/doc-index-ci-repair-plan-20261008.md` at commit `e3743e64ce65ea1f747949d30eb5e53e9b64c9cf`. The seven-stage CASE-001 execution order is unchanged; next primary stage remains `OI-0002`.
 
-**OI-0002 design review — 2026-10-08:** Actual PersonEntityRegistry, CaseRegistry, CaseIdentityAssociationService, HumanDeclaredFact, CaseStateStore and DurableApprovalStore were reviewed. Compatible logical schema, fail-closed case-party effective dates, subject-bound immutable fact envelope, security invariants and twelve synthetic acceptance scenarios recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` at commit `8787d7f97a7790ddaaf5e1ff96becc39ae3757c1`. **Design baseline only; no implementation, protected identity binding, Codex run or stage acceptance.** Verify authoritative frozen Persistence Contract before implementation; OI-0002 remains OPEN.
+**OI-0002 design review â€” 2026-10-08:** Actual PersonEntityRegistry, CaseRegistry, CaseIdentityAssociationService, HumanDeclaredFact, CaseStateStore and DurableApprovalStore were reviewed. Compatible logical schema, fail-closed case-party effective dates, subject-bound immutable fact envelope, security invariants and twelve synthetic acceptance scenarios recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` at commit `8787d7f97a7790ddaaf5e1ff96becc39ae3757c1`. **Design baseline only; no implementation, protected identity binding, Codex run or stage acceptance.** Verify authoritative frozen Persistence Contract before implementation; OI-0002 remains OPEN.
 
-**OI-0002 persistence contract recovered — 2026-10-08:** From Owner-approved 2026-09-29 Storage design conversation, `Persistence Contract v1 — FROZEN` specifies SQLite as the current authoritative structured-data DB, Google Drive for private documents, GitHub for engineering-only artifacts, one DB/deployment with case isolation, PostgreSQL-portable schema and later optional migration. Live SQLite must not reside in Drive sync. Current Git branch had no standalone frozen contract file; reconciliation with actual repo architecture and canonical `docs/case-party-model.md` roles is recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` (commit `5c0eb0665696e515a3d63f81a54d91bc02d6163a`). This recovers the design choice only; no stage implementation/acceptance, and no CASE-001 person identity inference.
+**OI-0002 persistence contract recovered â€” 2026-10-08:** From Owner-approved 2026-09-29 Storage design conversation, `Persistence Contract v1 â€” FROZEN` specifies SQLite as the current authoritative structured-data DB, Google Drive for private documents, GitHub for engineering-only artifacts, one DB/deployment with case isolation, PostgreSQL-portable schema and later optional migration. Live SQLite must not reside in Drive sync. Current Git branch had no standalone frozen contract file; reconciliation with actual repo architecture and canonical `docs/case-party-model.md` roles is recorded in `docs/oi-0002-identity-family-persistence-design-20261008.md` (commit `5c0eb0665696e515a3d63f81a54d91bc02d6163a`). This recovers the design choice only; no stage implementation/acceptance, and no CASE-001 person identity inference.
 
-## Mandatory active recovery plan — Owner-approved 2026-10-08
+## Mandatory active recovery plan â€” Owner-approved 2026-10-08
 
 **Required reference:** [CASE-001/2024 DR-04 Recovery Execution Plan](docs/case001-dr04-recovery-execution-plan-20261008.md) (Plan ID `CASE001-DR04-RECOVERY-20261008`). Read this plan on every project session and before dispatching a task until its seven acceptance gates are all PASS.
 
-**Locked execution order:** Identity & Family Persistence → Package A Owner Facts Registration → DR-01 Lineage Reacceptance → DR-02 Independent Reacceptance → Package B Annual Carryover Contract & Kernel Gate → Package C Bilingual Annual Questionnaire & UI → DR-04 final Independent Acceptance PASS. B/C precede DR-04 by Owner scheduling decision, not technical dependency. DR-03 prior acceptance requires compatibility verification, not automatic replay.
+**Locked execution order:** Identity & Family Persistence â†’ Package A Owner Facts Registration â†’ DR-01 Lineage Reacceptance â†’ DR-02 Independent Reacceptance â†’ Package B Annual Carryover Contract & Kernel Gate â†’ Package C Bilingual Annual Questionnaire & UI â†’ DR-04 final Independent Acceptance PASS. B/C precede DR-04 by Owner scheduling decision, not technical dependency. DR-03 prior acceptance requires compatibility verification, not automatic replay.
 
 **Verified current stop:** Identity/Persistence foundational blocker; Package A `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`. DR-01 historical acceptance is not sufficient for current lineage reacceptance. DR-02 and DR-04 cannot be called complete. DR-04 rounding successor EUR 134.00 and historical analytical EUR 133.83 must remain separately versioned.
 
-**Parallel GitHub CI email repair — Owner priority:** Repeated incoming GitHub Inbox email notifications were reported alongside the failing documentation-index test `test_every_focused_document_is_registered_in_the_index`. The exact six-step bounded remediation is mandatory reference [`docs/doc-index-ci-repair-plan-20261008.md`](docs/doc-index-ci-repair-plan-20261008.md), ID `DOC-INDEX-CI-REPAIR`, status `OWNER-PRIORITIZED / NOT EXECUTED`: identify failing CI paths → determine index eligibility → minimal index fix → exact test → related regression → independent acceptance/evidence. Verify live Actions before claiming root cause or reduced email volume. Keep open until PASS or Owner cancellation. **Distinct:** outgoing operational notification provider is separately blocked; neither workstream authorizes inbox access, sending, or disabling CI.
+**Parallel GitHub CI email repair â€” Owner priority:** Repeated incoming GitHub Inbox email notifications were reported alongside the failing documentation-index test `test_every_focused_document_is_registered_in_the_index`. The exact six-step bounded remediation is mandatory reference [`docs/doc-index-ci-repair-plan-20261008.md`](docs/doc-index-ci-repair-plan-20261008.md), ID `DOC-INDEX-CI-REPAIR`, status `OWNER-PRIORITIZED / NOT EXECUTED`: identify failing CI paths â†’ determine index eligibility â†’ minimal index fix â†’ exact test â†’ related regression â†’ independent acceptance/evidence. Verify live Actions before claiming root cause or reduced email volume. Keep open until PASS or Owner cancellation. **Distinct:** outgoing operational notification provider is separately blocked; neither workstream authorizes inbox access, sending, or disabling CI.
 
-**DOC-INDEX-CI-REPAIR verified progress — 2026-10-08:** Index drift fixed by registering two missing plan documents in `docs/README.md` (commit `b850a33`); isolated focused run `10 passed`. Related test run `12 passed, 3 failed`: three pre-existing pilot governance checks require obsolete literal Constitution v2 heading despite ratified v3. GitHub Actions live status and email reduction not yet verified; independent acceptance remains OPEN. See `docs/doc-index-ci-repair-plan-20261008.md` for exact evidence and next governed compatibility repair. Do not mark whole CI package PASS or mute notifications.
+**DOC-INDEX-CI-REPAIR verified progress â€” 2026-10-08:** Index drift fixed by registering two missing plan documents in `docs/README.md` (commit `b850a33`); isolated focused run `10 passed`. Related test run `12 passed, 3 failed`: three pre-existing pilot governance checks require obsolete literal Constitution v2 heading despite ratified v3. GitHub Actions live status and email reduction not yet verified; independent acceptance remains OPEN. See `docs/doc-index-ci-repair-plan-20261008.md` for exact evidence and next governed compatibility repair. Do not mark whole CI package PASS or mute notifications.
 
 **Next permitted work:** separately governed design/implementation/independent acceptance of compatible durable identity, effective-dated family roles and subject-bound protected persistence. No automatic execution or external transmission is authorized by this documentation.
 
@@ -298,95 +298,95 @@ This recovered checkpoint supersedes the older D-028 `HUMAN_REQUIRED` state and 
 
 ## Current continuation point
 
-### OI-0002 SEC-01 through SEC-04 remediation REVIEW_READY — 2026-10-09
+### OI-0002 SEC-01 through SEC-04 remediation REVIEW_READY â€” 2026-10-09
 
 - Exact baseline `28b0c1571c6026b7bfe996f68b52a30450d1f352` was clean and synchronized. Before code changed, synthetic adversarial probes independently reproduced unauthorized restore registration/consumption, unauthorized evidence revocation, context-free continuity initialization and accepted tail-truncated audit history.
 - Implementation commit `4c54c5cba6ef6e007012d035d59310e5dd2db3a9` makes the existing Kernel/evidence contracts require exact active Kernel and approved Human Gate restore authority, manifest-bound recovery-operator consumption, one-time scope-bound revocation authorization, authorized non-repeatable initialization, and a transactional keyed audit count/head anchor. Focused verification passes `18`; relevant Kernel/identity/registry verification passes `107`; complete unit regression passes `1104 passed, 5 skipped`.
 - Status is `REVIEW_READY / NOT INDEPENDENTLY ACCEPTED / NOT RELEASED`. Evidence is in `docs/oi-0002-security-remediation-sec01-sec04-20261009.md`. `E-03`, `C-02`, `C-06`, `REMEDIATION-02` and `OI-0003` remain BLOCKED. Exact next action is a separate independent read-only review of the published remediation SHA; this worker must not accept or release it.
 
-### OI-0002 limited implementation package 1 — 2026-10-09
+### OI-0002 limited implementation package 1 â€” 2026-10-09
 
 - Under Owner-authorized limited synthetic development, `IdentityContinuityAuthority` now delegates to the actual persistent Deterministic Orchestrator Kernel rather than a parallel SQLite authority. Kernel state binds deployment, case, tax year, task, manifest, run and operation; reservation, commit, restart verification, deterministic pending reconciliation and older-epoch rejection are covered.
 - Focused continuity/Kernel verification passes (`29 passed`). This is synthetic implementation evidence only: C-06 is not automatically PASS or released, no real custody/restore/production action occurred, and remediation-02/OI-0003 remain blocked.
 
-### OI-0002 limited implementation package 2 — 2026-10-09
+### OI-0002 limited implementation package 2 â€” 2026-10-09
 
-- The durable synthetic evidence authority now binds declaration → confirmation → one-time identity authorization to exact case, year, subject, semantic key, actor, run, task, manifest, validity, provider object and document revision. It verifies protected bytes through an injected case-scoped loader, supports expiry/revocation/consumption, and HMAC-protects rows plus an immutable audit chain.
+- The durable synthetic evidence authority now binds declaration â†’ confirmation â†’ one-time identity authorization to exact case, year, subject, semantic key, actor, run, task, manifest, validity, provider object and document revision. It verifies protected bytes through an injected case-scoped loader, supports expiry/revocation/consumption, and HMAC-protects rows plus an immutable audit chain.
 - Identity persistence now requires a protected evidence resolver on party/fact bind and restart readback; a digest-shaped string alone is no longer sufficient. A synthetic custody contract verifies distinct service/recovery identities, non-nested Kernel/identity/backup roots, nonliteral key references and least-privilege ACL requirements without changing Windows state.
 - Focused evidence/custody/persistence verification passes (`36 passed`). E-03/C-02 remain conditionally blocked pending independent verification and Owner release; no real principal, ACL, secret, backup or taxpayer artifact changed.
 
-### OI-0002 limited implementation package 3 — 2026-10-09
+### OI-0002 limited implementation package 3 â€” 2026-10-09
 
 - Synthetic governed restore is exact, expiring and one-time, bound to deployment, backup digest, current epoch/head, target generation and recovery operator. Concurrent consumption of one identity authorization has exactly one winner. Focused security verification passes (`15 passed`); relevant integrated regression passes (`115 passed`).
 - The first complete unit run produced `1098 passed, 5 skipped, 1 failed`; the sole failure is the documentation-index guard identifying three existing OI-0002 baseline documents that were not registered. No product/security test failed. The index and final governed report are the next bounded package.
 
-### OI-0002 limited integration REVIEW_READY — 2026-10-09
+### OI-0002 limited integration REVIEW_READY â€” 2026-10-09
 
 - The documentation index is reconciled and passes (`15 passed`). The corrected complete unit regression passes (`1099 passed, 5 skipped`). Package evidence is published in `docs/oi-0002-limited-integration-report-20261009.md`.
 - Status is `REVIEW_READY / NOT RELEASED`, not acceptance: E-03/C-02/C-06 remain BLOCKED pending a separate independent review and explicit Owner release. Real service accounts, ACLs, keys, backups, taxpayer data, production, remediation-02 and OI-0003 remain untouched/blocked.
 
-### OI-0002 Owner disposition and conditions gate — 2026-10-08
+### OI-0002 Owner disposition and conditions gate â€” 2026-10-08
 
 - Owner record `ODR-OI0002-OWNER-DISPOSITION-20261008` approves F02's six dedicated capabilities/service role and conditionally approves F03/F06. Conditional approval is not implementation release.
 - `OI-0002-CONDITIONS-VERIFICATION-GATE` finds E-03 BLOCKED because durable general declaration, confirmation, identity-authorization and audit/content-verification authorities are absent; C-02/C-06 are BLOCKED because actual separate-custody service-account, ACL, key and backup/recovery evidence is unavailable. Architecture/specification conditions otherwise pass as design evidence only.
 - Recommendation is `DO NOT AUTHORIZE REMEDIATION-02 YET`. Exact evidence and continuation are in `docs/oi-0002-conditions-verification-gate-20261008.md`. No code or contract changed; OI-0002 remains OPEN and remediation-02/OI-0003 remain BLOCKED.
 
-### OI-0002 architecture decision gate — 2026-10-08
+### OI-0002 architecture decision gate â€” 2026-10-08
 
 - Architecture review of exact implementation `ad263284ff211d6d7d75234c03c3005d43b7d2df` determined that F02, F03 and F06 cannot be remediated safely under unmodified frozen authority. Three explicit Owner decisions are required: dedicated identity permissions/service role; designation of the composite protected evidence resolver and metadata index; and the existing Kernel store as independent monotonic continuity/restore authority.
 - F05 immutable effective-dated role correction and F07 atomic migration are within the existing frozen design once their F02/F03/F06 dependencies are approved. Exact contracts, tests and the bounded remediation-02 sequence are in `docs/oi-0002-architecture-decision-gate-20261008.md`.
 - Status is `HUMAN_REQUIRED / ARCHITECTURE_DECISIONS_PENDING`. No implementation or frozen contract changed. OI-0002 remains OPEN; OI-0003 and all downstream stages remain blocked. Exact next action is Owner disposition of ODR-OI0002-02-PERMISSIONS, ODR-OI0002-03-EVIDENCE and ODR-OI0002-06-CONTINUITY.
 
-### OI-0002 second independent review FAIL — 2026-10-08
+### OI-0002 second independent review FAIL â€” 2026-10-08
 
 - A separate independent review inspected exact published remediation head `ad263284ff211d6d7d75234c03c3005d43b7d2df` from a clean isolated worktree. Focused (`52`), relevant (`102`), complete unit (`1084 passed, 5 skipped`) and documentation (`15`) regressions pass, but adversarial review reproduced five unresolved security/integrity defects.
 - F01 manifest expiry and F04 ACTIVE lifecycle enforcement are corrected. F02 remains over-authorized because generic tax-agent derived-artifact capability grants identity lifecycle operations; F03 accepts unresolved declaration/confirmation references; F05 lacks verified evidence and an effective-dated correction path; F06 accepts rollback of an older valid database-plus-same-directory-anchor pair; F07 commits destructive v1 table deletion before schema recreation/insertion.
 - T01-T12 disposition is 8 PASS, 4 FAIL, 0 BLOCKED. Recommendation is `FAIL`; OI-0002 remains OPEN, OI-0003 and every downstream stage remain blocked. Exact evidence and required corrections are in `docs/oi-0002-independent-security-acceptance-review-02-20261008.md`. No implementation, real identity, protected evidence, frozen contract, external action, merge or release changed.
 
-### OI-0002 remediation REVIEW_READY — 2026-10-08
+### OI-0002 remediation REVIEW_READY â€” 2026-10-08
 
 - `OI-0002-REMEDIATION-01` remediates F01-F07 in implementation code commit `ad30cee664b2ca002014adb0c9b3c46daca7ca82`: decision-time manifest expiry; Kernel-authorized lifecycle operations; ACTIVE enforcement; complete immutable fact lineage; cross-subject family cardinality; HMAC row/audit continuity with external anchor; and migration, crash, backup/restore and deployment controls.
 - Worker verification passed focused (`50`), relevant (`102`) and the five original adversarial classes (`9`). The final complete regression and exact published head are recorded in `docs/oi-0002-remediation-01-report-20261008.md`.
 - Status is `REVIEW_READY`, not accepted. No real CASE-001 identities or private data were created; no external action, merge, release, OI-0003, scheduler or parallel authority occurred. OI-0002 remains OPEN pending a separate independent review of the exact published head; OI-0003 and downstream stages remain blocked.
 
-### OI-0002 independent security review FAIL — 2026-10-08
+### OI-0002 independent security review FAIL â€” 2026-10-08
 
 - An independent read-only review established exact candidate SHA `90d44a8b0a40ad5a29ffa6d5d7d63db7c3caa10a` and returned `FAIL`. Focused regression passed `88`; complete unit regression passed `1080` with `5 skipped`, but independent adversarial probes reproduced post-expiry manifest authorization, unauthenticated raw identity access, overlapping spouse roles, archived-identity readback and deletable audit history.
-- T01–T12 disposition is 6 PASS, 5 FAIL, 1 BLOCKED. The incomplete subject-fact lineage envelope, lifecycle enforcement, role conflict model, audit integrity, migration and crash evidence also prevent acceptance. No real CASE-001 identity, protected evidence, implementation code, external action, merge, release or downstream package changed.
+- T01â€“T12 disposition is 6 PASS, 5 FAIL, 1 BLOCKED. The incomplete subject-fact lineage envelope, lifecycle enforcement, role conflict model, audit integrity, migration and crash evidence also prevent acceptance. No real CASE-001 identity, protected evidence, implementation code, external action, merge, release or downstream package changed.
 - OI-0002 remains OPEN. Exact continuation: remediate the ordered findings in `docs/oi-0002-independent-security-acceptance-review-20261008.md`, produce a new exact commit, then obtain a separate independent review. OI-0003 and all downstream recovery stages remain blocked.
 
-### DR-04 Part 1 approved successor — 2026-10-08
+### DR-04 Part 1 approved successor â€” 2026-10-08
 
 - Owner decision `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE-20261006` is implemented as DR-04 contract version 2. The exact source bases remain EUR 69.13 and EUR 90.00, while their separately bound whole-euro declaration representations remain EUR 70 and EUR 90.
 - The versioned successor records section-35a credit EUR 32.00 and refund EUR 134.00. Historical section-35a credit EUR 31.83 and refund EUR 133.83 remain explicit predecessor values and were not silently overwritten. Case isolation, provenance inputs and the `NON_TRANSMITTING_PREVIEW` boundary remain fail-closed.
 - Focused and bounded regression verification passed (`26 passed, 5 skipped`); the DR-04 exact official-XSD path executed and passed. Part 1 does not accept or close DR-04. Execution/binding of the ten reviewed plausibility rules, exact accepted-artifact lineage pinning, full regression and Independent Acceptance remain deferred; DR-05 remains blocked. Evidence: `docs/case001-dr04-acceptance-2024.md` and its JSON companion.
 
-### Supervisor-loop G1 usage telemetry — 2026-10-07
+### Supervisor-loop G1 usage telemetry â€” 2026-10-07
 
 - G1 is `PASS` on the actual Windows/ChatGPT account. Codex CLI `0.160.1` authenticated with the existing ChatGPT login, and local `codex app-server` returned unambiguous 300-minute and 10080-minute rate-limit windows through `account/rateLimits/read` without creating a model thread or project task.
 - A strict read-only normalizer now writes only non-secret usage telemetry to ignored `.runtime/usage/CODEX_USAGE.json` and adapts it to the existing deterministic `CapacityObservation`; no second Limit Guard or execution authority was created. Focused verification passed (`33 passed`) and the real local smoke created the ignored snapshot successfully. Evidence: `docs/supervisor-loop-g1-validation-20261007.md`.
 - Historical 2026-10-07 state: G2 MCP Event delivery was unproven and was then described as the next infrastructure gate. This continuation is superseded by the 2026-10-20 permanent Owner termination of OI-0009 and is not executable.
 
-### DR-04 authoritative rounding Human Gate — 2026-10-06
+### DR-04 authoritative rounding Human Gate â€” 2026-10-06
 
 - A clean synchronized Recovery Gate passed at `0af18efc2e059eff6c2b07fb3c5dd3b99ded60bb`. Live authoritative Codex capacity was five-hour `82%` remaining (reset `2026-10-06T21:08:11+02:00`) and weekly `23%` remaining (reset `2026-10-11T12:37:32+02:00`); the closed `BOUNDED` estimate permitted DR-04 investigation without using Full Reset.
 - Before code change, authoritative reconciliation confirmed that the accepted taxpayer-favorable whole-euro transformation maps the EUR 69.13 tenant basis to `70` and the EUR 90.00 craftsman basis to `90`. Those declaration inputs imply a section-35a credit of EUR 32.00, not the frozen EUR 31.83.
 - Changing this component alone projects a successor refund of EUR 134.00. Because the Owner required the accepted EUR 133.83 result to remain frozen unless an exact material-result change is explicitly approved, status is `HUMAN_REQUIRED / DR04-ROUNDING-RESULT-CHANGE`. No tax code, accepted result, external boundary, or protected artifact was changed. Focused control verification passed (`42 passed`: project execution graph plus bounded host control).
 - DR-05 remains dependency-blocked. Exact next action is `OWNER-DECIDE-DR04-ROUNDING-RESULT-CHANGE`; after approval, repair the two remaining defects (execute/bind the ten reviewed plausibility rules and reject valid-but-unrelated lineage), run focused/regression tests, and repeat Independent Acceptance. Evidence: `docs/dr04-rounding-human-gate-20261006.json`.
 
-### Owner operational exception notification amendment — 2026-10-05
+### Owner operational exception notification amendment â€” 2026-10-05
 
 Current disposition: the activation continuation described in this historical section is superseded by the 2026-10-20 Owner deferral of OI-0011. It is optional, nonblocking and not executable without a new explicit Owner directive; existing contracts and evidence remain preserved.
 
-- The Owner explicitly approved Constitution v3 Article 1 clauses 15–17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.
+- The Owner explicitly approved Constitution v3 Article 1 clauses 15â€“17: a narrow, pre-registered Owner-controlled operational exception channel for a closed event allowlist. Tax/taxpayer data, evidence, declarations, attachments, arbitrary messages/destinations, ELSTER/Finanzamt contact, submission, and all other external transfer remain under the unchanged two-stage authorization rule.
 - The exact decision, risks, controls, and migration consequence are recorded in `DECISIONS.md`. Runtime notification remains fail-closed until the versioned successor contract, sender path, bounded audit/retry behavior, and Independent Acceptance are complete.
 - The same authorization permits a bounded extension of the existing Windows Relay for lifecycle management of only `plan-limit-continuation-guard`; it does not permit a second scheduler, arbitrary command/path, or project execution authority.
 - Relay hardening binds scheduler lifecycle requests to the verified HOT CONTEXT digest, exact repository/branch/current HEAD, recovery checkpoint, graph digest, action, Human-Gate absence, and durable reset. Notification v2 uses fixed templates, a closed non-sensitive event-identity grammar, atomic durable pre-send reservation, identity-bound retry, and fail-closed completion. Focused verification passes (`79 passed`); final Independent Acceptance is `PASS`.
 - Exactly one authorized activation attempt was evaluated and recorded as `FAILED`: the protected provider configuration/permission required for a real email is unavailable to the runtime. No message, taxpayer/tax data, sensitive project data, credential, or attachment was transmitted. The isolated notification provider gate does not grant authority and does not block DR-04.
 - Post-repair live capacity is five-hour `9%` remaining and weekly `34%` remaining. This is a hard-threshold `TOKEN_PAUSED` state before DR-04. Five-hour reset is `2026-10-05T11:40:44Z`; `resume_not_before` is `2026-10-05T11:42:44Z` after the governed two-minute buffer. Continuation commit is `580d87514907395e4054272e244bf246351e4172`; exact next action remains `DR-04-REMEDIATE-AND-ACCEPT`. Capsule: `docs/dr04-token-paused-after-owner-notification-repair-20261005.json`. The sole existing guard must use a one-shot reset-aligned wake, not five-minute polling.
-- **Work scheduler migration STOP — 2026-10-05:** the `2026-10-05T11:42:44Z` wake was missed although the Windows host and desktop app were running, Windows Relay executed successfully every minute, and repository HEAD `1c25b83a06b65023514f9f7f5a7585bd0998f6f7` was clean and synchronized. No relay request or continuation execution occurred. Classification is `MISSED_WAKE / CODEX_AUTOMATION_TRIGGER_FAILURE`. The Codex automation `plan-limit-continuation-guard` was paused and marked `NON_AUTHORITATIVE_RETIRED_TRIGGER`; Relay `SCHEDULER_ARM` is no longer allowlisted. The intended single authority is a local-project ChatGPT Work Scheduled Task with the same logical identity. The current session exposes no callable Work Scheduled Task control; a web task cannot access the local project, and automating the ChatGPT Desktop UI is prohibited by the available computer-use safety contract. Therefore no substitute task was created, `WAKE_TEST_PASS` is not claimed, DR-04 was not started, and state is `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`. Evidence: `docs/work-scheduler-migration-stop-20261005.json`.
+- **Work scheduler migration STOP â€” 2026-10-05:** the `2026-10-05T11:42:44Z` wake was missed although the Windows host and desktop app were running, Windows Relay executed successfully every minute, and repository HEAD `1c25b83a06b65023514f9f7f5a7585bd0998f6f7` was clean and synchronized. No relay request or continuation execution occurred. Classification is `MISSED_WAKE / CODEX_AUTOMATION_TRIGGER_FAILURE`. The Codex automation `plan-limit-continuation-guard` was paused and marked `NON_AUTHORITATIVE_RETIRED_TRIGGER`; Relay `SCHEDULER_ARM` is no longer allowlisted. The intended single authority is a local-project ChatGPT Work Scheduled Task with the same logical identity. The current session exposes no callable Work Scheduled Task control; a web task cannot access the local project, and automating the ChatGPT Desktop UI is prohibited by the available computer-use safety contract. Therefore no substitute task was created, `WAKE_TEST_PASS` is not claimed, DR-04 was not started, and state is `NO_AUTHORITATIVE_SCHEDULER / MIGRATION_BLOCKED_TOOLING_BOUNDARY`. Evidence: `docs/work-scheduler-migration-stop-20261005.json`.
 
-### Autonomous infrastructure reconciliation — 2026-10-04
+### Autonomous infrastructure reconciliation â€” 2026-10-04
 
 - Owner directive `FINAL-INFRASTRUCTURE-DIRECTIVE` completed R1 through R6 on branch `d021-agent-case-provisioning`; implementation commit is `9355f81` and the starting accepted checkpoint was `ad4f69fa1ae1d6ea06d138d7ca969e061a918dec`.
 - R1 classified all 313 tracked files individually. No tracked deletion was safe or necessary; protected local artifacts were preserved. Disposable ignored logs/caches carry no governed state and no Git history, Drive, or protected-source mutation occurred.
@@ -399,9 +399,9 @@ Current disposition: the activation continuation described in this historical se
 - R6 Independent Acceptance required five review cycles. Four FAIL cycles exposed and repaired cost bypass, stale-capacity acceptance, shallow graph/inventory proof, fake closed-loop integration, notification authority/destination/retry weaknesses, reset selection, and UNKNOWN handling. Final Independent Acceptance is `PASS`; independent focused run `80 passed`, post-transition focused run `81 passed`, and the pre-transition complete unit regression passed `1003 passed, 1 warning`.
 - Exact next authorized action is `DR-03-REGISTER-AND-COMPLETE`; DR-01 and DR-02 remain accepted, DR-04 remains pending its three bounded repairs, and DR-05 remains dependency-blocked. The frozen refund remains EUR 133.83.
 - Post-push capacity gate at synchronized HEAD `6d7786d8a0516dcd7df5fe6f5d808c4c8a4ff539` observed 28 percent five-hour and 63 percent weekly remaining. The closed `BOUNDED` estimate projects 13/58 and therefore deterministically returns `CAPACITY_DEFERRED`. DR-03 was not started. The exact continuation is recorded in `docs/dr03-capacity-deferred-after-r6-20261004.json` for one wake at the actual five-hour reset `2026-10-05T01:39:36Z`.
-- **Missed-wake recovery — 2026-10-05:** the scheduled one-shot did not consume itself and remained stale `ACTIVE` after its reset time. The next legitimate execution recovered clean synchronized checkpoint `b765ba15d4d08689257d6d20c79d961e002ffded`, read fresh live capacity `97%` five-hour / `62%` weekly, revalidated exact action `DR-03-REGISTER-AND-COMPLETE`, and paused the consumed one-shot before work. No duplicate scheduler or polling loop was created. Durable recovery evidence is `docs/plan-limit-missed-wake-recovery-20261005.json`; DR-03 is now safe to resume automatically.
+- **Missed-wake recovery â€” 2026-10-05:** the scheduled one-shot did not consume itself and remained stale `ACTIVE` after its reset time. The next legitimate execution recovered clean synchronized checkpoint `b765ba15d4d08689257d6d20c79d961e002ffded`, read fresh live capacity `97%` five-hour / `62%` weekly, revalidated exact action `DR-03-REGISTER-AND-COMPLETE`, and paused the consumed one-shot before work. No duplicate scheduler or polling loop was created. Durable recovery evidence is `docs/plan-limit-missed-wake-recovery-20261005.json`; DR-03 is now safe to resume automatically.
 
-### Authoritative current snapshot — 2026-09-20
+### Authoritative current snapshot â€” 2026-09-20
 
 - ELSTER developer access was received; the Human authenticated privately and explicitly accepted the ERiC Release 44 software-manufacturer license.
 - Official ERiC `44.3.6.0` documentation and schema-documentation packages were retrieved locally and hash-verified outside Git. After exact Project Owner authorization, adapter contract version `2` was migrated locally from historical `41.2` to `44.3.6.0` for `UFA10` / E10 tax year 2024. Official mapping and executable plausibility validation remain fail-closed.
@@ -445,7 +445,7 @@ Current disposition: the activation continuation described in this historical se
 - Mapping profile v11 adds the official employer tax-free travel reimbursement field `E0205108` with whole-euro, non-negative, twelve-digit fail-closed validation. The generated declaration passes the exact official XSD, the focused E10/UI/documentation suite passes (`240 passed, 1 warning`), and the complete local unit regression passes (`826 passed, 1 warning`).
 - Employer-reimbursement hardening proves explicit zero is distinct from omission, accepts the exact twelve-digit maximum, binds the field into request/result identity, and rejects every superseded mapping profile. Focused mapping/documentation verification passes (`110 passed`).
 - Canonical-state hardening now requires the checkpoint, current state, and roadmap to retain mapping profile v11 and rejects the superseded profile-v2 current-state summary; focused documentation verification passes (`9 passed`).
-- Mapping profile v12 adds official field `E0204004` for the optional Agentur für Arbeit/Jobcenter travel-cost subsidy. The bounded value is non-negative, whole-euro, limited to twelve digits, preserves explicit zero, binds request/result identity, and is emitted only at `N/Wk/EP/Fahrtk_Ersatz`. The generated declaration passes the exact official XSD and the focused E10/documentation suite passes (`228 passed`).
+- Mapping profile v12 adds official field `E0204004` for the optional Agentur fÃ¼r Arbeit/Jobcenter travel-cost subsidy. The bounded value is non-negative, whole-euro, limited to twelve digits, preserves explicit zero, binds request/result identity, and is emitted only at `N/Wk/EP/Fahrtk_Ersatz`. The generated declaration passes the exact official XSD and the focused E10/documentation suite passes (`228 passed`).
 - Mapping profile v13 adds official fields `E0204103` and `E0203901` for tax-free and flat-taxed employer commuting benefits. They share the bounded whole-euro, explicit-zero, omission, and identity guarantees and preserve the exact official `Fahrtk_Ersatz` field order. The generated declaration passes the exact official XSD and the focused E10/documentation suite passes (`238 passed`).
 - Mapping profile v14 adds one synthetic business-travel transport-cost item at `/N/Wk/AWT/Fahrt`: exact official fields `E0205003` then `E0205004`, governed by reviewed official pairing rule `100200074`. It enforces paired presence, the official lexical boundaries and order, omission/explicit-zero distinction, deterministic identity binding, and no inferred adjacent AWT fields. The generated declaration passes the exact official XSD and the focused E10/readiness/UI/documentation suite passes (`287 passed`).
 - **Historical limit observation:** the `66%` five-hour / `95%` weekly observation after proof commit `adbba53d284fe38aa3ccb5af0a38df0a7972b921` is retained only as historical evidence. Current executions must use live service values recorded in the newest checkpoint entry.
@@ -458,49 +458,49 @@ Current disposition: the activation continuation described in this historical se
 - **Governed token state:** `state=AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE`; the reset-aligned wake reported five-hour `100%` remaining and weekly `85%` remaining. The subsequent Recovery Gate passed at `73651a567b7849e099940ce6bd0edbf25fef7915` with a clean tree, exact local/remote equality, and exclusive ownership. The governed capacity pause is ended; exact next action is `PKG-MA-02-COMPOSITION-AND-STORE`.
 - **MA-02 accepted result:** implemented a narrow Case Registry composition facade and durable SQLite synthetic workflow journal. Exact synthetic case/tax/run scope, atomic and idempotent transition identities, hash-chain/head integrity, schema rejection, cross-case denial, simulated crash rollback, and clean reopen recovery are verified. The first independent review found initial-transition identity and crash-proof gaps; both were repaired before final independent `PASS`. Focused verification `39 passed`; full unit regression `883 passed, 1 warning`; Kernel checkpoint `sha256:7434e9ef9fc227ddb6a808629c647644d637d225ecf5524b49f0d5ebb8071663`. Exact next action is `PKG-MA-03-INTAKE-REVIEW-DECLARATION`.
 - **MA-03 accepted result:** implemented six closed local actions for intake, processing, specialist/chief review, calculation, and form-preview preparation. Exact role/sequence/prior-state enforcement, durable pre-validation write-once attempts, deterministic auditable lineage, exact-active correction invalidation, idempotent accepted replay, and negative case isolation are verified. The first independent review rejected non-durable failed attempts and non-auditable correction lineage; both were repaired before final independent `PASS`. Focused verification `16 passed`; full unit regression `892 passed, 1 warning`; Kernel checkpoint `sha256:c90bbe7a41bf1ade4e491c4abdec8ac11473da2f782ef7e9b7f759a5434dd2d3`. Exact next action is `PKG-MA-04-APPROVAL-SUBMISSION-RECEIPT`.
-- **MA-04 accepted result — 2026-09-28:** Owner گزینه B را برای رفع تعارض `MA-04-APPROVAL-SUBMISSION-RECEIPT` تأیید کرد. coordinator/saga نسخه 1 داخل همان `DurableApprovalStore` پیاده و با workflow store موجود compose شد؛ هیچ store، Orchestrator، scheduler یا authority جدیدی ایجاد نشد. intent و شناسه‌های دقیق case/year/run/operation، مالکیت مصرف یک‌باره approvalها، commit markerهای مرتب، result و receipt بسته و integrity-bound هستند. دو SQLite مستقل‌اند و هیچ atomicity میان آن‌ها ادعا نمی‌شود؛ replay با transition identity قطعی انجام می‌شود و ambiguity/corruption fail closed است. crash/restart در commit intent، مصرف approval، هر workflow commit و هر coordinator-marker commit آزموده شد؛ expiry، revocation، reuse، duplicate prevention، registered/unregistered cross-case isolation و zero external activity نیز پوشش دارند. دو چرخه بازبینی مستقل شکاف‌های payload/consumption/crash coverage و Case Registry scope را رد کردند؛ همه اصلاح و پذیرش نهایی `PASS` شد. focused verification `32 passed`; full unit regression `913 passed, 1 warning`. هیچ داده واقعی، ERiC، ELSTER/Finanzamt، network، credential یا external receipt استفاده نشد. MA-05 پس از checkpoint و Recovery Gate موفق dependency-ready است.
-- **MA-05 accepted result — 2026-09-28:** reset-aligned wake ظرفیت `98%` پنج‌ساعته و `64%` هفتگی را تأیید کرد و Recovery Gate روی checkpoint `468d4dbce321f24911a185846ef32a48a38f2fe0` با working tree تمیز و برابری local/remote گذشت. مسیر کامل دوازده‌مرحله‌ای synthetic از Create Case تا Recovery اجرا و پس از reopen با دقیقاً یک operation/result/placeholder receipt بازیابی شد. failure matrix شامل cross-case، همه crash boundaryها، replay/retry، duplicate، stale-preview approval، revocation، expiry، corruption و recovery است. setup تازه در venv موقت با نصب فقط pytest گذشت؛ CI جدید read-only و actionهای آن hash-pinned است، secret یا external tax action ندارد و در failure از Kernel موجود STOP diagnostic/checkpoint تولید می‌کند. دو دور بازبینی مستقل شکاف stale approval، STOP persistence و CI-path/docs parity را رد کردند؛ همه اصلاح و پذیرش نهایی `PASS` شد. focused verification `62 passed`; full unit regression `915 passed, 1 warning`. MA-01 تا MA-05 کامل‌اند. ادامه به real data/provider، official ERiC، ELSTER/Finanzamt، production یا release بدون Human Gate جداگانه ممنوع است.
-- **Real CASE-001 reproduction authority — 2026-09-28:** Owner directive `OWNER-DIRECTIVE-CASE001-REPRO-20260928-001` authorizes controlled independent reproduction of real `CASE-001` / tax year `2024` under run `RUN-CASE001-REPRO-20260928-001`. Scope includes case-scoped read-only Drive source recovery from existing identity/migration evidence, existing configured Gemini document processing, internal tax agents/deterministic calculation, Specialist and Chief review, non-transmitting preview, frozen-result-first historical comparison, discrepancy analysis, independent acceptance, tests, and privacy-safe evidence. It does not authorize another case/year/provider, source mutation/migration, official ERiC external communication, ELSTER/Finanzamt transmission, signing, production, protected-main, merge/release, or duplicate stores/control planes. Pre-source Recovery Gate passed at Milestone A commit `589bc4f5d52f33db17db063694edcdd7b229e10f`; the durable authority checkpoint must be pushed before any Drive document read.
-- **Real CASE-001 reproduction execution — 2026-09-28:** exact-ID, read-only recovery resolved all 15 registered PDFs in the current provisioned `Tax_Categories` ancestry, superseding the older physical-location assumption without mutating Drive. Existing Gemini extraction completed 15/15 with zero failures. The baseline-free packet `sha256:e56a4d5c7833c67e68aebfabaa4499a745e907f34b0c5f8bf2e0192d213d21d7` drove the formal Specialist gate and Chief; both returned `BLOCKED`. A six-role advisory completion pass also retained `BLOCKED` and cannot override the formal gate. The pre-comparison frozen result is `sha256:1ba5b2afc6668fff4aae3bbcff5e55d6ee37d674069f7e243f26774340a17943`: gross wages EUR 36,470.23, wage tax EUR 776.00, employee statutory social contributions EUR 7,439.94, with z.v.E., income tax, section 35a credit, refund, and payment due unset. Material gaps are filing/joint-assessment status, spouse income/RV, day-level travel/absence and employer-reimbursement reconciliation, and bank-payment/reimbursement proof. VMA is `INSUFFICIENT_EVIDENCE`. Historical comparison began only after freeze; EUR 776.00 and the EVG payment sum EUR 246.07 reproduce, while the difference from historical refund EUR 70.83 is uncomputable because no defensible new refund exists. After correction of one missing exact-match classification, independent acceptance returned `PASS`. Focused verification passed with `20 passed`; full unit regression passed with `915 passed, 1 warning`. No ERiC/ELSTER/Finanzamt communication, signing, production action, Drive mutation, or external submission occurred.
-- **Post-reset CASE-001 source recovery — 2026-09-28:** fresh limits showed five-hour `100%` and weekly `53%` remaining; repository recovery was clean and local/remote-equal at `6ea8173690cac0e7800732e4fdfdcd6d06fd30d9`. Exact registered CASE-001 folder reads found no additional taxpayer source: `Documents`, `Evidence`, and `Reports` are empty; `Tax_Categories` contains the same 15 processed PDFs; `Calculations` contains only two historical analytical records and `Audit` only the organization journal. The readable D-024 working record confirms the same unresolved driver/absence/reimbursement/payment questions and adds no source identity. The reproduction remains `BLOCKED`; no periodic scheduler was activated and no external or mutating action occurred.
-- **Owner correction / 16-PDF independent execution — 2026-09-28:** the Owner corrected the evidence-discovery objective and confirmed 16 current taxpayer-source PDFs. Exact CASE-001 root recursion, rather than selected known folders, traversed 15 folders and found 17 PDFs: 16 taxpayer-source PDFs in `Tax_Categories` plus one official ESt 1A form package in `D026_Forms`, explicitly excluded as a project/form artifact. The missed source is a spouse payroll PDF in `Einkommensnachweise`. Run `RUN-CASE001-INDEPENDENT-20260928-002` freezes these 16 source identities and will freshly process all of them through the existing Gemini/tax-agent path. Historical analytical conclusions/final amounts are prohibited calculation inputs and no historical comparison is authorized. The prior 15-document run remains historical execution evidence and does not constrain the corrected result.
-- **CASE-001 comparative audit — 2026-09-28:** Owner directive `OWNER-DIRECTIVE-CASE001-COMPARATIVE-AUDIT-20260928-003` authorizes diagnosis only against the frozen 16-PDF run. The endpoint difference reconciles exactly as `EUR 76.00 - EUR 37.00 + EUR 31.83 = EUR 70.83`. The underlying historical path does not: historical z.v.E. is approximate and EUR 200.07 above the independent pre-floor value, historical pension/other-insurance intermediates are absent, and the current final-2024 splitting formula at statutory z.v.E. EUR 28,128 yields EUR 736 rather than reported EUR 737. School and section 35a candidates lack required payment evidence in the frozen set; EVG/commuting are absorbed by the lump sum; spouse gross was Gemini-extracted while RV/flat-tax fields were recovered only by later visual validation; meal expense remains unsupported. The first independent audit review rejected that Gemini-lineage attribution and required correction; final Independent Acceptance is `PASS_WITH_UNRESOLVED_DIFFERENCE`. No current implementation defect is proven, no frozen artifact or tax logic changed, and the Repair Gate remains closed. Exact next state: `AUDIT_UNRESOLVED` pending historical intermediates or evidence capable of resolving the one-euro tariff inconsistency.
-- **CASE-001 structured financial intake — 2026-09-28:** Owner authority registered canonical source `SFS-CASE-001-2024-0001` as one immutable CSV separate from the 16-PDF inventory. Local deterministic parsing preserved 946/946 rows across 2024 in EUR with zero invalid rows, one retained exact-duplicate group, zero probable duplicates and two retained reversal pairs. The first Independent Acceptance rejected aggregate-only lineage; remediation assigned every row a stable identity and terminal disposition (946 classified, zero unclassified) and replaced every candidate aggregate with exact row IDs. School payments now support EUR 144 deduction and section 35a payments support EUR 159.13 basis/EUR 31.83 credit. Versioned successor result: z.v.E. EUR 27,784; tariff tax EUR 674; tax after section 35a EUR 642.17; withheld EUR 776; refund EUR 133.83. Exact bridge from frozen predecessor: `76.00 + 26.00 + 31.83 = 133.83`. All six Specialists, Chief and final Independent Acceptance are `PASS`; focused tests `22 passed`; full unit regression `920 passed, 1 warning`. Capacity continuation gate observed five-hour 99 percent and weekly 37 percent remaining, resetting 2026-09-29 03:06:26 and 2026-10-04 20:39:49 Europe/Berlin. No historical target, source/Drive mutation, external ERiC, ELSTER/Finanzamt submission, production, new store, Orchestrator or scheduler occurred.
-- **CASE-001 EUR 60 donation reconciliation — 2026-09-28:** bounded recovery passed at `c1ad926316122329c430f739c35a4ecaea8529fd`; starting capacity was five-hour 86 percent and weekly 35 percent remaining. Frozen PDF `DOC-CASE-001-00000007` and accepted ledger row `TX-c67f3a594d3273589c5a9ce3` match deterministically on recipient, EUR 60, supporter/reference `994978`, timing and recurring-support terms. Direct visual review recovered the form footer stating recognition as charitable and benevolent, but the recipient-produced form does not expressly state the tax-privileged use purpose, corporation-tax exemption particulars, or a deterministic donation-versus-membership classification required by section 50(4) EStDV. Final status is `DONATION_EVIDENCE_INCOMPLETE`; affected evidence review is `PASS_WITH_EXCLUSION`, Chief rerun is `NOT_REQUIRED`, and Independent Acceptance is `PASS`. The accepted EUR 133.83 refund remains unchanged and no calculation successor was created. Private result SHA-256 is `ad265dd1c4ea203260865f383d9b22b8d713221f7283735238a2991084ec86cf`; focused regression passes (`14 passed`). The CSV, Gemini extraction, unrelated Specialists/Chief, medical and lawyer questions were not reopened; no Drive mutation or external action occurred.
-- **CASE-001 final closure and declaration-readiness audit — 2026-09-28:** recovery passed at synchronized clean `b1eab3ae476d723d11968934fb602c31e36093c4`; starting capacity was five-hour 69 percent and weekly 32 percent, with a pre-validation recheck of 64/32. The accepted EUR 133.83 result, 16-PDF inventory, 946-row ledger, exact evidence/review/final-result hashes, and all exclusions are frozen without recomputation. Lawyer and medical/pharmacy expenses are `OWNER_DECLINED / EXCLUDED`; the EUR 60 payment remains `DONATION_EVIDENCE_INCOMPLETE / EXCLUDED`. Four Independent Acceptance cycles forced correction of gross-wage transformation overclaim, EUR 3,000 Kindergeld/section 31 lineage, raw Vorsorge components, twelve exact tenant-payment row IDs, freeze hashes, and queue/DoD completeness; final Independent Acceptance is `PASS`. The corrected 18-item manifest contains 0 `SUPPORTED`, 0 `MISSING_MAPPING`, 1 `MISSING_RULE`, 7 `MISSING_FORM_OR_SECTION`, 1 `SUPPORTED_BUT_UNVERIFIED`, 2 `IRRELEVANT_FOR_CASE`, and 7 `EXCLUDED_BY_ACCEPTED_CASE_DECISION`. Existing field semantics touch two of nine affirmative requirements (22.22 percent) but remain synthetic-only; a complete CASE-001 preview is impossible. The bounded queue is `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05`, requiring one future Owner implementation authority while retaining all external gates. Focused manifest/mapping/declaration/XSD/plausibility/readiness/documentation verification passes (`254 passed`). No official ERiC or external action occurred.
-- **CASE-001 declaration remediation DR-01 STOP — 2026-09-29:** the Owner authorized the entire dependency queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05`. Live capacity began at five-hour 99 percent and weekly 26 percent; the synchronized clean Recovery Gate passed at `1dc6c6c7f5f31885301bf0dca89883f4f996b097`. DR-01 stopped before implementation because its required authoritative Hauptvordruck/joint-assessment and cent-to-whole-euro wage semantics cannot be recovered from the repository: the protected hash-pinned ERiC 44.3.6.0 annual documentation/schema packages are absent from all bounded searched locations, and the existing browser session redirects to an unauthenticated ELSTER developer login. No credential was requested or used and no speculative mapping was created. Status is `STOP_DIAGNOSTIC`; ending capacity was 89/24, all DR packages remain unstarted, frozen refund EUR 133.83 is unchanged, and exact continuation is private Owner authentication, local availability of the same packages, hash verification, then DR-01. No external action occurred.
-- **Protected Official Source Store accepted — 2026-09-29:** Owner privately recovered all three official packages under `E:\ERic` without supplying credentials. Independent verification proved exact expected hashes for documentation `bad21c...92ad5`, schema documentation `a77cca...e779e`, and Vordruck archive `488953...3862b`; non-destructive protected-store copies have identical bytes and the originals remain. Minimal extraction produced the exact previously pinned E10/2024 ODS `6379af...dacd5` and XSD `86c735...d272`. Repository contract `official-source-registry-v1.json` and the portable `AI_TAX_PROTECTED_SOURCE_ROOT` resolver enforce logical ID, release, relative path, size and SHA-256 with stable `OFFICIAL_SOURCE_MISSING` / `OFFICIAL_SOURCE_INTEGRITY_FAILURE` outcomes. Google Drive is backup only and Git contains metadata, not protected binaries. Focused verification passes (`14 passed`). The old STOP is resolved; exact continuation is DR-01.
-- **CASE-001 DR-01 accepted / capacity pause — 2026-09-29:** versioned case-scoped composition binds case, 2024, run, Case Registry, frozen calculation, exact person/wage evidence and the existing Anlage N mapping. Verified official semantics implement income-tax-return basis `E0100001`, required Person A/B Hauptvordruck contexts and `Zusammenveranlagung` `E0101201`. The official instructions and `GeldBetragOhneCent` field semantics deterministically transform positive source wage EUR 36,470.23 to declared EUR 36,470; mismatch fails closed. The composed result passes exact protected E10/2024 XSD validation and remains non-transmitting. Focused/relevant verification passes (`191 passed`); Independent Acceptance is `PASS`; frozen refund remains EUR 133.83. Post-package capacity was five-hour 80 percent and weekly 21 percent. State is `TOKEN_PAUSED` before dependency-ready DR-02; do not repeat Source Store acceptance or DR-01 after reset.
-- **CASE-001 DR-02 accepted — 2026-10-04:** exact protected ODS/XSD review and a versioned case-scoped composer now represent accepted pension, health, care, and unemployment facts in Anlage Vorsorgeaufwand. Official declaration fields are `E2000401`, `E2000801` (official line 9, correcting the stale line-8 manifest wording), `E2000601`, `E2001203`, `E2001505`, and `E2004403`; assessment-only values are not emitted. Whole-euro values are `3392`, `3391`, `121`, `2955`, `620`, and `475`; original cents remain identity-bound inputs. Exact-XSD and fail-closed focused verification passes (`12 passed`), Independent official-source review is `PASS`, the output remains non-transmitting, and the frozen refund remains EUR 133.83. Exact continuation is DR-03's factual-prerequisite gate and dependency-ready DR-04; DR-05 remains blocked until both are accepted.
-- **CASE-001 DR-02 post-package capacity checkpoint — 2026-10-04 (historical classification defect):** synchronized commit `ff90456` recorded five-hour 50 percent and weekly 92 percent remaining. Its `TOKEN_PAUSED` label was semantically invalid because those values are `RUN`; the observation and error remain audit evidence and are superseded by the Limit Controller repair. A proactive non-threshold stop must use deterministic `CAPACITY_DEFERRED`, never `TOKEN_PAUSED`.
-- **CASE-001 DR-03/DR-04 continuation checkpoint — 2026-10-04:** evidence-first DR-03 audit recovered the child/student label, school identity, EUR 480 payments, EUR 144 deduction, and EUR 3,000 Kindergeld context without re-ingestion. All six requested facts, including Familienkasse, were subsequently supplied by the Owner and are `SUPPLIED_NOT_REGISTERED`; sensitive values are not reproduced. A reusable Human Declaration contract is implemented and focused tests pass. DR-04 implementation is recoverable but **not accepted**: independent review found no executed plausibility evaluator, substitution-prone evidence references, and a genuine EUR 0.17 contradiction between declared whole-euro bases (90 + 70 => EUR 32.00 credit) and frozen exact-cent credit EUR 31.83. Status is `STOP_DIAGNOSTIC`; do not start DR-05 or repeat DR-01/DR-02.
-- **Bounded infrastructure repair — 2026-10-04:** execution began from clean synchronized `12069bcc26ed02a1e6cfb33b4e9ad7f937d8f97c7` with live five-hour 99 percent and weekly 86 percent remaining. Scope is limited to deterministic Limit Controller semantics, indexed official-source knowledge, and canonical-state repair. CASE-001 does not advance. Exact preserved product continuation is: register already supplied Human Declarations; complete DR-03; repair and independently accept DR-04's three defects; begin DR-05 only after both pass.
-- **Infrastructure repair accepted — 2026-10-04:** Repair A, Repair B, and canonical continuation preservation independently pass. `TOKEN_PAUSED` is now reserved for hard thresholds; deterministic proactive stops use `CAPACITY_DEFERRED` with a closed cost catalog and do not inherit the 80-percent resume threshold. Both actual reset timestamps are mandatory and never inferred. A manifest-pinned, versioned official-knowledge index returns the smallest accepted fragment without protected-source parsing; wrong scope/hash, drift, unresolved DR-03/DR-04 entries, and incomplete reopen audit fail closed. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`). CASE-001 did not advance and EUR 133.83 remains frozen. Exact next product action remains registration of the six supplied Human Declarations, then DR-03 completion, DR-04 repair/independent acceptance, and only then DR-05.
-- **DR-03 deterministic capacity deferral — 2026-10-04:** Recovery passed at clean synchronized `5e5394b27f069fbe4e3d17a743ad4d4826d9f046`. Live capacity was five-hour 28 percent and weekly 75 percent with reset epochs `1791146339` and `1791715052`, a healthy base `RUN`. The exact next atomic operation `DR-03-REGISTER-AND-COMPLETE` is closed catalog class `BOUNDED` (15/5); its five-hour projection is 13 percent, crossing the 15-percent hard threshold. State is therefore `CAPACITY_DEFERRED`, not `TOKEN_PAUSED`, with reason `PROJECTED_HARD_THRESHOLD_CROSSING`. Resume from this checkpoint after a fresh observation makes the same catalog operation fit; no 80-percent resume floor applies. No Human Declaration value was registered or reproduced and no DR package advanced.
-- **CASE-001 DR-03 accepted — 2026-10-05:** the recovered continuation registered all six Owner declarations inside the ignored protected case boundary (`sha256:fc1fc151c14561b21b113d3a0e6e88f20faf27debae0ef695f485e73f9e035d4`) without committing their values. The case/run/version and accepted DR-01/DR-02 predecessor semantics are revalidated fail-closed. Exact source-document, transaction-row, provider and frozen-calculation lineage is pinned. Anlage Kind represents EUR 3,000 Kindergeld and EUR 480 eligible school fees while EUR 144 remains assessment-only. Exact XSD and five official plausibility rules pass; focused verification is `6 passed`, relevant DR regression is `14 passed`, and final Independent Acceptance is `PASS`. EUR 133.83 remains frozen. Exact next action is DR-04 remediation; DR-05 remains dependency-blocked. No official ERiC, external transmission, signing, certificate, Drive mutation or production action occurred.
-- **Post-DR-03 autonomous continuation — 2026-10-05:** synchronized checkpoint `1eb620dc1978877481f9445a6dc471ab26805d09` makes `DR-04-REMEDIATE-AND-ACCEPT` the exact dependency-ready action. Live capacity was 22 percent five-hour and 51 percent weekly. The BOUNDED 15/5 projection crosses the five-hour hard margin, so state is `CAPACITY_DEFERRED`. The controller defect that previously returned non-resumable `CAUTION` before applying an explicit operation estimate is repaired and regression-covered. The sole existing `plan-limit-continuation-guard` is armed once for the actual five-hour reset `2026-10-05T06:40:04Z`; no polling or duplicate scheduler exists. Durable capsule: `docs/dr04-capacity-deferred-after-dr03-20261005.json`.
-- **Corrected 16-PDF execution accepted — 2026-09-28:** frozen inventory `sha256:d36daeb574e17e8487a830decd0ea31bc823a7d1aa5f5415c9a0c8df7e6a5694` binds all 16 source PDFs and all 16 fresh Gemini extractions; processing completed 16/16 with zero failures/skips. The new spouse payroll evidence establishes flat-taxed marginal-employment gross EUR 3,337.29 and employee RV EUR 120.15. The first full chain was rejected for omitting that RV; correction round 1 was rejected for tariff arithmetic; deterministic Decimal trace and correction round 2 produced six Specialist `PASS` results and Chief `PASS`. Final independent result: raw z.v.E. EUR 27,928.34, statutory z.v.E. EUR 27,928, joint Einkommensteuer EUR 700, solidarity surcharge EUR 0, creditable wage tax EUR 776, refund EUR 76. Form preview is non-transmitting and bound to `sha256:9955f9a6a4ab198176b16728816d61016c1b7c10bc4870405127cdb72616f135`; final private result is `sha256:9d6dc9c69ff9572a64320d7cd5b607c32577156ea0498d2d4e88ec420355f4a5`. Independent Acceptance found and required repair of two on-disk hash-binding defects, then returned `PASS`. Focused verification `20 passed`; full unit regression `915 passed, 1 warning`. Historical target use/comparison is false; external ERiC/ELSTER/Finanzamt action, signing, production, Drive mutation, and another case/year/provider are false.
+- **MA-04 accepted result â€” 2026-09-28:** Owner Ú¯Ø²ÛŒÙ†Ù‡ B Ø±Ø§ Ø¨Ø±Ø§ÛŒ Ø±ÙØ¹ ØªØ¹Ø§Ø±Ø¶ `MA-04-APPROVAL-SUBMISSION-RECEIPT` ØªØ£ÛŒÛŒØ¯ Ú©Ø±Ø¯. coordinator/saga Ù†Ø³Ø®Ù‡ 1 Ø¯Ø§Ø®Ù„ Ù‡Ù…Ø§Ù† `DurableApprovalStore` Ù¾ÛŒØ§Ø¯Ù‡ Ùˆ Ø¨Ø§ workflow store Ù…ÙˆØ¬ÙˆØ¯ compose Ø´Ø¯Ø› Ù‡ÛŒÚ† storeØŒ OrchestratorØŒ scheduler ÛŒØ§ authority Ø¬Ø¯ÛŒØ¯ÛŒ Ø§ÛŒØ¬Ø§Ø¯ Ù†Ø´Ø¯. intent Ùˆ Ø´Ù†Ø§Ø³Ù‡â€ŒÙ‡Ø§ÛŒ Ø¯Ù‚ÛŒÙ‚ case/year/run/operationØŒ Ù…Ø§Ù„Ú©ÛŒØª Ù…ØµØ±Ù ÛŒÚ©â€ŒØ¨Ø§Ø±Ù‡ approvalÙ‡Ø§ØŒ commit markerÙ‡Ø§ÛŒ Ù…Ø±ØªØ¨ØŒ result Ùˆ receipt Ø¨Ø³ØªÙ‡ Ùˆ integrity-bound Ù‡Ø³ØªÙ†Ø¯. Ø¯Ùˆ SQLite Ù…Ø³ØªÙ‚Ù„â€ŒØ§Ù†Ø¯ Ùˆ Ù‡ÛŒÚ† atomicity Ù…ÛŒØ§Ù† Ø¢Ù†â€ŒÙ‡Ø§ Ø§Ø¯Ø¹Ø§ Ù†Ù…ÛŒâ€ŒØ´ÙˆØ¯Ø› replay Ø¨Ø§ transition identity Ù‚Ø·Ø¹ÛŒ Ø§Ù†Ø¬Ø§Ù… Ù…ÛŒâ€ŒØ´ÙˆØ¯ Ùˆ ambiguity/corruption fail closed Ø§Ø³Øª. crash/restart Ø¯Ø± commit intentØŒ Ù…ØµØ±Ù approvalØŒ Ù‡Ø± workflow commit Ùˆ Ù‡Ø± coordinator-marker commit Ø¢Ø²Ù…ÙˆØ¯Ù‡ Ø´Ø¯Ø› expiryØŒ revocationØŒ reuseØŒ duplicate preventionØŒ registered/unregistered cross-case isolation Ùˆ zero external activity Ù†ÛŒØ² Ù¾ÙˆØ´Ø´ Ø¯Ø§Ø±Ù†Ø¯. Ø¯Ùˆ Ú†Ø±Ø®Ù‡ Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ù…Ø³ØªÙ‚Ù„ Ø´Ú©Ø§Ùâ€ŒÙ‡Ø§ÛŒ payload/consumption/crash coverage Ùˆ Case Registry scope Ø±Ø§ Ø±Ø¯ Ú©Ø±Ø¯Ù†Ø¯Ø› Ù‡Ù…Ù‡ Ø§ØµÙ„Ø§Ø­ Ùˆ Ù¾Ø°ÛŒØ±Ø´ Ù†Ù‡Ø§ÛŒÛŒ `PASS` Ø´Ø¯. focused verification `32 passed`; full unit regression `913 passed, 1 warning`. Ù‡ÛŒÚ† Ø¯Ø§Ø¯Ù‡ ÙˆØ§Ù‚Ø¹ÛŒØŒ ERiCØŒ ELSTER/FinanzamtØŒ networkØŒ credential ÛŒØ§ external receipt Ø§Ø³ØªÙØ§Ø¯Ù‡ Ù†Ø´Ø¯. MA-05 Ù¾Ø³ Ø§Ø² checkpoint Ùˆ Recovery Gate Ù…ÙˆÙÙ‚ dependency-ready Ø§Ø³Øª.
+- **MA-05 accepted result â€” 2026-09-28:** reset-aligned wake Ø¸Ø±ÙÛŒØª `98%` Ù¾Ù†Ø¬â€ŒØ³Ø§Ø¹ØªÙ‡ Ùˆ `64%` Ù‡ÙØªÚ¯ÛŒ Ø±Ø§ ØªØ£ÛŒÛŒØ¯ Ú©Ø±Ø¯ Ùˆ Recovery Gate Ø±ÙˆÛŒ checkpoint `468d4dbce321f24911a185846ef32a48a38f2fe0` Ø¨Ø§ working tree ØªÙ…ÛŒØ² Ùˆ Ø¨Ø±Ø§Ø¨Ø±ÛŒ local/remote Ú¯Ø°Ø´Øª. Ù…Ø³ÛŒØ± Ú©Ø§Ù…Ù„ Ø¯ÙˆØ§Ø²Ø¯Ù‡â€ŒÙ…Ø±Ø­Ù„Ù‡â€ŒØ§ÛŒ synthetic Ø§Ø² Create Case ØªØ§ Recovery Ø§Ø¬Ø±Ø§ Ùˆ Ù¾Ø³ Ø§Ø² reopen Ø¨Ø§ Ø¯Ù‚ÛŒÙ‚Ø§Ù‹ ÛŒÚ© operation/result/placeholder receipt Ø¨Ø§Ø²ÛŒØ§Ø¨ÛŒ Ø´Ø¯. failure matrix Ø´Ø§Ù…Ù„ cross-caseØŒ Ù‡Ù…Ù‡ crash boundaryÙ‡Ø§ØŒ replay/retryØŒ duplicateØŒ stale-preview approvalØŒ revocationØŒ expiryØŒ corruption Ùˆ recovery Ø§Ø³Øª. setup ØªØ§Ø²Ù‡ Ø¯Ø± venv Ù…ÙˆÙ‚Øª Ø¨Ø§ Ù†ØµØ¨ ÙÙ‚Ø· pytest Ú¯Ø°Ø´ØªØ› CI Ø¬Ø¯ÛŒØ¯ read-only Ùˆ actionÙ‡Ø§ÛŒ Ø¢Ù† hash-pinned Ø§Ø³ØªØŒ secret ÛŒØ§ external tax action Ù†Ø¯Ø§Ø±Ø¯ Ùˆ Ø¯Ø± failure Ø§Ø² Kernel Ù…ÙˆØ¬ÙˆØ¯ STOP diagnostic/checkpoint ØªÙˆÙ„ÛŒØ¯ Ù…ÛŒâ€ŒÚ©Ù†Ø¯. Ø¯Ùˆ Ø¯ÙˆØ± Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ù…Ø³ØªÙ‚Ù„ Ø´Ú©Ø§Ù stale approvalØŒ STOP persistence Ùˆ CI-path/docs parity Ø±Ø§ Ø±Ø¯ Ú©Ø±Ø¯Ù†Ø¯Ø› Ù‡Ù…Ù‡ Ø§ØµÙ„Ø§Ø­ Ùˆ Ù¾Ø°ÛŒØ±Ø´ Ù†Ù‡Ø§ÛŒÛŒ `PASS` Ø´Ø¯. focused verification `62 passed`; full unit regression `915 passed, 1 warning`. MA-01 ØªØ§ MA-05 Ú©Ø§Ù…Ù„â€ŒØ§Ù†Ø¯. Ø§Ø¯Ø§Ù…Ù‡ Ø¨Ù‡ real data/providerØŒ official ERiCØŒ ELSTER/FinanzamtØŒ production ÛŒØ§ release Ø¨Ø¯ÙˆÙ† Human Gate Ø¬Ø¯Ø§Ú¯Ø§Ù†Ù‡ Ù…Ù…Ù†ÙˆØ¹ Ø§Ø³Øª.
+- **Real CASE-001 reproduction authority â€” 2026-09-28:** Owner directive `OWNER-DIRECTIVE-CASE001-REPRO-20260928-001` authorizes controlled independent reproduction of real `CASE-001` / tax year `2024` under run `RUN-CASE001-REPRO-20260928-001`. Scope includes case-scoped read-only Drive source recovery from existing identity/migration evidence, existing configured Gemini document processing, internal tax agents/deterministic calculation, Specialist and Chief review, non-transmitting preview, frozen-result-first historical comparison, discrepancy analysis, independent acceptance, tests, and privacy-safe evidence. It does not authorize another case/year/provider, source mutation/migration, official ERiC external communication, ELSTER/Finanzamt transmission, signing, production, protected-main, merge/release, or duplicate stores/control planes. Pre-source Recovery Gate passed at Milestone A commit `589bc4f5d52f33db17db063694edcdd7b229e10f`; the durable authority checkpoint must be pushed before any Drive document read.
+- **Real CASE-001 reproduction execution â€” 2026-09-28:** exact-ID, read-only recovery resolved all 15 registered PDFs in the current provisioned `Tax_Categories` ancestry, superseding the older physical-location assumption without mutating Drive. Existing Gemini extraction completed 15/15 with zero failures. The baseline-free packet `sha256:e56a4d5c7833c67e68aebfabaa4499a745e907f34b0c5f8bf2e0192d213d21d7` drove the formal Specialist gate and Chief; both returned `BLOCKED`. A six-role advisory completion pass also retained `BLOCKED` and cannot override the formal gate. The pre-comparison frozen result is `sha256:1ba5b2afc6668fff4aae3bbcff5e55d6ee37d674069f7e243f26774340a17943`: gross wages EUR 36,470.23, wage tax EUR 776.00, employee statutory social contributions EUR 7,439.94, with z.v.E., income tax, section 35a credit, refund, and payment due unset. Material gaps are filing/joint-assessment status, spouse income/RV, day-level travel/absence and employer-reimbursement reconciliation, and bank-payment/reimbursement proof. VMA is `INSUFFICIENT_EVIDENCE`. Historical comparison began only after freeze; EUR 776.00 and the EVG payment sum EUR 246.07 reproduce, while the difference from historical refund EUR 70.83 is uncomputable because no defensible new refund exists. After correction of one missing exact-match classification, independent acceptance returned `PASS`. Focused verification passed with `20 passed`; full unit regression passed with `915 passed, 1 warning`. No ERiC/ELSTER/Finanzamt communication, signing, production action, Drive mutation, or external submission occurred.
+- **Post-reset CASE-001 source recovery â€” 2026-09-28:** fresh limits showed five-hour `100%` and weekly `53%` remaining; repository recovery was clean and local/remote-equal at `6ea8173690cac0e7800732e4fdfdcd6d06fd30d9`. Exact registered CASE-001 folder reads found no additional taxpayer source: `Documents`, `Evidence`, and `Reports` are empty; `Tax_Categories` contains the same 15 processed PDFs; `Calculations` contains only two historical analytical records and `Audit` only the organization journal. The readable D-024 working record confirms the same unresolved driver/absence/reimbursement/payment questions and adds no source identity. The reproduction remains `BLOCKED`; no periodic scheduler was activated and no external or mutating action occurred.
+- **Owner correction / 16-PDF independent execution â€” 2026-09-28:** the Owner corrected the evidence-discovery objective and confirmed 16 current taxpayer-source PDFs. Exact CASE-001 root recursion, rather than selected known folders, traversed 15 folders and found 17 PDFs: 16 taxpayer-source PDFs in `Tax_Categories` plus one official ESt 1A form package in `D026_Forms`, explicitly excluded as a project/form artifact. The missed source is a spouse payroll PDF in `Einkommensnachweise`. Run `RUN-CASE001-INDEPENDENT-20260928-002` freezes these 16 source identities and will freshly process all of them through the existing Gemini/tax-agent path. Historical analytical conclusions/final amounts are prohibited calculation inputs and no historical comparison is authorized. The prior 15-document run remains historical execution evidence and does not constrain the corrected result.
+- **CASE-001 comparative audit â€” 2026-09-28:** Owner directive `OWNER-DIRECTIVE-CASE001-COMPARATIVE-AUDIT-20260928-003` authorizes diagnosis only against the frozen 16-PDF run. The endpoint difference reconciles exactly as `EUR 76.00 - EUR 37.00 + EUR 31.83 = EUR 70.83`. The underlying historical path does not: historical z.v.E. is approximate and EUR 200.07 above the independent pre-floor value, historical pension/other-insurance intermediates are absent, and the current final-2024 splitting formula at statutory z.v.E. EUR 28,128 yields EUR 736 rather than reported EUR 737. School and section 35a candidates lack required payment evidence in the frozen set; EVG/commuting are absorbed by the lump sum; spouse gross was Gemini-extracted while RV/flat-tax fields were recovered only by later visual validation; meal expense remains unsupported. The first independent audit review rejected that Gemini-lineage attribution and required correction; final Independent Acceptance is `PASS_WITH_UNRESOLVED_DIFFERENCE`. No current implementation defect is proven, no frozen artifact or tax logic changed, and the Repair Gate remains closed. Exact next state: `AUDIT_UNRESOLVED` pending historical intermediates or evidence capable of resolving the one-euro tariff inconsistency.
+- **CASE-001 structured financial intake â€” 2026-09-28:** Owner authority registered canonical source `SFS-CASE-001-2024-0001` as one immutable CSV separate from the 16-PDF inventory. Local deterministic parsing preserved 946/946 rows across 2024 in EUR with zero invalid rows, one retained exact-duplicate group, zero probable duplicates and two retained reversal pairs. The first Independent Acceptance rejected aggregate-only lineage; remediation assigned every row a stable identity and terminal disposition (946 classified, zero unclassified) and replaced every candidate aggregate with exact row IDs. School payments now support EUR 144 deduction and section 35a payments support EUR 159.13 basis/EUR 31.83 credit. Versioned successor result: z.v.E. EUR 27,784; tariff tax EUR 674; tax after section 35a EUR 642.17; withheld EUR 776; refund EUR 133.83. Exact bridge from frozen predecessor: `76.00 + 26.00 + 31.83 = 133.83`. All six Specialists, Chief and final Independent Acceptance are `PASS`; focused tests `22 passed`; full unit regression `920 passed, 1 warning`. Capacity continuation gate observed five-hour 99 percent and weekly 37 percent remaining, resetting 2026-09-29 03:06:26 and 2026-10-04 20:39:49 Europe/Berlin. No historical target, source/Drive mutation, external ERiC, ELSTER/Finanzamt submission, production, new store, Orchestrator or scheduler occurred.
+- **CASE-001 EUR 60 donation reconciliation â€” 2026-09-28:** bounded recovery passed at `c1ad926316122329c430f739c35a4ecaea8529fd`; starting capacity was five-hour 86 percent and weekly 35 percent remaining. Frozen PDF `DOC-CASE-001-00000007` and accepted ledger row `TX-c67f3a594d3273589c5a9ce3` match deterministically on recipient, EUR 60, supporter/reference `994978`, timing and recurring-support terms. Direct visual review recovered the form footer stating recognition as charitable and benevolent, but the recipient-produced form does not expressly state the tax-privileged use purpose, corporation-tax exemption particulars, or a deterministic donation-versus-membership classification required by section 50(4) EStDV. Final status is `DONATION_EVIDENCE_INCOMPLETE`; affected evidence review is `PASS_WITH_EXCLUSION`, Chief rerun is `NOT_REQUIRED`, and Independent Acceptance is `PASS`. The accepted EUR 133.83 refund remains unchanged and no calculation successor was created. Private result SHA-256 is `ad265dd1c4ea203260865f383d9b22b8d713221f7283735238a2991084ec86cf`; focused regression passes (`14 passed`). The CSV, Gemini extraction, unrelated Specialists/Chief, medical and lawyer questions were not reopened; no Drive mutation or external action occurred.
+- **CASE-001 final closure and declaration-readiness audit â€” 2026-09-28:** recovery passed at synchronized clean `b1eab3ae476d723d11968934fb602c31e36093c4`; starting capacity was five-hour 69 percent and weekly 32 percent, with a pre-validation recheck of 64/32. The accepted EUR 133.83 result, 16-PDF inventory, 946-row ledger, exact evidence/review/final-result hashes, and all exclusions are frozen without recomputation. Lawyer and medical/pharmacy expenses are `OWNER_DECLINED / EXCLUDED`; the EUR 60 payment remains `DONATION_EVIDENCE_INCOMPLETE / EXCLUDED`. Four Independent Acceptance cycles forced correction of gross-wage transformation overclaim, EUR 3,000 Kindergeld/section 31 lineage, raw Vorsorge components, twelve exact tenant-payment row IDs, freeze hashes, and queue/DoD completeness; final Independent Acceptance is `PASS`. The corrected 18-item manifest contains 0 `SUPPORTED`, 0 `MISSING_MAPPING`, 1 `MISSING_RULE`, 7 `MISSING_FORM_OR_SECTION`, 1 `SUPPORTED_BUT_UNVERIFIED`, 2 `IRRELEVANT_FOR_CASE`, and 7 `EXCLUDED_BY_ACCEPTED_CASE_DECISION`. Existing field semantics touch two of nine affirmative requirements (22.22 percent) but remain synthetic-only; a complete CASE-001 preview is impossible. The bounded queue is `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05`, requiring one future Owner implementation authority while retaining all external gates. Focused manifest/mapping/declaration/XSD/plausibility/readiness/documentation verification passes (`254 passed`). No official ERiC or external action occurred.
+- **CASE-001 declaration remediation DR-01 STOP â€” 2026-09-29:** the Owner authorized the entire dependency queue `DR-01 -> (DR-02, DR-03, DR-04) -> DR-05`. Live capacity began at five-hour 99 percent and weekly 26 percent; the synchronized clean Recovery Gate passed at `1dc6c6c7f5f31885301bf0dca89883f4f996b097`. DR-01 stopped before implementation because its required authoritative Hauptvordruck/joint-assessment and cent-to-whole-euro wage semantics cannot be recovered from the repository: the protected hash-pinned ERiC 44.3.6.0 annual documentation/schema packages are absent from all bounded searched locations, and the existing browser session redirects to an unauthenticated ELSTER developer login. No credential was requested or used and no speculative mapping was created. Status is `STOP_DIAGNOSTIC`; ending capacity was 89/24, all DR packages remain unstarted, frozen refund EUR 133.83 is unchanged, and exact continuation is private Owner authentication, local availability of the same packages, hash verification, then DR-01. No external action occurred.
+- **Protected Official Source Store accepted â€” 2026-09-29:** Owner privately recovered all three official packages under `E:\ERic` without supplying credentials. Independent verification proved exact expected hashes for documentation `bad21c...92ad5`, schema documentation `a77cca...e779e`, and Vordruck archive `488953...3862b`; non-destructive protected-store copies have identical bytes and the originals remain. Minimal extraction produced the exact previously pinned E10/2024 ODS `6379af...dacd5` and XSD `86c735...d272`. Repository contract `official-source-registry-v1.json` and the portable `AI_TAX_PROTECTED_SOURCE_ROOT` resolver enforce logical ID, release, relative path, size and SHA-256 with stable `OFFICIAL_SOURCE_MISSING` / `OFFICIAL_SOURCE_INTEGRITY_FAILURE` outcomes. Google Drive is backup only and Git contains metadata, not protected binaries. Focused verification passes (`14 passed`). The old STOP is resolved; exact continuation is DR-01.
+- **CASE-001 DR-01 accepted / capacity pause â€” 2026-09-29:** versioned case-scoped composition binds case, 2024, run, Case Registry, frozen calculation, exact person/wage evidence and the existing Anlage N mapping. Verified official semantics implement income-tax-return basis `E0100001`, required Person A/B Hauptvordruck contexts and `Zusammenveranlagung` `E0101201`. The official instructions and `GeldBetragOhneCent` field semantics deterministically transform positive source wage EUR 36,470.23 to declared EUR 36,470; mismatch fails closed. The composed result passes exact protected E10/2024 XSD validation and remains non-transmitting. Focused/relevant verification passes (`191 passed`); Independent Acceptance is `PASS`; frozen refund remains EUR 133.83. Post-package capacity was five-hour 80 percent and weekly 21 percent. State is `TOKEN_PAUSED` before dependency-ready DR-02; do not repeat Source Store acceptance or DR-01 after reset.
+- **CASE-001 DR-02 accepted â€” 2026-10-04:** exact protected ODS/XSD review and a versioned case-scoped composer now represent accepted pension, health, care, and unemployment facts in Anlage Vorsorgeaufwand. Official declaration fields are `E2000401`, `E2000801` (official line 9, correcting the stale line-8 manifest wording), `E2000601`, `E2001203`, `E2001505`, and `E2004403`; assessment-only values are not emitted. Whole-euro values are `3392`, `3391`, `121`, `2955`, `620`, and `475`; original cents remain identity-bound inputs. Exact-XSD and fail-closed focused verification passes (`12 passed`), Independent official-source review is `PASS`, the output remains non-transmitting, and the frozen refund remains EUR 133.83. Exact continuation is DR-03's factual-prerequisite gate and dependency-ready DR-04; DR-05 remains blocked until both are accepted.
+- **CASE-001 DR-02 post-package capacity checkpoint â€” 2026-10-04 (historical classification defect):** synchronized commit `ff90456` recorded five-hour 50 percent and weekly 92 percent remaining. Its `TOKEN_PAUSED` label was semantically invalid because those values are `RUN`; the observation and error remain audit evidence and are superseded by the Limit Controller repair. A proactive non-threshold stop must use deterministic `CAPACITY_DEFERRED`, never `TOKEN_PAUSED`.
+- **CASE-001 DR-03/DR-04 continuation checkpoint â€” 2026-10-04:** evidence-first DR-03 audit recovered the child/student label, school identity, EUR 480 payments, EUR 144 deduction, and EUR 3,000 Kindergeld context without re-ingestion. All six requested facts, including Familienkasse, were subsequently supplied by the Owner and are `SUPPLIED_NOT_REGISTERED`; sensitive values are not reproduced. A reusable Human Declaration contract is implemented and focused tests pass. DR-04 implementation is recoverable but **not accepted**: independent review found no executed plausibility evaluator, substitution-prone evidence references, and a genuine EUR 0.17 contradiction between declared whole-euro bases (90 + 70 => EUR 32.00 credit) and frozen exact-cent credit EUR 31.83. Status is `STOP_DIAGNOSTIC`; do not start DR-05 or repeat DR-01/DR-02.
+- **Bounded infrastructure repair â€” 2026-10-04:** execution began from clean synchronized `12069bcc26ed02a1e6cfb33b4e9ad7f937d8f97c7` with live five-hour 99 percent and weekly 86 percent remaining. Scope is limited to deterministic Limit Controller semantics, indexed official-source knowledge, and canonical-state repair. CASE-001 does not advance. Exact preserved product continuation is: register already supplied Human Declarations; complete DR-03; repair and independently accept DR-04's three defects; begin DR-05 only after both pass.
+- **Infrastructure repair accepted â€” 2026-10-04:** Repair A, Repair B, and canonical continuation preservation independently pass. `TOKEN_PAUSED` is now reserved for hard thresholds; deterministic proactive stops use `CAPACITY_DEFERRED` with a closed cost catalog and do not inherit the 80-percent resume threshold. Both actual reset timestamps are mandatory and never inferred. A manifest-pinned, versioned official-knowledge index returns the smallest accepted fragment without protected-source parsing; wrong scope/hash, drift, unresolved DR-03/DR-04 entries, and incomplete reopen audit fail closed. Focused verification passes (`50 passed`); relevant DR/source regression passes (`74 passed`). CASE-001 did not advance and EUR 133.83 remains frozen. Exact next product action remains registration of the six supplied Human Declarations, then DR-03 completion, DR-04 repair/independent acceptance, and only then DR-05.
+- **DR-03 deterministic capacity deferral â€” 2026-10-04:** Recovery passed at clean synchronized `5e5394b27f069fbe4e3d17a743ad4d4826d9f046`. Live capacity was five-hour 28 percent and weekly 75 percent with reset epochs `1791146339` and `1791715052`, a healthy base `RUN`. The exact next atomic operation `DR-03-REGISTER-AND-COMPLETE` is closed catalog class `BOUNDED` (15/5); its five-hour projection is 13 percent, crossing the 15-percent hard threshold. State is therefore `CAPACITY_DEFERRED`, not `TOKEN_PAUSED`, with reason `PROJECTED_HARD_THRESHOLD_CROSSING`. Resume from this checkpoint after a fresh observation makes the same catalog operation fit; no 80-percent resume floor applies. No Human Declaration value was registered or reproduced and no DR package advanced.
+- **CASE-001 DR-03 accepted â€” 2026-10-05:** the recovered continuation registered all six Owner declarations inside the ignored protected case boundary (`sha256:fc1fc151c14561b21b113d3a0e6e88f20faf27debae0ef695f485e73f9e035d4`) without committing their values. The case/run/version and accepted DR-01/DR-02 predecessor semantics are revalidated fail-closed. Exact source-document, transaction-row, provider and frozen-calculation lineage is pinned. Anlage Kind represents EUR 3,000 Kindergeld and EUR 480 eligible school fees while EUR 144 remains assessment-only. Exact XSD and five official plausibility rules pass; focused verification is `6 passed`, relevant DR regression is `14 passed`, and final Independent Acceptance is `PASS`. EUR 133.83 remains frozen. Exact next action is DR-04 remediation; DR-05 remains dependency-blocked. No official ERiC, external transmission, signing, certificate, Drive mutation or production action occurred.
+- **Post-DR-03 autonomous continuation â€” 2026-10-05:** synchronized checkpoint `1eb620dc1978877481f9445a6dc471ab26805d09` makes `DR-04-REMEDIATE-AND-ACCEPT` the exact dependency-ready action. Live capacity was 22 percent five-hour and 51 percent weekly. The BOUNDED 15/5 projection crosses the five-hour hard margin, so state is `CAPACITY_DEFERRED`. The controller defect that previously returned non-resumable `CAUTION` before applying an explicit operation estimate is repaired and regression-covered. The sole existing `plan-limit-continuation-guard` is armed once for the actual five-hour reset `2026-10-05T06:40:04Z`; no polling or duplicate scheduler exists. Durable capsule: `docs/dr04-capacity-deferred-after-dr03-20261005.json`.
+- **Corrected 16-PDF execution accepted â€” 2026-09-28:** frozen inventory `sha256:d36daeb574e17e8487a830decd0ea31bc823a7d1aa5f5415c9a0c8df7e6a5694` binds all 16 source PDFs and all 16 fresh Gemini extractions; processing completed 16/16 with zero failures/skips. The new spouse payroll evidence establishes flat-taxed marginal-employment gross EUR 3,337.29 and employee RV EUR 120.15. The first full chain was rejected for omitting that RV; correction round 1 was rejected for tariff arithmetic; deterministic Decimal trace and correction round 2 produced six Specialist `PASS` results and Chief `PASS`. Final independent result: raw z.v.E. EUR 27,928.34, statutory z.v.E. EUR 27,928, joint Einkommensteuer EUR 700, solidarity surcharge EUR 0, creditable wage tax EUR 776, refund EUR 76. Form preview is non-transmitting and bound to `sha256:9955f9a6a4ab198176b16728816d61016c1b7c10bc4870405127cdb72616f135`; final private result is `sha256:9d6dc9c69ff9572a64320d7cd5b607c32577156ea0498d2d4e88ec420355f4a5`. Independent Acceptance found and required repair of two on-disk hash-binding defects, then returned `PASS`. Focused verification `20 passed`; full unit regression `915 passed, 1 warning`. Historical target use/comparison is false; external ERiC/ELSTER/Finanzamt action, signing, production, Drive mutation, and another case/year/provider are false.
 
-All later dated checkpoint sections are chronological history. Their former “exact next action” statements document the state at that time and do not override this snapshot.
+All later dated checkpoint sections are chronological history. Their former â€œexact next actionâ€ statements document the state at that time and do not override this snapshot.
 
-### STOP DIAGNOSTIC — MILESTONE-A-20260927-001
+### STOP DIAGNOSTIC â€” MILESTONE-A-20260927-001
 
-- **شناسایی:** در 2026-09-27، مخزن `golestanzadeh/ai-agent-lab` روی شاخه `d021-agent-case-provisioning` در commit `62747b16a11dbd997f0c023c6c40c0f2f408cc5f` تمیز، همگام با remote و تحت مالکیت انحصاری این اجرا بود. PR باز #1 به‌صورت draft باقی مانده و automation موجود `plan-limit-continuation-guard` با status `PAUSED` حفظ شد.
-- **دسته توقف اصلی:** `HUMAN_REQUIRED / PRODUCT_EXECUTION_AUTHORITY`. دستور Owner خواستار تفکیک اختیار موجود از کار نیازمند اختیار بود. شواهد پایدار نشان می‌دهد D-051 مصرف شده، اختیار UI در UI-19 پایان یافته و `ORCH-CONT-20260927-001` فقط کنترل milestone و proof مصنوعی آن را پوشش داده است. هیچ‌کدام ایجاد composition service، durable workflow store، operational actions، approval integration، Milestone A E2E یا CI جدید را مجاز نمی‌کند.
-- **اثر:** workstreamهای A-02 تا A-09 و بخش اجرایی A-01 مسدودند. اجزای موجود سالم و قابل استفاده مجدد باقی می‌مانند؛ هیچ خطر داده، credential یا سامانه بیرونی ایجاد نشده و هیچ package محصول اجرا نشده است.
-- **بازیابی و بررسی انجام‌شده:** Recovery Gate، بررسی PR/automation، limit safety check، inventory اجزای موجود و تطبیق با A-01 تا A-09 انجام شد. طرح پنج‌بسته‌ای در `docs/milestone-a-execution-plan.md` ثبت شد. برای جلوگیری از authority amplification، هیچ task آماده‌ای در Kernel ثبت نشد و scheduler از حالت `PAUSED` خارج نشد.
-- **گزینه‌های مجاز باقی‌مانده:** فقط بازبینی یا اصلاح طرح و پاسخ Owner به درخواست اختیار یکپارچه مجاز است. کار مستقلِ دیگری که این milestone را بدون عبور از همان gate پیش ببرد شناسایی نشد.
-- **اقدام دقیق لازم از Owner:** اختیار واحد `MILESTONE-A-20260927-001` را دقیقاً با پنج package، budgetها، dependencyها، acceptance/recovery rules، artifact boundary و exclusions ثبت‌شده در طرح تأیید یا رد کند. پس از تأیید، authority contract باید hash-bound شود؛ سپس Recovery Gate تکرار و فقط package آماده ثبت شود.
-- **وضعیت ادامه:** scheduler `plan-limit-continuation-guard` باید `PAUSED` بماند. ظرفیت علت توقف نیست؛ Human Gate علت توقف است. نقطه ادامه، commit حاوی همین plan/checkpoint پس از push خواهد بود.
-- **نتیجه پایدار:** plan/checkpoint در commit `2acf07d5b19ea3a0785b9fcf3e263410985a3da3` روی `d021-agent-case-provisioning` push شد؛ targeted documentation verification برابر `9 passed` بود. بررسی پایان بسته five-hour `50%` used / `50%` remaining و weekly `8%` used / `92%` remaining را گزارش کرد. این ظرفیت Human Gate را رفع نمی‌کند و package دیگری مجاز نیست.
+- **Ø´Ù†Ø§Ø³Ø§ÛŒÛŒ:** Ø¯Ø± 2026-09-27ØŒ Ù…Ø®Ø²Ù† `golestanzadeh/ai-agent-lab` Ø±ÙˆÛŒ Ø´Ø§Ø®Ù‡ `d021-agent-case-provisioning` Ø¯Ø± commit `62747b16a11dbd997f0c023c6c40c0f2f408cc5f` ØªÙ…ÛŒØ²ØŒ Ù‡Ù…Ú¯Ø§Ù… Ø¨Ø§ remote Ùˆ ØªØ­Øª Ù…Ø§Ù„Ú©ÛŒØª Ø§Ù†Ø­ØµØ§Ø±ÛŒ Ø§ÛŒÙ† Ø§Ø¬Ø±Ø§ Ø¨ÙˆØ¯. PR Ø¨Ø§Ø² #1 Ø¨Ù‡â€ŒØµÙˆØ±Øª draft Ø¨Ø§Ù‚ÛŒ Ù…Ø§Ù†Ø¯Ù‡ Ùˆ automation Ù…ÙˆØ¬ÙˆØ¯ `plan-limit-continuation-guard` Ø¨Ø§ status `PAUSED` Ø­ÙØ¸ Ø´Ø¯.
+- **Ø¯Ø³ØªÙ‡ ØªÙˆÙ‚Ù Ø§ØµÙ„ÛŒ:** `HUMAN_REQUIRED / PRODUCT_EXECUTION_AUTHORITY`. Ø¯Ø³ØªÙˆØ± Owner Ø®ÙˆØ§Ø³ØªØ§Ø± ØªÙÚ©ÛŒÚ© Ø§Ø®ØªÛŒØ§Ø± Ù…ÙˆØ¬ÙˆØ¯ Ø§Ø² Ú©Ø§Ø± Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ Ø§Ø®ØªÛŒØ§Ø± Ø¨ÙˆØ¯. Ø´ÙˆØ§Ù‡Ø¯ Ù¾Ø§ÛŒØ¯Ø§Ø± Ù†Ø´Ø§Ù† Ù…ÛŒâ€ŒØ¯Ù‡Ø¯ D-051 Ù…ØµØ±Ù Ø´Ø¯Ù‡ØŒ Ø§Ø®ØªÛŒØ§Ø± UI Ø¯Ø± UI-19 Ù¾Ø§ÛŒØ§Ù† ÛŒØ§ÙØªÙ‡ Ùˆ `ORCH-CONT-20260927-001` ÙÙ‚Ø· Ú©Ù†ØªØ±Ù„ milestone Ùˆ proof Ù…ØµÙ†ÙˆØ¹ÛŒ Ø¢Ù† Ø±Ø§ Ù¾ÙˆØ´Ø´ Ø¯Ø§Ø¯Ù‡ Ø§Ø³Øª. Ù‡ÛŒÚ†â€ŒÚ©Ø¯Ø§Ù… Ø§ÛŒØ¬Ø§Ø¯ composition serviceØŒ durable workflow storeØŒ operational actionsØŒ approval integrationØŒ Milestone A E2E ÛŒØ§ CI Ø¬Ø¯ÛŒØ¯ Ø±Ø§ Ù…Ø¬Ø§Ø² Ù†Ù…ÛŒâ€ŒÚ©Ù†Ø¯.
+- **Ø§Ø«Ø±:** workstreamÙ‡Ø§ÛŒ A-02 ØªØ§ A-09 Ùˆ Ø¨Ø®Ø´ Ø§Ø¬Ø±Ø§ÛŒÛŒ A-01 Ù…Ø³Ø¯ÙˆØ¯Ù†Ø¯. Ø§Ø¬Ø²Ø§ÛŒ Ù…ÙˆØ¬ÙˆØ¯ Ø³Ø§Ù„Ù… Ùˆ Ù‚Ø§Ø¨Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ù…Ø¬Ø¯Ø¯ Ø¨Ø§Ù‚ÛŒ Ù…ÛŒâ€ŒÙ…Ø§Ù†Ù†Ø¯Ø› Ù‡ÛŒÚ† Ø®Ø·Ø± Ø¯Ø§Ø¯Ù‡ØŒ credential ÛŒØ§ Ø³Ø§Ù…Ø§Ù†Ù‡ Ø¨ÛŒØ±ÙˆÙ†ÛŒ Ø§ÛŒØ¬Ø§Ø¯ Ù†Ø´Ø¯Ù‡ Ùˆ Ù‡ÛŒÚ† package Ù…Ø­ØµÙˆÙ„ Ø§Ø¬Ø±Ø§ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.
+- **Ø¨Ø§Ø²ÛŒØ§Ø¨ÛŒ Ùˆ Ø¨Ø±Ø±Ø³ÛŒ Ø§Ù†Ø¬Ø§Ù…â€ŒØ´Ø¯Ù‡:** Recovery GateØŒ Ø¨Ø±Ø±Ø³ÛŒ PR/automationØŒ limit safety checkØŒ inventory Ø§Ø¬Ø²Ø§ÛŒ Ù…ÙˆØ¬ÙˆØ¯ Ùˆ ØªØ·Ø¨ÛŒÙ‚ Ø¨Ø§ A-01 ØªØ§ A-09 Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯. Ø·Ø±Ø­ Ù¾Ù†Ø¬â€ŒØ¨Ø³ØªÙ‡â€ŒØ§ÛŒ Ø¯Ø± `docs/milestone-a-execution-plan.md` Ø«Ø¨Øª Ø´Ø¯. Ø¨Ø±Ø§ÛŒ Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² authority amplificationØŒ Ù‡ÛŒÚ† task Ø¢Ù…Ø§Ø¯Ù‡â€ŒØ§ÛŒ Ø¯Ø± Kernel Ø«Ø¨Øª Ù†Ø´Ø¯ Ùˆ scheduler Ø§Ø² Ø­Ø§Ù„Øª `PAUSED` Ø®Ø§Ø±Ø¬ Ù†Ø´Ø¯.
+- **Ú¯Ø²ÛŒÙ†Ù‡â€ŒÙ‡Ø§ÛŒ Ù…Ø¬Ø§Ø² Ø¨Ø§Ù‚ÛŒâ€ŒÙ…Ø§Ù†Ø¯Ù‡:** ÙÙ‚Ø· Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ ÛŒØ§ Ø§ØµÙ„Ø§Ø­ Ø·Ø±Ø­ Ùˆ Ù¾Ø§Ø³Ø® Owner Ø¨Ù‡ Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø§Ø®ØªÛŒØ§Ø± ÛŒÚ©Ù¾Ø§Ø±Ú†Ù‡ Ù…Ø¬Ø§Ø² Ø§Ø³Øª. Ú©Ø§Ø± Ù…Ø³ØªÙ‚Ù„Ù Ø¯ÛŒÚ¯Ø±ÛŒ Ú©Ù‡ Ø§ÛŒÙ† milestone Ø±Ø§ Ø¨Ø¯ÙˆÙ† Ø¹Ø¨ÙˆØ± Ø§Ø² Ù‡Ù…Ø§Ù† gate Ù¾ÛŒØ´ Ø¨Ø¨Ø±Ø¯ Ø´Ù†Ø§Ø³Ø§ÛŒÛŒ Ù†Ø´Ø¯.
+- **Ø§Ù‚Ø¯Ø§Ù… Ø¯Ù‚ÛŒÙ‚ Ù„Ø§Ø²Ù… Ø§Ø² Owner:** Ø§Ø®ØªÛŒØ§Ø± ÙˆØ§Ø­Ø¯ `MILESTONE-A-20260927-001` Ø±Ø§ Ø¯Ù‚ÛŒÙ‚Ø§Ù‹ Ø¨Ø§ Ù¾Ù†Ø¬ packageØŒ budgetÙ‡Ø§ØŒ dependencyÙ‡Ø§ØŒ acceptance/recovery rulesØŒ artifact boundary Ùˆ exclusions Ø«Ø¨Øªâ€ŒØ´Ø¯Ù‡ Ø¯Ø± Ø·Ø±Ø­ ØªØ£ÛŒÛŒØ¯ ÛŒØ§ Ø±Ø¯ Ú©Ù†Ø¯. Ù¾Ø³ Ø§Ø² ØªØ£ÛŒÛŒØ¯ØŒ authority contract Ø¨Ø§ÛŒØ¯ hash-bound Ø´ÙˆØ¯Ø› Ø³Ù¾Ø³ Recovery Gate ØªÚ©Ø±Ø§Ø± Ùˆ ÙÙ‚Ø· package Ø¢Ù…Ø§Ø¯Ù‡ Ø«Ø¨Øª Ø´ÙˆØ¯.
+- **ÙˆØ¶Ø¹ÛŒØª Ø§Ø¯Ø§Ù…Ù‡:** scheduler `plan-limit-continuation-guard` Ø¨Ø§ÛŒØ¯ `PAUSED` Ø¨Ù…Ø§Ù†Ø¯. Ø¸Ø±ÙÛŒØª Ø¹Ù„Øª ØªÙˆÙ‚Ù Ù†ÛŒØ³ØªØ› Human Gate Ø¹Ù„Øª ØªÙˆÙ‚Ù Ø§Ø³Øª. Ù†Ù‚Ø·Ù‡ Ø§Ø¯Ø§Ù…Ù‡ØŒ commit Ø­Ø§ÙˆÛŒ Ù‡Ù…ÛŒÙ† plan/checkpoint Ù¾Ø³ Ø§Ø² push Ø®ÙˆØ§Ù‡Ø¯ Ø¨ÙˆØ¯.
+- **Ù†ØªÛŒØ¬Ù‡ Ù¾Ø§ÛŒØ¯Ø§Ø±:** plan/checkpoint Ø¯Ø± commit `2acf07d5b19ea3a0785b9fcf3e263410985a3da3` Ø±ÙˆÛŒ `d021-agent-case-provisioning` push Ø´Ø¯Ø› targeted documentation verification Ø¨Ø±Ø§Ø¨Ø± `9 passed` Ø¨ÙˆØ¯. Ø¨Ø±Ø±Ø³ÛŒ Ù¾Ø§ÛŒØ§Ù† Ø¨Ø³ØªÙ‡ five-hour `50%` used / `50%` remaining Ùˆ weekly `8%` used / `92%` remaining Ø±Ø§ Ú¯Ø²Ø§Ø±Ø´ Ú©Ø±Ø¯. Ø§ÛŒÙ† Ø¸Ø±ÙÛŒØª Human Gate Ø±Ø§ Ø±ÙØ¹ Ù†Ù…ÛŒâ€ŒÚ©Ù†Ø¯ Ùˆ package Ø¯ÛŒÚ¯Ø±ÛŒ Ù…Ø¬Ø§Ø² Ù†ÛŒØ³Øª.
 
-### STOP DIAGNOSTIC — ORCH-CONT-20260927-001
+### STOP DIAGNOSTIC â€” ORCH-CONT-20260927-001
 
 - **Identification:** recorded `2026-09-27T18:32:28Z` (`2026-09-27T20:32:28+02:00`, Europe/Berlin); repository `golestanzadeh/ai-agent-lab`; branch `d021-agent-case-provisioning`; recovered HEAD `f32945a29374ef06e2ace36a3e8a3df8fee9c93e`; task `MASTER_ORCHESTRATOR_CONTINUITY`; package/milestone implementation not started. Last verified operation was the read-only Phase-1 evidence and compatibility assessment.
 - **Primary stop category:** `HUMAN_REQUIRED / ARCHITECTURE_AUTHORITY`. Verified fact: the existing Kernel implements task/dependency registration, bounded budgets, retries, Human Gates, independent acceptance, hash-chained audit, and checkpoints, but it has no accepted milestone-authority contract, package-queue replenishment/replanning contract, or general ready-task dispatcher. Agent Bridge Protocol v1 is passive validation only, and Windows Relay allowlists only `LOCAL_SYNC_BOOTSTRAP`. Implementing Phase 2 would therefore extend accepted architecture/contracts and requires explicit Project Owner approval.
 - **Impact:** autonomous milestone decomposition and queue replenishment remain blocked; existing local synthetic components, Local Sync, Windows Relay, and repository integrity are unaffected. No data, credential, or external system is at risk. No independent authorized implementation package was identified that advances this mission without crossing the architecture gate.
 - **Automated recovery performed:** Recovery Gate passed; local and remote HEAD matched with a clean tree and exclusive ownership; Codex automation `plan-limit-continuation-guard` was verified `PAUSED`; Windows tasks `AI-Tax-Agent Local Sync` and `AI-Tax-Agent Windows Relay` were `Ready`, enabled, and last returned `0`; no implementation or scheduler change was attempted.
-- **Required next action:** the Project Owner must explicitly approve a bounded design-and-implementation package for a versioned milestone-authority contract, Kernel validation/registration of generated packages, queue-exhaustion replanning, and a narrowly scoped dispatch adapter. Acceptance must include no authority amplification, dependency ordering, budget/retry enforcement, independent acceptance, checkpoint recovery, and a two-package synthetic proof. Until then, do not implement Phases 2–5.
+- **Required next action:** the Project Owner must explicitly approve a bounded design-and-implementation package for a versioned milestone-authority contract, Kernel validation/registration of generated packages, queue-exhaustion replanning, and a narrowly scoped dispatch adapter. Acceptance must include no authority amplification, dependency ordering, budget/retry enforcement, independent acceptance, checkpoint recovery, and a two-package synthetic proof. Until then, do not implement Phases 2â€“5.
 - **Recovery state:** five-hour remaining `15%`, weekly remaining `87%`; five-hour reset `2026-09-27T21:33:23Z`; two-minute buffered time `2026-09-27T21:35:23Z`; weekly reset epoch `1791131603`. The capacity threshold independently requires `TOKEN_PAUSED`, but a reset grants no architecture authority. Exact safe continuation point is review of the approved milestone-contract package, if granted. Scheduler remains `PAUSED`; no automatic wake is configured because the Human Gate, not capacity alone, blocks continuation.
 
 Repository cleanup and canonical-state consolidation completed on 2026-09-13.
@@ -554,17 +554,17 @@ A stage is not durably handed off until the checkpoint states:
 
 ## Required references
 
-- `CONSTITUTION.md` — ratified supreme Project Constitution v2.
-- `AGENTS.md` — mandatory Agent behavior and governance.
-- `CURRENT_STATE.md` — detailed verified/recovered current state.
-- `docs/agent-organization-v1-proposal.md` — active Agent hierarchy, authority, communication, lifecycle, and execution path.
-- `docs/o2-machine-readable-contracts.md` and `contracts/orchestrator/v1/` — Phase O2 design, schemas, policies, and acceptance evidence.
-- `ROADMAP.md` — remaining work and registered future artifacts.
-- `DECISIONS.md` — accepted decisions and authority.
-- `docs/d027-tax-agent-runtime.md` — executable specialist runtime.
-- `docs/d028-chief-tax-auditor.md` — historical Chief implementation and live-test checkpoint.
-- `docs/agent-bridge-production.md` — development control plane.
-- `docs/local-sync-agent.md` and `docs/windows-relay.md` — host-side operational bridge.
+- `CONSTITUTION.md` â€” ratified supreme Project Constitution v2.
+- `AGENTS.md` â€” mandatory Agent behavior and governance.
+- `CURRENT_STATE.md` â€” detailed verified/recovered current state.
+- `docs/agent-organization-v1-proposal.md` â€” active Agent hierarchy, authority, communication, lifecycle, and execution path.
+- `docs/o2-machine-readable-contracts.md` and `contracts/orchestrator/v1/` â€” Phase O2 design, schemas, policies, and acceptance evidence.
+- `ROADMAP.md` â€” remaining work and registered future artifacts.
+- `DECISIONS.md` â€” accepted decisions and authority.
+- `docs/d027-tax-agent-runtime.md` â€” executable specialist runtime.
+- `docs/d028-chief-tax-auditor.md` â€” historical Chief implementation and live-test checkpoint.
+- `docs/agent-bridge-production.md` â€” development control plane.
+- `docs/local-sync-agent.md` and `docs/windows-relay.md` â€” host-side operational bridge.
 
 ## Authority and safety
 
@@ -573,7 +573,7 @@ This checkpoint records state; it does not grant runtime authority. It does not 
 
 ## Historical checkpoints
 
-### Repository cleanup checkpoint — 2026-09-13
+### Repository cleanup checkpoint â€” 2026-09-13
 
 The active branch was cleaned and canonicalized:
 
@@ -587,7 +587,7 @@ The active branch was cleaned and canonicalized:
 Git history remains the recovery path for deleted material. No source code, tax evidence, private Drive data, approval data, or audit data was deleted.
 
 
-## Constitution v2 ratification checkpoint — 2026-09-13
+## Constitution v2 ratification checkpoint â€” 2026-09-13
 
 - The Project Owner / Human explicitly approved and ratified Project Constitution v2, including Article 1 and all 20 Articles.
 - The ratified text is active at `CONSTITUTION.md` and supersedes the original twelve-principle Constitution.
@@ -599,13 +599,13 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **RATIFIED / IN FORCE**.
 
 
-## Agent Organization v1 ratification checkpoint — 2026-09-13
+## Agent Organization v1 ratification checkpoint â€” 2026-09-13
 
 - The Project Owner / Human explicitly approved the redefined ten-section Agent Organization v1 model as the governing basis for continued project work.
 - Defined Human, independent control, Master/PMO, Engineering, and Tax Operations layers.
 - Preserved the existing seven tax-runtime Agent identifiers.
 - Accepted 20 permanent Agent roles plus three inactive case-selected domain role templates.
-- Accepted role responsibilities, reporting lines, access tiers A0–A6/AX, task-mediated communication, deterministic kernel boundaries, lifecycle, separation of duties, and phases O0–P4.
+- Accepted role responsibilities, reporting lines, access tiers A0â€“A6/AX, task-mediated communication, deterministic kernel boundaries, lifecycle, separation of duties, and phases O0â€“P4.
 - Future organizational changes require explicit Project Owner / Human instruction or approval. The Master may request review and propose exact changes but cannot approve or activate them.
 - Ratification authorizes Phase O2 machine-readable contract work only.
 - No Agent instance, credential, permission expansion, protected-main action, production release, destructive action, tax submission, or external transfer was authorized.
@@ -613,7 +613,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **RATIFIED / ACTIVE ORGANIZATIONAL CONTRACT**.
 
 
-## Phase O2 acceptance checkpoint — 2026-09-13
+## Phase O2 acceptance checkpoint â€” 2026-09-13
 
 - Created the exact-version `ORCHESTRATOR_CONTRACT_SET_V1` under `contracts/orchestrator/v1/`.
 - Defined the 20 permanent roles, three inactive templates, Agent manifest, Permission Matrix, task/response schemas, lifecycle, Human Gates, conflict rules, budgets, retries, loop controls, and kill switch.
@@ -628,7 +628,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: Phase O3 designs and implements the deterministic Orchestrator Kernel against the accepted O2 contracts, without activating Agents or crossing any later Human Gate.
 
 
-## Phase O3 technical completion checkpoint — 2026-09-13
+## Phase O3 technical completion checkpoint â€” 2026-09-13
 
 - Implemented the SQLite-backed deterministic control plane at `src/agent_lab/orchestrator_kernel.py`.
 - Covered task/dependency and Human Gate registration; Agent manifest validation; Default-Deny permission decisions; case/run scope; lifecycle; independent acceptance; budget, retry, and loop controls; fail-closed kill switch; hash-chained audit; checkpoint/recovery; read-only inspection; and exact Agent Bridge binding.
@@ -643,7 +643,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **O3_ACCEPTED / PHASE COMPLETE**.
 
 
-## Organized pause before Phase O4 — 2026-09-13
+## Organized pause before Phase O4 â€” 2026-09-13
 
 - Phase O4 is authorized but intentionally deferred until 2026-09-14 at the Project Owner's instruction because approximately 25% of the current five-hour token allowance remained.
 - No Phase O4 design, artifact registration, implementation, pilot execution, or Agent activation began in this session.
@@ -654,7 +654,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - This pause grants no real Agent, credential, A6, private case-data, production, protected-main, destructive, tax-submission, or external-transfer authority.
 
 
-## Phase O4 resumed — 2026-09-14
+## Phase O4 resumed â€” 2026-09-14
 
 - The Project Owner instructed continuation from the checkpoint at 09:40 Europe/Berlin with a scheduled stop at 11:30 Europe/Berlin.
 - The bounded pilot is a deterministic local consistency check of explicitly allowlisted public governance documents.
@@ -663,7 +663,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Resume status: `O4_RESUMED / DESIGN_REGISTERED`.
 
 
-## Phase O4 technical completion checkpoint — 2026-09-14
+## Phase O4 technical completion checkpoint â€” 2026-09-14
 
 - Implemented the deterministic governance-document consistency pilot at commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3`.
 - Verified separate start/resume Kernel instances, durable pause/recovery, allowlisted document hashing, evidence-drift rejection, independent acceptance, budget reporting, bounded retry enforcement, audit integrity, final checkpoint, and final `HALTED` kill-switch state.
@@ -679,7 +679,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: Human reviews and explicitly accepts implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` or requests exact amendments. Phase O5 may not begin before that acceptance.
 
 
-## Phase O4 acceptance and Phase O5 start — 2026-09-14
+## Phase O4 acceptance and Phase O5 start â€” 2026-09-14
 
 - The Project Owner explicitly accepted Phase O4 implementation commit `b81f4060c5973ad0e5b4ec88a385ce3e046f7ee3` and authorized Phase O5.
 - O4 status: **O4_ACCEPTED / PHASE COMPLETE**.
@@ -690,7 +690,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement the deterministic readiness evaluator, verify the blockers, and stop at the applicable Human/operational gate without activating production authority.
 
 
-## Phase O5 readiness checkpoint — 2026-09-14
+## Phase O5 readiness checkpoint â€” 2026-09-14
 
 - Implemented the deterministic fail-closed readiness evaluator at commit `9e00bcfccdddd04cda7195a907fbc3aaa9dd9772`.
 - Verification: targeted `11 passed`; relevant O3/O4/O5/Bridge/Local Sync/Windows Relay `72 passed`; full regression `379 passed, 1 skipped`; compile check passed.
@@ -700,7 +700,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - No service, automation, credential, permission, repository protection, production authority, merge, release, or external transfer was changed.
 
 
-## Phase O5 local service authorization result — 2026-09-14
+## Phase O5 local service authorization result â€” 2026-09-14
 
 - Human authorization covered enabling `AI-Tax-Agent Local Sync` and installing `AI-Tax-Agent Windows Relay` through the registered script.
 - The two user-owned untracked files were added only to local `.git/info/exclude`; their contents and locations were not changed, and no repository commit contains them.
@@ -711,7 +711,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - At this checkpoint, the next action was elevated Local Sync activation; the later verification record below supersedes that blocker.
 
 
-## Phase O5 Local Sync elevated activation result — 2026-09-14
+## Phase O5 Local Sync elevated activation result â€” 2026-09-14
 
 - The Project Owner reported executing the approved Local Sync activation commands from an elevated PowerShell session.
 - Independent verification: task state `READY`, enabled `true`, run level `Limited`, latest task result `0`.
@@ -722,7 +722,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: identify and govern the Work automation update, then define monitoring and verify protected-main enforcement.
 
 
-## Phase O5 scheduled-task window fix — 2026-09-14
+## Phase O5 scheduled-task window fix â€” 2026-09-14
 
 - The Project Owner reported repeated command windows opening during the one-minute scheduled runs.
 - Root cause: Windows Relay used console `python.exe`, was visible, and Windows subprocesses lacked no-window creation flags.
@@ -733,7 +733,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - At this checkpoint, O5 still had Work automation, monitoring, and protected-main blockers; the later verification record below resolves the latter two.
 
 
-## Phase O5 monitoring and protected-main verification — 2026-09-14
+## Phase O5 monitoring and protected-main verification â€” 2026-09-14
 
 - GitHub ruleset `22799423` is active and targets `main`.
 - Its bypass list is empty; pull requests are required before merging; force pushes are blocked.
@@ -743,7 +743,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: identify the existing ChatGPT Work automation, change its repository scope from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab`, verify it is enabled, and rerun readiness.
 
 
-## Phase O5 Work automation resolution and readiness PASS — 2026-09-14
+## Phase O5 Work automation resolution and readiness PASS â€” 2026-09-14
 
 - The Project Owner explicitly authorized changing the three active ChatGPT Work Agent Bridge automations from `golestanzadeh/agent-bridge-poc` to `golestanzadeh/ai-agent-lab`.
 - `Bridge PR Wake-up`, `Agent Bridge Human Gate`, and `Agent Bridge Continuation` were each inspected before change. All three were active, but both their GitHub Repository condition and prompt still referenced the PoC repository.
@@ -755,7 +755,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: the Project Owner reviews and explicitly accepts the Phase O5 readiness result or requests exact amendments. Phase P1 and any production activation remain unauthorized until separately approved.
 
 
-## Phase O5 acceptance checkpoint — 2026-09-14
+## Phase O5 acceptance checkpoint â€” 2026-09-14
 
 - The Project Owner / Human explicitly accepted the Phase O5 technical-readiness result and exact readiness-record commit `d64da2588b18f548c877aed6044f8884e7644cdc`.
 - Accepted evidence: deterministic `PASS`, `ready: true`, fourteen verified conditions, zero blockers, and successful GitHub validation run `34824845788` at the accepted commit.
@@ -765,7 +765,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - This acceptance does not authorize Phase P1, production activation, credentials or permission expansion, protected-main mutation or merge, release, destructive action, tax submission, ELSTER/Finanzamt contact, or external transfer.
 
 
-## Plan-limit continuation controller — 2026-09-14
+## Plan-limit continuation controller â€” 2026-09-14
 
 - The Project Owner requested that Codex inspect live five-hour and weekly account limits, stop early enough to preserve a durable checkpoint, and automatically return to this task after capacity recovers.
 - Live service evidence at design time: five-hour 99% remaining (`usedPercent: 1`; UI rounded to 100%), weekly 62% remaining (`usedPercent: 38`), primary reset `2026-09-14 23:47:38 +02:00`, and weekly reset `2026-09-20 13:48:09 +02:00`.
@@ -776,7 +776,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: obtain or identify explicit authority for the next project phase before starting it. The controller may resume only an exact action already authorized and durably recorded as `TOKEN_PAUSED`; it cannot create authority.
 
 
-## Phase P1 package 1 technical completion — 2026-09-14
+## Phase P1 package 1 technical completion â€” 2026-09-14
 
 - The Project Owner explicitly authorized Phase P1 design and implementation only in a non-production environment, using synthetic data and without real transmission to ELSTER or Finanzamt.
 - Official ELSTER evidence identifies ERiC as the third-party software integration route. The official availability schedule identifies ERiC `41.2` for unlimited income tax (`UFA 10`) for tax year 2024.
@@ -791,7 +791,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Gate at package-1 acceptance: await separate explicit authority before package 2 or any developer-access step. The later package-2 authority recorded below supersedes only the package-2 design restriction; every developer-access and external-capability restriction remains in force.
 
 
-## Phase P1 package 2 technical completion — 2026-09-14
+## Phase P1 package 2 technical completion â€” 2026-09-14
 
 - Authority: non-production design and implementation of a versioned ERiC adapter boundary only; no registration, credentials, live connectivity, or real transmission.
 - Registered artifacts: `src/agent_lab/eric_adapter_contract.py`, `tests/unit/test_eric_adapter_contract.py`, and `docs/p1-eric-adapter-contract.md`.
@@ -808,7 +808,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: await separate exact Project Owner authority for any next Phase P1 package or developer-access/material-retrieval step. Developer registration/account creation, manufacturer ID, official ERiC material retrieval, material-verification advancement, FFI/XML implementation, credentials, certificates, live connectivity, and any real transmission remain unauthorized.
 
 
-## Phase P1 package 3 technical completion — 2026-09-14
+## Phase P1 package 3 technical completion â€” 2026-09-14
 
 - Authority: synthetic, non-production design and implementation of the official-material registration and independent-review process only; no registration, protected retrieval, credentials, connectivity, or transmission.
 - Registered artifacts: `src/agent_lab/eric_material_process.py`, `tests/unit/test_eric_material_process.py`, and `docs/p1-eric-material-process.md`.
@@ -822,7 +822,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: continue autonomously with remaining local, synthetic, non-production Phase P1 work under the revocable authority recorded below.
 
 
-## Revocable continuous Phase P1 authority — 2026-09-14
+## Revocable continuous Phase P1 authority â€” 2026-09-14
 
 - Authorized work: local synthetic/non-production inspection, design, implementation, repair, testing, documentation, commit, push, bounded Agent delegation, review, and result control across remaining Phase P1 packages without package-by-package approval.
 - Revocation/editability: the Project Owner may revoke or amend this authority at any time; the latest explicit instruction controls future work.
@@ -832,7 +832,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **P1_CONTINUOUS_NON_PRODUCTION_AUTHORITY_ACTIVE / TOKEN_PAUSED**.
 
 
-## Phase P1 package 4 synthetic preview completion — 2026-09-14
+## Phase P1 package 4 synthetic preview completion â€” 2026-09-14
 
 - Implemented `src/agent_lab/elster_preview.py`, `tests/unit/test_elster_preview.py`, and `docs/p1-synthetic-preview.md` under the active continuous authority.
 - The preview binds package-1 envelope identity, accepted adapter-contract identity, completed synthetic material-process evidence, route/version metadata, synthetic values, official-material status, and an immutable warning.
@@ -845,7 +845,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact automatic-resume action: when the five-hour allowance is at least 80%, weekly remaining is above 10%, and repository recovery checks pass, implement the registered synthetic, non-production submission-lifecycle/idempotency package. No new Human approval is required inside D-051 authority.
 
 
-## Phase P1 package 5 synthetic lifecycle/idempotency completion — 2026-09-14
+## Phase P1 package 5 synthetic lifecycle/idempotency completion â€” 2026-09-14
 
 - Guarded automatic continuation resumed with 99% five-hour and 49% weekly remaining after branch, working-tree, and local/remote synchronization checks passed at `3c2ff2844bac94387969527b72a8c49c0f997415`.
 - Implemented `src/agent_lab/elster_submission_lifecycle.py`, `tests/unit/test_elster_submission_lifecycle.py`, and `docs/p1-synthetic-submission-lifecycle.md`.
@@ -856,7 +856,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement the registered local synthetic lifecycle-audit and restart-recovery package. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.
 
 
-## Phase P1 package 6 synthetic audit/recovery completion — 2026-09-15
+## Phase P1 package 6 synthetic audit/recovery completion â€” 2026-09-15
 
 - Implemented `src/agent_lab/elster_submission_audit.py`, `tests/unit/test_elster_submission_audit.py`, and `docs/p1-synthetic-submission-audit.md`.
 - The package records only privacy-minimized synthetic lifecycle metadata in a hash-chained snapshot and excludes tax values and purpose text.
@@ -867,7 +867,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement the registered local synthetic submission-readiness dossier. No new Human approval is required inside D-051 authority; every existing mandatory stop boundary remains in force.
 
 
-## Phase P1 package 7 synthetic readiness-dossier completion — 2026-09-15
+## Phase P1 package 7 synthetic readiness-dossier completion â€” 2026-09-15
 
 - Implemented `src/agent_lab/elster_readiness_dossier.py`, `tests/unit/test_elster_readiness_dossier.py`, and `docs/p1-synthetic-readiness-dossier.md`.
 - The immutable dossier binds the exact envelope, adapter, synthetic material-process, preview, lifecycle-audit, and recovery lineage while excluding tax values and purpose text.
@@ -877,7 +877,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact continuation choice: the Project Owner must exactly authorize either (a) the next protected P1 developer-registration/material-retrieval boundary, or (b) the separate user-interface phase. No registration, retrieval, credential, connectivity, production, protected-main, or transmission action has begun.
 
 
-## Protected ERiC access and UI phase start — 2026-09-15
+## Protected ERiC access and UI phase start â€” 2026-09-15
 
 - Human authority: developer registration and protected retrieval of official ERiC documentation/package are authorized first; starting the user-interface phase is also authorized.
 - Registration progress: the official ELSTER developer-registration form is open and ready. No personal/organizational value was entered and no submission occurred. The Human must enter the exact form values, solve the CAPTCHA, and leave final submission for action-time confirmation.
@@ -891,7 +891,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact continuation: before 09:00 Europe/Berlin on 2026-09-15, make no registration entry, submission, or ELSTER contact. No further local implementation is registered that is certainly free of a Human Gate; await the UI framework/architecture choice or the end of the temporary registration pause.
 
 
-## UI package 3 architecture authorization — 2026-09-15
+## UI package 3 architecture authorization â€” 2026-09-15
 
 - The Project Owner explicitly selected FastAPI + Jinja/HTMX for the local interactive prototype.
 - The latest instruction preserves the prior local, synthetic, non-production scope; it does not authorize real data, authentication, external connectivity, deployment, production, ELSTER/Finanzamt contact or transmission, or action on `main`.
@@ -899,7 +899,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement and verify UI package 3, commit and push on `d021-agent-case-provisioning`; registration remains paused until 09:00 Europe/Berlin.
 
 
-## UI package 3 completion — 2026-09-15
+## UI package 3 completion â€” 2026-09-15
 
 - Implemented the authorized FastAPI + Jinja/HTMX local prototype with Persian RTL responsive templates, local integrity-verified HTMX `2.0.10`, synthetic case switching, scoped status panels, an exact Human Gate, and visibly disabled submission/operation controls.
 - Runtime boundary: loopback only, synthetic in-memory registry, no CDN request, no authentication/persistence, no protected ERiC access, no real data, no external API, no submission route, and no official receipt.
@@ -908,7 +908,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact continuation: keep ERiC registration paused until 09:00 Europe/Berlin. Further local synthetic UI refinement may continue only when it does not introduce persistence, authentication, external access, real data, deployment, production, or transmission; otherwise stop for the applicable Human Gate.
 
 
-## Parallel delivery target — 2026-09-15
+## Parallel delivery target â€” 2026-09-15
 
 - The Project Owner set a project-wide operational target: complete design and full implementation in less than 20 days, establishing a deadline boundary before 2026-10-05 Europe/Berlin.
 - Execution policy: unrelated tracks and packages that are not prerequisites for one another should proceed concurrently or be interleaved; a wait or Human Gate in one track must not stop independent authorized work.
@@ -918,7 +918,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Scheduling priority: continuously select the highest-value exact registered action that is already authorized, prerequisite-ready, and independent of currently blocked tracks; retain the plan-limit stop/resume controls.
 
 
-## ERiC registration resumed — 2026-09-15 09:15 Europe/Berlin
+## ERiC registration resumed â€” 2026-09-15 09:15 Europe/Berlin
 
 - The Project Owner explicitly resumed the registration stage after the temporary pause ended at 09:00.
 - The official ELSTER developer-registration form is open and empty. Mandatory: salutation, first name, last name, company/project designation, email, website, application reason, and CAPTCHA. Phone is optional.
@@ -927,10 +927,10 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **ERIC_REGISTRATION_RESUMED / HUMAN_FORM_ENTRY_REQUIRED**.
 
 
-## ERiC developer registration submitted — 2026-09-15 09:20:28 Europe/Berlin
+## ERiC developer registration submitted â€” 2026-09-15 09:20:28 Europe/Berlin
 
 - The Project Owner completed the official fields and CAPTCHA, then separately confirmed the final `Absenden` action at action time.
-- The official ELSTER `Versandbestätigung` page confirmed successful transmission and displayed a transmission identifier.
+- The official ELSTER `VersandbestÃ¤tigung` page confirmed successful transmission and displayed a transmission identifier.
 - Privacy rule: do not record the Human's contact fields or the transmission identifier in Git, project documents, logs, or chat summaries beyond noting that official evidence was visibly confirmed.
 - Status: **ERIC_DEVELOPER_REGISTRATION_SUBMITTED / ACCESS_EMAIL_PENDING**.
 - Exact continuation: wait for the ELSTER access email. The Human must authenticate directly and privately; no agent may request, read, store, transmit, or commit the username/password. Once authenticated access is available, continue with the already authorized protected ERiC documentation/package download and the registered independent verification process.
@@ -945,7 +945,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **ERIC_ACCESS_EMAIL_PENDING / UI_PACKAGE_4_AUTHORIZED_AND_REGISTERED**.
 
 
-## UI package 4 completion — 2026-09-15
+## UI package 4 completion â€” 2026-09-15
 
 - Implemented a ten-stage immutable synthetic workflow plus responsive Persian timeline and privacy-safe local recovery/diagnostic panel.
 - The workflow is bound to one validated synthetic case/run, exposes exactly one current boundary, clears with case switching, and permanently denies private content, real data, operational actions, networking, and submission.
@@ -954,7 +954,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact continuation: do not wait idly for ELSTER. Select the next registered, authorized, prerequisite-ready local synthetic package; stop before persistence, authentication, protected materials, real data, external connectivity, production, transmission, or another Human Gate.
 
 
-## UI package 5 registration — 2026-09-15
+## UI package 5 registration â€” 2026-09-15
 
 - Under the explicit no-wait parallel-delivery instruction, registered a synthetic metadata-only document intake and provenance view for the local UI.
 - Exact scope: generic synthetic document labels, immutable references, processing/category status, and one case/run binding. No contents, real names, upload, Drive access, persistence, authentication, external connectivity, or transmission.
@@ -962,7 +962,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement, verify, visually inspect, commit, and push UI package 5 on the active development branch.
 
 
-## UI package 5 completion — 2026-09-15
+## UI package 5 completion â€” 2026-09-15
 
 - Implemented the registered metadata-only synthetic document/provenance contract and local UI inventory.
 - Exact case/run binding, generic labels, immutable references, and allowlisted metadata are enforced; private names/content, cross-case records, upload, persistence, source access, real data, and networking are denied.
@@ -970,7 +970,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_PACKAGE_5_COMPLETE / ERIC_ACCESS_EMAIL_PENDING / PARALLEL_DELIVERY_ACTIVE**.
 
 
-## Agent-led continuous execution — 2026-09-15
+## Agent-led continuous execution â€” 2026-09-15
 
 - The Project Owner explicitly instructed the Agents to continue all independent, authorized, prerequisite-ready work without unnecessary stops or package-by-package confirmation.
 - Agents may design, delegate, implement, review, test, document, commit, and push bounded work inside existing authority. Keep durable progress in this checkpoint and Git.
@@ -979,7 +979,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / EXCEPTION_ONLY_REPORTING / ERIC_ACCESS_EMAIL_PENDING**.
 
 
-## UI package 6 autonomous registration — 2026-09-15
+## UI package 6 autonomous registration â€” 2026-09-15
 
 - Agent review selected the highest-value next prerequisite-ready package: a synthetic review, evidence-gap, calculation, and form-preview view completing the next major portion of the ordinary UI journey.
 - Registered new artifacts: `src/agent_lab/ui_review_contract.py`, `src/agent_lab/ui_templates/_review_preview.html`, `tests/unit/test_ui_review_contract.py`, and `docs/ui-synthetic-review-preview.md`, plus bounded extensions to existing UI files/tests.
@@ -988,7 +988,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement, test, visually inspect, document, commit, and push UI package 6. No Human Gate applies inside this exact scope.
 
 
-## UI package 6 completion — 2026-09-15
+## UI package 6 completion â€” 2026-09-15
 
 - Implemented the immutable case/run-bound synthetic findings, evidence-gap, calculation-summary, and form-preview contract and integrated it into the local Persian UI.
 - Official ERiC mapping remains exactly `NOT_RECOVERED`; preview identity equals the workspace preview reference; findings and gaps use closed allowlists; numeric values are nonnegative and explicitly synthetic.
@@ -998,7 +998,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: select and register the next architecture-compatible local synthetic UI package; protected ERiC work still waits for Human-owned authentication after the access email.
 
 
-## UI package 7 autonomous registration — 2026-09-15
+## UI package 7 autonomous registration â€” 2026-09-15
 
 - Under the confirmed agent-led continuation authority, selected a local synthetic display-only Human Decision Queue as the next prerequisite-ready UI package.
 - Registered artifacts: `src/agent_lab/ui_decision_contract.py`, `src/agent_lab/ui_templates/_decision_queue.html`, `tests/unit/test_ui_decision_contract.py`, and `docs/ui-synthetic-decision-queue.md`, plus bounded UI integration/tests.
@@ -1007,7 +1007,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement, test, visually inspect, document, commit, and push UI package 7 on the active development branch.
 
 
-## UI package 7 completion — 2026-09-15
+## UI package 7 completion â€” 2026-09-15
 
 - Implemented the immutable synthetic display-only Human Decision Queue, bound to one exact selected case/run and the existing Human Gate artifact, destination, status, action, and timezone-aware expiry.
 - The queue exposes no form or decision mutation and enables no approval, rejection, persistence, authentication, networking, protected access, receipt, production, or transmission.
@@ -1016,7 +1016,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: select and register the next architecture-compatible local synthetic UI package; real Human decision capture remains separately gated.
 
 
-## UI package 8 autonomous registration — 2026-09-15
+## UI package 8 autonomous registration â€” 2026-09-15
 
 - Selected a local synthetic display-only submission-readiness boundary as the next architecture-compatible package.
 - Registered artifacts: `src/agent_lab/ui_submission_readiness_contract.py`, `src/agent_lab/ui_templates/_submission_readiness.html`, `tests/unit/test_ui_submission_readiness_contract.py`, and `docs/ui-synthetic-submission-readiness.md`, plus bounded UI integration/tests.
@@ -1025,7 +1025,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement, test, visually inspect, document, commit, and push UI package 8.
 
 
-## UI package 8 completion — 2026-09-15
+## UI package 8 completion â€” 2026-09-15
 
 - Implemented the immutable case/run/preview-bound synthetic submission-readiness view with two separate Article 1 stages, both exactly `NOT_APPROVED`, and a closed five-item blocker set.
 - No approval action, authentication, credential, transmitter, retry, receipt, networking, production, or submission capability exists.
@@ -1034,7 +1034,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: at the next safe execution window, select only a small architecture-compatible local synthetic package; stop if weekly remaining reaches 20% or five-hour remaining reaches 15%.
 
 
-## Local Agent Runtime Activation Layer authorization — 2026-09-15
+## Local Agent Runtime Activation Layer authorization â€” 2026-09-15
 
 - The Project Owner explicitly authorized a local, non-production, low-risk activation layer for the existing `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` roles.
 - The package must reuse the accepted O2 contracts and O3 Kernel and may not change the ratified organization.
@@ -1044,7 +1044,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action: implement the registered local dispatcher and four-role synthetic execution loop, verify fail-closed controls and independent acceptance, document, commit, and push on the active development branch.
 
 
-## Local Agent Runtime Activation Layer completion — 2026-09-15
+## Local Agent Runtime Activation Layer completion â€” 2026-09-15
 
 - Implemented the registered fixed local synthetic dispatcher for `PLANNING_DEPENDENCY_AGENT`, `IMPLEMENTATION_AGENT`, `QUALITY_ENGINEERING_AGENT`, and `INDEPENDENT_ACCEPTANCE_AGENT` without modifying the accepted O2 contract set or ratified organization.
 - The runtime creates temporary task-bound instances, validates manifests and capabilities through the existing Kernel, binds exact outputs and evidence, consumes bounded local budgets, independently re-verifies artifacts/QA, pauses and recovers from an exact checkpoint, records independent acceptance, and halts on completion.
@@ -1055,7 +1055,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **AGENT_RUNTIME_ACTIVATION_LAYER_TECHNICALLY_COMPLETE / LOCAL SYNTHETIC ONLY**.
 - Historical next action at that commit: return to UI package 6. This was completed and then superseded by UI-7 and UI-8; the authoritative next action is the current snapshot above. Provider-backed or broader runtime activation still requires separate exact authorization.
 
-### Repository information-consolidation checkpoint — 2026-09-15
+### Repository information-consolidation checkpoint â€” 2026-09-15
 
 - A complete tracked-repository hygiene audit found 215 tracked files, no tracked caches/logs/databases/keys/environment files, no duplicate tracked hashes, no broken local Markdown links, no basic secret-pattern findings, and no Git object-database or history-bloat problem.
 - `CURRENT_STATE.md` was reduced to verified live state, current boundaries, remaining work, and one exact next action.
@@ -1066,7 +1066,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - No architecture, organizational rule, case data, source code, test, security control, or production capability changed.
 - Exact next action remains the authoritative current snapshot at the top of this section.
 
-### Protected ERiC retrieval checkpoint — 2026-09-16
+### Protected ERiC retrieval checkpoint â€” 2026-09-16
 
 - The developer-access email arrived and the Human completed authentication privately; no credential was stored or committed.
 - The Project Owner explicitly accepted the ERiC Release 44 software-manufacturer license, and the protected download page became available.
@@ -1076,7 +1076,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Existing ERiC 41.2 synthetic contracts remain valid only as historical synthetic evidence. Changing the accepted adapter/version architecture is not inferred from retrieval and requires exact Human approval.
 - No ERiC executable package, 980 MB forms archive, manufacturer ID, credential, real data, network transmitter, or submission capability was obtained or activated.
 
-### ERiC 44.3.6.0 contract migration checkpoint — 2026-09-16
+### ERiC 44.3.6.0 contract migration checkpoint â€” 2026-09-16
 
 - The Project Owner explicitly authorized migration of the local non-production ERiC architecture and versioned contract from historical synthetic `41.2` to official `44.3.6.0`, including review of the recovered E10/2024 material, implementation, and testing, while excluding real data, Manufacturer-ID, credentials, connectivity, and transmission.
 - Adapter contract version `2` now binds ERiC `44.3.6.0`, `UFA10`, tax year `2024`, envelope schema `1`, and the recovered official material categories. The material state is `RECOVERED_LOCAL_MAPPING_UNVERIFIED`.
@@ -1085,7 +1085,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **ERIC_44_3_6_0_CONTRACT_MIGRATION_TECHNICALLY_COMPLETE / LOCAL NON-PRODUCTION ONLY**.
 - Exact next action is the authoritative current snapshot above; do not start the detailed mapping package while the weekly token guard remains in its caution zone.
 
-### Governed token pause — 2026-09-19
+### Governed token pause â€” 2026-09-19
 
 - Live plan-limit inspection reported five-hour usage `1%` and weekly usage `90%`, leaving `99%` and exactly `10%` respectively.
 - The hard weekly threshold therefore applies. No new implementation package was started.
@@ -1093,7 +1093,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **TOKEN_PAUSED / REPOSITORY CLEAN_AND_SYNCHRONIZED_BEFORE_PAUSE**.
 - Exact continuation: after the reset, resume only when a fresh check confirms five-hour remaining at least `80%`, weekly remaining above `10%`, and safe repository recovery. The next bounded package is the already authorized local non-production E10/2024 detailed mapping and plausibility-validation work under the exclusions in the authoritative snapshot.
 
-### Post-reset continuation and CI repair — 2026-09-20
+### Post-reset continuation and CI repair â€” 2026-09-20
 
 - Fresh service readings reported `100%` remaining in both the five-hour and weekly windows; the active branch was clean and synchronized at `fad38f75cb3220a01874b2238dc6f725e9fe2e63`, satisfying the recorded resume conditions.
 - Reconciled the historical O4 governance validator with the compact canonical ROADMAP by replacing its removed `## Registered Phase O4 pilot artifacts` marker with `## Current position`. No obsolete roadmap content was restored and no authority or runtime capability changed.
@@ -1101,23 +1101,23 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE / CI_REGRESSION_REPAIRED**.
 - Exact next action remains the authoritative snapshot above: begin the already authorized local non-production E10/2024 detailed mapping and plausibility-validation package.
 
-### E10/2024 local mapping package authorization — 2026-09-20
+### E10/2024 local mapping package authorization â€” 2026-09-20
 
 - The Project Owner explicitly authorized the next local E10/2024 package and requested exception-only reporting with only the final result.
 - Registered the bounded implementation, test, and documentation artifacts in `ROADMAP.md` before creation.
 - Boundary: official ERiC `44.3.6.0`, E10/2024, local synthetic non-production mapping and validation only. Real data, Manufacturer-ID, credentials, certificates, external connectivity, signing, full ERiC execution, and transmission remain excluded.
 - Status: **AUTHORIZED_AND_REGISTERED / IMPLEMENTATION_READY**.
 
-### E10/2024 bounded mapping completion — 2026-09-20
+### E10/2024 bounded mapping completion â€” 2026-09-20
 
-- Implemented the registered local mapping profile for the synthetic employment summary with exact E10/2024 namespace/version, separate tax-class 1–5 and tax-class 6 field groups, explicit Person binding, and explicit other-employment-expense semantics.
+- Implemented the registered local mapping profile for the synthetic employment summary with exact E10/2024 namespace/version, separate tax-class 1â€“5 and tax-class 6 field groups, explicit Person binding, and explicit other-employment-expense semantics.
 - Official source review confirmed the mapped identifiers in the annual documentation and exactly one declaration for each mapped identifier in `E10-2024.xsd`, including the official whole-euro and comma-decimal types.
 - The immutable output is deterministic and rejects ambiguous semantics, invalid tax classes, out-of-range amounts, XML/binding mutation, blocker removal, or any attempt to enable protected/external capability.
 - Verification: mapping/relevant targeted `70 passed`; non-Drive regression `574 passed, 1 skipped`; Google Drive provisioning `15 passed` on Python 3.11. Python 3.14 Windows full-suite attempts showed unrelated order-varying atomic-journal replacement failures in the pre-existing Drive tests.
 - Status: **E10_2024_BOUNDED_MAPPING_TECHNICALLY_COMPLETE / FULL_DECLARATION_AND_OFFICIAL_ERIC_PLAUSIBILITY_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
 
-### E10/2024 declaration/XSD completion — 2026-09-20
+### E10/2024 declaration/XSD completion â€” 2026-09-20
 
 - Implemented complete synthetic E10/2024 declaration assembly around the verified Anlage N subset and deterministic artifact identity.
 - Added exact filename and SHA-256 pinning before loading the locally recovered official `E10-2024.xsd`; protected schema content remains outside Git.
@@ -1126,7 +1126,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **E10_2024_DECLARATION_OFFICIAL_XSD_VALIDATED / OFFICIAL_ERIC_PLAUSIBILITY_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
 
-### E10/2024 local plausibility-subset completion — 2026-09-20
+### E10/2024 local plausibility-subset completion â€” 2026-09-20
 
 - Reviewed the protected annual `N - Regeln` evidence outside Git and implemented only the six presence rules directly implicated by the mapped fields, including paired-field rule `121355`.
 - Corrected the other-employment-expense mapping to require explicit `Schreibmaterial` semantics and emit item fields `E0205405`/`E0205406` before aggregate `E0204803`, as required by official rule `100200112`.
@@ -1136,7 +1136,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **E10_2024_LOCAL_PLAUSIBILITY_SUBSET_COMPLETE / OFFICIAL_ERIC_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
 
-### E10/2024 plausibility provenance hardening — 2026-09-20
+### E10/2024 plausibility provenance hardening â€” 2026-09-20
 
 - Bound each bounded local plausibility result and artifact identity to the exact reviewed protected annual-documentation filename and SHA-256.
 - Filename, digest, rule-set, findings, blocker, or capability-policy mutation fails closed; the protected source remains outside Git.
@@ -1144,7 +1144,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **E10_2024_LOCAL_PLAUSIBILITY_PROVENANCE_BOUND / OFFICIAL_ERIC_ENGINE_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
 
-### Current local E10 readiness integration — 2026-09-20
+### Current local E10 readiness integration â€” 2026-09-20
 
 - Added an immutable current-state assessment binding the exact mapping, official-XSD declaration, and source-provenance-bound passing local-plausibility artifacts.
 - Cross-lineage substitution, failed local stages, blocker removal, or external-capability enablement fails closed.
@@ -1153,7 +1153,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **E10_2024_LOCAL_LINEAGE_COMPLETE / EXTERNAL_EXECUTION_BLOCKED**.
 - Exact next action is the authoritative snapshot above.
 
-### Agent Runtime recovery-inspection completion — 2026-09-21
+### Agent Runtime recovery-inspection completion â€” 2026-09-21
 
 - Added read-only classification of intact planned, completed, and interrupted mid-resume runtime state.
 - The inspector verifies immutable plan/state artifacts, Kernel audit integrity, checkpoint identity/hash, kill-switch state, and durable completed-task evidence without mutating runtime state.
@@ -1162,7 +1162,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **LOCAL_RUNTIME_RECOVERY_DIAGNOSTICS_COMPLETE / AUTOMATIC_REPLAY_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-9 current E10 readiness reconciliation — 2026-09-21
+### UI-9 current E10 readiness reconciliation â€” 2026-09-21
 
 - Removed obsolete display claims that official mapping/material were unrecovered.
 - The synthetic Persian UI now shows local E10/2024 mapping, official-XSD validation, and six-rule subset completion while clearly showing that the official ERiC engine has not executed.
@@ -1171,7 +1171,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_9_LOCAL_E10_READINESS_DISPLAY_COMPLETE / REAL_OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI workflow diagnostic consistency — 2026-09-21
+### UI workflow diagnostic consistency â€” 2026-09-21
 
 - Advanced the synthetic workflow contract to version `2` and removed its final obsolete mapping-not-recovered diagnostic.
 - The closed diagnostic allowlist now reports the verified local E10/2024 XSD-and-six-rule result, explicitly reports the official ERiC engine as not executed, and keeps production submission unauthorized.
@@ -1180,7 +1180,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_9_DIAGNOSTICS_CONSISTENT / REAL_OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### Plan-limit controller state reconciliation — 2026-09-21
+### Plan-limit controller state reconciliation â€” 2026-09-21
 
 - Replaced the obsolete current status `PAUSED AT HUMAN GATE` with the durably authorized active agent-led, exception-only state.
 - Preserved the 2026-09-15 package-7 pause as history and made clear that every heartbeat must read fresh account-service percentages rather than treating an old observation as current.
@@ -1189,7 +1189,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **PLAN_LIMIT_GUARD_ACTIVE / DOCUMENTATION_RECONCILED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-10 synthetic support and recovery diagnostics — 2026-09-21
+### UI-10 synthetic support and recovery diagnostics â€” 2026-09-21
 
 - Added an immutable case/run-bound support contract with a closed safe-code allowlist for read-only recovery diagnostics, unavailable pause/resume/stop controls, and the absence of a receipt before transmission.
 - Added a display-only Persian support panel and corrected the last stale Persian mapping-not-recovered label in the workspace preview.
@@ -1198,7 +1198,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_10_SYNTHETIC_SUPPORT_COMPLETE / OPERATIONAL_CONTROLS_AND_RECEIPT_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-11 one-click Windows launcher — 2026-09-21
+### UI-11 one-click Windows launcher â€” 2026-09-21
 
 - Added a repository-relative double-click launcher for the existing local synthetic UI; no command entry is required.
 - The launcher binds exactly to `127.0.0.1:8000`, opens only the local browser URL, keeps a visible stop-by-closing boundary, and installs or persists nothing.
@@ -1207,7 +1207,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_11_WINDOWS_ONE_CLICK_COMPLETE / LOOPBACK_ONLY**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-12 phone-width and keyboard accessibility contract — 2026-09-21
+### UI-12 phone-width and keyboard accessibility contract â€” 2026-09-21
 
 - Preserved Persian RTL viewport and skip-link semantics, single-column phone layouts, visible Human Gates/diagnostics, wrap-safe long codes, 44-pixel targets, and visible keyboard focus.
 - Narrow layouts contain no CSS rule that hides safety information; no operational control or external dependency was introduced.
@@ -1215,7 +1215,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_12_RESPONSIVE_ACCESSIBILITY_COMPLETE / HANDS_ON_PHONE_VALIDATION_REMAINS**.
 - Exact next action is the authoritative snapshot above.
 
-### Documentation-index completeness guard — 2026-09-21
+### Documentation-index completeness guard â€” 2026-09-21
 
 - Registered the current runtime recovery, E10 mapping/declaration/plausibility/readiness, and UI support/Windows/phone documents in the focused documentation index.
 - Added a deterministic guard requiring exact equality between focused Markdown files and indexed filenames while preserving `PROJECT_CHECKPOINT.md` as the canonical status entry point.
@@ -1223,7 +1223,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **DOCUMENTATION_INDEX_COMPLETE / DRIFT_GUARD_ACTIVE**.
 - Exact next action is the authoritative snapshot above.
 
-### Canonical-state drift guard — 2026-09-21
+### Canonical-state drift guard â€” 2026-09-21
 
 - Extended the documentation quality guard to compare the authoritative checkpoint snapshot, current state, and roadmap rather than validating the index alone.
 - The records must agree on the latest completed UI package; the checkpoint and current state must both retain the active development branch and `AGENT_LED_CONTINUOUS_EXECUTION_ACTIVE` marker.
@@ -1231,7 +1231,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **CANONICAL_STATE_DRIFT_GUARD_ACTIVE**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-13 loopback browser security headers — 2026-09-21
+### UI-13 loopback browser security headers â€” 2026-09-21
 
 - Added uniform no-store, no-referrer, MIME-sniffing, frame-denial, restricted-permissions, and self-only content-security headers to full-page, partial, health, and error responses.
 - The policy denies form actions and external script/style/connect sources; it enables no control, authentication, deployment, real data, ERiC invocation, or transmission.
@@ -1239,7 +1239,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_13_LOOPBACK_BROWSER_HARDENING_COMPLETE / DEPLOYMENT_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-14 closed Persian safety labels — 2026-09-21
+### UI-14 closed Persian safety labels â€” 2026-09-21
 
 - Added a closed catalog of concise Persian labels for critical workflow, review, readiness, and support codes while preserving each exact technical code for troubleshooting.
 - Unknown or arbitrary text fails closed at the label boundary; no private/free-form diagnostic channel or operational capability was added.
@@ -1247,7 +1247,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_14_PERSIAN_SAFETY_LABELS_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-15 Persian workflow-stage and state labels — 2026-09-21
+### UI-15 Persian workflow-stage and state labels â€” 2026-09-21
 
 - Extended the closed Persian catalog to every workflow stage, stage state, and recovery state while preserving exact technical codes beside the labels.
 - The workflow timeline is now understandable without interpreting English enum values; unknown values still fail closed.
@@ -1255,7 +1255,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_15_PERSIAN_WORKFLOW_LABELS_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-16 Persian case, document, and decision labels — 2026-09-21
+### UI-16 Persian case, document, and decision labels â€” 2026-09-21
 
 - Extended the closed Persian catalog to case lifecycle states, document categories/statuses, Human Gate states, and the allowlisted decision action/destination.
 - Workspace, document inventory, and decision queue now present Persian meaning first while retaining exact technical values for audit/support; unknown values fail closed.
@@ -1263,7 +1263,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_16_PERSIAN_CASE_DOCUMENT_DECISION_LABELS_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### Continuous package-chain limit policy — 2026-09-21
+### Continuous package-chain limit policy â€” 2026-09-21
 
 - The Project Owner directed that limits be checked at the end of every task/package and that the next bounded authorized package begin immediately when capacity permits.
 - The hourly guard was updated to continue package by package within one heartbeat instead of stopping routinely after one package.
@@ -1271,7 +1271,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **CONTINUOUS_PACKAGE_CHAIN_ACTIVE / END_OF_PACKAGE_LIMIT_CHECKS**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-17 semantic and mixed-direction accessibility — 2026-09-21
+### UI-17 semantic and mixed-direction accessibility â€” 2026-09-21
 
 - Added an explicit document-table caption, column/row header scopes, labelled decision-expiry time, and screen-reader-neutral timeline numbering.
 - Technical codes, hashes, and timestamps are explicitly left-to-right inside the Persian RTL interface, preserving legibility without hiding audit values.
@@ -1279,7 +1279,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_17_SEMANTIC_ACCESSIBILITY_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-18 concise dynamic case announcement — 2026-09-21
+### UI-18 concise dynamic case announcement â€” 2026-09-21
 
 - Replaced the complete workspace live region with one atomic polite status message containing only the selected synthetic case and tax year.
 - Dynamic HTMX replacement no longer asks assistive technology to reread every workspace panel.
@@ -1287,16 +1287,16 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status: **UI_18_CONCISE_DYNAMIC_ANNOUNCEMENT_COMPLETE / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### UI-19 fail-closed empty-registry startup — 2026-09-21
+### UI-19 fail-closed empty-registry startup â€” 2026-09-21
 
 - The local synthetic UI now refuses startup when no case exists in its injected Case Registry.
 - Verification: targeted UI and canonical-documentation suite `20 passed`. No operational capability changed.
 - Status: **UI_19_EMPTY_REGISTRY_FAIL_CLOSED / OPERATIONS_GATED**.
 - Exact next action is the authoritative snapshot above.
 
-### E10/2024 mapping profile v2 — 2026-09-21
+### E10/2024 mapping profile v2 â€” 2026-09-21
 
-- Added explicit optional solidarity surcharge and church-tax mappings for tax classes 1–5 and 6 from the reviewed official E10/2024 material.
+- Added explicit optional solidarity surcharge and church-tax mappings for tax classes 1â€“5 and 6 from the reviewed official E10/2024 material.
 - Omitted amounts remain absent; no value is inferred. All external and protected capabilities remain denied.
 - Request identity binds both optional amounts, and obsolete mapping profile version 1 now has an explicit fail-closed regression check.
 - Verification: targeted mapping, declaration, and local-plausibility suite `67 passed`.
@@ -1304,28 +1304,28 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Exact next action is the authoritative snapshot above.
 
 
-### DR-04 official plausibility rule extraction — 2026-10-08
+### DR-04 official plausibility rule extraction â€” 2026-10-08
 
-- Verified the protected ELSTER E10/2024 ODS SHA-256 and extracted all ten HA_35a rule predicates, field references and severity from rows 7–16. See `docs/dr04-plausibility-source-extraction-20261008.md`.
-- Stage 1 source extraction PASS; precise `UngleichMitToleranz2` operator semantics still require authoritative verification before an evaluator can be accepted. Stages 2–4 structural/data/evaluator audits complete; stage 5 contract remains proposed, not frozen.
+- Verified the protected ELSTER E10/2024 ODS SHA-256 and extracted all ten HA_35a rule predicates, field references and severity from rows 7â€“16. See `docs/dr04-plausibility-source-extraction-20261008.md`.
+- Stage 1 source extraction PASS; precise `UngleichMitToleranz2` operator semantics still require authoritative verification before an evaluator can be accepted. Stages 2â€“4 structural/data/evaluator audits complete; stage 5 contract remains proposed, not frozen.
 - No local plausibility execution, full regression, independent acceptance, external transmission, Wake, scheduling or DR-05 authorization occurred. DR-04 OPEN; DR-05 BLOCKED. Preserve the existing authoritative execution checkpoint and next action until an independently authorized implementation slice is ready.
 
 
-### DR-04 tolerance operator authoritative resolution — 2026-10-08
+### DR-04 tolerance operator authoritative resolution â€” 2026-10-08
 
 - Resolved `UngleichMitToleranz2` using official protected ERiC 44.3.6.0 documentation archive, `Dokumentation/Datenarten/Zusatzinformationen_zur_Plausibilitaetspruefung.pdf`, page 70, section 4.5, Table 4-20. Exact condition: `abs(v1-v2) > 2`; difference 2 is not an error, difference 3 is an error for whole-euro inputs.
 - Applies to DR-04 rules `101100090` and `12204`; all ten source rule predicates and fields already extracted. See `docs/dr04-plausibility-source-extraction-20261008.md`.
 - Source-definition and operator-semantics blocker cleared. Next authorized engineering work remains deterministic local evaluator contract/implementation with evidence and tests, then exact lineage and independent acceptance. No ERiC execution, no submission, no DR-05 authorization. DR-04 remains OPEN.
 
 
-### DR-04 bounded Codex implementation handoff — 2026-10-08
+### DR-04 bounded Codex implementation handoff â€” 2026-10-08
 
 - Owner requires uninterrupted progression through the authorized ten-stage workflow; an intermediate PASS must trigger the next dependent stage, with documented checkpoints and self-repair of ordinary failures.
 - Source rule predicates, exact 10/10 field mappings, and official strict tolerance-2 semantics are documented in `docs/dr04-plausibility-source-extraction-20261008.md`.
-- Stages 5–10 need actual evaluator implementation, tests, evidence binding and independent acceptance. Prepared Codex prompt: `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`. Codex has NOT been dispatched. Stop at this necessary development-worker handoff, not at an intermediate rule PASS.
+- Stages 5â€“10 need actual evaluator implementation, tests, evidence binding and independent acceptance. Prepared Codex prompt: `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`. Codex has NOT been dispatched. Stop at this necessary development-worker handoff, not at an intermediate rule PASS.
 - Do not recreate a local checkpoint, bypass independent acceptance, execute ERiC transmission, merge, or start DR-05. DR-04 remains OPEN until verified and independently accepted.
 
-### DR-04 ten-rule execution safe stop — 2026-10-08
+### DR-04 ten-rule execution safe stop â€” 2026-10-08
 
 - The capacity and recovery gates passed, and the bounded candidate implemented all ten extracted HA_35a predicates, strict tolerance-2 semantics, exact direct DR-04 evidence hashes, deterministic rule evidence, and negative coverage. Focused verification reached `26 passed`; relevant declaration/source regression reached `83 passed, 5 skipped`.
 - Independent Acceptance returned `FAIL` twice. The first defect (unrelated DR-02 scope/semantics) was repaired. The remaining defect is substitution of the accepted DR-02 request/prior-result identities or unrelated non-VOR XML: the DR-02 acceptance record never durably stored its exact request reference, prior-result reference, complete XML digest, or result identity.
@@ -1333,65 +1333,70 @@ Git history remains the recovery path for deleted material. No source code, tax 
 - Status is `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`. The Owner and independent acceptance authority must provide/confirm the canonical DR-02 identities or authorize bounded DR-02 lineage re-acceptance. Then pin that identity, add request/prior/non-VOR substitution tests, rerun focused/relevant/full regression, and repeat independent review. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred. Evidence: `docs/case001-dr04-acceptance-2024.md` and JSON companion.
 
 
-### Next bounded execution plan / owner-reported capacity — 2026-10-08
+### Next bounded execution plan / owner-reported capacity â€” 2026-10-08
 
 - Owner reports remaining five-hour 23% and weekly 86%; these values supersede stale app-server snapshot for planning but are not independently verified. Five-hour headroom is binding; no long Codex dispatch authorized solely from historical telemetry.
 - New bounded plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. Next gate: owner/independent-authority confirmation of canonical accepted DR-02 identities OR explicit authorization for bounded DR-02 lineage re-acceptance. The plan does not grant this authority.
 - Once authorized and capacity-checked, recover/re-accept DR-02 identity, pin negative substitution tests, rerun DR-04 regression and independent acceptance; keep DR-04 OPEN / DR-05 BLOCKED until independent PASS. No Codex dispatched by this planning update.
 
 
-### Owner Human Gate decision: DR-02 bounded lineage re-acceptance APPROVED — 2026-10-08
+### Owner Human Gate decision: DR-02 bounded lineage re-acceptance APPROVED â€” 2026-10-08
 
 - The Owner explicitly approved option B, a bounded DR-02 lineage re-acceptance, in the current project conversation. This resolves the Owner-authorization portion of `HUMAN_REQUIRED / DR02-ACCEPTED-IDENTITY-NOT-RECOVERED`, but does NOT itself provide recovered identities or independent acceptance.
 - Authorized scope and guarded Codex handoff: `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`; prerequisite plan: `docs/dr02-lineage-reacceptance-plan-20261008.md`. First obtain fresh actual Codex telemetry and honor the Limit Guard; owner last reported 23% five-hour and 86% weekly remaining.
 - New canonical DR-02 identities require reproducible evidence and independent review. Until accepted, DR-04 OPEN / DR-05 BLOCKED. No external transfer, signing, release, or Wake. Codex dispatch is not claimed by this checkpoint update.
 
 
-### Mandatory Codex bridge capacity evidence — Owner directive 2026-10-08
+### Mandatory Codex bridge capacity evidence â€” Owner directive 2026-10-08
 
 - Owner requires every current and future Codex prompt to measure LIVE authenticated five-hour and weekly capacity before and after each package and persist exact timestamped remaining values in the existing authoritative `BRIDGE_STATE.json`, then read back to verify. Repeat before next task/wake; fail closed on missing/stale telemetry, schema uncertainty, or persistence mismatch. Never substitute the historical snapshot or confuse Work and Codex quotas.
 - Applied to `docs/codex-dr02-lineage-reacceptance-prompt-20261008.md`, `docs/codex-dr04-ten-rule-execution-prompt-20261008.md`, and standing protocol `docs/codex-agent-workflow.md`. This records a requirement, not a claim that `BRIDGE_STATE.json` was already written or that Codex was dispatched.
 
 
-### Corrected Codex quota handoff — Owner clarification 2026-10-08
+### Corrected Codex quota handoff â€” Owner clarification 2026-10-08
 
 - This decision **supersedes** the earlier same-day instruction to measure Codex quota before each task. The supervisor supplies starting remaining percentages in the prompt: FIRST task Owner-provided five-hour 23%, weekly 86%; later tasks use the preceding Codex task's verified END snapshot from `BRIDGE_STATE.json`.
 - Codex's pre-execution duty is only conservative full-package capacity estimation plus deterministic Limit Guard against supplied values; it must not redundantly query live quota at task start. If stale/reset-ambiguous or insufficient, stop fail-closed.
 - AFTER execution or safe stop, Codex measures actual ending quota, persists timestamped exact values and reset times in existing `BRIDGE_STATE.json` and verifies by readback. That is the sole next-task quota handoff. Updated `docs/codex-agent-workflow.md` and DR-02/DR-04 prompts. This change does not claim a bridge-state measurement or Codex execution.
 
 
-### Supervisor reset-time responsibility — Owner clarification 2026-10-08
+### Supervisor reset-time responsibility â€” Owner clarification 2026-10-08
 
 - The supervisor reads the preceding Codex task's verified `BRIDGE_STATE.json` snapshot including five-hour/weekly reset timestamps, calculates remaining capacity and next eligible dispatch time, and supplies the computed capacity to the next Codex prompt. Codex does not perform a redundant initial quota read.
 - A reset means that window's quota becomes available again; never assume exactly 100% *currently remaining* if intervening use is unknown. Resolve stale/ambiguous evidence before dispatch. Codex only estimates package cost against supervisor-provided values and records verified END capacity and reset timestamps.
 - Standing protocol and current DR-02/DR-04 prompts amended accordingly; no Codex dispatched.
 
 
-### Supervisor direct initial audit — 2026-10-08
+### Supervisor direct initial audit â€” 2026-10-08
 
 - Supervisor directly inspected authorized local worktree, DR-02 acceptance and the actual Work bridge state/contract. Evidence and findings: `docs/dr02-lineage-supervisor-initial-audit-20261008.md`.
 - DR-02 original accepted request/prior-result/XML/result identities remain unrecovered; owner-authorized bounded re-acceptance is pending, not PASS. Existing `BRIDGE_STATE.json` v1 has no Codex quota fields and is Work report transport; do not overwrite with invented telemetry. Proposed additive capacity extension needs writer/consumer compatibility checks.
 - Preserved intentionally deleted local checkpoint and pre-existing untracked files. No Codex dispatched or ERiC/external action. DR-04 OPEN; DR-05 BLOCKED.
 
-### DR-02 lineage re-acceptance independent FAIL — 2026-10-08
+### DR-02 lineage re-acceptance independent FAIL â€” 2026-10-08
 
 - Owner-authorized bounded re-acceptance ran after a `RUN` capacity admission. Original DR-02 request/prior/XML/result identities remained unrecovered. A clearly new candidate mechanism bound request, prior result, complete XML digest, result identity, official source/XSD and the non-transmitting boundary; focused verification passed `9 passed` and relevant DR-01/02/03/source regression passed `33 passed, 5 skipped`.
 - Independent Acceptance returned `FAIL`: the replay still depended on placeholder evidence references and a preconstructed DR-02 result, so an arbitrary canonical request reference or unrelated XSD-valid non-VOR XML could become the initial candidate. The candidate source was not committed or pushed.
 - Scoped CASE-001 recovery confirmed exact source documents exist, but no immutable accepted DR-01 declaration result/request identity was durably recovered to recompute DR-02 end to end. Status is `HUMAN_REQUIRED / DR01-ACCEPTED-DECLARATION-IDENTITY-NOT-RECOVERED`.
 - Exact continuation: an independent authority must provide/confirm the accepted DR-01 request/result/full-XML identities, or the Owner must separately authorize bounded DR-01 lineage re-acceptance before DR-02 can be re-accepted. DR-04 remains OPEN; DR-05 remains BLOCKED. No Wake or external action occurred.
 
-### DR-01 lineage re-acceptance evidence stop — 2026-10-08
+### DR-01 lineage re-acceptance evidence stop â€” 2026-10-08
 
 - Owner-authorized bounded recovery inspected commits `6b3c90c` and `ff90456` plus the scoped protected CASE-001 artifact tree. Historical DR-01 request/result/run identities and complete XML digest were not durably recovered.
 - A new deterministic replay could not safely start: protected evidence supports wage facts and partial Person A/B identity, but exact Person A religion code, Person B religion code, marriage date, and fully mapped immutable Case Registry/person evidence references required by the DR-01 contract are not durably available. No placeholder, inference, or arbitrary hash was used.
 - Independent review returned `HUMAN_REQUIRED / FAIL` for acceptance from the current evidence. No candidate identity was generated, no implementation changed, and no DR-01 identity was promoted.
 - Exact continuation: the Owner or authorized declaration-fact authority must supply/confirm those exact facts in a durable case-scoped record and map each DR-01 lineage reference to an immutable artifact. Then replay DR-01, bind request/result/full XML/source/XSD, run substitution tests, and repeat independent acceptance. DR-02 re-acceptance remains blocked; DR-04 OPEN; DR-05 BLOCKED.
 
-### CASE-001 Owner Facts Package A schema stop — 2026-10-08
+### CASE-001 Owner Facts Package A schema stop â€” 2026-10-08
 
 - Instruction `CASE001-OWNER-FACTS-PACKAGE-A-20261008` verified the protected CASE-001/2024 Owner Declaration at exact SHA-256 `560310A335E80C54E37F5030E5213180072E0C2F2787D819F924B9CA8D98A0F3`. Its scope, Owner-confirmed state, pending registry mapping, and no-external-transmission boundary are intact; no protected value is committed here.
 - The frozen architecture cannot yet complete the required binding safely. The authoritative CASE-001 Case Registry material exposes one case-owner reference, but no durable Person A/Person B identity records or associations. `PersonEntityRegistry` remains in-memory, and `HumanDeclaredFact` v1 has no subject/person identity field or generic durable persistence boundary.
 - Independent review returned `HUMAN_REQUIRED / FAIL`. No protected fact registration, identity creation, alternative registry, or runtime implementation was performed. Package B, Package C, DR-01 re-acceptance, DR-02, DR-04, and DR-05 were not executed.
 - Exact continuation: a separately governed identity-resolution/schema action must durably establish Person A and Person B identities and their CASE-001 roles/associations, and approve or identify a subject-bound protected fact persistence representation. Then rerun Package A against the unchanged hash-pinned Owner Declaration. Do not infer identity from family names.
 
-**DOC-INDEX-CI-REPAIR CI verification — 2026-10-08:** Ratified Constitution v3 marker compatibility fixed in `src/agent_lab/orchestrator_pilot.py` at commit `b673118`; two GitHub Actions `Milestone A synthetic acceptance` runs succeeded (IDs `37792324906`, `37792372732`) with successful governance/documentation steps. Isolated regression at commit `299f40e`: `68 passed in 16.56s`. Evidence in `docs/doc-index-ci-repair-plan-20261008.md`. Status `IMPLEMENTATION_VERIFIED / CI_GREEN / FORMAL_INDEPENDENT_ACCEPTANCE_PENDING`; do not mark formally accepted or claim all incoming emails stopped. No changes to outbound email provider or inbox.
+**DOC-INDEX-CI-REPAIR CI verification â€” 2026-10-08:** Ratified Constitution v3 marker compatibility fixed in `src/agent_lab/orchestrator_pilot.py` at commit `b673118`; two GitHub Actions `Milestone A synthetic acceptance` runs succeeded (IDs `37792324906`, `37792372732`) with successful governance/documentation steps. Isolated regression at commit `299f40e`: `68 passed in 16.56s`. Evidence in `docs/doc-index-ci-repair-plan-20261008.md`. Status `IMPLEMENTATION_VERIFIED / CI_GREEN / FORMAL_INDEPENDENT_ACCEPTANCE_PENDING`; do not mark formally accepted or claim all incoming emails stopped. No changes to outbound email provider or inbox.
+
+# C09-R1 governed execution start - 2026-10-22
+
+Owner authorized sequential R1-R4 bounded work with mandatory test documentation and GitHub commit before every next test/stage. Prior T01-T08 evidence commits: 9d6401f, e48edfa, 2cfb926, 5f586ea. 19/19 local simulator tests passed; GCS pilot limited live evidence exists; T08 NOT ACCEPTED. R1 operational adapter/integration is NOT implemented or tested at this checkpoint. OI-0002 stays OPEN and OI-0003 remains blocked. Current next action C09_R1_OPERATIONAL_WITNESS_INTEGRATION; no production mutation, retention lock or independent approval. OPEN_ITEMS.md reconciled in same change; no row closed. See docs/oi0002-c09-witness/R1_EXECUTION_2026-10-22.md.
+
