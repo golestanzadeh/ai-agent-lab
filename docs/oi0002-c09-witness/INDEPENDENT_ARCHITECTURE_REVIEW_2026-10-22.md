@@ -18,3 +18,7 @@ The reviewer used a separate read-only context, authored no part of the proposal
 | F06 | HIGH | Operational contract lacks exact fields, closed matrices, algorithms/key rules, transitions and golden vectors. | Freeze a complete operational appendix and exhaustive permitted/forbidden/version/downgrade/scope-confusion tests. |
 
 No operational implementation is authorized by this review. Exact next action is architecture-only remediation F01–F06 followed by a new independent review on the corrected exact commit. C09 and OI-0002 remain open.
+
+## Re-review of remediation commit `a43bf34c0550ba147d25748e36fc2d6bbf2c9e8b`
+
+Decision: **`INDEPENDENT_ARCHITECTURE_FAIL`**. The independent reviewer confirmed that atomic head CAS, unsigned-preimage binding, same-SID pipe defenses, restore ordering and much of the protocol freeze were materially corrected. Four HIGH gaps remain: (R2-F01) Kernel cannot verify HMAC readback without receiving the custodied key or a closed verification operation; (R2-F02) per-operation payload/proof and request-state-outcome schemas remain open; (R2-F03) the capability statement conflicts with the existing accepted Permission Matrix names; and (R2-F04) Owner restore authorization lacks an independently authenticated canonical signature/custody/revocation profile. Focused verification again passed `251 passed`; that component evidence does not cure these contract gaps. No implementation is authorized before remediation and another independent review.
