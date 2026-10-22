@@ -1412,3 +1412,7 @@ Single synthetic record conditional GCS create with separate keyless Writer and 
 # C09-R1 strict protocol test environment failure - 2026-10-22
 
 R1-P01 attempt 1 did not collect: the default `C:\Python314\python.exe` has no pytest (exit 1). This is not a protocol test result. A provider-neutral canonical record module and one bounded test candidate are present but unaccepted. No cloud or protected operation occurred. Exact continuation after push is discovery of the existing pytest-capable interpreter and rerun of only R1-P01, followed by its own documentation/push boundary. OPEN_ITEMS.md was assessed in the same change; no row is resolved and OI-0002/C09 remain OPEN. Evidence: docs/oi0002-c09-witness/R1_P01_PROTOCOL_TEST_2026-10-22.md.
+
+# C09-R1 strict protocol test environment failure attempt 2 - 2026-10-22
+
+R1-P01 attempt 2 also did not collect. Pytest 9.1.1 was installed into ignored `.runtime/c09-r1-testdeps` through the approved elevated network boundary, but the normal process could not load `pytest.__main__`; readback showed access denied on the installed pytest directories. No protocol behavior ran and no PASS is claimed. Exact continuation after push is repair or recreation of only that ignored test target with normal-user read access, import verification, then R1-P01 attempt 3. OPEN_ITEMS.md was synchronized; no row is resolved and C09 remains OPEN. Evidence remains `docs/oi0002-c09-witness/R1_P01_PROTOCOL_TEST_2026-10-22.md`.
