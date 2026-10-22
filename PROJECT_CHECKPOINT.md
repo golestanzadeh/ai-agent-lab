@@ -1400,3 +1400,7 @@ Git history remains the recovery path for deleted material. No source code, tax 
 
 Owner authorized sequential R1-R4 bounded work with mandatory test documentation and GitHub commit before every next test/stage. Prior T01-T08 evidence commits: 9d6401f, e48edfa, 2cfb926, 5f586ea. 19/19 local simulator tests passed; GCS pilot limited live evidence exists; T08 NOT ACCEPTED. R1 operational adapter/integration is NOT implemented or tested at this checkpoint. OI-0002 stays OPEN and OI-0003 remains blocked. Current next action C09_R1_OPERATIONAL_WITNESS_INTEGRATION; no production mutation, retention lock or independent approval. OPEN_ITEMS.md reconciled in same change; no row closed. See docs/oi0002-c09-witness/R1_EXECUTION_2026-10-22.md.
 
+
+# C09-R1 adapter implementation checkpoint - 2026-10-22
+
+GCS JSON conditional-create and exact generation readback adapter added with separate writer/reader token providers. Five adapter mock tests plus 19 simulator tests PASS (24/24). NO live GCS adapter test, Kernel/Identity production integration, staged receipt or operational acceptance. R1 remains OPEN, R2 blocked. OPEN_ITEMS.md synchronized; OI-0002 remains active. Evidence: docs/oi0002-c09-witness/R1_ADAPTER_TEST_2026-10-22.md.
