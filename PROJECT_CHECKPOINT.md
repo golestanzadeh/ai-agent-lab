@@ -1424,3 +1424,7 @@ R1-P01 attempt 3 passed after read/execute access was limited to the ignored wor
 # C09-R1 protocol schema/type/MAC negatives PASS - 2026-10-22
 
 R1-P02 passed: `1 passed, 1 warning in 0.21s`, exit 0. Missing required fields, boolean epoch substitution and incorrect HMAC were rejected fail closed. The warning was the known pytest-cache path collision. This synthetic result establishes no custody, provider, chain, Kernel/Identity or operational acceptance. Exact continuation after push is one ordered-chain verifier test. OPEN_ITEMS.md was reconciled; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_P02_PROTOCOL_NEGATIVES_2026-10-22.md`.
+
+# C09-R1 ordered chain verifier PASS - 2026-10-22
+
+R1-P03 passed: `1 passed, 1 warning in 0.25s`, exit 0. Two contiguous authenticated records were accepted; gap, reorder and previous-record fork were rejected without sorting attacker input. This in-memory test provides no provider enumeration/version, custody, Kernel/Identity or operational evidence. Exact continuation after push is one generation-pinned GCS chain-read test. OPEN_ITEMS.md was reconciled with no row resolved; OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_P03_CHAIN_TEST_2026-10-22.md`.

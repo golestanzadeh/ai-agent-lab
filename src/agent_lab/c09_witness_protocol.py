@@ -157,3 +157,44 @@ class WitnessRecord:
             f"witness/v1/{self.deployment_id}/epoch-{self.epoch:020d}/"
             f"sequence-{self.sequence:020d}.json"
         )
+
+
+def verify_chain(
+    records: list[WitnessRecord], key: bytes, *, deployment_id: str
+) -> tuple[WitnessRecord, ...]:
+    """Verify one complete ordered deployment history; never sorts attacker input."""
+    previous = ZERO
+    expected_epoch = 1
+    expected_sequence = 1
+    seen_operations: set[str] = set()
+    verified: list[WitnessRecord] = []
+    for record in records:
+        record.verify(key)
+        if record.deployment_id != deployment_id:
+            raise WitnessError("cross-deployment witness record")
+        if record.operation_id in seen_operations:
+            raise WitnessError("duplicate witness operation")
+        ordinary = (
+            record.record_type == "COMMIT"
+            and record.epoch == expected_epoch
+            and record.sequence == expected_sequence
+        )
+        restore = (
+            record.record_type == "RESTORE"
+            and record.epoch == expected_epoch + 1
+            and record.sequence == 1
+            and record.owner_authorization_digest is not None
+        )
+        if not ordinary and not restore:
+            raise WitnessError("witness sequence gap, reorder, or epoch fork")
+        if record.previous_record != previous:
+            raise WitnessError("witness chain fork")
+        verified.append(record)
+        seen_operations.add(record.operation_id)
+        previous = record.commitment
+        if restore:
+            expected_epoch = record.epoch
+            expected_sequence = 2
+        else:
+            expected_sequence += 1
+    return tuple(verified)
