@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REREVIEW_4 -->
+<!-- CURRENT_NEXT_ACTION: C09_R1_IMPLEMENT_AFTER_CAPACITY_RESET -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -36,6 +36,8 @@ Second remediation adds a closed Custodian `VERIFY_WITNESS` operation so Kernel 
 Third independent review of `42c8be63bd6154deb14570c09dac0591d7a43a10` remained **FAIL**. It confirmed the prior four corrections but found: missing Identity finalization message/evidence; restore simultaneously specified and unreachable; historical HMAC chain failure after rotation; and deletable/uncommitted restore revocation state. No operational implementation started. Exact next action is architecture remediation R3-F01–R3-F04 and re-review; C09/OI-0002 remain open and no active row is resolved.
 
 Third remediation adds `FINALIZE_MUTATION` with exact witness/Custodian evidence and state/outcome rules; explicitly adds least-privilege `identity_backup` and `identity_restore` A4 deployment-store capabilities under the current Owner C09 directive while granting them to no role by default; forbids HMAC rotation within a deployment so complete historical verification remains possible; and makes Owner restore authorization/revocation a conditionally-created, version-checked, signed hash chain whose head is bound into RESTORE witness records. Status is `ARCHITECTURE_REREVIEW_READY / NOT IMPLEMENTED / C09 OPEN`. No operational state changed and no active open item is resolved.
+
+Independent review of exact architecture commit `2c664800d8a3ace7cf0995c838a46d46c6a57191` returned **`INDEPENDENT_ARCHITECTURE_PASS`** with no remaining architecture finding; reviewer verification passed `251 passed`. This permits bounded implementation but grants no operational acceptance or privileged change. Fresh authenticated capacity at `2026-10-22T21:27:23.2175459Z` was 34% five-hour and 90% weekly remaining; after the mandatory 15-point reserve only 19 points were usable versus a conservative 30–40 required for implementation, fault campaigns, regression, independent review and reporting. Status is `BLOCKED_CAPACITY / C09 OPEN / OI-0002 OPEN`. No partial implementation started. Exact next action after reset/readmission is the smallest synthetic durable transaction/staged-receipt implementation followed by exact-SHA independent review. `OPEN_ITEMS.md` membership is unchanged.
 
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 

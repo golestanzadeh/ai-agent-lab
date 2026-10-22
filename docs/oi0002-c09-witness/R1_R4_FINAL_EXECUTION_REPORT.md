@@ -68,3 +68,13 @@ Required continuation:
 - `a286f43` R1-G01 PASS and protocol-type unification.
 
 This final report commit will add R1-REG-01 evidence and the blocked continuation. No taxpayer data, secret, production mutation, retention lock, external filing, scheduler activation or security-policy relaxation occurred.
+
+## Authorized continuation outcome — 2026-10-22
+
+The previous independence blocker was addressed. A concrete authenticated Kernel–Identity/Custodian/GCS architecture was published, underwent three documented independent FAIL/remediation cycles, and received **`INDEPENDENT_ARCHITECTURE_PASS`** on exact commit `2c664800d8a3ace7cf0995c838a46d46c6a57191`. The independent reviewer was `/root/c09_architecture_independent_review`, used a separate read-only context and changed no files. Existing focused protocol/documentation verification passed `251 passed`; documentation consistency passed `18 passed` on every governed transition.
+
+R1 remains `PARTIAL / ARCHITECTURE_PASS / IMPLEMENTATION_NOT_STARTED`: shared witness protocol and mocked GCS adapter remain tested, but durable staged receipts, authenticated service processes and actual transaction integration are not implemented. R2 is `NOT_STARTED / R1_DEPENDENCY`. R3 is `NOT_STARTED / HUMAN_GATES`: no capability grant, IAM, key provisioning/custody or retention lock changed. R4 is `ARCHITECTURE_REVIEW_PASS / FINAL_IMPLEMENTATION_ACCEPTANCE_NOT_STARTED`. C09 and OI-0002 remain OPEN.
+
+Authenticated telemetry at `2026-10-22T21:27:23.2175459Z` reported 34% five-hour remaining (reset `2026-10-23T01:33:11Z`) and 90% weekly remaining (reset `2026-10-29T20:33:11Z`). Preserving the mandatory 15-point reserve leaves 19 usable points. Conservative remaining cost for bounded implementation, fault campaigns, regression, independent implementation review and reporting is 30–40 points. Limit Guard therefore returns **`BLOCKED_CAPACITY`** and forbids partial implementation.
+
+Exact recovery: after authenticated capacity reset/readmission, start from remote `c09-witness-hardening` at this report commit; implement the smallest synthetic transport-neutral durable transaction/staged-receipt state machine from the accepted architecture; add `identity_backup`/`identity_restore` capabilities without granting them; run negative/fault tests and independent exact-SHA review. Stop for explicit Owner approval before any real capability grant, privileged IAM, durable key provisioning, Retention Lock or live service activation.
