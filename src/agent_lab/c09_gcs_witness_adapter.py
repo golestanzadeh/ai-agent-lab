@@ -7,7 +7,7 @@ from __future__ import annotations
 from urllib.parse import quote
 
 import requests
-from .c09_witness_protocol import WitnessError, WitnessRecord
+from .c09_witness_protocol import WitnessError, WitnessRecord, verify_chain
 
 
 class GCSWitnessAdapter:
@@ -54,3 +54,50 @@ class GCSWitnessAdapter:
         if response.content != record.to_bytes():
             raise WitnessError('witness readback mismatch')
         return True
+
+    def read_chain(self, deployment_id: str, mac_key: bytes) -> tuple[WitnessRecord, ...]:
+        if not deployment_id:
+            raise WitnessError('deployment identity unavailable')
+        endpoint = 'https://storage.googleapis.com/storage/v1/b/' + quote(self.bucket, safe='') + '/o'
+        response = self._request(
+            'GET', endpoint, reader=True,
+            params={'prefix': f'witness/v1/{deployment_id}/', 'versions': 'true'},
+        )
+        if response.status_code != 200:
+            raise WitnessError('witness listing unavailable: HTTP ' + str(response.status_code))
+        try:
+            listing = response.json()
+            items = listing.get('items', [])
+        except (ValueError, AttributeError) as exc:
+            raise WitnessError('invalid witness listing') from exc
+        if not isinstance(items, list):
+            raise WitnessError('invalid witness listing')
+        observed: dict[str, str] = {}
+        prefix = f'witness/v1/{deployment_id}/'
+        for item in items:
+            if not isinstance(item, dict) or set(item) - {'name', 'generation', 'size', 'timeDeleted'}:
+                raise WitnessError('ambiguous witness metadata')
+            name = item.get('name')
+            generation = item.get('generation')
+            if (
+                not isinstance(name, str) or not name.startswith(prefix)
+                or not isinstance(generation, str) or not generation.isdigit()
+                or item.get('timeDeleted') is not None
+                or name in observed
+            ):
+                raise WitnessError('multiple versions, deletion, or invalid witness metadata')
+            observed[name] = generation
+        records: list[WitnessRecord] = []
+        for name in sorted(observed):
+            object_endpoint = endpoint + '/' + quote(name, safe='')
+            download = self._request(
+                'GET', object_endpoint, reader=True,
+                params={'alt': 'media', 'generation': observed[name]},
+            )
+            if download.status_code != 200:
+                raise WitnessError('witness generation readback unavailable: HTTP ' + str(download.status_code))
+            record = WitnessRecord.from_bytes(download.content, mac_key)
+            if record.object_key != name:
+                raise WitnessError('witness object key mismatch')
+            records.append(record)
+        return verify_chain(records, mac_key, deployment_id=deployment_id)

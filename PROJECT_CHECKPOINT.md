@@ -1428,3 +1428,7 @@ R1-P02 passed: `1 passed, 1 warning in 0.21s`, exit 0. Missing required fields, 
 # C09-R1 ordered chain verifier PASS - 2026-10-22
 
 R1-P03 passed: `1 passed, 1 warning in 0.25s`, exit 0. Two contiguous authenticated records were accepted; gap, reorder and previous-record fork were rejected without sorting attacker input. This in-memory test provides no provider enumeration/version, custody, Kernel/Identity or operational evidence. Exact continuation after push is one generation-pinned GCS chain-read test. OPEN_ITEMS.md was reconciled with no row resolved; OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_P03_CHAIN_TEST_2026-10-22.md`.
+
+# C09-R1 GCS chain-read test environment failure - 2026-10-22
+
+R1-G01 attempt 1 did not collect because the isolated test target lacks the repository-pinned `requests` runtime dependency (exit 1). No provider behavior ran and no PASS is claimed. Exact continuation after push is installing pinned requests into the same ignored target and rerunning only R1-G01. OPEN_ITEMS.md was synchronized; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_G01_GCS_CHAIN_READ_2026-10-22.md`.

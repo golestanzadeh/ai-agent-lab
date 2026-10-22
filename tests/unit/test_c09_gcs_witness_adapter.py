@@ -59,3 +59,41 @@ def test_no_credentials_fails_closed():
     h, record, payload = fixture()
     with pytest.raises(WitnessError, match='credentials'):
         GCSWitnessAdapter('test-bucket', lambda: '', lambda: 'reader-token', Session(payload)).append(record, h.key)
+
+
+def test_r1_g01_chain_read_pins_generations_and_rejects_version_ambiguity():
+    h = WitnessProtocolHarness()
+    h.execute('OP-1')
+    h.execute('OP-2')
+    records = h.verify_witness_chain()
+
+    class ChainSession:
+        def __init__(self, ambiguous=False):
+            self.ambiguous = ambiguous
+            self.calls = []
+
+        def request(self, method, path, **kwargs):
+            self.calls.append((method, path, kwargs))
+            if path.endswith('/o'):
+                items = [
+                    {'name': records[0].object_key, 'generation': '101', 'size': str(len(records[0].to_bytes()))},
+                    {'name': records[1].object_key, 'generation': '102', 'size': str(len(records[1].to_bytes()))},
+                ]
+                if self.ambiguous:
+                    items.append({'name': records[1].object_key, 'generation': '99', 'size': '1'})
+                return Response(200, {'items': items})
+            generation = kwargs['params']['generation']
+            record = records[0] if generation == '101' else records[1]
+            return Response(200, content=record.to_bytes())
+
+    session = ChainSession()
+    adapter = GCSWitnessAdapter('test-bucket', lambda: 'writer', lambda: 'reader', session)
+    assert adapter.read_chain(h.deployment_id, h.key) == tuple(records)
+    assert session.calls[0][2]['params']['versions'] == 'true'
+    assert [call[2]['params']['generation'] for call in session.calls[1:]] == ['101', '102']
+    assert all(call[2]['headers']['Authorization'] == 'Bearer reader' for call in session.calls)
+
+    with pytest.raises(WitnessError, match='multiple versions'):
+        GCSWitnessAdapter(
+            'test-bucket', lambda: 'writer', lambda: 'reader', ChainSession(ambiguous=True)
+        ).read_chain(h.deployment_id, h.key)

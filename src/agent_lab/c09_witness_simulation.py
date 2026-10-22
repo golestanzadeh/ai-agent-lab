@@ -92,7 +92,10 @@ class WitnessRecord:
 
     @property
     def commitment(self) -> str:
-        return digest(canonical_bytes({**self.unsigned(), "mac": self.mac}))
+        return digest(self.to_bytes())
+
+    def to_bytes(self) -> bytes:
+        return canonical_bytes({**self.unsigned(), "mac": self.mac})
 
     @property
     def object_key(self) -> str:
