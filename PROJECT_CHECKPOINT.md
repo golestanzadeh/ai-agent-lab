@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REREVIEW_3 -->
+<!-- CURRENT_NEXT_ACTION: C09_ARCHITECTURE_REMEDIATE_R3_F01_F04 -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -32,6 +32,8 @@ Architecture remediation now specifies: atomic live-head CAS and unique predeces
 Independent re-review of `a43bf34c0550ba147d25748e36fc2d6bbf2c9e8b` remained **FAIL**. Prior concurrency, preimage, pipe-squatting, restore-order and partial-freeze findings were materially resolved, but four HIGH gaps remain: HMAC readback verification without key exposure; complete operation payload/proof/outcome schemas; exact existing Permission Matrix mapping; and an independently authenticated Owner restore authorization profile. Focused verification passed `251 passed`. No implementation started. Exact next action is architecture remediation R2-F01–R2-F04 and another independent re-review; C09/OI-0002 remain open and `OPEN_ITEMS.md` membership is unchanged.
 
 Second remediation adds a closed Custodian `VERIFY_WITNESS` operation so Kernel never receives the HMAC key; exact per-operation payload, Kernel-proof and request/state/outcome matrices; the accepted Permission Matrix mapping (`identity_create`, `identity_read`, `identity_update`, `identity_status_transition`, `case_party_bind`, `subject_fact_bind`) with backup/restore reserved-denied pending a separate Owner capability gate; and an offline ECDSA Owner restore authorization/revocation profile whose digest is consumed in the external RESTORE witness chain. Status remains `NOT IMPLEMENTED / C09 OPEN`; exact next action is independent re-review of the new exact commit. No active `OPEN_ITEMS.md` row is resolved.
+
+Third independent review of `42c8be63bd6154deb14570c09dac0591d7a43a10` remained **FAIL**. It confirmed the prior four corrections but found: missing Identity finalization message/evidence; restore simultaneously specified and unreachable; historical HMAC chain failure after rotation; and deletable/uncommitted restore revocation state. No operational implementation started. Exact next action is architecture remediation R3-F01–R3-F04 and re-review; C09/OI-0002 remain open and no active row is resolved.
 
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
