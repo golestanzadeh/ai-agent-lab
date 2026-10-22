@@ -2,7 +2,7 @@
 
 Date: 2026-10-22  
 Contract: `oi0002.kernel-identity-c09/1.0`  
-Status: `PROPOSED / INDEPENDENT_ARCHITECTURE_REVIEW_REQUIRED / NOT IMPLEMENTED`
+Status: `REMEDIATED_F01_F06 / INDEPENDENT_ARCHITECTURE_REREVIEW_REQUIRED / NOT IMPLEMENTED`
 
 ## Decision and authority boundary
 
@@ -23,9 +23,9 @@ Kernel cannot open Identity storage. Identity cannot open Kernel storage. Key Cu
 
 ## Authenticated transport
 
-The Identity service creates one fixed deployment-scoped pipe using `PIPE_TYPE_MESSAGE`, `PIPE_READMODE_MESSAGE`, bounded instances, `PIPE_REJECT_REMOTE_CLIENTS` and `FILE_FLAG_FIRST_PIPE_INSTANCE`. Failure to acquire the first instance is a fatal start condition. The DACL omits Users, Administrators, Recovery and Key Custodian from data-plane access.
+The Identity service creates one fixed deployment-scoped pipe using `PIPE_TYPE_MESSAGE`, `PIPE_READMODE_MESSAGE`, bounded instances, `PIPE_REJECT_REMOTE_CLIENTS` and `FILE_FLAG_FIRST_PIPE_INSTANCE`. Failure to acquire the first instance is a fatal start condition. The DACL omits Users, Administrators, Recovery and Key Custodian from data-plane access. Service installation pins the protected absolute image path and SHA-256 for the Identity executable; an approved binary update atomically replaces those manifest values under the existing Human Gate before service restart.
 
-For every connection Identity calls `ImpersonateNamedPipeClient`, reads `TokenUser` from the thread token, compares the binary SID to the pinned Kernel SID and executes `RevertToSelf` in `finally` before dispatch. Kernel verifies the server process token against the pinned Identity SID using query-only rights before sending a request. Either token check, DACL check or local-only property failing closes the connection. PID is diagnostic only.
+For every connection Identity calls `ImpersonateNamedPipeClient`, reads `TokenUser` from the thread token, compares the binary SID to the pinned Kernel SID and executes `RevertToSelf` in `finally` before dispatch. Kernel obtains the connected server PID, opens a query-only process handle immediately, re-reads the connected PID and rejects turnover, then verifies from that retained handle the exact Identity SID, protected normalized image path and SHA-256 against the manifest before sending a request. Failure to open/inspect the handle, path/hash mismatch, PID turnover or service-image update race closes the connection. Pipe DACL, first-instance ownership, local-only mode, token identity and retained-handle binary identity are independently mandatory. PID alone is never authority.
 
 Each connection carries exactly one existing canonical frame. The operational contract version is distinct from the development-only contract. Unknown versions, duplicate/unknown fields, noncanonical bytes, excess size/depth, additional frames or trailing bytes are rejected before transaction creation. No password, signing key, raw evidence, SQL, path, callable or free-form command crosses the pipe.
 
@@ -46,8 +46,8 @@ The proof binds contract version, deployment, transaction ID, request digest, op
 1. Kernel authorizes the exact request and creates a transaction identity.
 2. Identity `PREPARE` verifies current head and domain invariants and stores an idempotent `PREPARED` row with request digest, projected head and canonical mutation plan. It does not mutate domain state.
 3. Kernel records durable `PENDING` with the exact projection, rereads it, and issues the row-derived one-time commit proof.
-4. Identity `COMMIT` verifies the proof and exact prepared row, applies the mutation once, appends its audit record and stores `IDENTITY_COMMITTED` plus an authenticated staged-receipt containing transaction/request/result digests, prior/new Identity heads, Kernel pending head, backup generation and the exact canonical witness-record bytes. This state is not externally final and cannot be acknowledged.
-5. Kernel verifies the staged receipt and asks Key Custodian to authenticate only those exact witness bytes. Kernel uses the existing writer credential to perform GCS conditional create for the exact epoch/sequence key, then uses the separately scoped reader credential to enumerate versions and read back the exact generation and bytes. It verifies schema, authentication, contiguous chain, previous commitment, generation uniqueness, no deletion ambiguity and every local-head binding.
+4. Identity `COMMIT` verifies the proof and exact prepared row and, in one `BEGIN IMMEDIATE` SQLite transaction, compares the live epoch/head to the prepared predecessor, atomically claims the unique `(deployment_id, predecessor_epoch, predecessor_head)` commit slot, consumes the one-time proof, applies the mutation once, appends its audit record and stores `IDENTITY_COMMITTED`. It also stores an authenticated staged receipt containing transaction/request/result digests, prior/new Identity heads, Kernel pending head, backup generation and the digest of an exact canonical **unsigned witness preimage**. Two preparations may project from one predecessor, but exactly one COMMIT can claim it; every loser returns `CONTINUITY_CONFLICT` without domain/audit mutation. The claim and all mutation effects roll back together on failure.
+5. Kernel verifies the staged receipt and asks Key Custodian to authenticate only that exact preimage through the closed protocol below. The final record is the canonical preimage plus the returned authentication fields. Kernel requires exact preimage reproduction and binds both `preimage_digest` and `signed_record_digest`; adding or substituting any other field or serialization is denied. Kernel uses the existing writer credential to perform GCS conditional create for the exact epoch/sequence key, then uses the separately scoped reader credential to enumerate versions and read back the exact generation and bytes. It verifies schema, authentication, contiguous chain, previous commitment, generation uniqueness, no deletion ambiguity and every local-head binding.
 6. Kernel records the verified witness key, generation and commitment in its durable transaction and requests Identity finalization with that exact evidence. Identity binds it to the staged receipt and advances to `COMMITTED_FINAL` without repeating the mutation.
 7. Kernel rereads `COMMITTED_FINAL`, verifies result/head/receipt/witness bindings, records Kernel `COMMITTED`, releases the authorization reservation and only then acknowledges success.
 
@@ -60,6 +60,34 @@ The object key, canonical record and chain rules are exactly those in `WITNESS_P
 The writer credential may create only new objects under the deployment prefix and cannot read, overwrite, delete, alter retention or administer IAM. The reader credential may list versions and read exact generations but cannot write or administer. Record-authentication authority and Owner restore authority are separate. Key Custodian signs/MACs only a Kernel-authorized canonical witness digest after verifying the exact staged receipt; it cannot choose an operation or sequence.
 
 Independent custody, IAM bindings, durable key provisioning and retention locking are Human Gates. Until those gates are approved and operationally proven, this architecture may be implemented and tested only with synthetic fixtures and non-privileged mocks; it cannot claim C09 operational acceptance.
+
+### Closed Kernel–Custodian authentication protocol
+
+The Key Custodian owns a second fixed local message-mode Named Pipe. Its server uses first-instance, remote-rejection, DACL and actual-client-token checks identical to the Identity server, allowing only the pinned Kernel SID. Kernel verifies the retained Custodian server process handle, SID, normalized protected image path and executable SHA-256 exactly as above. Identity and Recovery cannot connect. No signing key or reusable secret crosses the pipe.
+
+Request contract `ai-tax-agent.c09-custodian/1.0` has exactly: `message_type=AUTHENTICATE_WITNESS`, deployment ID, transaction ID, request digest, staged-receipt digest, unsigned-preimage digest and canonical unsigned preimage, expected epoch/sequence/previous commitment, Kernel pending head, Identity new head, backup generation, random 32-byte nonce, `issued_at`, `expires_at` (maximum five seconds), Kernel authorization-proof digest and Kernel signature. The Kernel signature is made from a reread durable PENDING row plus the Identity staged-receipt digest; Custodian verifies the pinned Kernel public key and every redundant equality before signing/MACing.
+
+Response contains exactly contract, transaction ID, request/preimage/receipt digests, nonce, key ID, algorithm, authentication value, signed-record digest and one closed outcome (`AUTHENTICATED`, `DENIED`, `CONFLICT`) with one privacy-minimized denial code. Algorithm is `HMAC-SHA-256` for v1; key ID is manifest-pinned and unknown, retired or mismatched IDs are rejected. Custodian durably records `(deployment_id, transaction_id, preimage_digest, nonce)` before returning. Exact retries return identical evidence; changed retries, expired requests, reused nonce/transaction for another digest, wrong sequence/head, wrong SID or invalid Kernel proof are denied and audited. Custodian cannot allocate sequence, select operations or advance Kernel/Identity state.
+
+## Frozen operational protocol appendix
+
+The Identity pipe contract is `oi0002.kernel-identity-c09/1.0`; the development-only `oi0002.kernel-identity-ipc-dev/1.0` is always rejected operationally. It reuses the accepted canonical JSON/frame bounds (one frame, payload `1..65,532`, nesting at most 12, no duplicate/unknown fields) and exact UUID/digest/timestamp rules.
+
+Every request has exactly: `contract`, `message_type`, `transaction_id`, `request_digest`, `deployment_id`, `scope_kind`, `case_id`, `tax_year`, `run_id`, `task_id`, `manifest_id`, `actor_instance_id`, `role_id`, `capability`, `domain_operation`, `expected_epoch`, `expected_head`, sorted unique `authorization_references`, `expires_at`, and closed operation-specific `payload`. Backup/restore uses `DEPLOYMENT_STORE` with literal `*` case/year and a complete ordered generation manifest; other operations use `CASE_YEAR`. Required strings are `1..256` UTF-8 bytes except canonical digests and UUIDs; arrays contain at most 64 entries; the restore generation manifest contains at most 1,024 unique sorted cases.
+
+The exact message/operation matrix is:
+
+- `PREPARE_MUTATION` and `COMMIT_MUTATION`: `REGISTER_IDENTITY`, `UPDATE_IDENTITY_STATUS`, `BIND_PARTY`, `CORRECT_PARTY_ROLE`, `BIND_FACT`;
+- `READ_IDENTITY_STATE`: `READ_CASE_IDENTITY`, `LIST_PARTIES`, `READ_FACTS`;
+- `GET_TRANSACTION` and `ABORT_PREPARED`: `TRANSACTION_CONTROL` only;
+- `PREPARE_BACKUP` and `COMMIT_BACKUP`: `BACKUP_DEPLOYMENT_STORE` only;
+- `PREPARE_RESTORE` and `COMMIT_RESTORE`: `RESTORE_DEPLOYMENT_STORE` only.
+
+Each operation has one identically named dedicated capability except transaction control, which uses `identity_transaction_control`. Unknown or crossed message/operation/capability combinations are denied. State transitions are exactly `NEW→PREPARED→IDENTITY_COMMITTED→COMMITTED_FINAL`; `PREPARED→ABORTED` is the only abort, and `IDENTITY_COMMITTED` cannot abort or return a final result. Exact retries may observe but not repeat a transition.
+
+Responses have exactly: `contract`, request `message_type`, `transaction_id`, `request_digest`, `outcome`, `response_digest`, `identity_epoch`, `identity_head`, `staged_receipt_digest`, `witness_preimage_digest`, `signed_record_digest`, and `denial_code`. Closed outcomes are `PREPARED`, `IDENTITY_COMMITTED`, `COMMITTED_FINAL`, `READ_OK`, `ABORTED`, `DENIED`, `CONFLICT`, `NOT_FINALIZABLE`. Closed denial codes are `AUTHORIZATION_DENIED`, `SCOPE_DENIED`, `TRANSACTION_CONFLICT`, `CONTINUITY_CONFLICT`, `REQUEST_INVALID`, `EXPIRED`, `UNSUPPORTED`, `TEMPORARY_FAILURE`. Nonapplicable fields are the empty string, never omitted/null; DENIED/CONFLICT disclose no heads.
+
+Kernel proofs use manifest-pinned ECDSA P-256/SHA-256 fixed 64-byte `r||s`, base64url without padding, domain separator `AI-TAX-AGENT\0C09-KERNEL-PROOF\0`, key ID and exact canonical unsigned-proof bytes. Unknown algorithm/key, downgrade, retired key, noncanonical signature or key rotation during a transaction is denied; rotation requires a governed manifest generation and no nonterminal transactions. Golden vectors must freeze complete requests, responses, Kernel proofs, Custodian requests/responses and witness preimage/final records before implementation acceptance.
 
 ## Crash, restart and reconciliation
 
@@ -75,7 +103,9 @@ Independent custody, IAM bindings, durable key provisioning and retention lockin
 
 Provider timeout is treated as ambiguous: read the exact key/version before retrying create. Conflicting valid successors, gaps, forks, invalid authentication, deletion/version ambiguity, stale heads or an unverifiable Identity-ahead state halt protected writes. Recovery never replays an already committed Identity mutation.
 
-Restore is deployment-store scoped. It requires an unexpired, one-time Owner authorization bound to source/target epoch, complete case-generation manifest, backup digest/generation and expected witness head. Replacement is staged, verified, and followed by a `RESTORE` witness record starting the authorized successor epoch. Reuse, partial-store restore or any mismatched case/generation entry is denied. Retention lock or destructive recovery remains a separate Human Gate.
+Restore is deployment-store scoped. It requires an unexpired, one-time Owner authorization bound to source/target epoch, complete case-generation manifest, backup digest/generation and expected witness head. Kernel first reserves that authorization as `RESTORE_RESERVED` for one restore transaction. Both services independently stage and fsync exact generation directories and record `RESTORE_STAGED`; neither active pointer changes. Identity verifies the complete staged store and returns its projected head. Kernel constructs and obtains authentication for the exact `RESTORE` witness preimage, conditionally creates and reads back the witness, then durably records `RESTORE_WITNESSED`.
+
+Activation order is Identity pointer first, then Kernel pointer, each by atomic replace plus directory flush and reread, recording `IDENTITY_ACTIVATED` and `KERNEL_ACTIVATED`. While either pointer differs from the witnessed generation both services remain recovery-only and protected reads/writes are denied. On restart, the exact witnessed record plus staged-generation hashes authorizes completing missing pointer activations; absence/ambiguity of witness before activation causes staged data to remain inactive; one active pointer without the exact witness halts for Human recovery and never rolls back or accepts mixed state. After both pointers and heads match the witness, Kernel marks `RESTORE_FINAL`, Identity marks the authorization use consumed, and Kernel marks the Owner authorization consumed. The same reserved use may resume only this transaction; it cannot authorize another generation. Reuse, partial-store restore or any mismatched case/generation entry is denied. Retention lock or destructive recovery remains a separate Human Gate.
 
 ## Audit and privacy
 
