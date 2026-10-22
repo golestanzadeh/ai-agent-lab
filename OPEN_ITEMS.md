@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R1_OPERATIONAL_WITNESS_INTEGRATION -->
+<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | REMEDIATION-02/custody evidence PASS. R1 shared protocol and mocked GCS chain reader focused regression PASS (`28 passed`); prior single-record live append/readback remains limited PASS. R1 operational Kernel/Identity transaction, staged receipt, recovery, custody and independent acceptance remain missing; C09 OPEN. | **Independent architecture/security authority required:** review and approve the narrow Kernel<->Identity service/IPC architecture against frozen C01-C13 before operational implementation. Then resume per-test R1, R2 live campaigns and separately gated R3. Keep OI-0003 blocked. | `docs/oi0002-c09-witness/R1_R4_FINAL_EXECUTION_REPORT.md`; `docs/oi-0002-final-closure-matrix-20261012.md`; `docs/oi-0002-operational-deployment-stop-20261011.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | REMEDIATION-02/custody evidence PASS. R1 shared protocol and mocked GCS chain reader focused regression PASS (`28 passed`); prior single-record live append/readback remains limited PASS. Proposed operational boundary `oi0002.kernel-identity-c09/1.0` is review-ready but not accepted or implemented; C09 OPEN. | **Independent architecture/security authority required:** review `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md` on its exact commit against frozen C01-C13. Only after PASS may bounded implementation resume. R3 IAM/key/retention changes retain explicit Human Gates; keep OI-0003 blocked. | `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md`; `docs/oi0002-c09-witness/R1_R4_FINAL_EXECUTION_REPORT.md`; `docs/oi-0002-final-closure-matrix-20261012.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |

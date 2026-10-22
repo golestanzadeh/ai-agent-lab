@@ -3,7 +3,7 @@
 ## Authoritative remaining path — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
+<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Last reconciled: **2026-10-20**
@@ -12,7 +12,7 @@ The current accepted experience is synthetic-only. October execution-order label
 
 Mandatory remaining path:
 
-1. Owner decides whether to approve the proposed GCS Frankfurt witness/trust/cost profile or select the AWS alternate (`OWNER_DECIDE_C09_WITNESS_PROFILE`). The protocol and AT-C09-01..15 simulator are complete, but only locally.
+1. Obtain independent security review of the proposed authenticated Kernel–Identity boundary and GCS witness-finality architecture (`C09_INDEPENDENT_ARCHITECTURE_REVIEW`). Owner continuation authorization supersedes the earlier provider-selection wait, but no architecture or operational acceptance is implied.
 2. Revise and independently accept the operational Kernel↔Identity ADR; authorize and execute a capped synthetic live-provider campaign; only then implement and independently verify frozen OI-0002 C01–C13.
 3. Complete protected OI-0003, then CASE-001 lineage and annual-review gates OI-0004–OI-0008, followed by integrated DR-05 (OI-0012).
 4. Complete the formal real-data UI25 packages through Owner end-to-end 2025 acceptance. Production provider use, calculation/declaration and Approval/Export each retain their own evidence and Human Gates.

@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R1_OPERATIONAL_WITNESS_INTEGRATION -->
+<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -20,6 +20,10 @@ The mandatory critical path is:
 OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical PASS and G2 MCP Events are not an execution dependency. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`; it is not a technical PASS, and no development, acceptance or release stage depends on outbound notification-provider activation. Either item may be reactivated only by a new explicit Owner directive. OI-0010 remains an optional operational enhancement and is not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
+
+# C09 operational architecture gate resumed — 2026-10-22
+
+Owner authorization resumed C09 R1–R4 engineering. Recovery verified clean branch `c09-witness-hardening` and remote baseline `6d29758a6c9944ae1c4a349968d3972cd2565199`. The proposed `oi0002.kernel-identity-c09/1.0` architecture preserves the Kernel as sole coordinator, separate Kernel/Identity principals and stores, bilateral Windows-token-authenticated Named Pipe transport, default-deny operations, durable staged receipts, strict no-early-ack ordering, deterministic reconciliation and the existing external GCS witness chain. It replaces no authority and makes no cloud/IAM/key/retention change. Status is `ARCHITECTURE_REVIEW_READY / NOT IMPLEMENTED / C09 OPEN`; exact next action is independent architecture/security review of the specification commit against C01–C13. `OPEN_ITEMS.md` was assessed in the same change set: no active row is resolved.
 
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 

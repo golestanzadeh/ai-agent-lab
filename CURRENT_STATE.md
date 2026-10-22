@@ -1,7 +1,7 @@
 # Current State
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: OWNER_DECIDE_C09_WITNESS_PROFILE -->
+<!-- CURRENT_NEXT_ACTION: C09_INDEPENDENT_ARCHITECTURE_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 ## Authoritative current snapshot — 2026-10-20
@@ -10,7 +10,7 @@ The currently demonstrated product is a bilingual, owner-tested **synthetic** ca
 
 The labels UI25-05 through UI25-10 used by October bounded execution orders are increment labels. They do not close the same-numbered full packages in the formal UI25 plan. Formal UI25-10 Approval/Export remains disabled and unaccepted.
 
-OI-0002 remains open on operational Kernel↔Identity continuity. The TPM path is unavailable and GitHub is not an independent witness. A provider-neutral external-witness protocol and AT-C09-01..15 local simulator now have `LOCAL_SIMULATION_PASS`, but no provider, custody or operational guarantee was tested. Exact next action is `OWNER_DECIDE_C09_WITNESS_PROFILE`; GCS Frankfurt is the preliminary recommendation, AWS S3 the alternate. Owner approval, revised ADR independent PASS and a capped synthetic live-provider campaign are required before operational implementation. OI-0003, CASE-001 lineage/annual gates OI-0004–OI-0008, integrated DR-05 OI-0012, real 2025 processing and external submission remain dependency-gated. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not a technical PASS. Neither may be reactivated without a new explicit Owner directive. OI-0010 remains an optional non-critical operational enhancement.
+OI-0002 remains open on operational Kernel↔Identity continuity. The TPM path is unavailable and GitHub is not an independent witness. Owner authorization now selects continuation with the existing GCS witness profile and permits bounded architecture and engineering subject to independent review and Human Gates. The proposed authenticated Named Pipe plus staged-receipt/GCS-finality architecture is review-ready, not implemented or accepted. Exact next action is `C09_INDEPENDENT_ARCHITECTURE_REVIEW`. OI-0003, CASE-001 lineage/annual gates OI-0004–OI-0008, integrated DR-05 OI-0012, real 2025 processing and external submission remain dependency-gated. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not a technical PASS. Neither may be reactivated without a new explicit Owner directive. OI-0010 remains an optional non-critical operational enhancement.
 
 All dated sections below are a chronological evidence ledger. Earlier pending, failed, blocked or next-action statements are historical when superseded by the snapshot above or a later accepted record; they are not current authorization.
 
