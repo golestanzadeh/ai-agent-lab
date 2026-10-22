@@ -1420,3 +1420,7 @@ R1-P01 attempt 2 also did not collect. Pytest 9.1.1 was installed into ignored `
 # C09-R1 strict canonical protocol decode PASS - 2026-10-22
 
 R1-P01 attempt 3 passed after read/execute access was limited to the ignored workspace pytest target: `1 passed, 1 warning in 0.39s`, exit 0. Exact canonical authenticated bytes were accepted; whitespace-reformatted and duplicate-key JSON were rejected. The warning was only a pytest-cache path collision. This bounded result does not prove remaining protocol negatives, GCS chain/version behavior, durable receipts, Kernel/Identity ordering, recovery or custody. Exact continuation after push is the next single schema/type/MAC negative test transaction. OPEN_ITEMS.md was synchronized; no row is resolved and C09/OI-0002 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_P01_PROTOCOL_TEST_2026-10-22.md`.
+
+# C09-R1 protocol schema/type/MAC negatives PASS - 2026-10-22
+
+R1-P02 passed: `1 passed, 1 warning in 0.21s`, exit 0. Missing required fields, boolean epoch substitution and incorrect HMAC were rejected fail closed. The warning was the known pytest-cache path collision. This synthetic result establishes no custody, provider, chain, Kernel/Identity or operational acceptance. Exact continuation after push is one ordered-chain verifier test. OPEN_ITEMS.md was reconciled; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_P02_PROTOCOL_NEGATIVES_2026-10-22.md`.

@@ -33,3 +33,24 @@ def test_r1_p01_strict_canonical_decode_rejects_reformatted_and_duplicate_json()
     )
     with pytest.raises(WitnessError, match="duplicate"):
         WitnessRecord.from_bytes(duplicate, KEY)
+
+
+def test_r1_p02_schema_types_and_mac_substitution_fail_closed():
+    record = _record()
+    unsigned = record.unsigned()
+
+    missing = {**unsigned, "mac": record.mac}
+    del missing["backup_generation"]
+    with pytest.raises(WitnessError, match="schema"):
+        WitnessRecord.from_bytes(
+            __import__("json").dumps(missing, sort_keys=True, separators=(",", ":")).encode(),
+            KEY,
+        )
+
+    boolean_epoch = WitnessRecord(**{**unsigned, "epoch": True}, mac=record.mac)
+    with pytest.raises(WitnessError, match="contract"):
+        WitnessRecord.from_bytes(boolean_epoch.to_bytes(), KEY)
+
+    substituted = WitnessRecord(**unsigned, mac="hmac-sha256:" + "0" * 64)
+    with pytest.raises(WitnessError, match="authentication"):
+        WitnessRecord.from_bytes(substituted.to_bytes(), KEY)
