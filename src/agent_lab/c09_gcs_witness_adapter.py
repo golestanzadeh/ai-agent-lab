@@ -4,11 +4,10 @@ Caller supplies independent credentials and MAC key; never logs them.
 """
 from __future__ import annotations
 
-import json
 from urllib.parse import quote
 
 import requests
-from .c09_witness_simulation import WitnessError, WitnessRecord, canonical_bytes
+from .c09_witness_protocol import WitnessError, WitnessRecord
 
 
 class GCSWitnessAdapter:
@@ -34,7 +33,7 @@ class GCSWitnessAdapter:
 
     def append(self, record: WitnessRecord, mac_key: bytes):
         record.verify(mac_key)
-        payload = canonical_bytes({**record.unsigned(), 'mac': record.mac})
+        payload = record.to_bytes()
         endpoint = 'https://storage.googleapis.com/upload/storage/v1/b/' + quote(self.bucket, safe='') + '/o'
         response = self._request('POST', endpoint, params={'uploadType': 'media', 'name': record.object_key, 'ifGenerationMatch': '0'}, headers={'Content-Type': 'application/json'}, data=payload)
         if response.status_code != 200:
@@ -52,7 +51,6 @@ class GCSWitnessAdapter:
         response = self._request('GET', endpoint, reader=True, params={'alt': 'media', 'generation': generation})
         if response.status_code != 200:
             raise WitnessError('witness readback unavailable: HTTP ' + str(response.status_code))
-        expected = canonical_bytes({**record.unsigned(), 'mac': record.mac})
-        if response.content != expected:
+        if response.content != record.to_bytes():
             raise WitnessError('witness readback mismatch')
         return True

@@ -1408,3 +1408,7 @@ GCS JSON conditional-create and exact generation readback adapter added with sep
 # C09-R1 live GCS adapter evidence - 2026-10-22
 
 Single synthetic record conditional GCS create with separate keyless Writer and Reader identities, generation-pinned exact readback PASS. Generation 1792700926092570; commitment sha256:7bbd3d162e447175f27c3639938bbb15faf8b3e63e28dac04aca8abed74ce916. Ephemeral MAC key was not persisted, hence this is NOT independent durable signing custody or production chain. R1 operational Kernel/Identity integration and independent acceptance remain OPEN; R2 not started. OPEN_ITEMS.md reconciled. See docs/oi0002-c09-witness/R1_LIVE_GCS_EXECUTION_2026-10-22.md.
+
+# C09-R1 strict protocol test environment failure - 2026-10-22
+
+R1-P01 attempt 1 did not collect: the default `C:\Python314\python.exe` has no pytest (exit 1). This is not a protocol test result. A provider-neutral canonical record module and one bounded test candidate are present but unaccepted. No cloud or protected operation occurred. Exact continuation after push is discovery of the existing pytest-capable interpreter and rerun of only R1-P01, followed by its own documentation/push boundary. OPEN_ITEMS.md was assessed in the same change; no row is resolved and OI-0002/C09 remain OPEN. Evidence: docs/oi0002-c09-witness/R1_P01_PROTOCOL_TEST_2026-10-22.md.
