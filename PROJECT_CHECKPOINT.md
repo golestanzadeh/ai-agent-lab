@@ -1436,3 +1436,7 @@ R1-G01 attempt 1 did not collect because the isolated test target lacks the repo
 # C09-R1 GCS chain-read assertion failure - 2026-10-22
 
 R1-G01 attempt 2 collected but failed (`1 failed, 2 warnings`) because exact matching content was compared across the operational and simulator dataclass types. The ambiguity branch did not run and no PASS is claimed. Exact continuation after push is canonical-byte comparison and rerun of only R1-G01. OPEN_ITEMS.md was synchronized with no row resolved; OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_G01_GCS_CHAIN_READ_2026-10-22.md`.
+
+# C09-R1 GCS chain-read duplicated-type failure - 2026-10-22
+
+R1-G01 attempt 3 failed (`1 failed, 2 warnings`) after canonical-byte and generation-pin checks passed: the intended ambiguity error was raised from the shared protocol, but the test expected the simulator's duplicate error class. No PASS is claimed. Exact continuation after push is unifying simulator protocol types with the shared contract, then rerunning only R1-G01. OPEN_ITEMS.md was synchronized; no row is resolved and OI-0002/C09 remain OPEN. Evidence: `docs/oi0002-c09-witness/R1_G01_GCS_CHAIN_READ_2026-10-22.md`.

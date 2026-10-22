@@ -31,3 +31,13 @@ Observed evidence: exit 1; `1 failed, 2 warnings in 2.02s`. The chain reader ret
 Interpretation: this is a fixture/assertion boundary defect, not a demonstrated chain-reader correctness failure. No provider call occurred; the session was mocked. No PASS is claimed.
 
 Exact continuation after push: compare returned and fixture records by exact canonical bytes instead of cross-class dataclass equality, then rerun only R1-G01 as attempt 3.
+
+## Attempt 3
+
+Status: `FAIL / DUPLICATED PROTOCOL ERROR TYPE / R1 OPEN`.
+
+Observed evidence: exit 1; `1 failed, 2 warnings in 0.95s`. Exact canonical-byte comparison and generation pin assertions passed. The ambiguity path raised the expected message `multiple versions, deletion, or invalid witness metadata`, but `pytest.raises` rejected it because the test imported the simulator's separate `WitnessError`, while the adapter raised the operational protocol's `WitnessError`.
+
+Interpretation: duplicated record/error definitions between simulator and shared protocol create a real compatibility hazard. The adapter behavior reached the intended fail-closed branch, but the overall test is FAIL and no R1-G01 PASS is claimed.
+
+Exact continuation after push: make the simulator import and use the shared protocol constants, record, error, canonical and digest definitions rather than duplicating them; then rerun only R1-G01 as attempt 4.

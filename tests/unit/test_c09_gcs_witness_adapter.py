@@ -88,7 +88,8 @@ def test_r1_g01_chain_read_pins_generations_and_rejects_version_ambiguity():
 
     session = ChainSession()
     adapter = GCSWitnessAdapter('test-bucket', lambda: 'writer', lambda: 'reader', session)
-    assert adapter.read_chain(h.deployment_id, h.key) == tuple(records)
+    observed = adapter.read_chain(h.deployment_id, h.key)
+    assert [record.to_bytes() for record in observed] == [record.to_bytes() for record in records]
     assert session.calls[0][2]['params']['versions'] == 'true'
     assert [call[2]['params']['generation'] for call in session.calls[1:]] == ['101', '102']
     assert all(call[2]['headers']['Authorization'] == 'Bearer reader' for call in session.calls)
