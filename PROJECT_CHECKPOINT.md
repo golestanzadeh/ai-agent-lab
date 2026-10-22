@@ -1404,3 +1404,7 @@ Owner authorized sequential R1-R4 bounded work with mandatory test documentation
 # C09-R1 adapter implementation checkpoint - 2026-10-22
 
 GCS JSON conditional-create and exact generation readback adapter added with separate writer/reader token providers. Five adapter mock tests plus 19 simulator tests PASS (24/24). NO live GCS adapter test, Kernel/Identity production integration, staged receipt or operational acceptance. R1 remains OPEN, R2 blocked. OPEN_ITEMS.md synchronized; OI-0002 remains active. Evidence: docs/oi0002-c09-witness/R1_ADAPTER_TEST_2026-10-22.md.
+
+# C09-R1 live GCS adapter evidence - 2026-10-22
+
+Single synthetic record conditional GCS create with separate keyless Writer and Reader identities, generation-pinned exact readback PASS. Generation 1792700926092570; commitment sha256:7bbd3d162e447175f27c3639938bbb15faf8b3e63e28dac04aca8abed74ce916. Ephemeral MAC key was not persisted, hence this is NOT independent durable signing custody or production chain. R1 operational Kernel/Identity integration and independent acceptance remain OPEN; R2 not started. OPEN_ITEMS.md reconciled. See docs/oi0002-c09-witness/R1_LIVE_GCS_EXECUTION_2026-10-22.md.
