@@ -17,3 +17,7 @@ Status: `DESIGN / LOCAL_SIMULATION_PASS`
 | Reused/expired/mismatched restore authority | Reject and audit. | Denied. |
 
 An authorized restore never deletes or rewrites witness history. It appends a signed transition from the current global commitment to a strictly greater epoch, then creates sequence 1 for that epoch. Any ambiguity remains fail-closed.
+
+## 2026-10-22 implementation clarification
+The Identity-ahead / Kernel PENDING / no-witness row above describes the conservative baseline, but current hardened simulator implements conditional RECONCILED_IDENTITY_AHEAD only when the exact previous externally authenticated base is verified and a matching pending operation exists. Outage, stale base, or ambiguity fail closed. This is local proof, not operational integration.
+

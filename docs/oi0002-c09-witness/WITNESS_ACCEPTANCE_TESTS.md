@@ -25,3 +25,7 @@ Evidence: `src/agent_lab/c09_witness_simulation.py` and `tests/unit/test_c09_wit
 | AT-C09-15 | Locked-version model | Delete marker plus replacement version | Version/delete-marker ambiguity rejected | PASS |
 
 All 15 tests passed locally. These tests prove deterministic simulator behavior, not provider enforcement, credential custody, operational IPC or C09 acceptance.
+
+## 2026-10-22 execution update
+The 15 AT-C09 cases are the named scenario catalogue; four additional unit tests bring the executed pytest total to **19 passed** (PYTHONPATH=src python -m pytest tests/unit/test_c09_witness_simulation.py -q). The original AT-C09-05 table expectation is superseded by conditional verified Identity-ahead reconciliation; unverified or unavailable witness still fails closed. See LIVE_TEST_EVIDENCE_2026-10-22.md. T05 is LOCAL PASS only; C09 NOT ACCEPTED.
+
