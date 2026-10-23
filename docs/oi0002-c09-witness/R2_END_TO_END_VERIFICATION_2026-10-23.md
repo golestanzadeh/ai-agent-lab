@@ -55,3 +55,10 @@ Result: **PASS**, exit 0; `15 passed in 4.48s`.
 
 Ambiguous conditional-create completion reconciled the exact staged bytes once; Writer/Reader outage and incomplete enumeration denied acknowledgment; pagination, repeated/invalid token, duplicate generation and deletion ambiguity remained fail closed. A read-only host check returned `GCLOUD_UNAVAILABLE`; therefore no live GCS test ran and no actual cloud or Windows-principal isolation claim is made. No cloud resource, IAM, key, service or evidence changed. R2-T05 is next.
 
+## R2-T05 — PASS
+
+Command: selected receipt/Witness tamper, truncation, coordinated rollback and protocol-chain nodes.
+Result: **PASS**, exit 0; `11 passed, 17 deselected in 4.56s`.
+
+Startup rejected altered canonical receipt JSON/digest, missing/rewritten/wrong-generation Witness, a validly signed but transaction-inconsistent backup generation, local chain truncation and rollback behind one or two external successors. Gap, fork and ordering protocol checks remained fail closed. R2-T06 is next.
+
