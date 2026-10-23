@@ -256,7 +256,8 @@ class DurableC09TransactionState:
         ).fetchone()
         previous = ZERO if prior is None else digest(prior["witness_bytes"])
         return WitnessRecord(
-            PROTOCOL, self.context.deployment_id, 1, row["expected_epoch"] + 1, previous,
+            PROTOCOL, self.context.deployment_id, row["expected_epoch"] + 1,
+            row["expected_epoch"] + 1, previous,
             row["next_head"], row["next_head"], 0, row["operation_id"],
         ).signed(self.mac_key)
 

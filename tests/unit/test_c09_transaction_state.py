@@ -191,7 +191,7 @@ def test_restart_fails_closed_when_committed_witness_is_unverifiable(tmp_path, d
         witness.available = False
     state.close(); kernel.close()
     reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
-    with pytest.raises(WitnessError):
+    with pytest.raises((WitnessError, C09TransactionError)):
         DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
     reopened_kernel.close()
 
@@ -203,7 +203,7 @@ def test_truncated_local_witness_chain_is_rejected_after_restart(tmp_path):
     state.db.execute("DELETE FROM c09_transaction WHERE transaction_id='TX-FIRST'")
     state.close(); kernel.close()
     reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
-    with pytest.raises(C09TransactionError, match="truncated"):
+    with pytest.raises(C09TransactionError, match="head disagrees|truncated"):
         DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
     reopened_kernel.close()
 

@@ -93,3 +93,10 @@ Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.
 Result: **FAIL**, exit 1; `6 failed, 15 passed in 10.17s`.
 
 Independent enumeration made missing, rewritten, wrong-generation and truncated evidence fail closed, but three older tests asserted the former provider exception type rather than the coordinator integrity denial. More importantly, the two-record rollback test exposed that `WitnessRecord.epoch` remained fixed at 1 while sequence advanced. No PASS is claimed. The bounded correction is to bind both epoch and sequence to `expected_epoch + 1`, retain fail-closed integrity errors at the coordinator boundary, and rerun the exact suite.
+
+## R1-F04-A2 — complete-chain remediation focused PASS
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`.
+Result: **PASS**, exit 0; `21 passed in 8.72s`.
+
+Both Witness epoch and sequence now equal the committed successor epoch. The injected reader independently returns the complete current chain; local durable rows no longer define the external verification set. One and two unseen external successors, missing/tampered/wrong-generation evidence, local truncation, partial listing and unavailable complete enumeration all fail closed. Regression and independent re-review remain required.
