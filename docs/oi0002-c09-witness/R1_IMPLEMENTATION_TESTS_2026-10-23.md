@@ -77,3 +77,12 @@ Command: `PYTHONPATH=src python -m pytest tests/unit -q`.
 Result: **PASS**, exit 0; `1469 passed, 5 skipped in 285.38s`.
 
 The full unit suite is green after F01-F03 remediation. Independent implementation re-review of the exact frozen commit remains required before any R1 acceptance claim.
+
+## R1 independent implementation re-review 02 — FAIL
+
+Reviewed exact SHA: `f7d973a82c35d82aadd8a6436957f10a447d0852`.
+Decision: **`INDEPENDENT_IMPLEMENTATION_FAIL`**.
+
+The reviewer confirmed F01-F03 materially corrected and reproduced `18 passed in 7.38s` focused plus `81 passed in 19.86s` relevant tests. Independent fault injection found **F04 CRITICAL**: after two committed transactions, restoring both local Kernel and Identity databases to the valid TX-1 snapshot while retaining both external Witness records allowed startup and TX-1 readback. Local rows incorrectly defined the verification set, so the external TX-2 successor was invisible.
+
+Required repair: the Witness reader must independently enumerate a complete, current chain/head and startup/recovery must compare it against local durable rows and Kernel/Identity continuity, rejecting extra successors, gaps, forks, deleted generations and stale/partial listings. Required evidence includes the exact coordinated-rollback probe, one/multiple unseen tails and stale/partial enumeration. No active open-item row is resolved.
