@@ -34,3 +34,10 @@ Both threads returned COMMITTED because thread scheduling let the second read ep
 
 Evidence proves the bounded happy path cannot acknowledge before verified Kernel finality and the pre-finality reader-failure path remains unacknowledgeable. R2-T02 is next.
 
+## R2-T02 — PASS
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py::test_r1_i04_process_termination_at_every_boundary_recovers_exactly_once -q`.
+Result: **PASS**, exit 0; `6 passed in 3.19s`.
+
+Every durable boundary—PREPARED, PENDING, IDENTITY_COMMITTED, WITNESS_STAGED, WITNESSED and COMMITTED—survived close/reopen and deterministically reached exactly one committed Witness before acknowledgment. R2-T03 is next.
+
