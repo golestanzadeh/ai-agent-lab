@@ -69,3 +69,11 @@ Result: **PASS**, exit 0; `7 passed in 2.72s`.
 
 Exact case/task/manifest/run scope and active Kernel authority remain mandatory. Forged or undeclared capabilities and unauthorized initialization fail closed. `identity_backup` and `identity_restore` remain A4 Human-Gate/no-standing-permission and are hard-denied by the bounded transaction implementation. R2-T01–T06 are technically green; regression and independent acceptance remain mandatory.
 
+## R2 regression and candidate freeze
+
+- Focused transaction/GCS suite: **PASS**, `36 passed in 11.25s`, exit 0.
+- Relevant C09 transaction/protocol/simulator/GCS, Identity continuity/custody/evidence/persistence, IPC wire/envelope/response and Kernel suite: **PASS**, `358 passed in 30.66s`, exit 0.
+- Complete unit suite with skip reasons: **PASS**, `1481 passed, 5 skipped in 314.15s`, exit 0.
+
+The five skips are existing DR03 protected-source/registration exclusions at `test_case_declaration_dr03.py` lines 45, 60, 68, 76 and 86; none concerns R2, C09, Kernel, Identity, Witness, GCS, IPC or permissions. Local status is `R2_TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING`. Live GCS and real Windows-principal separation remain explicitly unproven.
+
