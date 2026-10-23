@@ -98,3 +98,55 @@ def test_r1_g01_chain_read_pins_generations_and_rejects_version_ambiguity():
         GCSWitnessAdapter(
             'test-bucket', lambda: 'writer', lambda: 'reader', ChainSession(ambiguous=True)
         ).read_chain(h.deployment_id, h.key)
+
+
+def test_complete_chain_consumes_all_pages_and_accepts_page_order_variation():
+    h = WitnessProtocolHarness()
+    h.execute('OP-1'); h.execute('OP-2')
+    records = h.verify_witness_chain()
+
+    class PagedSession:
+        def __init__(self):
+            self.calls = []
+
+        def request(self, method, path, **kwargs):
+            self.calls.append((method, path, kwargs))
+            if path.endswith('/o'):
+                token = kwargs['params'].get('pageToken')
+                if token is None:
+                    return Response(200, {'items': [{'name': records[1].object_key, 'generation': '102'}], 'nextPageToken': 'PAGE-2'})
+                assert token == 'PAGE-2'
+                return Response(200, {'items': [{'name': records[0].object_key, 'generation': '101'}]})
+            generation = kwargs['params']['generation']
+            return Response(200, content=records[0].to_bytes() if generation == '101' else records[1].to_bytes())
+
+    session = PagedSession()
+    observed = GCSWitnessAdapter('test-bucket', lambda: 'writer', lambda: 'reader', session).read_chain(h.deployment_id, h.key)
+    assert observed == records
+    list_calls = [call for call in session.calls if call[1].endswith('/o')]
+    assert len(list_calls) == 2 and list_calls[1][2]['params']['pageToken'] == 'PAGE-2'
+
+
+@pytest.mark.parametrize('mode', ['repeated-token', 'invalid-token', 'duplicate', 'deleted'])
+def test_complete_chain_rejects_pagination_and_version_ambiguity(mode):
+    h, record, _ = fixture()
+
+    class BadPagedSession:
+        def request(self, method, path, **kwargs):
+            if not path.endswith('/o'):
+                return Response(200, content=record.to_bytes())
+            token = kwargs['params'].get('pageToken')
+            item = {'name': record.object_key, 'generation': '101'}
+            if mode == 'invalid-token':
+                return Response(200, {'items': [item], 'nextPageToken': 7})
+            if mode == 'deleted':
+                item['timeDeleted'] = '2026-10-23T00:00:00Z'
+                return Response(200, {'items': [item]})
+            if token is None:
+                return Response(200, {'items': [item], 'nextPageToken': 'PAGE-X'})
+            if mode == 'repeated-token':
+                return Response(200, {'items': [], 'nextPageToken': 'PAGE-X'})
+            return Response(200, {'items': [item]})
+
+    with pytest.raises(WitnessError, match='token|multiple versions|deletion'):
+        GCSWitnessAdapter('test-bucket', lambda: 'writer', lambda: 'reader', BadPagedSession()).read_chain(h.deployment_id, h.key)

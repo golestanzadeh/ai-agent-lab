@@ -116,3 +116,10 @@ Decision: **`INDEPENDENT_IMPLEMENTATION_FAIL`**.
 The reviewer confirmed F01-F03 and direct F04 complete-chain rollback corrections, reproducing `21 passed` focused and `84 passed` relevant. **F05 CRITICAL** remains: a valid-looking partial listing equal to the rolled-back local prefix is accepted, and `GCSWitnessAdapter.read_chain()` issues one list request without consuming `nextPageToken`. The adversarial probe retained two external objects, restored both local stores to the first transaction, returned only the first external item, and startup accepted it.
 
 Required repair is exhaustive pagination until `nextPageToken` is absent, rejection of malformed/repeated tokens, duplicate objects across pages, deletion/version ambiguity and incomplete synthetic enumeration. Required tests cover first-page-only rollback denial, valid multi-page chains, repeated/invalid tokens, page-order variation, cross-page duplicates and deletion metadata. No active open-item row is resolved.
+
+## R1-F05-A1 — initial pagination remediation test
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py tests/unit/test_c09_gcs_witness_adapter.py -q`.
+Result: **FAIL**, exit 1; `2 failed, 30 passed in 10.39s`.
+
+The new partial-enumeration path raised fail-closed `WitnessError` while an older assertion expected `C09TransactionError`; the valid multi-page reader returned the contract tuple while its new assertion compared against a list. These are bounded test-expectation defects, not permission or external-state changes. No PASS is claimed.

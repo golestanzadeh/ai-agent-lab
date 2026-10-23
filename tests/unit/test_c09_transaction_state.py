@@ -55,7 +55,7 @@ class SyntheticWitness:
             key=lambda value: json.loads(value[1])["sequence"],
         )
         if self.listing_limit is not None:
-            ordered = ordered[:self.listing_limit]
+            raise WitnessError("complete witness enumeration unavailable")
         return tuple(ordered)
 
 
