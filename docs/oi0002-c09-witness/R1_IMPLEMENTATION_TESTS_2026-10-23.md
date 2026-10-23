@@ -63,3 +63,10 @@ Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.
 Result: **PASS**, exit 0; `18 passed in 8.25s`.
 
 The remediation adds a non-mutating local `PREPARED` state, exact transaction/request binding in the durable Kernel reservation, authorization plus pending-reservation revalidation before every pre-finality side effect, canonical pre-provider `WITNESS_STAGED` bytes, and fail-closed committed-Witness/Kernel verification at restart and acknowledgment. Tests now cover six crash boundaries; failed reservation with no Identity or Witness effect; ambiguous provider completion; missing, rewritten and wrong-generation Witness objects; reader outage; truncated local chain; and durable bytes before provider append. This is still synthetic-only candidate evidence pending relevant/full regression and independent exact-SHA re-review.
+
+## R1 remediation relevant regression
+
+Command: focused C09 transaction/protocol/simulator/GCS adapter, Identity continuity/custody/evidence/persistence, IPC wire/envelope/response and Orchestrator Kernel suites.
+Result: **PASS**, exit 0; `346 passed in 27.91s`.
+
+The exact remediation remains synthetic/component evidence. It activates no IPC, cloud mutation, credential, protected data, role grant or operational acknowledgment. Full unit regression and independent exact-SHA security re-review remain mandatory.
