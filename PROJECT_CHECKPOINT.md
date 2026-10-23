@@ -89,6 +89,10 @@ Independent reviewer `/root/c09_r1_implementation_independent_review`, separate 
 
 Final post-acceptance documentation consistency passed `18 passed in 0.79s`, exit 0. Authenticated capacity at `2026-10-23T18:31:20.2948412Z` was 79% five-hour remaining (reset `2026-10-23T23:15:20Z`) and 97% weekly remaining (reset `2026-10-30T18:15:20Z`); the mandatory reserve remains intact. This execution stops after R1 as directed.
 
+# C09 R2 governed verification started — 2026-10-23
+
+Owner authorized R2 only. Recovery verified clean synchronized checkpoint `9f6849265ace459b79dbdf4b0edd1fb5f6845c10`, R1 accepted evidence `bd656b7c03a8d20e6c12062b7a599a95fd471aed`, and architecture `2c664800d8a3ace7cf0995c838a46d46c6a57191`. Fresh authenticated admission was 75% five-hour and 96% weekly remaining, preserving the 15-point reserve. The finite R2-T01–T06 matrix is frozen in `docs/oi0002-c09-witness/R2_END_TO_END_VERIFICATION_2026-10-23.md`. Existing R1 evidence supplies most transition/outage/rollback cases; R2 adds true same-predecessor concurrency and durable receipt-tamper startup verification. Status is `R2_MATRIX_FROZEN / EXECUTION_PENDING / C09 OPEN / OI-0002 OPEN`; no active open-item row is resolved, and R3/R4 are prohibited.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20
