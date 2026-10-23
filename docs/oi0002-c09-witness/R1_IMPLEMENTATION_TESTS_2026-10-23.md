@@ -20,3 +20,7 @@ The Identity Contract Set now has distinct ID `ORCHESTRATOR_CONTRACT_SET_V2_IDEN
 ## R1-REG-A1 — invalid test-path selection
 
 The first relevant-regression command included nonexistent `tests/unit/test_identity_permission_adapter.py`. Pytest exited 4 with `file or directory not found`; **no tests ran** and no PASS is claimed. No product state changed. Exact continuation is to derive the existing test paths from the repository and rerun the intended relevant set as R1-REG-A2.
+
+## R1-REG-A2 — transient path inventory conflict
+
+A repository-path inventory briefly exposed an untracked synthetic receipt-store test from another concurrent workspace action; it disappeared before collection. The attempted command exited 4 with `file or directory not found`; **no tests ran**. No candidate code was retained from that transient file and the worktree returned clean. Exact continuation is to use only `git ls-files` tracked test paths for R1-REG-A3.

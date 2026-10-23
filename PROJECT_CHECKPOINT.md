@@ -49,6 +49,8 @@ The governed repair assigns the C09-R1 Identity Contract Set a distinct identity
 
 `R1-REG-A1` was not collected because the command named a nonexistent test file; exit 4, no tests ran, no PASS claimed. Exact continuation is repository-derived path correction and R1-REG-A2. C09/OI-0002 and active open-item membership are unchanged.
 
+`R1-REG-A2` also was not collected after a transient untracked test path from another workspace action disappeared; exit 4, no tests ran, and no transient code was retained. Exact continuation is a tracked-only `git ls-files` regression selection. C09/OI-0002 and `OPEN_ITEMS.md` membership remain unchanged.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20
