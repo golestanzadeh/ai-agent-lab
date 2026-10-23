@@ -98,3 +98,17 @@ The startup validator now independently derives the expected successor head from
 
 The five skips are the unchanged DR03 protected-source/registration exclusions and do not cover R2. Current status is **`R2_F01_REMEDIATED / SYNTHETIC_ONLY / INDEPENDENT_RE_REVIEW_PENDING`**. Live GCS and real four-principal isolation remain unproven. C09/OI-0002 remain open; no privileged grant is made and R3/R4 are not started.
 
+## Independent R2 re-review — PASS
+
+Reviewed SHA: `a159373c768c52197e2c1647259e855a82e38f91`.
+Reviewer: `/root/c09_r1_implementation_independent_review`, separate read-only context.
+Decision: **`INDEPENDENT_R2_PASS / SYNTHETIC_ONLY`**.
+
+The reviewer independently regenerated canonical receipt JSON/digest after payload-only, transaction-only and combined transaction-row substitutions. All three probes were rejected with `C09TransactionError: durable transaction head derivation is invalid`. Independent focused transaction/GCS verification passed `39 passed in 12.28s`, and relevant C09/GCS/Identity/IPC/Kernel regression passed `366 passed in 34.45s`, both exit 0. Inspection found no residual in-scope T01–T06 defect. The reviewer relied on the exact-candidate full-suite evidence (`1484 passed, 5 skipped`) rather than repeating the five-minute suite; the five skips are unrelated DR03 protected-source/registration exclusions.
+
+Final authenticated telemetry measured `2026-10-23T19:09:16.3566483Z`: five-hour 28% remaining, reset `2026-10-23T23:15:20Z`; weekly 89% remaining, reset `2026-10-30T18:15:20Z`. The mandatory 15-point reserve remains intact.
+
+R2 is complete within its bounded synthetic/component scope. Live GCS, actual Reader/Writer custody and real four-Windows-principal isolation remain unavailable/unproven. This is not operational C09 acceptance, OI-0002 closure, protected persistence approval or authority for R3/R4. Privileged IAM, key-custody and retention changes remain explicit Owner Human Gates.
+
+The initial post-acceptance documentation check failed `1 failed, 17 passed` because only one canonical continuation marker had been advanced. That run receives no PASS credit. The correction synchronizes the marker across the existing checkpoint, current state, roadmap and their existing contract test without granting R3/R4 authority or changing product behavior.
+
