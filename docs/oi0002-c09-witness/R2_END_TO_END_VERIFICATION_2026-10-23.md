@@ -62,3 +62,10 @@ Result: **PASS**, exit 0; `11 passed, 17 deselected in 4.56s`.
 
 Startup rejected altered canonical receipt JSON/digest, missing/rewritten/wrong-generation Witness, a validly signed but transaction-inconsistent backup generation, local chain truncation and rollback behind one or two external successors. Gap, fork and ordering protocol checks remained fail closed. R2-T06 is next.
 
+## R2-T06 — PASS
+
+Command: selected default-deny, exact continuity scope, unauthorized initialization, governed-restore gate, declared-capability, case-scope and Kill Switch nodes.
+Result: **PASS**, exit 0; `7 passed in 2.72s`.
+
+Exact case/task/manifest/run scope and active Kernel authority remain mandatory. Forged or undeclared capabilities and unauthorized initialization fail closed. `identity_backup` and `identity_restore` remain A4 Human-Gate/no-standing-permission and are hard-denied by the bounded transaction implementation. R2-T01–T06 are technically green; regression and independent acceptance remain mandatory.
+
