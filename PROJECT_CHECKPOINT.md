@@ -75,6 +75,8 @@ Third independent re-review of exact `9be09e7cb84e04663eaf896f1a482a1b9be4d23b` 
 
 Initial F05 focused run `R1-F05-A1` failed `2 failed, 30 passed`: the new pagination/security paths behaved fail closed, but two test assertions expected the prior coordinator error class and list type instead of the new reader `WitnessError` and tuple return. No PASS is claimed. Exact continuation is correct those test expectations without weakening the new behavior and rerun. No active open item is resolved.
 
+Corrected F05 focused run `R1-F05-A2` passed `32 passed in 9.70s`, exit 0. GCS enumeration consumes every page until no token remains; repeated/invalid tokens, cross-page duplicates, deletion/version ambiguity and incomplete synthetic enumeration fail closed, while complete multi-page page-order variation verifies deterministically. Exact continuation is relevant/full regression and independent exact-SHA re-review. C09/OI-0002 remain open; no active row is resolved.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20

@@ -122,7 +122,7 @@ def test_complete_chain_consumes_all_pages_and_accepts_page_order_variation():
 
     session = PagedSession()
     observed = GCSWitnessAdapter('test-bucket', lambda: 'writer', lambda: 'reader', session).read_chain(h.deployment_id, h.key)
-    assert observed == records
+    assert observed == tuple(records)
     list_calls = [call for call in session.calls if call[1].endswith('/o')]
     assert len(list_calls) == 2 and list_calls[1][2]['params']['pageToken'] == 'PAGE-2'
 

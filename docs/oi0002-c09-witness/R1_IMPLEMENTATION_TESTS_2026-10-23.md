@@ -123,3 +123,10 @@ Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.
 Result: **FAIL**, exit 1; `2 failed, 30 passed in 10.39s`.
 
 The new partial-enumeration path raised fail-closed `WitnessError` while an older assertion expected `C09TransactionError`; the valid multi-page reader returned the contract tuple while its new assertion compared against a list. These are bounded test-expectation defects, not permission or external-state changes. No PASS is claimed.
+
+## R1-F05-A2 — pagination remediation focused PASS
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py tests/unit/test_c09_gcs_witness_adapter.py -q`.
+Result: **PASS**, exit 0; `32 passed in 9.70s`.
+
+The reader consumes all pages through terminal absence of `nextPageToken`; it rejects repeated or malformed tokens, duplicate objects across pages, deletion/version ambiguity and incomplete synthetic enumeration. A complete two-page chain with reversed page order is sorted and verified deterministically. Regression and independent review remain mandatory.

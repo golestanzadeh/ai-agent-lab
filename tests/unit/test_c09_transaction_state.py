@@ -252,7 +252,7 @@ def test_partial_or_stale_external_enumeration_fails_closed(tmp_path):
     state.close(); kernel.close()
     reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
     witness.listing_limit = 0
-    with pytest.raises(C09TransactionError, match="head disagrees"):
+    with pytest.raises(WitnessError, match="enumeration unavailable"):
         DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
     witness.listing_limit = None
     witness.complete_listing = False
