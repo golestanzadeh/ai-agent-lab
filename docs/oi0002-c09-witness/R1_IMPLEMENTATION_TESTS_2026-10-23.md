@@ -136,3 +136,19 @@ The reader consumes all pages through terminal absence of `nextPageToken`; it re
 Authenticated measurement at `2026-10-23T14:07:03.7832886Z`: five-hour remaining 21%, reset `2026-10-23T18:24:15Z`; weekly remaining 76%, reset `2026-10-29T20:33:11Z`. With the mandatory 15-point five-hour reserve, only 6 points are admissible, which is insufficient for the remaining relevant/full regression, independent review and governed result cycle.
 
 Status: **`BLOCKED_CAPACITY / R1_REVIEW_NOT_COMPLETE`**. Clean synchronized recovery commit is `17657f276999cdf815df7ac9e3595b82b85bd7df`. After reset, obtain fresh authenticated admission, run relevant and complete unit regression, publish the exact evidence SHA and request independent re-review. R2 remains prohibited until R1 independent PASS.
+
+## R1 final verification after capacity reset
+
+Candidate baseline: `e2cad8dbb5f0742e38633dd7ae6f7a84c9e92d8f` with implementation ancestry `17657f276999cdf815df7ac9e3595b82b85bd7df`.
+Environment: Windows, Python repository runtime, synthetic temporary stores and mocked provider tests; no real taxpayer data, privileged mutation or external filing.
+
+- `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py tests/unit/test_c09_gcs_witness_adapter.py -q` — **PASS**, exit 0; `32 passed in 11.15s`.
+- Relevant C09 transaction/protocol/simulator/GCS, Identity continuity/custody/evidence/persistence, IPC wire/envelope/response and Kernel suite — **PASS**, exit 0; `354 passed in 30.49s`.
+- `PYTHONPATH=src python -m pytest tests/unit -q` — **PASS**, exit 0; `1477 passed, 5 skipped in 310.34s`.
+- `python -m pytest tests/unit/test_documentation_index.py -q` — **PASS**, exit 0; `18 passed in 1.09s`.
+
+The five skips are unchanged platform/external-environment exclusions already present in the full unit suite; no F01-F05 focused test was skipped. This verification changes no implementation. Independent review must target the exact immutable evidence commit that records these results; R1 remains open until that review returns PASS.
+
+The first documentation check after editing failed `1 failed, 17 passed in 1.53s`: only two `CURRENT_NEXT_ACTION` markers had been advanced, conflicting with the canonical identical-marker contract. Both markers were restored to the existing cross-file value; this was a documentation-only consistency correction and the failed attempt is not counted as PASS.
+
+Corrected post-edit documentation check: `python -m pytest tests/unit/test_documentation_index.py -q` — **PASS**, exit 0; `18 passed in 0.77s`.
