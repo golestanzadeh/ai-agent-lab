@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_set_id": "ORCHESTRATOR_CONTRACT_SET_V2_IDENTITY_ADMINISTRATION",
+  "contract_set_id": "ORCHESTRATOR_CONTRACT_SET_V2_IDENTITY_ADMINISTRATION_C09_R1",
   "organization_contract": {
     "path": "docs/agent-organization-v1-proposal.md",
     "activation_commit": "15c0f9855f361ade1133d22f20cee21f75a812fc"
