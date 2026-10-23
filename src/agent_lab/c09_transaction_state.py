@@ -77,6 +77,7 @@ class DurableC09TransactionState:
               ON c09_transaction(expected_epoch, expected_head)
               WHERE state IN ('IDENTITY_COMMITTED','WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED');
         """)
+        self._verify_durable_receipts()
         self._verify_durable_witnesses()
 
     def close(self) -> None:
@@ -155,12 +156,7 @@ class DurableC09TransactionState:
             row = self._row(transaction_id)
         if row["state"] == "PENDING":
             self._verify_pending(row)
-            receipt = {
-                "contract": "ai-tax-agent.c09-staged-receipt/1",
-                "transaction_id": row["transaction_id"], "operation_id": row["operation_id"],
-                "payload_digest": row["payload_digest"], "expected_epoch": row["expected_epoch"],
-                "expected_head": row["expected_head"], "identity_head": row["next_head"],
-            }
+            receipt = self._receipt(row)
             receipt_json = canonical_bytes(receipt).decode("utf-8")
             receipt_digest = digest(receipt_json.encode("utf-8"))
             try:
@@ -267,9 +263,30 @@ class DurableC09TransactionState:
             reservation_id=row["transaction_id"], request_digest=row["payload_digest"],
         )
 
+    @staticmethod
+    def _receipt(row: sqlite3.Row) -> dict:
+        return {
+            "contract": "ai-tax-agent.c09-staged-receipt/1",
+            "transaction_id": row["transaction_id"], "operation_id": row["operation_id"],
+            "payload_digest": row["payload_digest"], "expected_epoch": row["expected_epoch"],
+            "expected_head": row["expected_head"], "identity_head": row["next_head"],
+        }
+
+    def _verify_durable_receipts(self) -> None:
+        rows = self.db.execute(
+            "SELECT * FROM c09_transaction WHERE state IN "
+            "('IDENTITY_COMMITTED','WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED') "
+            "ORDER BY expected_epoch"
+        ).fetchall()
+        for row in rows:
+            expected_json = canonical_bytes(self._receipt(row)).decode("utf-8")
+            expected_digest = digest(expected_json.encode("utf-8"))
+            if row["receipt_json"] != expected_json or row["receipt_digest"] != expected_digest:
+                raise C09TransactionError("durable staged receipt is missing or altered")
+
     def _verify_durable_witnesses(self) -> None:
         rows = self.db.execute(
-            "SELECT state,witness_bytes,witness_generation FROM c09_transaction "
+            "SELECT state,witness_bytes,witness_generation,operation_id,next_head FROM c09_transaction "
             "WHERE state IN ('WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED') ORDER BY expected_epoch"
         ).fetchall()
         external = self.witness.read_complete_chain(self.context.deployment_id)
@@ -293,6 +310,12 @@ class DurableC09TransactionState:
             record = WitnessRecord.from_bytes(payload, self.mac_key)
             if record.deployment_id != self.context.deployment_id or record.epoch != index + 1 or record.sequence != index + 1:
                 raise C09TransactionError("external witness sequence or scope is invalid")
+            if (
+                record.record_type != "COMMIT" or record.operation_id != row["operation_id"]
+                or record.kernel_head != row["next_head"] or record.identity_head != row["next_head"]
+                or record.backup_generation != 0 or record.owner_authorization_digest is not None
+            ):
+                raise C09TransactionError("external witness semantics conflict with durable transaction")
             if record.previous_record != previous:
                 raise C09TransactionError("durable witness chain is truncated or reordered")
             self.witness.verify_exact(record, generation)

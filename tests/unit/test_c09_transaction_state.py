@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -257,5 +258,65 @@ def test_partial_or_stale_external_enumeration_fails_closed(tmp_path):
     witness.listing_limit = None
     witness.complete_listing = False
     with pytest.raises(WitnessError, match="enumeration unavailable"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()
+
+
+def test_r2_t03_concurrent_same_predecessor_allows_exactly_one_successor(tmp_path):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.close(); kernel.close()
+
+    def attempt(index):
+        local_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+        local_state = DurableC09TransactionState(state_path, local_kernel, context, witness, KEY)
+        try:
+            return local_state.begin(
+                transaction_id=f"TX-CONCURRENT-{index}", operation_id=f"OP-CONCURRENT-{index}",
+                capability="identity_create", payload={"ref": f"synthetic://concurrent/{index}"},
+            ).state
+        except Exception as exc:
+            return type(exc).__name__
+        finally:
+            local_state.close(); local_kernel.close()
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        outcomes = list(pool.map(attempt, (1, 2)))
+    assert outcomes.count("COMMITTED") == 1
+    assert len(witness.objects) == 1
+    check_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    row = check_kernel._connection.execute("SELECT epoch,pending_json FROM identity_continuity").fetchone()
+    assert row["epoch"] == 1 and row["pending_json"] is None
+    check_kernel.close()
+
+
+@pytest.mark.parametrize("column,value", [
+    ("receipt_json", "{}"),
+    ("receipt_digest", "sha256:" + "f" * 64),
+])
+def test_r2_t05_restart_rejects_altered_durable_receipt(tmp_path, column, value):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-RECEIPT", operation_id="OP-RECEIPT", capability="identity_create", payload={"ref": "synthetic://receipt"})
+    state.db.execute(f"UPDATE c09_transaction SET {column}=? WHERE transaction_id='TX-RECEIPT'", (value,))
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(C09TransactionError, match="receipt"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()
+
+
+def test_r2_t05_restart_rejects_validly_signed_wrong_backup_generation(tmp_path):
+    from dataclasses import replace
+
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-BACKUP", operation_id="OP-BACKUP", capability="identity_create", payload={"ref": "synthetic://backup"})
+    key = next(iter(witness.objects))
+    generation, payload = witness.objects[key]
+    from agent_lab.c09_witness_protocol import WitnessRecord
+    altered = replace(WitnessRecord.from_bytes(payload, KEY), backup_generation=7).signed(KEY).to_bytes()
+    witness.objects[key] = (generation, altered)
+    state.db.execute("UPDATE c09_transaction SET witness_bytes=? WHERE transaction_id='TX-BACKUP'", (altered,))
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(C09TransactionError, match="semantics"):
         DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
     reopened_kernel.close()

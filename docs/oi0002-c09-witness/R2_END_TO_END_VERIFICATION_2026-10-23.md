@@ -17,3 +17,10 @@ R2 does not reopen the accepted architecture, grant a capability, activate IPC, 
 
 Live synthetic GCS is optional only when the already-approved resource and effective separated Reader/Writer identities can be verified without IAM/resource mutation. Mocked or same-principal evidence never proves Windows four-principal isolation. Any unavailable live dependency is recorded as a limitation and does not authorize infrastructure changes.
 
+## R2-T03-A1 — concurrency harness FAIL
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`.
+Result: **FAIL**, exit 1; `1 failed, 24 passed in 14.65s`.
+
+Both threads returned COMMITTED because thread scheduling let the second read epoch 1 after the first committed; the test therefore created two valid sequential successors rather than two contenders for one predecessor. No Kernel concurrency failure or PASS is claimed. The bounded correction is a test-only barrier after both predecessor reads and before PREPARED insertion. Durable receipt-tamper and exact Witness-semantic tests in this run passed.
+
