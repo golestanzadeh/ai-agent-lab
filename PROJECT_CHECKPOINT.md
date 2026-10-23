@@ -61,6 +61,8 @@ Bounded F01-F03 remediation now makes local `PREPARED` non-mutating, binds exact
 
 Post-remediation relevant C09/Identity/IPC/Kernel regression passed `346 passed in 27.91s`, exit 0. This is compatibility evidence only and does not replace independent security re-review. Exact continuation is complete unit regression, candidate freeze and exact-SHA independent review; C09/OI-0002 remain open and no active open-item row is resolved.
 
+Post-remediation complete unit regression passed `1469 passed, 5 skipped in 285.38s`, exit 0. The implementation remains synthetic-only and non-operational; no role grant, service, IPC endpoint, Cloud/IAM/key/retention mutation or protected-data operation occurred. Exact continuation is independent implementation re-review of the frozen candidate SHA. C09/OI-0002 remain open and no active open-item row is resolved.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20

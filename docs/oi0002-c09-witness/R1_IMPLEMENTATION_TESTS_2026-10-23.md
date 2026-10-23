@@ -70,3 +70,10 @@ Command: focused C09 transaction/protocol/simulator/GCS adapter, Identity contin
 Result: **PASS**, exit 0; `346 passed in 27.91s`.
 
 The exact remediation remains synthetic/component evidence. It activates no IPC, cloud mutation, credential, protected data, role grant or operational acknowledgment. Full unit regression and independent exact-SHA security re-review remain mandatory.
+
+## R1 remediation complete unit regression
+
+Command: `PYTHONPATH=src python -m pytest tests/unit -q`.
+Result: **PASS**, exit 0; `1469 passed, 5 skipped in 285.38s`.
+
+The full unit suite is green after F01-F03 remediation. Independent implementation re-review of the exact frozen commit remains required before any R1 acceptance claim.
