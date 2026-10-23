@@ -77,3 +77,13 @@ Exact case/task/manifest/run scope and active Kernel authority remain mandatory.
 
 The five skips are existing DR03 protected-source/registration exclusions at `test_case_declaration_dr03.py` lines 45, 60, 68, 76 and 86; none concerns R2, C09, Kernel, Identity, Witness, GCS, IPC or permissions. Local status is `R2_TECHNICAL_PASS / SYNTHETIC_ONLY / INDEPENDENT_ACCEPTANCE_PENDING`. Live GCS and real Windows-principal separation remain explicitly unproven.
 
+## Independent R2 review 01 — FAIL
+
+Reviewed SHA: `a2d28ff3be93ac7db8193e0f00177388b064ed66`.
+Reviewer: `/root/c09_r1_implementation_independent_review`, separate read-only context.
+Decision: **`INDEPENDENT_R2_FAIL`**.
+
+Independent focused verification passed `36 passed in 12.79s`; relevant verification passed `363 passed in 38.06s`. The reviewer then reproduced **R2-F01 HIGH**: modifying local `payload_digest` and regenerating internally consistent receipt JSON/digest was accepted after restart while the original `next_head`, Witness and Kernel finality remained unchanged. Receipt validation reconstructed expectations from the same mutable row but did not verify the defining head derivation.
+
+Required correction is an independent invariant check that stored `next_head` exactly equals `_next_head(expected_head, transaction_id, payload_digest)`, plus payload-digest, transaction-id and combined row/receipt substitution tests. Full regression and a new exact-SHA independent review are mandatory. Live GCS and four-principal coverage remain unavailable/unproven.
+
