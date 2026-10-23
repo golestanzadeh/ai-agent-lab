@@ -27,7 +27,14 @@ A repository-path inventory briefly exposed an untracked synthetic receipt-store
 
 ## R1-REG-A3 — tracked relevant regression PASS
 
-Command: tracked C09 transaction/protocol/adapter/simulator, Identity continuity/persistence/evidence/custody, IPC wire/envelope/response and Orchestrator Kernel unit suites.  
+Command: tracked C09 transaction/protocol/adapter/simulator, Identity continuity/persistence/evidence/custody, IPC wire/envelope/response and Orchestrator Kernel unit suites.
 Result: **PASS**, exit 0; `337 passed in 26.50s`.
 
 This proves compatibility across the relevant bounded components, including the governed C09-R1 Contract Set. It does not establish real Named Pipe authentication, real principal separation, live GCS custody or operational C09 acceptance. Exact continuation is complete unit regression, candidate diff/security review and independent implementation review.
+
+## R1-FULL-01 — complete unit regression PASS
+
+Command: `PYTHONPATH=src python -m pytest tests/unit -q`
+Result: **PASS**, exit 0; `1460 passed, 5 skipped in 280.95s`.
+
+The full unit suite preserves existing behavior with the R1 synthetic durable transaction state machine and governed capability Contract Set. No real service, credential, cloud mutation, protected data, capability grant or external acknowledgment was activated. Exact continuation is candidate diff/security inspection and independent exact-SHA implementation review.
