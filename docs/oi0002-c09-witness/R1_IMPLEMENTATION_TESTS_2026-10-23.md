@@ -152,3 +152,22 @@ The five skips are unchanged platform/external-environment exclusions already pr
 The first documentation check after editing failed `1 failed, 17 passed in 1.53s`: only two `CURRENT_NEXT_ACTION` markers had been advanced, conflicting with the canonical identical-marker contract. Both markers were restored to the existing cross-file value; this was a documentation-only consistency correction and the failed attempt is not counted as PASS.
 
 Corrected post-edit documentation check: `python -m pytest tests/unit/test_documentation_index.py -q` — **PASS**, exit 0; `18 passed in 0.77s`.
+
+## R1 final independent implementation acceptance
+
+Reviewed exact immutable SHA: `bd656b7c03a8d20e6c12062b7a599a95fd471aed`.
+Reviewer: `/root/c09_r1_implementation_independent_review`, separate read-only context; worktree remained clean and HEAD matched remote.
+Decision: **`INDEPENDENT_IMPLEMENTATION_PASS`**.
+
+Independent verification:
+
+- Focused F01-F05/GCS suite: `32 passed in 9.85s`, exit 0.
+- One initial hand-assembled relevant command named nonexistent `test_ipc_wire.py`: exit 4, no tests; not credited.
+- Corrected tracked relevant C09/GCS/Identity/IPC/Kernel suite: `359 passed in 32.13s`, exit 0.
+- Complete unit suite with skip reasons: `1477 passed, 5 skipped in 304.35s`, exit 0.
+
+All five skips are existing DR03 protected-source/registration tests; none covers C09, Kernel, Witness, GCS, pagination, Identity, IPC or permissions. The reviewer independently confirmed F01 exact Kernel reservation/order, F02 restart/ack Witness verification, F03 durable pre-append staging, F04 coordinated rollback rejection and F05 complete pagination/version/deletion ambiguity defenses. Backup/restore capabilities remain A4 Human-Gate/no-standing-permission and hard-denied here.
+
+Accepted scope: **`R1 / BOUNDED_SYNTHETIC_COMPONENT_ONLY`**. This does not accept live GCS, real separated Windows principals, signing-key custody, operational IPC, C09, OI-0002, protected data or external acknowledgment. R2 was not started.
+
+Final post-acceptance documentation consistency: `18 passed in 0.79s`, exit 0. Authenticated ending capacity measured `2026-10-23T18:31:20.2948412Z`: five-hour remaining 79% (reset `2026-10-23T23:15:20Z`), weekly remaining 97% (reset `2026-10-30T18:15:20Z`).
