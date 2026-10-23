@@ -41,3 +41,10 @@ Result: **PASS**, exit 0; `6 passed in 3.19s`.
 
 Every durable boundary—PREPARED, PENDING, IDENTITY_COMMITTED, WITNESS_STAGED, WITNESSED and COMMITTED—survived close/reopen and deterministically reached exactly one committed Witness before acknowledgment. R2-T03 is next.
 
+## R2-T03 — PASS
+
+Command: concurrency, replay/conflict and failed-reservation nodes from `test_c09_transaction_state.py`.
+Result: **PASS**, exit 0; `3 passed in 2.29s`.
+
+The deterministic same-predecessor race produced one COMMITTED successor and one denied contender. Exact replay was idempotent; conflicting transaction, operation or payload identity was rejected; and reservation failure left epoch zero with no Witness. R2-T04 is next.
+

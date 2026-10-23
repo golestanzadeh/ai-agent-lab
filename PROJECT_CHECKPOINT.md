@@ -99,6 +99,8 @@ The corrected focused suite passed `25 passed in 11.58s`; the concurrency probe 
 
 R2-T02 process-termination recovery passed all six durable boundaries: `6 passed in 3.19s`, exit 0. PREPARED, PENDING, IDENTITY_COMMITTED, WITNESS_STAGED, WITNESSED and COMMITTED each recovered after reopen to exactly one committed Witness and acknowledged only after verification. Exact continuation is R2-T03 concurrency/replay. No active open-item row is resolved.
 
+R2-T03 concurrency/replay passed `3 passed in 2.29s`, exit 0. A deterministic same-predecessor race accepted exactly one successor, exact replay remained idempotent, conflicting transaction/operation/payload identities were rejected, and failed Kernel reservation produced no Identity or Witness side effect. Exact continuation is R2-T04 provider ambiguity/outage. No active open-item row is resolved.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20
