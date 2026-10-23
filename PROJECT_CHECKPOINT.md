@@ -69,6 +69,8 @@ Initial F04 remediation test `R1-F04-A1` failed `6 failed, 15 passed`: the new i
 
 Corrected F04 focused verification `R1-F04-A2` passed `21 passed in 8.72s`, exit 0. Witness epoch and sequence now both bind to the actual successor epoch; independent complete-chain enumeration is compared against every durable local receipt, and extra external successors, missing/tampered generations, truncated local history and stale/partial enumeration fail closed. Exact continuation is relevant/full regression and another exact-SHA independent re-review. C09/OI-0002 remain open; no active row is resolved.
 
+F04 post-remediation relevant regression passed `349 passed in 29.82s`; complete unit regression passed `1472 passed, 5 skipped in 288.44s`, both exit 0. No operational or privileged state changed. Exact continuation is freeze/push the new candidate and obtain independent exact-SHA implementation re-review; C09/OI-0002 remain open and no active row is resolved.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20

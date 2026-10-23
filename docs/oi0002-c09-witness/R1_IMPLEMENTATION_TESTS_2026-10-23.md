@@ -100,3 +100,10 @@ Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.
 Result: **PASS**, exit 0; `21 passed in 8.72s`.
 
 Both Witness epoch and sequence now equal the committed successor epoch. The injected reader independently returns the complete current chain; local durable rows no longer define the external verification set. One and two unseen external successors, missing/tampered/wrong-generation evidence, local truncation, partial listing and unavailable complete enumeration all fail closed. Regression and independent re-review remain required.
+
+## R1-F04 regression
+
+- Relevant C09/Identity/IPC/Kernel command: **PASS**, exit 0; `349 passed in 29.82s`.
+- Complete unit command `PYTHONPATH=src python -m pytest tests/unit -q`: **PASS**, exit 0; `1472 passed, 5 skipped in 288.44s`.
+
+This freezes synthetic/component candidate evidence only. Another independent exact-SHA implementation re-review remains mandatory.
