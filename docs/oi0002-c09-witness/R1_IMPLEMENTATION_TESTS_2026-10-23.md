@@ -107,3 +107,12 @@ Both Witness epoch and sequence now equal the committed successor epoch. The inj
 - Complete unit command `PYTHONPATH=src python -m pytest tests/unit -q`: **PASS**, exit 0; `1472 passed, 5 skipped in 288.44s`.
 
 This freezes synthetic/component candidate evidence only. Another independent exact-SHA implementation re-review remains mandatory.
+
+## R1 independent implementation re-review 03 — FAIL
+
+Reviewed exact SHA: `9be09e7cb84e04663eaf896f1a482a1b9be4d23b`.
+Decision: **`INDEPENDENT_IMPLEMENTATION_FAIL`**.
+
+The reviewer confirmed F01-F03 and direct F04 complete-chain rollback corrections, reproducing `21 passed` focused and `84 passed` relevant. **F05 CRITICAL** remains: a valid-looking partial listing equal to the rolled-back local prefix is accepted, and `GCSWitnessAdapter.read_chain()` issues one list request without consuming `nextPageToken`. The adversarial probe retained two external objects, restored both local stores to the first transaction, returned only the first external item, and startup accepted it.
+
+Required repair is exhaustive pagination until `nextPageToken` is absent, rejection of malformed/repeated tokens, duplicate objects across pages, deletion/version ambiguity and incomplete synthetic enumeration. Required tests cover first-page-only rollback denial, valid multi-page chains, repeated/invalid tokens, page-order variation, cross-page duplicates and deletion metadata. No active open-item row is resolved.
