@@ -23,6 +23,8 @@ class SyntheticWitness:
         self.available = True
         self.verify_ok = True
         self.timeout_after_create = False
+        self.complete_listing = True
+        self.listing_limit = None
 
     def append_or_resolve(self, record):
         if not self.available:
@@ -44,6 +46,17 @@ class SyntheticWitness:
             raise WitnessError("independent reader verification failed")
         if self.objects.get(record.object_key) != (generation, record.to_bytes()):
             raise WitnessError("witness readback mismatch")
+
+    def read_complete_chain(self, deployment_id):
+        if not self.available or not self.complete_listing:
+            raise WitnessError("complete witness enumeration unavailable")
+        ordered = sorted(
+            (value for key, value in self.objects.items() if f"/{deployment_id}/" in key),
+            key=lambda value: json.loads(value[1])["sequence"],
+        )
+        if self.listing_limit is not None:
+            ordered = ordered[:self.listing_limit]
+        return tuple(ordered)
 
 
 def configured(tmp_path, *, capabilities=("identity_create",)):
@@ -205,3 +218,44 @@ def test_canonical_witness_bytes_are_durable_before_provider_append(tmp_path):
     witness.available = True
     assert state.recover("TX-STAGED").state == "COMMITTED"
     state.close(); kernel.close()
+
+
+@pytest.mark.parametrize("successors", [1, 2])
+def test_coordinated_local_rollback_cannot_hide_external_successors(tmp_path, successors):
+    import shutil
+
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-BASE", operation_id="OP-BASE", capability="identity_create", payload={"ref": "synthetic://base"})
+    state.acknowledge("TX-BASE")
+    state.close(); kernel.close()
+    kernel_snapshot = tmp_path / "kernel.snapshot"
+    state_snapshot = tmp_path / "identity.snapshot"
+    shutil.copy2(kernel_path, kernel_snapshot)
+    shutil.copy2(state_path, state_snapshot)
+    for index in range(successors):
+        kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+        state = DurableC09TransactionState(state_path, kernel, context, witness, KEY)
+        state.begin(transaction_id=f"TX-TAIL-{index}", operation_id=f"OP-TAIL-{index}", capability="identity_create", payload={"ref": f"synthetic://tail/{index}"})
+        state.acknowledge(f"TX-TAIL-{index}")
+        state.close(); kernel.close()
+    shutil.copy2(kernel_snapshot, kernel_path)
+    shutil.copy2(state_snapshot, state_path)
+    rolled_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(C09TransactionError, match="head disagrees"):
+        DurableC09TransactionState(state_path, rolled_kernel, context, witness, KEY)
+    rolled_kernel.close()
+
+
+def test_partial_or_stale_external_enumeration_fails_closed(tmp_path):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-LIST", operation_id="OP-LIST", capability="identity_create", payload={"ref": "synthetic://list"})
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    witness.listing_limit = 0
+    with pytest.raises(C09TransactionError, match="head disagrees"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    witness.listing_limit = None
+    witness.complete_listing = False
+    with pytest.raises(WitnessError, match="enumeration unavailable"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()

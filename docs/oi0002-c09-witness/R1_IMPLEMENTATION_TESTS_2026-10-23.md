@@ -86,3 +86,10 @@ Decision: **`INDEPENDENT_IMPLEMENTATION_FAIL`**.
 The reviewer confirmed F01-F03 materially corrected and reproduced `18 passed in 7.38s` focused plus `81 passed in 19.86s` relevant tests. Independent fault injection found **F04 CRITICAL**: after two committed transactions, restoring both local Kernel and Identity databases to the valid TX-1 snapshot while retaining both external Witness records allowed startup and TX-1 readback. Local rows incorrectly defined the verification set, so the external TX-2 successor was invisible.
 
 Required repair: the Witness reader must independently enumerate a complete, current chain/head and startup/recovery must compare it against local durable rows and Kernel/Identity continuity, rejecting extra successors, gaps, forks, deleted generations and stale/partial listings. Required evidence includes the exact coordinated-rollback probe, one/multiple unseen tails and stale/partial enumeration. No active open-item row is resolved.
+
+## R1-F04-A1 — initial complete-chain remediation test
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`.
+Result: **FAIL**, exit 1; `6 failed, 15 passed in 10.17s`.
+
+Independent enumeration made missing, rewritten, wrong-generation and truncated evidence fail closed, but three older tests asserted the former provider exception type rather than the coordinator integrity denial. More importantly, the two-record rollback test exposed that `WitnessRecord.epoch` remained fixed at 1 while sequence advanced. No PASS is claimed. The bounded correction is to bind both epoch and sequence to `expected_epoch + 1`, retain fail-closed integrity errors at the coordinator boundary, and rerun the exact suite.

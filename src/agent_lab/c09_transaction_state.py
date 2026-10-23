@@ -28,6 +28,7 @@ class InjectedCrash(C09TransactionError):
 class WitnessClient(Protocol):
     def append_or_resolve(self, record: WitnessRecord) -> str: ...
     def verify_exact(self, record: WitnessRecord, generation: str) -> None: ...
+    def read_complete_chain(self, deployment_id: str) -> tuple[tuple[str, bytes], ...]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -267,18 +268,34 @@ class DurableC09TransactionState:
 
     def _verify_durable_witnesses(self) -> None:
         rows = self.db.execute(
-            "SELECT witness_bytes,witness_generation FROM c09_transaction "
-            "WHERE state IN ('WITNESSED','COMMITTED','ACKNOWLEDGED') ORDER BY expected_epoch"
+            "SELECT state,witness_bytes,witness_generation FROM c09_transaction "
+            "WHERE state IN ('WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED') ORDER BY expected_epoch"
         ).fetchall()
+        external = self.witness.read_complete_chain(self.context.deployment_id)
+        committed_count = sum(row["state"] != "WITNESS_STAGED" for row in rows)
+        if len(external) < committed_count or len(external) > len(rows):
+            raise C09TransactionError("external witness head disagrees with durable local state")
+        if len(external) != len(rows) and not (
+            len(rows) == committed_count + 1 and rows[-1]["state"] == "WITNESS_STAGED"
+            and len(external) == committed_count
+        ):
+            raise C09TransactionError("external witness enumeration is incomplete")
         previous = ZERO
-        for row in rows:
-            if row["witness_bytes"] is None or not row["witness_generation"]:
+        for index, (generation, payload) in enumerate(external):
+            row = rows[index]
+            if row["witness_bytes"] is None:
                 raise C09TransactionError("durable witness evidence is incomplete")
-            record = WitnessRecord.from_bytes(row["witness_bytes"], self.mac_key)
+            if payload != row["witness_bytes"]:
+                raise C09TransactionError("external witness chain conflicts with durable local state")
+            if row["witness_generation"] is not None and generation != row["witness_generation"]:
+                raise C09TransactionError("external witness generation conflicts with durable local state")
+            record = WitnessRecord.from_bytes(payload, self.mac_key)
+            if record.deployment_id != self.context.deployment_id or record.epoch != index + 1 or record.sequence != index + 1:
+                raise C09TransactionError("external witness sequence or scope is invalid")
             if record.previous_record != previous:
                 raise C09TransactionError("durable witness chain is truncated or reordered")
-            self.witness.verify_exact(record, row["witness_generation"])
-            previous = digest(row["witness_bytes"])
+            self.witness.verify_exact(record, generation)
+            previous = digest(payload)
 
     @staticmethod
     def _crash(boundary: str, requested: str | None) -> None:
