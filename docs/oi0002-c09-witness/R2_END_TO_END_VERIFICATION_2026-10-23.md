@@ -87,3 +87,14 @@ Independent focused verification passed `36 passed in 12.79s`; relevant verifica
 
 Required correction is an independent invariant check that stored `next_head` exactly equals `_next_head(expected_head, transaction_id, payload_digest)`, plus payload-digest, transaction-id and combined row/receipt substitution tests. Full regression and a new exact-SHA independent review are mandatory. Live GCS and four-principal coverage remain unavailable/unproven.
 
+## R2-F01 remediation candidate
+
+The startup validator now independently derives the expected successor head from `expected_head`, `transaction_id` and `payload_digest` before validating receipt bytes/digest. It therefore does not accept a self-consistent receipt rebuilt from a substituted mutable row. New adversarial tests cover payload-only, transaction-only and combined row substitutions with regenerated canonical receipt JSON and digest; every case fails closed during restart.
+
+- Focused transaction suite: **PASS**, `28 passed in 23.67s`, exit 0.
+- Relevant C09/Identity/IPC/Kernel regression: **PASS**, `361 passed in 34.37s`, exit 0.
+- Complete unit suite: **PASS**, `1484 passed, 5 skipped in 308.45s`, exit 0.
+- Documentation suite: **PASS**, `18 passed in 0.77s`, exit 0. An earlier command naming nonexistent `tests/unit/test_documentation_consistency.py` exited 4 and received no credit.
+
+The five skips are the unchanged DR03 protected-source/registration exclusions and do not cover R2. Current status is **`R2_F01_REMEDIATED / SYNTHETIC_ONLY / INDEPENDENT_RE_REVIEW_PENDING`**. Live GCS and real four-principal isolation remain unproven. C09/OI-0002 remain open; no privileged grant is made and R3/R4 are not started.
+

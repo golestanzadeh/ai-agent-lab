@@ -279,6 +279,11 @@ class DurableC09TransactionState:
             "ORDER BY expected_epoch"
         ).fetchall()
         for row in rows:
+            derived_head = self._next_head(
+                row["expected_head"], row["transaction_id"], row["payload_digest"]
+            )
+            if row["next_head"] != derived_head:
+                raise C09TransactionError("durable transaction head derivation is invalid")
             expected_json = canonical_bytes(self._receipt(row)).decode("utf-8")
             expected_digest = digest(expected_json.encode("utf-8"))
             if row["receipt_json"] != expected_json or row["receipt_digest"] != expected_digest:

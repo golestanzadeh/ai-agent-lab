@@ -9,7 +9,7 @@ import pytest
 from agent_lab.c09_transaction_state import (
     C09TransactionError, DurableC09TransactionState, InjectedCrash,
 )
-from agent_lab.c09_witness_protocol import WitnessError
+from agent_lab.c09_witness_protocol import WitnessError, canonical_bytes, digest
 from agent_lab.identity_continuity_authority import IdentityContinuityContext
 from agent_lab.orchestrator_kernel import OrchestratorKernel, PermissionDenied
 
@@ -328,5 +328,32 @@ def test_r2_t05_restart_rejects_validly_signed_wrong_backup_generation(tmp_path)
     state.close(); kernel.close()
     reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
     with pytest.raises(C09TransactionError, match="semantics"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()
+
+
+@pytest.mark.parametrize("substitution", ["payload", "transaction", "combined"])
+def test_r2_f01_composite_row_and_regenerated_receipt_substitution_is_rejected(tmp_path, substitution):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-DERIVE", operation_id="OP-DERIVE", capability="identity_create", payload={"ref": "synthetic://derive"})
+    if substitution in {"payload", "combined"}:
+        state.db.execute(
+            "UPDATE c09_transaction SET payload_digest=? WHERE transaction_id='TX-DERIVE'",
+            ("sha256:" + "a" * 64,),
+        )
+    if substitution in {"transaction", "combined"}:
+        state.db.execute(
+            "UPDATE c09_transaction SET transaction_id='TX-SUBSTITUTED' WHERE transaction_id='TX-DERIVE'"
+        )
+    transaction_id = "TX-SUBSTITUTED" if substitution in {"transaction", "combined"} else "TX-DERIVE"
+    row = state.db.execute("SELECT * FROM c09_transaction WHERE transaction_id=?", (transaction_id,)).fetchone()
+    receipt_json = canonical_bytes(state._receipt(row)).decode("utf-8")
+    state.db.execute(
+        "UPDATE c09_transaction SET receipt_json=?,receipt_digest=? WHERE transaction_id=?",
+        (receipt_json, digest(receipt_json.encode("utf-8")), transaction_id),
+    )
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(C09TransactionError, match="derivation"):
         DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
     reopened_kernel.close()
