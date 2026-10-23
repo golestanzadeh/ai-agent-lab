@@ -24,3 +24,13 @@ Result: **FAIL**, exit 1; `1 failed, 24 passed in 14.65s`.
 
 Both threads returned COMMITTED because thread scheduling let the second read epoch 1 after the first committed; the test therefore created two valid sequential successors rather than two contenders for one predecessor. No Kernel concurrency failure or PASS is claimed. The bounded correction is a test-only barrier after both predecessor reads and before PREPARED insertion. Durable receipt-tamper and exact Witness-semantic tests in this run passed.
 
+## Harness correction and R2-T01 — PASS
+
+- Corrected complete transaction-state suite: `25 passed in 11.58s`, exit 0.
+- `pytest --count=5` repeat attempt: exit 4 because the optional repeat plugin is absent; no tests ran and no PASS is claimed.
+- Explicit loop of the same-predecessor concurrency node: five consecutive PASS executions (`2.25s`, `0.85s`, `0.80s`, `0.72s`, `0.78s`).
+- R2-T01 command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q -k "happy_path_is_durable or reader_failure_and_missing_credentials"`.
+- R2-T01 result: **PASS**, exit 0; `2 passed, 23 deselected in 0.96s`.
+
+Evidence proves the bounded happy path cannot acknowledge before verified Kernel finality and the pre-finality reader-failure path remains unacknowledgeable. R2-T02 is next.
+

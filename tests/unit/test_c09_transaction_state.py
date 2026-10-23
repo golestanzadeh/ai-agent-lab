@@ -1,4 +1,5 @@
 import json
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -262,9 +263,18 @@ def test_partial_or_stale_external_enumeration_fails_closed(tmp_path):
     reopened_kernel.close()
 
 
-def test_r2_t03_concurrent_same_predecessor_allows_exactly_one_successor(tmp_path):
+def test_r2_t03_concurrent_same_predecessor_allows_exactly_one_successor(tmp_path, monkeypatch):
     kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
     state.close(); kernel.close()
+    barrier = threading.Barrier(2)
+    original_next_head = DurableC09TransactionState._next_head
+
+    def synchronized_next_head(current, transaction_id, payload_digest):
+        result = original_next_head(current, transaction_id, payload_digest)
+        barrier.wait(timeout=10)
+        return result
+
+    monkeypatch.setattr(DurableC09TransactionState, "_next_head", staticmethod(synchronized_next_head))
 
     def attempt(index):
         local_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
