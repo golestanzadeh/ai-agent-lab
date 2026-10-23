@@ -12,7 +12,7 @@ Exact repair: compute and pin the new accepted Identity contract digest/version 
 
 ## R1-I01-A2 — governed Contract Set and focused PASS
 
-Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`  
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`.
 Result: **PASS**, exit 0; `9 passed in 4.00s`.
 
 The Identity Contract Set now has distinct ID `ORCHESTRATOR_CONTRACT_SET_V2_IDENTITY_ADMINISTRATION_C09_R1` and exact pinned digest `sha256:fe140ebca6f207dd8f3aa46158328f3fa7f63b00f74851aa0af77c9c12ce9f77`. Tests cover durable PENDING/Identity commit/staged receipt/witness/Kernel COMMITTED/acknowledgment, process termination at four boundaries, ambiguous timeout after provider create, independent Reader denial, unavailable witness, exact replay, conflicting transaction/operation identity, ungranted backup/restore and forged capability. No external I/O or protected data was used. No active open-item row is resolved; implementation remains pending broader regression and independent review.
@@ -56,3 +56,10 @@ Required remediation is bounded to enforcing exact Kernel PENDING before every p
 Documentation verification initially named absent `tests/unit/test_documentation_consistency.py`; pytest exited 4 and no test ran, so no PASS is claimed for that command. Repository-derived correction is `tests/unit/test_documentation_index.py`.
 
 Corrected documentation verification: `python -m pytest tests/unit/test_documentation_index.py -q` — **PASS**, exit 0; `18 passed in 0.83s`.
+
+## R1 remediation focused verification
+
+Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.py -q`.
+Result: **PASS**, exit 0; `18 passed in 8.25s`.
+
+The remediation adds a non-mutating local `PREPARED` state, exact transaction/request binding in the durable Kernel reservation, authorization plus pending-reservation revalidation before every pre-finality side effect, canonical pre-provider `WITNESS_STAGED` bytes, and fail-closed committed-Witness/Kernel verification at restart and acknowledgment. Tests now cover six crash boundaries; failed reservation with no Identity or Witness effect; ambiguous provider completion; missing, rewritten and wrong-generation Witness objects; reader outage; truncated local chain; and durable bytes before provider append. This is still synthetic-only candidate evidence pending relevant/full regression and independent exact-SHA re-review.

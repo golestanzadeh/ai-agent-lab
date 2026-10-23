@@ -32,14 +32,25 @@ class IdentityContinuityAuthority:
             **self._scope(), head=head,
         )
 
-    def reserve(self, epoch: int, current_head: str, next_head: str) -> None:
+    def reserve(self, epoch: int, current_head: str, next_head: str, *, reservation_id: str | None = None,
+                request_digest: str | None = None) -> None:
         self._kernel.reserve_identity_continuity(
             **self._scope(), expected_epoch=epoch, expected_head=current_head, next_head=next_head,
+            reservation_id=reservation_id, request_digest=request_digest,
         )
 
-    def finalize(self, epoch: int, next_head: str) -> None:
+    def verify_pending(self, epoch: int, current_head: str, next_head: str, *,
+                       reservation_id: str | None = None, request_digest: str | None = None) -> None:
+        self._kernel.verify_pending_identity_continuity(
+            **self._scope(), expected_epoch=epoch, expected_head=current_head, next_head=next_head,
+            reservation_id=reservation_id, request_digest=request_digest,
+        )
+
+    def finalize(self, epoch: int, next_head: str, *, reservation_id: str | None = None,
+                 request_digest: str | None = None) -> None:
         self._kernel.finalize_identity_continuity(
             **self._scope(), committed_epoch=epoch + 1, committed_head=next_head,
+            reservation_id=reservation_id, request_digest=request_digest,
         )
 
     def reconcile(self, identity_epoch: int, identity_head: str) -> None:

@@ -79,7 +79,7 @@ def test_r1_i01_i02_happy_path_is_durable_and_acknowledges_only_after_kernel_com
     state.close(); kernel.close()
 
 
-@pytest.mark.parametrize("boundary", ["PENDING", "IDENTITY_COMMITTED", "WITNESSED", "COMMITTED"])
+@pytest.mark.parametrize("boundary", ["PREPARED", "PENDING", "IDENTITY_COMMITTED", "WITNESS_STAGED", "WITNESSED", "COMMITTED"])
 def test_r1_i04_process_termination_at_every_boundary_recovers_exactly_once(tmp_path, boundary):
     kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
     with pytest.raises(InjectedCrash, match=boundary):
@@ -98,7 +98,7 @@ def test_r1_i04_timeout_after_create_recovers_without_duplicate(tmp_path):
     witness.timeout_after_create = True
     with pytest.raises(WitnessError, match="ambiguous"):
         state.begin(transaction_id="TX-TIMEOUT", operation_id="OP-TIMEOUT", capability="identity_create", payload={"ref": "synthetic://timeout"})
-    assert state.result("TX-TIMEOUT").state == "IDENTITY_COMMITTED"
+    assert state.result("TX-TIMEOUT").state == "WITNESS_STAGED"
     assert state.recover("TX-TIMEOUT").state == "COMMITTED"
     assert len(witness.objects) == 1
     state.close(); kernel.close()
@@ -144,4 +144,64 @@ def test_r1_i03_capabilities_are_defined_default_deny_and_never_granted(tmp_path
             state.begin(transaction_id="TX-" + capability, operation_id="OP-" + capability, capability=capability, payload={})
     with pytest.raises(PermissionDenied, match="Kernel denied"):
         state.begin(transaction_id="TX-FORGED", operation_id="OP-FORGED", capability="identity_update", payload={})
+    state.close(); kernel.close()
+
+
+def test_kernel_reservation_failure_cannot_mutate_identity_or_witness(tmp_path, monkeypatch):
+    _, kernel, _, witness, _, state = configured(tmp_path)
+    original = state.authority.reserve
+    monkeypatch.setattr(state.authority, "reserve", lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("reserve failed")))
+    with pytest.raises(RuntimeError, match="reserve failed"):
+        state.begin(transaction_id="TX-NO-RESERVE", operation_id="OP-NO-RESERVE", capability="identity_create", payload={"ref": "synthetic://blocked"})
+    row = state.db.execute("SELECT state FROM c09_transaction WHERE transaction_id='TX-NO-RESERVE'").fetchone()
+    identity = state.db.execute("SELECT epoch FROM identity_state").fetchone()
+    assert row["state"] == "PREPARED" and identity["epoch"] == 0 and witness.objects == {}
+    monkeypatch.setattr(state.authority, "reserve", original)
+    assert state.recover("TX-NO-RESERVE").state == "COMMITTED"
+    state.close(); kernel.close()
+
+
+@pytest.mark.parametrize("damage", ["missing", "rewritten", "wrong-generation", "reader-outage"])
+def test_restart_fails_closed_when_committed_witness_is_unverifiable(tmp_path, damage):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-DAMAGE", operation_id="OP-DAMAGE", capability="identity_create", payload={"ref": "synthetic://damage"})
+    record_key = next(iter(witness.objects))
+    if damage == "missing":
+        witness.objects.clear()
+    elif damage == "rewritten":
+        generation, payload = witness.objects[record_key]
+        witness.objects[record_key] = (generation, payload + b" ")
+    elif damage == "wrong-generation":
+        generation, payload = witness.objects[record_key]
+        witness.objects[record_key] = (str(int(generation) + 1), payload)
+    else:
+        witness.available = False
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(WitnessError):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()
+
+
+def test_truncated_local_witness_chain_is_rejected_after_restart(tmp_path):
+    kernel_path, kernel, context, witness, state_path, state = configured(tmp_path)
+    state.begin(transaction_id="TX-FIRST", operation_id="OP-FIRST", capability="identity_create", payload={"ref": "synthetic://first"})
+    state.begin(transaction_id="TX-SECOND", operation_id="OP-SECOND", capability="identity_create", payload={"ref": "synthetic://second"})
+    state.db.execute("DELETE FROM c09_transaction WHERE transaction_id='TX-FIRST'")
+    state.close(); kernel.close()
+    reopened_kernel = OrchestratorKernel(kernel_path, CONTRACT_ROOT)
+    with pytest.raises(C09TransactionError, match="truncated"):
+        DurableC09TransactionState(state_path, reopened_kernel, context, witness, KEY)
+    reopened_kernel.close()
+
+
+def test_canonical_witness_bytes_are_durable_before_provider_append(tmp_path):
+    _, kernel, _, witness, _, state = configured(tmp_path)
+    witness.available = False
+    with pytest.raises(WitnessError, match="unavailable"):
+        state.begin(transaction_id="TX-STAGED", operation_id="OP-STAGED", capability="identity_create", payload={"ref": "synthetic://staged"})
+    row = state.db.execute("SELECT state,witness_bytes,witness_generation FROM c09_transaction WHERE transaction_id='TX-STAGED'").fetchone()
+    assert row["state"] == "WITNESS_STAGED" and row["witness_bytes"] and row["witness_generation"] is None
+    witness.available = True
+    assert state.recover("TX-STAGED").state == "COMMITTED"
     state.close(); kernel.close()

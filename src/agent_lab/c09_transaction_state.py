@@ -43,7 +43,7 @@ class TransactionResult:
 class DurableC09TransactionState:
     """Durable staged receipts; Kernel remains the sole coordinator."""
 
-    _STATES = {"PENDING", "IDENTITY_COMMITTED", "WITNESSED", "COMMITTED", "ACKNOWLEDGED"}
+    _STATES = {"PREPARED", "PENDING", "IDENTITY_COMMITTED", "WITNESS_STAGED", "WITNESSED", "COMMITTED", "ACKNOWLEDGED"}
 
     def __init__(self, path: str | Path, kernel: OrchestratorKernel,
                  context: IdentityContinuityContext, witness: WitnessClient, mac_key: bytes) -> None:
@@ -71,11 +71,12 @@ class DurableC09TransactionState:
               receipt_json TEXT, receipt_digest TEXT,
               witness_bytes BLOB, witness_generation TEXT,
               acknowledged INTEGER NOT NULL DEFAULT 0,
-              CHECK(state IN ('PENDING','IDENTITY_COMMITTED','WITNESSED','COMMITTED','ACKNOWLEDGED')));
+              CHECK(state IN ('PREPARED','PENDING','IDENTITY_COMMITTED','WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED')));
             CREATE UNIQUE INDEX IF NOT EXISTS c09_one_successor
               ON c09_transaction(expected_epoch, expected_head)
-              WHERE state IN ('IDENTITY_COMMITTED','WITNESSED','COMMITTED','ACKNOWLEDGED');
+              WHERE state IN ('IDENTITY_COMMITTED','WITNESS_STAGED','WITNESSED','COMMITTED','ACKNOWLEDGED');
         """)
+        self._verify_durable_witnesses()
 
     def close(self) -> None:
         self.db.close()
@@ -129,16 +130,30 @@ class DurableC09TransactionState:
         next_head = self._next_head(state["head"], transaction_id, payload_digest)
         with self.db:
             self.db.execute(
-                "INSERT INTO c09_transaction(transaction_id,operation_id,capability,payload_digest,expected_epoch,expected_head,next_head,state) VALUES(?,?,?,?,?,?,?,'PENDING')",
+                "INSERT INTO c09_transaction(transaction_id,operation_id,capability,payload_digest,expected_epoch,expected_head,next_head,state) VALUES(?,?,?,?,?,?,?,'PREPARED')",
                 (transaction_id, operation_id, capability, payload_digest, state["epoch"], state["head"], next_head),
             )
-        self.authority.reserve(state["epoch"], state["head"], next_head)
-        self._crash("PENDING", stop_after)
+        self._crash("PREPARED", stop_after)
         return self.recover(transaction_id, stop_after=stop_after)
 
     def recover(self, transaction_id: str, *, stop_after: str | None = None) -> TransactionResult:
         row = self._row(transaction_id)
+        if row["state"] == "PREPARED":
+            self.authority.reserve(
+                row["expected_epoch"], row["expected_head"], row["next_head"],
+                reservation_id=row["transaction_id"], request_digest=row["payload_digest"],
+            )
+            with self.db:
+                changed = self.db.execute(
+                    "UPDATE c09_transaction SET state='PENDING' WHERE transaction_id=? AND state='PREPARED'",
+                    (transaction_id,),
+                ).rowcount
+                if changed != 1:
+                    raise C09TransactionError("conflicting reservation transition")
+            self._crash("PENDING", stop_after)
+            row = self._row(transaction_id)
         if row["state"] == "PENDING":
+            self._verify_pending(row)
             receipt = {
                 "contract": "ai-tax-agent.c09-staged-receipt/1",
                 "transaction_id": row["transaction_id"], "operation_id": row["operation_id"],
@@ -168,22 +183,39 @@ class DurableC09TransactionState:
             self._crash("IDENTITY_COMMITTED", stop_after)
             row = self._row(transaction_id)
         if row["state"] == "IDENTITY_COMMITTED":
+            self._verify_pending(row)
             record = self._record(row)
+            with self.db:
+                changed = self.db.execute(
+                    "UPDATE c09_transaction SET state='WITNESS_STAGED',witness_bytes=? WHERE transaction_id=? AND state='IDENTITY_COMMITTED'",
+                    (record.to_bytes(), transaction_id),
+                ).rowcount
+                if changed != 1:
+                    raise C09TransactionError("conflicting witness staging transition")
+            self._crash("WITNESS_STAGED", stop_after)
+            row = self._row(transaction_id)
+        if row["state"] == "WITNESS_STAGED":
+            self._verify_pending(row)
+            record = WitnessRecord.from_bytes(row["witness_bytes"], self.mac_key)
             generation = self.witness.append_or_resolve(record)
             self.witness.verify_exact(record, generation)
             with self.db:
                 changed = self.db.execute(
-                    "UPDATE c09_transaction SET state='WITNESSED',witness_bytes=?,witness_generation=? WHERE transaction_id=? AND state='IDENTITY_COMMITTED'",
-                    (record.to_bytes(), generation, transaction_id),
+                    "UPDATE c09_transaction SET state='WITNESSED',witness_generation=? WHERE transaction_id=? AND state='WITNESS_STAGED'",
+                    (generation, transaction_id),
                 ).rowcount
                 if changed != 1:
                     raise C09TransactionError("conflicting witness transition")
             self._crash("WITNESSED", stop_after)
             row = self._row(transaction_id)
         if row["state"] == "WITNESSED":
+            self._verify_pending(row)
             record = WitnessRecord.from_bytes(row["witness_bytes"], self.mac_key)
             self.witness.verify_exact(record, row["witness_generation"])
-            self.authority.finalize(row["expected_epoch"], row["next_head"])
+            self.authority.finalize(
+                row["expected_epoch"], row["next_head"], reservation_id=row["transaction_id"],
+                request_digest=row["payload_digest"],
+            )
             with self.db:
                 self.db.execute(
                     "UPDATE c09_transaction SET state='COMMITTED' WHERE transaction_id=? AND state='WITNESSED'",
@@ -196,6 +228,8 @@ class DurableC09TransactionState:
         row = self._row(transaction_id)
         if row["state"] not in {"COMMITTED", "ACKNOWLEDGED"}:
             raise C09TransactionError("unverified transaction cannot be acknowledged")
+        self._verify_durable_witnesses()
+        self.authority.verify(row["expected_epoch"] + 1, row["next_head"])
         with self.db:
             self.db.execute(
                 "UPDATE c09_transaction SET state='ACKNOWLEDGED',acknowledged=1 WHERE transaction_id=? AND state='COMMITTED'",
@@ -224,6 +258,27 @@ class DurableC09TransactionState:
             PROTOCOL, self.context.deployment_id, 1, row["expected_epoch"] + 1, previous,
             row["next_head"], row["next_head"], 0, row["operation_id"],
         ).signed(self.mac_key)
+
+    def _verify_pending(self, row: sqlite3.Row) -> None:
+        self.authority.verify_pending(
+            row["expected_epoch"], row["expected_head"], row["next_head"],
+            reservation_id=row["transaction_id"], request_digest=row["payload_digest"],
+        )
+
+    def _verify_durable_witnesses(self) -> None:
+        rows = self.db.execute(
+            "SELECT witness_bytes,witness_generation FROM c09_transaction "
+            "WHERE state IN ('WITNESSED','COMMITTED','ACKNOWLEDGED') ORDER BY expected_epoch"
+        ).fetchall()
+        previous = ZERO
+        for row in rows:
+            if row["witness_bytes"] is None or not row["witness_generation"]:
+                raise C09TransactionError("durable witness evidence is incomplete")
+            record = WitnessRecord.from_bytes(row["witness_bytes"], self.mac_key)
+            if record.previous_record != previous:
+                raise C09TransactionError("durable witness chain is truncated or reordered")
+            self.witness.verify_exact(record, row["witness_generation"])
+            previous = digest(row["witness_bytes"])
 
     @staticmethod
     def _crash(boundary: str, requested: str | None) -> None:

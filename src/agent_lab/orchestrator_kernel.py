@@ -1364,22 +1364,32 @@ class OrchestratorKernel:
     def reserve_identity_continuity(
         self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
         task_id: str, run_id: str, operation: str, expected_epoch: int,
-        expected_head: str, next_head: str,
+        expected_head: str, next_head: str, reservation_id: str | None = None,
+        request_digest: str | None = None,
     ) -> None:
         row = self._identity_continuity_context(
             manifest_id=manifest_id, task_id=task_id, case_id=case_id,
             tax_year=tax_year, run_id=run_id, operation=operation,
         )
-        pending = _canonical({"manifest_id": manifest_id, "task_id": task_id, "run_id": run_id,
-                              "operation": operation, "next_head": next_head,
-                              "actor_id": row["actor_instance_id"]})
+        pending_value = {"manifest_id": manifest_id, "task_id": task_id, "run_id": run_id,
+                         "operation": operation, "next_head": next_head,
+                         "actor_id": row["actor_instance_id"]}
+        if reservation_id is not None or request_digest is not None:
+            pending_value.update(reservation_id=reservation_id, request_digest=request_digest)
+        pending = _canonical(pending_value)
         with self._connection:
             changed = self._connection.execute(
                 "UPDATE identity_continuity SET pending_json=? WHERE deployment_id=? AND case_id=? AND tax_year=? AND epoch=? AND head=? AND pending_json IS NULL",
                 (pending, deployment_id, case_id, tax_year, expected_epoch, expected_head),
             ).rowcount
             if changed != 1:
-                raise IntegrityError("stale continuity state or pending reservation")
+                current = self._connection.execute(
+                    "SELECT epoch,head,pending_json FROM identity_continuity WHERE deployment_id=? AND case_id=? AND tax_year=?",
+                    (deployment_id, case_id, tax_year),
+                ).fetchone()
+                if current is None or current["epoch"] != expected_epoch or current["head"] != expected_head or current["pending_json"] != pending:
+                    raise IntegrityError("stale continuity state or pending reservation")
+                return
             self._append_event("IDENTITY_CONTINUITY_RESERVED", "IDENTITY_CONTINUITY", deployment_id,
                                row["actor_instance_id"], {"case_id": case_id, "tax_year": tax_year,
                                "epoch": expected_epoch + 1, "head": next_head, "operation": operation})
@@ -1387,6 +1397,7 @@ class OrchestratorKernel:
     def finalize_identity_continuity(
         self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
         task_id: str, run_id: str, operation: str, committed_epoch: int, committed_head: str,
+        reservation_id: str | None = None, request_digest: str | None = None,
     ) -> None:
         row = self._identity_continuity_context(
             manifest_id=manifest_id, task_id=task_id, case_id=case_id,
@@ -1399,11 +1410,14 @@ class OrchestratorKernel:
         if current is None or current["pending_json"] is None:
             raise IntegrityError("continuity reservation is missing")
         pending = json.loads(current["pending_json"])
-        if current["epoch"] + 1 != committed_epoch or pending != {
+        expected_pending = {
             "actor_id": row["actor_instance_id"], "manifest_id": manifest_id,
             "next_head": committed_head, "operation": operation,
             "run_id": run_id, "task_id": task_id,
-        }:
+        }
+        if reservation_id is not None or request_digest is not None:
+            expected_pending.update(reservation_id=reservation_id, request_digest=request_digest)
+        if current["epoch"] + 1 != committed_epoch or pending != expected_pending:
             raise IntegrityError("identity commit does not match Kernel reservation")
         with self._connection:
             self._connection.execute(
@@ -1413,6 +1427,31 @@ class OrchestratorKernel:
             self._append_event("IDENTITY_CONTINUITY_COMMITTED", "IDENTITY_CONTINUITY", deployment_id,
                                row["actor_instance_id"], {"case_id": case_id, "tax_year": tax_year,
                                "epoch": committed_epoch, "head": committed_head})
+
+    def verify_pending_identity_continuity(
+        self, *, deployment_id: str, case_id: str, tax_year: int, manifest_id: str,
+        task_id: str, run_id: str, operation: str, expected_epoch: int,
+        expected_head: str, next_head: str, reservation_id: str | None = None,
+        request_digest: str | None = None,
+    ) -> None:
+        """Revalidate authority and the exact durable reservation before side effects."""
+        actor = self._identity_continuity_context(
+            manifest_id=manifest_id, task_id=task_id, case_id=case_id,
+            tax_year=tax_year, run_id=run_id, operation=operation,
+        )["actor_instance_id"]
+        row = self._connection.execute(
+            "SELECT epoch,head,pending_json FROM identity_continuity WHERE deployment_id=? AND case_id=? AND tax_year=?",
+            (deployment_id, case_id, tax_year),
+        ).fetchone()
+        expected_value = {
+            "actor_id": actor, "manifest_id": manifest_id, "next_head": next_head,
+            "operation": operation, "run_id": run_id, "task_id": task_id,
+        }
+        if reservation_id is not None or request_digest is not None:
+            expected_value.update(reservation_id=reservation_id, request_digest=request_digest)
+        expected = _canonical(expected_value)
+        if row is None or row["epoch"] != expected_epoch or row["head"] != expected_head or row["pending_json"] != expected:
+            raise IntegrityError("exact continuity reservation is unavailable")
 
     def verify_identity_continuity(self, *, deployment_id: str, case_id: str, tax_year: int, epoch: int, head: str) -> None:
         row = self._connection.execute(
