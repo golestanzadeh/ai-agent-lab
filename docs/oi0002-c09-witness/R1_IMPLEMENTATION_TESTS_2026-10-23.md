@@ -38,3 +38,21 @@ Command: `PYTHONPATH=src python -m pytest tests/unit -q`
 Result: **PASS**, exit 0; `1460 passed, 5 skipped in 280.95s`.
 
 The full unit suite preserves existing behavior with the R1 synthetic durable transaction state machine and governed capability Contract Set. No real service, credential, cloud mutation, protected data, capability grant or external acknowledgment was activated. Exact continuation is candidate diff/security inspection and independent exact-SHA implementation review.
+
+## R1 independent implementation review 01 — FAIL
+
+Reviewed exact SHA: `8a6b655a9e6e1e1786055fd254b826d52fd6960f`.
+Reviewer: `/root/c09_r1_implementation_independent_review`, separate read-only context.
+Decision: **`INDEPENDENT_IMPLEMENTATION_FAIL`**.
+
+Reviewer verification reproduced `9 passed` focused and `72 passed` relevant tests. Independent adversarial probes found:
+
+- **F01 CRITICAL:** after injected Kernel reservation failure, local recovery could commit Identity and append Witness without an exact durable Kernel PENDING reservation; final Kernel transition alone rejected the ghost transaction too late.
+- **F02 CRITICAL:** after a completed transaction, process restart and deletion of the external Witness, `acknowledge()` trusted local `COMMITTED` and returned success.
+- **F03 HIGH:** canonical Witness bytes were stored only after provider append/readback rather than durably and atomically staged before provider interaction.
+
+Required remediation is bounded to enforcing exact Kernel PENDING before every pre-finality mutation, fail-closed startup/recovery/acknowledgment Witness verification, and durable pre-append canonical staging. Required negative evidence includes every transition boundary plus missing, rewritten, wrong-generation, truncated-chain and reader-outage conditions. C09/OI-0002 remain open and no active open-item row is resolved.
+
+Documentation verification initially named absent `tests/unit/test_documentation_consistency.py`; pytest exited 4 and no test ran, so no PASS is claimed for that command. Repository-derived correction is `tests/unit/test_documentation_index.py`.
+
+Corrected documentation verification: `python -m pytest tests/unit/test_documentation_index.py -q` — **PASS**, exit 0; `18 passed in 0.83s`.
