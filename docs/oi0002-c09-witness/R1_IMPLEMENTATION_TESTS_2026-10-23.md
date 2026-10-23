@@ -130,3 +130,9 @@ Command: `PYTHONPATH=src python -m pytest tests/unit/test_c09_transaction_state.
 Result: **PASS**, exit 0; `32 passed in 9.70s`.
 
 The reader consumes all pages through terminal absence of `nextPageToken`; it rejects repeated or malformed tokens, duplicate objects across pages, deletion/version ambiguity and incomplete synthetic enumeration. A complete two-page chain with reversed page order is sorted and verified deterministically. Regression and independent review remain mandatory.
+
+## Capacity stop after R1-F05-A2
+
+Authenticated measurement at `2026-10-23T14:07:03.7832886Z`: five-hour remaining 21%, reset `2026-10-23T18:24:15Z`; weekly remaining 76%, reset `2026-10-29T20:33:11Z`. With the mandatory 15-point five-hour reserve, only 6 points are admissible, which is insufficient for the remaining relevant/full regression, independent review and governed result cycle.
+
+Status: **`BLOCKED_CAPACITY / R1_REVIEW_NOT_COMPLETE`**. Clean synchronized recovery commit is `17657f276999cdf815df7ac9e3595b82b85bd7df`. After reset, obtain fresh authenticated admission, run relevant and complete unit regression, publish the exact evidence SHA and request independent re-review. R2 remains prohibited until R1 independent PASS.
