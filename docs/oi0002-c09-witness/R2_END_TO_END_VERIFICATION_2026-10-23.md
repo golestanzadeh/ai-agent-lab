@@ -48,3 +48,10 @@ Result: **PASS**, exit 0; `3 passed in 2.29s`.
 
 The deterministic same-predecessor race produced one COMMITTED successor and one denied contender. Exact replay was idempotent; conflicting transaction, operation or payload identity was rejected; and reservation failure left epoch zero with no Witness. R2-T04 is next.
 
+## R2-T04 — PASS / live dependency unavailable
+
+Command: timeout, Reader outage, pre-append staging, incomplete enumeration nodes plus complete `test_c09_gcs_witness_adapter.py`.
+Result: **PASS**, exit 0; `15 passed in 4.48s`.
+
+Ambiguous conditional-create completion reconciled the exact staged bytes once; Writer/Reader outage and incomplete enumeration denied acknowledgment; pagination, repeated/invalid token, duplicate generation and deletion ambiguity remained fail closed. A read-only host check returned `GCLOUD_UNAVAILABLE`; therefore no live GCS test ran and no actual cloud or Windows-principal isolation claim is made. No cloud resource, IAM, key, service or evidence changed. R2-T05 is next.
+
