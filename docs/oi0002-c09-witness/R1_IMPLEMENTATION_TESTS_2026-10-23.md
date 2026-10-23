@@ -24,3 +24,10 @@ The first relevant-regression command included nonexistent `tests/unit/test_iden
 ## R1-REG-A2 — transient path inventory conflict
 
 A repository-path inventory briefly exposed an untracked synthetic receipt-store test from another concurrent workspace action; it disappeared before collection. The attempted command exited 4 with `file or directory not found`; **no tests ran**. No candidate code was retained from that transient file and the worktree returned clean. Exact continuation is to use only `git ls-files` tracked test paths for R1-REG-A3.
+
+## R1-REG-A3 — tracked relevant regression PASS
+
+Command: tracked C09 transaction/protocol/adapter/simulator, Identity continuity/persistence/evidence/custody, IPC wire/envelope/response and Orchestrator Kernel unit suites.  
+Result: **PASS**, exit 0; `337 passed in 26.50s`.
+
+This proves compatibility across the relevant bounded components, including the governed C09-R1 Contract Set. It does not establish real Named Pipe authentication, real principal separation, live GCS custody or operational C09 acceptance. Exact continuation is complete unit regression, candidate diff/security review and independent implementation review.
