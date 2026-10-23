@@ -49,6 +49,8 @@
     "identity_status_transition": {"maximum_tier": "A4", "case_run_required": true},
     "case_party_bind": {"maximum_tier": "A4", "case_run_required": true},
     "subject_fact_bind": {"maximum_tier": "A4", "case_run_required": true},
+    "identity_backup": {"maximum_tier": "A4", "case_run_required": true, "human_gate_required": true, "no_standing_agent_permission": true},
+    "identity_restore": {"maximum_tier": "A4", "case_run_required": true, "human_gate_required": true, "no_standing_agent_permission": true},
     "report_evidence_gap": {"maximum_tier": "A4", "case_run_required": true},
     "research_authoritative_law": {"maximum_tier": "A4", "case_run_required": true},
     "propose_tax_opportunity": {"maximum_tier": "A4", "case_run_required": true},

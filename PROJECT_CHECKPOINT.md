@@ -41,6 +41,10 @@ Independent review of exact architecture commit `2c664800d8a3ace7cf0995c838a46d4
 
 Final authenticated handoff at `2026-10-22T21:28:24.5144451Z`: 31% five-hour remaining (reset `2026-10-23T01:33:11Z`) and 89% weekly remaining (reset `2026-10-29T20:33:11Z`), ordinary usage allowed. The reserve remains intact; next dispatch must obtain/readmit against fresh authenticated evidence after reset.
 
+# C09 R1 implementation resumed — 2026-10-23
+
+Recovery verified clean synchronized baseline `a7a56bb9931eb9ee0ebcd9e47ae1fff5d46597c5` and preserved architecture PASS at `2c664800d8a3ace7cf0995c838a46d46c6a57191`. Authenticated admission was 99% five-hour and 89% weekly remaining, preserving the 15-point reserve. R1-I01/I02/I04 candidate code adds synthetic-only durable receipts and Kernel-coordinated recovery; R1-I03 adds ungranted Default-Deny capability definitions. Test `R1-I01-A1` failed before execution (`9 failed`) because the frozen Contract Set digest correctly rejected a raw Permission Matrix change. No state or external action occurred. Exact continuation is governed Contract Set identity/digest repair and rerun. `OPEN_ITEMS.md` membership is unchanged; C09/OI-0002 remain open.
+
 Reconciliation audit: **12 contradiction classes detected; 12 resolved in the current projection; 0 unresolved evidence conflicts**. The resolved classes were stale UI25-05 independent-review status, stale UI25-11 Owner status, UI25 increment/formal-package identifier collision, obsolete UI25-00 next action, stale OI-0002 executable step, TPM/GitHub freshness assumptions, missing DR-05 active gate, DR lineage historical-PASS ambiguity, C09 global-block ambiguity, optional scheduler/supervisor/notification classification, frozen-matrix current-status ambiguity, and historical-ledger precedence. The remaining open items are genuine unaccepted dependencies or Human Gates, not documentary contradictions.
 
 # OI-0009 permanent Owner termination — 2026-10-20
