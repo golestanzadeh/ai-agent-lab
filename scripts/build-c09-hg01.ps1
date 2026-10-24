@@ -35,5 +35,6 @@ Get-ChildItem -LiteralPath $out -Recurse -File | Where-Object { $_.FullName -not
     $relative = $_.FullName.Substring($out.Length + 1).Replace('\','/')
     $manifest += [ordered]@{ path=$relative; size=$_.Length; sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower() }
 }
-$manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $out 'artifact-tree.json') -Encoding utf8NoBOM
+$manifestJson = $manifest | ConvertTo-Json -Depth 4
+[System.IO.File]::WriteAllText((Join-Path $out 'artifact-tree.json'), $manifestJson, (New-Object System.Text.UTF8Encoding($false)))
 Write-Output $out
