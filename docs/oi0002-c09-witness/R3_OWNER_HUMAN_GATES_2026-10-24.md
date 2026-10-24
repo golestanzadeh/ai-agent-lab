@@ -44,10 +44,10 @@ Independent re-review of exact SHA `21aee1b3985b4dfef6d920f524889a2ce0af53fc` re
 
 ## HG-C09-R3-03 — GCS least-privilege bindings
 
-Gate readiness: **`NOT_APPROVAL_READY`** until a fresh policy version/etag readback, exact custom-role resource names, exact prefix condition and approved local keyless credential-delivery mechanism are committed and independently reviewed. `gcloud.cmd` is unavailable here, so current IAM cannot be asserted.
+Gate readiness: **`HG03_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`**. Authenticated read-only inventory and the exact proposal are recorded in `HG03_GCS_IAM_READINESS_2026-10-24.md`. Independent review of exact SHA `0f197ef9682ccf79f9df7743748951585cfdcaa8` passed after two fail-and-remediate cycles; focused `33` and relevant `327` passed independently and 14 adversarial substitutions were rejected. Current unconditioned roles, legacy project basic-principal bindings, Owner Token Creator access, absent operational keyless delivery, deployment-time fresh CAS and live enforcement remain blockers. No Owner approval statement is issued and no cloud state changed.
 
 1. **Target:** project `ai-tax-agent-507813`, bucket `ai-tax-agent-c09-witness-test-507813`, exact deployment prefix and the two existing service accounts in `config/c09-r3/gcs-iam-proposal.json`.
-2. **Current state:** historical isolated writer/reader probes passed; current IAM cannot be read because `gcloud.cmd` is unavailable in this process.
+2. **Current state:** live read-only inventory verified effective policy v1/ETag `CAQ=`, exact existing accounts, unconditioned predefined roles, no custom roles/conditions, zero user-managed keys and no WIF pool; this is not operational acceptance.
 3. **Change:** apply/reconcile custom prefix-scoped Writer=create-only and Reader=get/list-only bindings; no user-managed keys.
 4. **Permission:** narrow bucket IAM administration for the exact bindings.
 5. **Justification:** separates append authority from verification.

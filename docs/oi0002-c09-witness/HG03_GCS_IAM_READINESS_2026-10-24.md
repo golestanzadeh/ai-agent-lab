@@ -57,4 +57,4 @@ The future Owner statement is recorded in the JSON package. It is not presently 
 - Focused offline HG-01/HG-02/HG-03 preparation tests: `21 passed`.
 - No IAM, key, role, bucket, retention or credential mutation occurred.
 
-Independent exact-SHA review is required before this preparation package can receive its independent status. Even with review PASS, the blockers above require `NOT_APPROVAL_READY`.
+Independent reviews of `df1c939` and `1eb9c94` initially failed and identified enforceability gaps in condition, ETag, full-policy-member and keyless-contract validation. Those findings were corrected. Independent re-review of exact SHA `0f197ef9682ccf79f9df7743748951585cfdcaa8` returned `HG03_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`; reviewer tests passed `33` focused and `327` relevant, and all 14 adversarial substitutions were rejected. Even with preparation PASS, the operational blockers above keep the gate not approval-ready.

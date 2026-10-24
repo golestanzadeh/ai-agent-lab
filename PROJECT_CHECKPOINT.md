@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG03_AFTER_CAPACITY_RESET -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_PREREQUISITE_INVESTIGATION -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -20,6 +20,14 @@ The mandatory critical path is:
 OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical PASS and G2 MCP Events are not an execution dependency. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`; it is not a technical PASS, and no development, acceptance or release stage depends on outbound notification-provider activation. Either item may be reactivated only by a new explicit Owner directive. OI-0010 remains an optional operational enhancement and is not on the mandatory product critical path unless separately selected and authorized. C09 being open does not globally block independently safe development, but any operation depending on rollback-resistant finality remains fail-closed.
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
+
+# C09 R3 HG-03 preparation independently accepted — 2026-10-24
+
+Fresh authenticated admission was 98% five-hour and 75% weekly remaining, preserving the mandatory 15-point reserve. Authenticated read-only Cloud SDK inventory verified project `ai-tax-agent-507813`, bucket `ai-tax-agent-c09-witness-test-507813`, effective bucket policy v1/ETag `CAQ=`, project policy v1/ETag `BwZa0Iovf6w=`, exact Writer/Reader accounts, zero user-managed keys, no custom roles, no IAM Conditions and no Workload Identity pool. Current unconditioned predefined roles, legacy project basic-principal bindings and Owner Token Creator access remain explicit blockers.
+
+The bounded package defines three exact minimal custom roles, exact prefix/bucket conditions, complete full-policy binding validation, manifest-to-policy ETag binding and a closed nine-property keyless contract. Initial independent reviews of `df1c939` and `1eb9c94` failed on enforceability gaps; both finding sets were corrected. Independent review of exact SHA `0f197ef9682ccf79f9df7743748951585cfdcaa8` returned **`HG03_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`**. Worker verification passed `33` focused and `394` relevant; reviewer verification passed `33` focused and `327` relevant, with all 14 adversarial substitutions rejected. No IAM, role, key, credential, bucket or retention mutation occurred.
+
+HG-03 remains not approval-ready until an approved operational local keyless source/binding exists, legacy bindings and Owner impersonation are safely resolved, a fresh deployment-time ETag/CAS succeeds, and separately authorized live enforcement/revocation probes pass. R3 operational security is not accepted; C09/OI-0002 remain open. `OPEN_ITEMS.md` was synchronized with no row closure. The next already authorized optional action, subject to a fresh Limit Guard, is a proposal-only investigation of HG-01 service implementation/build prerequisites; no service implementation or installation is authorized.
 
 # C09 operational architecture gate resumed — 2026-10-22
 
