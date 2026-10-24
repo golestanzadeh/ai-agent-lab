@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I05_SIGNING_PROFILE -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_AFTER_CAPACITY_RESET_FULL_REGRESSION_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 and HG-01/02/03 preparation have bounded independent PASS. HG-03 remains not approval-ready for its recorded cloud/keyless blockers. HG01 BP-01/I01/I02 and synthetic I03 pass; I04 built three real unsigned development executables twice but exact reproducibility failed for EXE/base-library outputs. Operational Custodian, signing, final-candidate rebuild, regression and independent review remain incomplete. | Continue with I05 signing profile if admitted; never treat current artifacts as deployment candidates. Installation/activation and all operational R3 Human Gates remain separate. | `docs/oi0002-c09-witness/HG01_IMPLEMENTATION_2026-10-24.md`; `config/c09-r3/hg01-build-evidence.json` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 and HG-01/02/03 preparation have bounded independent PASS. HG01 BP-01/I01/I02/synthetic-I03/I05 are implemented locally; I04 proves build feasibility but exact reproducibility failed and artifacts are unsigned/pre-final-candidate. Full regression and independent security/build review are capacity-deferred. HG-03 and operational Custodian remain separately blocked. | After reset: full regression, freeze exact SHA, independent implementation/build review, remediate if admitted, then reassess HG-01. Never deploy/install current artifacts. | `docs/oi0002-c09-witness/HG01_IMPLEMENTATION_2026-10-24.md`; `config/c09-r3/hg01-build-evidence.json`; `config/c09-r3/hg01-signing-profile.json` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |

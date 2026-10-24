@@ -307,3 +307,25 @@ def test_hg01_build_script_is_fixed_scope_and_never_installs_or_activates_servic
     forbidden = ("new-service", "sc.exe", "start-service", "set-acl", "set-service", "signtool")
     assert not any(item in script.casefold() for item in forbidden)
 
+
+def test_hg01_signing_profile_is_strict_and_operational_signing_is_not_authorized():
+    root = Path(__file__).resolve().parents[2]
+    profile = json.loads((root / "config/c09-r3/hg01-signing-profile.json").read_text(encoding="utf-8"))
+    operational = profile["operational_artifacts"]
+    assert profile["operational_signing_authorized"] is False
+    assert operational["format"] == "Authenticode" and operational["digest_algorithm"] == "SHA256"
+    assert operational["timestamp"] == "RFC3161_SHA256_REQUIRED"
+    assert operational["certificate_eku"] == "1.3.6.1.5.5.7.3.3"
+    assert operational["private_key_export_allowed"] is False
+    assert operational["publisher_and_thumbprint_manifest_pinned"] is True
+    assert "denies installation/startup" in profile["failure"]
+
+
+def test_hg01_artifact_verifier_is_read_only_fixed_scope_and_fails_unsigned_operational_artifacts():
+    root = Path(__file__).resolve().parents[2]
+    script = (root / "scripts/verify-c09-hg01-artifacts.ps1").read_text(encoding="utf-8")
+    assert "Get-FileHash" in script and "Get-AuthenticodeSignature" in script
+    assert "RequireOperationalSignature" in script and "Status -ne 'Valid'" in script
+    forbidden = ("signtool", "set-authenticodesignature", "new-service", "start-service", "set-acl")
+    assert not any(item in script.casefold() for item in forbidden)
+

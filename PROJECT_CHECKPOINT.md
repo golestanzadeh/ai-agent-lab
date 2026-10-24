@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I05_SIGNING_PROFILE -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_AFTER_CAPACITY_RESET_FULL_REGRESSION_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -42,6 +42,8 @@ HG01-I02 implements the Windows-native transport core: frozen Identity/Custodian
 HG01-I03 adds a synthetic-only closed Custodian runtime for authenticate/verify, exact Kernel authorization and staged-receipt callbacks, canonical digest binding, five-second expiry, deterministic exact retry and changed-replay rejection. Focused service/transport/Custodian verification passed `34`. No key escapes the boundary. The SCM entry point remains fail-closed pending HG-04 operational non-exportable key-provider authority; no operational key exists. Exact next package is HG01-I04 local reproducible-build evidence.
 
 HG01-I04 used the hash-locked isolated toolchain to produce two clean builds of all three real executables from `97adcca`. Both trees had 204 files, but exact comparison returned 12 diff rows across the three EXEs and three base-library ZIPs. Build feasibility PASSes; bit-for-bit reproducibility FAILs and is not claimed. Build-A executable SHA-256 values and `NotSigned` status are recorded in `hg01-build-evidence.json`; ignored artifacts were not installed or committed. HG-01 remains not approval-ready. Exact next package is I05 signing-profile preparation, followed by capacity reassessment for regression/independent review.
+
+HG01-I05 freezes a strict operational Authenticode SHA-256/RFC3161 profile with Code Signing EKU, pinned publisher/thumbprint, chain/revocation validation and fail-closed verification. Development artifacts remain unsigned and ineligible. No key/certificate was created or used. After I04, authenticated capacity was 28% five-hour; preserving 15 left 13 points, sufficient for I05 but not the conservative 15–20 required for full regression, final-candidate rebuild analysis, independent security/build review and reporting. Status is `CAPACITY_DEFERRED_BEFORE_FINAL_VERIFICATION / HG01_NOT_APPROVAL_READY`; exact continuation after reset is full regression, exact-SHA independent review and blocker/readiness assessment—not implementation expansion.
 
 # C09 operational architecture gate resumed — 2026-10-22
 

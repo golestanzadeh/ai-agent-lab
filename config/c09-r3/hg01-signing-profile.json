@@ -1,0 +1,21 @@
+{
+  "schema": "ai-tax-agent.c09-r3-hg01-signing-profile/1.0",
+  "status": "PROFILE_PREPARED_OPERATIONAL_KEY_NOT_AUTHORIZED",
+  "development_artifacts": {"signature_required": false, "accepted_status": "NotSigned", "deployment_eligible": false},
+  "operational_artifacts": {
+    "signature_required": true,
+    "format": "Authenticode",
+    "digest_algorithm": "SHA256",
+    "timestamp": "RFC3161_SHA256_REQUIRED",
+    "certificate_eku": "1.3.6.1.5.5.7.3.3",
+    "certificate_source": "OWNER_SELECTED_NON_EXPORTABLE_PROVIDER_HUMAN_GATE",
+    "private_key_export_allowed": false,
+    "publisher_and_thumbprint_manifest_pinned": true,
+    "chain_build_required": true,
+    "revocation_check_required": true
+  },
+  "verification": ["artifact SHA-256 matches reviewed manifest", "Authenticode status Valid", "signer thumbprint and publisher match protected manifest", "Code Signing EKU present", "RFC3161 timestamp valid", "certificate chain and revocation checks succeed"],
+  "failure": "Any absent, invalid, untrusted, expired-without-valid-timestamp, revoked, wrong-publisher, wrong-thumbprint, wrong-hash or unverifiable signature denies installation/startup.",
+  "custody": "Operational certificate selection, provisioning, access grant, use and revocation are separate Owner Human Gates. No runtime service may read/export the private key.",
+  "operational_signing_authorized": false
+}

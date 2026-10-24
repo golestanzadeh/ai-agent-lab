@@ -49,3 +49,11 @@ Status: `BUILD_PASS / REPRODUCIBILITY_FAIL / UNSIGNED_DEVELOPMENT_ONLY`.
 The hash-locked wheelhouse installed into an isolated ignored virtual environment. Two clean builds from source commit `97adcca94b845dd931aac13cb4f669571daa62f4` produced three actual onedir executables per build. Each tree contained 204 recorded files. Exact comparison returned 12 differing rows across six logical paths: every role's EXE and `base_library.zip`. Bit-for-bit reproducibility is therefore **not** claimed.
 
 Build A executable SHA-256 values are recorded in `config/c09-r3/hg01-build-evidence.json`. All three Authenticode states are `NotSigned`. Artifacts remain only under the ignored `.runtime` build root and were not installed, started or committed. Because they predate the final candidate and fail exact reproduction/signing, they are evidence of build feasibility—not deployment candidates.
+
+## HG01-I05 signing profile
+
+Status: `PROFILE_PASS / OPERATIONAL_SIGNING_HUMAN_GATE`.
+
+The prepared profile requires Authenticode SHA-256, an RFC3161 SHA-256 timestamp, Code Signing EKU, pinned publisher/thumbprint, valid chain and revocation checks. Missing/invalid/revoked/wrong-signer/wrong-hash evidence denies installation and startup. Development builds may remain `NotSigned` but are never deployment-eligible. The private key must be non-exportable in an Owner-selected provider; selection, provisioning, grant, signing and revocation are separately prohibited Human Gates.
+
+The verifier is read-only and fixed to the ignored HG-01 build root. No certificate/key was created, imported, selected or used. No artifact was modified.
