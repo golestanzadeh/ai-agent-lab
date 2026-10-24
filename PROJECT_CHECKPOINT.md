@@ -1610,3 +1610,6 @@ Owner authorized nonprivileged stages 1-5A continuously with autonomous repair/r
 
 # Codex independent HG01 reviewer handoff prepared - 2026-10-24
 Prepared docs/oi0002-c09-witness/HG01_CODEX_INDEPENDENT_REVIEW_HANDOFF_2026-10-24.md and HG01_CODEX_REVIEW_PROMPT_2026-10-24.txt. Read-only independent review is NOT executed; candidate source f1af82f, documentation baseline bd34918. Await capacity reset and separate reviewer context. Operational Human Gates remain closed. OPEN_ITEMS OI-0002 stays active.
+
+# HG01 independent Codex review FAIL - 2026-10-24
+User-delivered separate Codex review found F01/F02 HIGH, F03/F04 MEDIUM. 309 focused PASS, A/B 75/75 reproducibility PASS, but full regression 1556 passed/5 skipped/1 failed; independent decision INDEPENDENT_FAIL. Supervisor inspected current Custodian shared VERIFY branch, consistent with F01. Detailed handoff docs/oi0002-c09-witness/HG01_INDEPENDENT_FAIL_AND_REMEDIATION_2026-10-24.md. OI-0002 OPEN. Next: repair F01-F04, test and new A/B builds, independent exact-SHA re-review. No privileged operations authorized.
