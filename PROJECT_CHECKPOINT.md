@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_PREREQUISITE_INVESTIGATION -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_IMPLEMENTATION_AUTHORIZATION_REQUIRED -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -28,6 +28,8 @@ Fresh authenticated admission was 98% five-hour and 75% weekly remaining, preser
 The bounded package defines three exact minimal custom roles, exact prefix/bucket conditions, complete full-policy binding validation, manifest-to-policy ETag binding and a closed nine-property keyless contract. Initial independent reviews of `df1c939` and `1eb9c94` failed on enforceability gaps; both finding sets were corrected. Independent review of exact SHA `0f197ef9682ccf79f9df7743748951585cfdcaa8` returned **`HG03_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`**. Worker verification passed `33` focused and `394` relevant; reviewer verification passed `33` focused and `327` relevant, with all 14 adversarial substitutions rejected. No IAM, role, key, credential, bucket or retention mutation occurred.
 
 HG-03 remains not approval-ready until an approved operational local keyless source/binding exists, legacy bindings and Owner impersonation are safely resolved, a fresh deployment-time ETag/CAS succeeds, and separately authorized live enforcement/revocation probes pass. R3 operational security is not accepted; C09/OI-0002 remain open. `OPEN_ITEMS.md` was synchronized with no row closure. The next already authorized optional action, subject to a fresh Limit Guard, is a proposal-only investigation of HG-01 service implementation/build prerequisites; no service implementation or installation is authorized.
+
+The admitted optional HG-01 investigation found reusable Kernel, Identity, IPC-validation and Witness libraries but no operational SCM service entry point, Named Pipe transport/dispatcher, Custodian service, frozen packaging toolchain, dependency-hashed reproducible build, signed executable or artifact manifest. The accepted architecture fixes the three-service security boundary but does not select a Windows packaging/service-host implementation. `HG01_SERVICE_IMPLEMENTATION_PREREQUISITES_2026-10-24.md` defines the smallest bounded implementation, required artifact and four-principal/fault evidence, a 35–50 point estimate and exact authority boundary. Status is `PROPOSAL_READY / IMPLEMENTATION_NOT_AUTHORIZED / HG01_NOT_APPROVAL_READY`. No source/service/host change occurred. Next action is Owner authorization of the bounded implementation plus packaging/reproducible-build profile selection; activation remains a later separate Human Gate.
 
 # C09 operational architecture gate resumed — 2026-10-22
 
