@@ -6,6 +6,12 @@ Independent review 01 of candidate `b2f1b69a982bc5021c94354131e903ed06c77f31` re
 
 The remediation additionally requires complete volume-serial/file-ID path evidence and rejects reparse tags or aliased file identities. Its first focused run reported `1 failed, 7 passed` only because a negative test still expected the pre-pinning error wording; that run receives no credit. After correcting the assertion, focused verification passed `8 passed in 0.26s`, relevant regression passed `369 passed in 33.97s`, and full unit regression passed `1492 passed, 5 skipped in 296.00s`. The five skips remain unrelated DR03 protected-source/registration exclusions. Status: `R3_PREPARATION_REMEDIATED / INDEPENDENT_RE_REVIEW_PENDING`.
 
+## Independent preparation re-review — PASS
+
+Reviewer `/root/c09_architecture_independent_review` reviewed exact pushed SHA `66f06f3106ea6a2dfda3b9fd7f20ded9dc0e39cc` in a separate read-only context and returned **`INDEPENDENT_R3_PREPARATION_PASS`**. Independent focused/relevant verification passed `344 passed`. Independent probes rejected swapped Windows roles, arbitrary cloud Writer identity, nested stores, mixed-case secret references and same-provider custody. The reviewer found no secret or residual in-scope preparation defect and confirmed that no host/cloud state changed.
+
+Final distinction: **`R3_PREPARATION_ACCEPTED`** and **`R3_OPERATIONAL_SECURITY_NOT_ACCEPTED`**. Operational path IDs/SDDL, service images/hashes/tokens, current IAM and keyless delivery, non-exportable signing custody, offline Owner restore custody, retention and live GCS remain unproven. HG-01–03 are not approval-ready until their exact artifacts/readbacks are supplied and independently reviewed; HG-04–07 remain conditional/separate. R4 is not started and C09/OI-0002 remain open.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
