@@ -1,0 +1,33 @@
+{
+  "schema": "ai-tax-agent.c09-r3-deployment-preparation/1.0",
+  "activation": "DISABLED_HUMAN_GATE_REQUIRED",
+  "deployment_id": "C09-R3-OPERATIONAL-PENDING",
+  "windows_principals": [
+    {"role":"KERNEL","account":"AITaxKernel","sid":"S-1-5-21-212838446-3778166418-3746953556-1020"},
+    {"role":"IDENTITY","account":"AITaxIdentity","sid":"S-1-5-21-212838446-3778166418-3746953556-1021"},
+    {"role":"KEY_CUSTODIAN","account":"AITaxKeyCustodian","sid":"S-1-5-21-212838446-3778166418-3746953556-1022"},
+    {"role":"RECOVERY","account":"AITaxRecovery","sid":"S-1-5-21-212838446-3778166418-3746953556-1023"}
+  ],
+  "services": [
+    {"name":"AITaxKernel","run_as":"AITaxKernel","startup":"DISABLED","image_path":"OWNER_APPROVAL_REQUIRED","image_sha256":"OWNER_APPROVAL_REQUIRED"},
+    {"name":"AITaxIdentity","run_as":"AITaxIdentity","startup":"DISABLED","image_path":"OWNER_APPROVAL_REQUIRED","image_sha256":"OWNER_APPROVAL_REQUIRED"},
+    {"name":"AITaxKeyCustodian","run_as":"AITaxKeyCustodian","startup":"DISABLED","image_path":"OWNER_APPROVAL_REQUIRED","image_sha256":"OWNER_APPROVAL_REQUIRED"}
+  ],
+  "ipc": {
+    "identity_pipe": "\\\\.\\pipe\\AI-Tax-Agent\\Identity-v1",
+    "custodian_pipe": "\\\\.\\pipe\\AI-Tax-Agent\\Custodian-v1",
+    "remote_clients": "REJECT",
+    "first_instance_required": true,
+    "identity_allowed_client_sid": "S-1-5-21-212838446-3778166418-3746953556-1020",
+    "custodian_allowed_client_sid": "S-1-5-21-212838446-3778166418-3746953556-1020"
+  },
+  "filesystem_acl_specification": {
+    "kernel_store": {"path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Kernel","modify":["AITaxKernel"],"deny_write":["AITaxIdentity","AITaxKeyCustodian"]},
+    "identity_store": {"path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Identity","modify":["AITaxIdentity"],"deny_write":["AITaxKernel","AITaxKeyCustodian"]},
+    "witness_key": {"path":"PROVIDER_REFERENCE_REQUIRED","use":["AITaxKeyCustodian"],"export":[]},
+    "restore_key": {"path":"OFFLINE_OWNER_CUSTODY_REQUIRED","use":[],"export":[]}
+  },
+  "restore_enabled": false,
+  "retention_lock_enabled": false,
+  "contains_secret_material": false
+}

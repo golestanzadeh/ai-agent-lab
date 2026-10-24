@@ -1,0 +1,24 @@
+{
+  "schema": "ai-tax-agent.c09-r3-gcs-iam-proposal/1.0",
+  "proposal_only": true,
+  "project": "ai-tax-agent-507813",
+  "bucket": "ai-tax-agent-c09-witness-test-507813",
+  "prefix": "witness/v1/C09-R3-OPERATIONAL-PENDING/",
+  "bindings": [
+    {
+      "role": "WITNESS_WRITER",
+      "principal": "c09-witness-test@ai-tax-agent-507813.iam.gserviceaccount.com",
+      "required_permissions": ["storage.objects.create"],
+      "forbidden_permissions": ["storage.objects.get","storage.objects.list","storage.objects.delete","storage.objects.update","storage.buckets.setIamPolicy","storage.buckets.update"]
+    },
+    {
+      "role": "WITNESS_READER",
+      "principal": "c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com",
+      "required_permissions": ["storage.objects.get","storage.objects.list"],
+      "forbidden_permissions": ["storage.objects.create","storage.objects.delete","storage.objects.update","storage.buckets.setIamPolicy","storage.buckets.update"]
+    }
+  ],
+  "user_managed_keys_allowed": false,
+  "retention_lock_change": "NOT_AUTHORIZED",
+  "apply": false
+}

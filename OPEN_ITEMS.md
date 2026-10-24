@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_OWNER_HUMAN_GATE_OR_SEPARATE_R4_AUTHORIZATION -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_PREPARATION_INDEPENDENT_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1 has bounded independent PASS. Exact R2 SHA `a159373` received `INDEPENDENT_R2_PASS / SYNTHETIC_ONLY`; payload/transaction/combined regenerated-receipt substitutions fail closed, and T01–T06 have no residual in-scope finding. Live GCS, actual Writer/Reader custody and four-principal isolation remain unproven; C09 OPEN and backup/restore ungranted. | R2 instruction is complete. Any R3 privileged IAM/key/retention action requires the explicit Owner Human Gate; R4 requires separately governed independent acceptance authority. Do not infer operational C09 or OI-0002 closure. | `docs/oi0002-c09-witness/R2_END_TO_END_VERIFICATION_2026-10-23.md`; `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2 have bounded independent PASS. R3 non-privileged preparation is technically green (`8` focused, `369` relevant, `1492` full unit with 5 unrelated skips) with inert templates and seven exact Human Gates; independent preparation review is pending. No service/IAM/key/retention activation occurred. Live GCS, operational custody and four-principal service isolation remain unproven; C09 OPEN and backup/restore ungranted. | Freeze/push the R3 preparation candidate and obtain independent exact-SHA review. Operational service/ACL/IAM/key/restore/retention actions require their separate Owner Human Gates; R4 is not started. | `docs/oi0002-c09-witness/R3_SECURITY_DEPLOYMENT_PREPARATION_2026-10-24.md`; `docs/oi0002-c09-witness/R3_OWNER_HUMAN_GATES_2026-10-24.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |
