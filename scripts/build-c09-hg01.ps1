@@ -3,6 +3,9 @@ param(
     [Parameter(Mandatory=$true)][ValidateSet('A','B')] [string]$BuildId
 )
 $ErrorActionPreference = 'Stop'
+# Stabilize hash-dependent collection iteration in PyInstaller's child Python processes.
+# This is a build-only setting, not an operational runtime security setting.
+$env:PYTHONHASHSEED = '0'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $python = Join-Path $root '.runtime\hg01-build-venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python -PathType Leaf)) { throw 'Pinned HG01 build virtual environment is unavailable.' }
