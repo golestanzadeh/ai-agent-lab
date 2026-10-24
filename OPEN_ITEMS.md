@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I02_AUTHENTICATED_NAMED_PIPE -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I03_CUSTODIAN_RUNTIME -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 and HG-01/02/03 preparation have bounded independent PASS. HG-03 remains not approval-ready for its recorded cloud/keyless blockers. HG01 BP-01 build profile and I01 fixed-role fail-closed service entry points pass locally; transport, Custodian runtime, builds/artifacts/signing and independent review remain incomplete. | Continue incrementally with HG01-I02 authenticated Named Pipe transport. Installation/activation and all operational R3 Human Gates remain separate; no C09/OI-0002 closure. | `docs/oi0002-c09-witness/HG01_IMPLEMENTATION_2026-10-24.md`; `docs/oi0002-c09-witness/HG03_GCS_IAM_READINESS_2026-10-24.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 and HG-01/02/03 preparation have bounded independent PASS. HG-03 remains not approval-ready for its recorded cloud/keyless blockers. HG01 BP-01, I01 service entry points and I02 authenticated Named Pipe transport core pass locally; Custodian/runtime wiring, builds/artifacts/signing and independent review remain incomplete. | Continue incrementally with HG01-I03 Custodian host/runtime composition. Installation/activation and all operational R3 Human Gates remain separate; no C09/OI-0002 closure. | `docs/oi0002-c09-witness/HG01_IMPLEMENTATION_2026-10-24.md`; `docs/oi0002-c09-witness/HG03_GCS_IAM_READINESS_2026-10-24.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |

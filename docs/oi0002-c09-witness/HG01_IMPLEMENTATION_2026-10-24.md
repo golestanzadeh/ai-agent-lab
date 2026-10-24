@@ -25,3 +25,11 @@ Lifecycle transitions are locked and deterministic. Wrong SID/role, malformed/un
 Verification: `46 passed` focused and `363 passed` relevant C09/Identity/IPC/Kernel. No service was installed or started, no account right/ACL changed and no credential or protected store was accessed.
 
 Exact continuation: HG01-I02 authenticated Named Pipe transport. It must authenticate actual Windows tokens, enforce fixed DACL/local-only/first-instance behavior, bind retained server image identity, reuse canonical framing and remain independently testable without installing services.
+
+## HG01-I02 authenticated Named Pipe transport core
+
+Status: `TECHNICAL_PASS / HOST-INTEGRATION_PENDING / NOT ACTIVATED`.
+
+The Windows-native transport core freezes the two approved pipe names, creates message-mode local-only single-instance servers with `FILE_FLAG_FIRST_PIPE_INSTANCE`, a protected DACL containing only SYSTEM and the pinned Kernel SID, bounded canonical frames and no generic endpoint. Server-side authorization impersonates the connected client, reads the actual thread token SID and always calls `RevertToSelf` before dispatch. Client-side verification retains the server process handle and binds two PID reads, actual process-token SID, normalized pinned image path and executable SHA-256. PID turnover, wrong SID/path/hash, malformed/trailing/oversized frames and noncanonical envelopes fail closed.
+
+The first run exposed an incorrect envelope helper name and an oversized pytest parameter ID; both were corrected before any PASS claim. Verification passes `227` focused transport/protocol/service tests and `112` relevant C09/Identity/Kernel tests. No pipe endpoint was activated outside tests and no service/ACL/account was changed. Wiring the transport into the service runtimes remains pending with HG01-I03 Custodian/runtime composition.
