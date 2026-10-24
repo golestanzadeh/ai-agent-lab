@@ -142,3 +142,21 @@ def test_r3_inventory_script_is_read_only_and_privacy_minimized():
     assert not any(token.casefold() in script.casefold() for token in forbidden)
     assert "Get-LocalUser" in script and "Get-CimInstance Win32_Service" in script
 
+
+def test_hg01_manifest_is_exact_but_not_approval_ready_without_real_binaries():
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads((root / "config/c09-r3/hg01-windows-services.json").read_text(encoding="utf-8"))
+    assert manifest["approval_ready"] is False and manifest["execution_authorized"] is False
+    assert manifest["status"] == "BLOCKED_MISSING_SERVICE_IMPLEMENTATION_AND_REPRODUCIBLE_BUILD"
+    assert [item["name"] for item in manifest["services"]] == ["AITaxKernel", "AITaxIdentity", "AITaxKeyCustodian"]
+    assert all(item["executable_path"] is None and item["executable_sha256"] is None for item in manifest["services"])
+    assert all(item["startup"] == "DEMAND_START_DISABLED_UNTIL_OWNER_APPROVAL" for item in manifest["services"])
+
+
+def test_hg01_inventory_is_read_only_and_install_commands_are_never_executed():
+    root = Path(__file__).resolve().parents[2]
+    script = (root / "scripts/inspect-c09-hg01-readonly.ps1").read_text(encoding="utf-8")
+    forbidden = ("sc.exe", "New-Service", "Set-Service", "Start-Service", "Stop-Service", "Set-Acl", "Set-LocalUser")
+    assert not any(token.casefold() in script.casefold() for token in forbidden)
+    assert "Get-LocalUser" in script and "Get-CimInstance Win32_Service" in script
+

@@ -1,0 +1,54 @@
+{
+  "schema": "ai-tax-agent.c09-r3-hg01-services/1.0",
+  "gate_id": "HG-C09-R3-01",
+  "approval_ready": false,
+  "status": "BLOCKED_MISSING_SERVICE_IMPLEMENTATION_AND_REPRODUCIBLE_BUILD",
+  "host": "DESKTOP-HVRUQB7",
+  "services": [
+    {
+      "name": "AITaxKernel",
+      "principal": "AITaxKernel",
+      "sid": "S-1-5-21-212838446-3778166418-3746953556-1020",
+      "executable_path": null,
+      "executable_sha256": null,
+      "depends_on": [],
+      "startup": "DEMAND_START_DISABLED_UNTIL_OWNER_APPROVAL",
+      "pipe_client": ["\\\\.\\pipe\\AI-Tax-Agent\\Identity-v1", "\\\\.\\pipe\\AI-Tax-Agent\\Custodian-v1"],
+      "recovery": "NO_AUTOMATIC_RESTART_UNTIL_OPERATIONAL_RECOVERY_ACCEPTANCE"
+    },
+    {
+      "name": "AITaxIdentity",
+      "principal": "AITaxIdentity",
+      "sid": "S-1-5-21-212838446-3778166418-3746953556-1021",
+      "executable_path": null,
+      "executable_sha256": null,
+      "depends_on": [],
+      "startup": "DEMAND_START_DISABLED_UNTIL_OWNER_APPROVAL",
+      "pipe_server": "\\\\.\\pipe\\AI-Tax-Agent\\Identity-v1",
+      "allowed_client_sid": "S-1-5-21-212838446-3778166418-3746953556-1020",
+      "recovery": "NO_AUTOMATIC_RESTART_UNTIL_OPERATIONAL_RECOVERY_ACCEPTANCE"
+    },
+    {
+      "name": "AITaxKeyCustodian",
+      "principal": "AITaxKeyCustodian",
+      "sid": "S-1-5-21-212838446-3778166418-3746953556-1022",
+      "executable_path": null,
+      "executable_sha256": null,
+      "depends_on": [],
+      "startup": "DEMAND_START_DISABLED_UNTIL_OWNER_APPROVAL",
+      "pipe_server": "\\\\.\\pipe\\AI-Tax-Agent\\Custodian-v1",
+      "allowed_client_sid": "S-1-5-21-212838446-3778166418-3746953556-1020",
+      "recovery": "NO_AUTOMATIC_RESTART_UNTIL_OPERATIONAL_RECOVERY_ACCEPTANCE"
+    }
+  ],
+  "installation_command_template": ["sc.exe", "create", "<EXACT_SERVICE_NAME>", "binPath=", "<EXACT_REVIEWED_ABSOLUTE_PATH>", "start=", "demand", "obj=", ".\\<EXACT_PINNED_ACCOUNT>"],
+  "post_install_state": "STOPPED_AND_DISABLED_PENDING_SEPARATE_OWNER_EXECUTION_APPROVAL",
+  "rollback_command_template": ["sc.exe", "delete", "<EXACT_SERVICE_NAME>"],
+  "execution_authorized": false,
+  "blockers": [
+    "No operational Windows service entry-point implementation exists in the repository",
+    "No approved reproducible Windows executable build process exists",
+    "No executable artifacts, absolute protected paths, or binary SHA-256 values exist",
+    "Service logon-right and protected executable ACL changes remain privileged Human Gates"
+  ]
+}

@@ -18,6 +18,12 @@ Ending authenticated capacity measured `2026-10-24T11:14:49.6826735Z`: five-hour
 
 The Owner authorized a single readiness package covering exact service binaries/configuration, ACL/SDDL/current-state deltas, and live read-only GCS IAM evidence through independent review. Recovery at `89dbe9466cfc9f0002f071049bac391c6e869b87` was clean and synchronized. Fresh authenticated telemetry at `2026-10-24T11:21:23.3540207Z` was 59% five-hour and 82% weekly remaining. The required reserve leaves 44 usable points, below the conservative ≥50-point cost for build/inventory/cloud-readback, focused/relevant/full tests, independent review, one remediation allowance and reporting. Status is **`BLOCKED_CAPACITY`** before implementation. No Gate state, host/cloud configuration, protected evidence or code changed. Resume only after fresh post-reset admission; reset is `2026-10-24T15:51:41Z` (17:51:41 Europe/Berlin).
 
+## Incremental HG-01 readiness package
+
+The Owner superseded the indivisible-package policy. Fresh admission was 55% five-hour and 81% weekly; the bounded HG-01 estimate fit. Repository inspection found no service entry points, executable artifacts or approved reproducible build process. Creating wrapper binaries would invent unreviewed operational service behavior, so no binary was built and no source digest was misrepresented as an executable digest.
+
+Safe work produced `hg01-windows-services.json` with exact service names, pinned account/SID pairs, IPC endpoints, demand-start/disabled-until-approval posture, no automatic recovery and non-executable parameterized install/rollback forms. All executable paths/hashes are explicitly null and the manifest is `approval_ready=false`. The read-only host verifier confirmed the three exact accounts/SIDs and zero installed C09 services without mutation. Focused tests passed `10 passed in 0.29s`; relevant custody/IPC/Kernel regression passed `246 passed in 10.61s`. Status: **`HG01 NOT_APPROVAL_READY / BLOCKED_MISSING_SERVICE_IMPLEMENTATION_AND_REPRODUCIBLE_BUILD / INDEPENDENT_REVIEW_PENDING`**.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
