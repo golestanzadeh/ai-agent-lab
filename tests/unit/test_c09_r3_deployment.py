@@ -259,3 +259,32 @@ def test_hg03_revocation_and_fail_closed_are_explicit_and_no_live_enforcement_cl
     assert "every refresh fails closed" in delivery["required_properties"]["rotation_revocation"]
     assert any("Live negative enforcement" in item for item in manifest["approval_blockers"])
 
+
+def test_hg01_build_profile_is_pinned_separate_inert_and_does_not_claim_reproducibility():
+    root = Path(__file__).resolve().parents[2]
+    profile = json.loads((root / "config/c09-r3/hg01-build-profile.json").read_text(encoding="utf-8"))
+    assert profile["schema"] == "ai-tax-agent.c09-r3-hg01-build-profile/1.0"
+    assert profile["operational_deployment_authorized"] is False
+    assert profile["python"]["version"] == "3.14.2"
+    assert profile["packager"] == {"name": "PyInstaller", "version": "6.22.3", "mode": "onedir", "upx": False, "clean": True}
+    assert profile["service_host_dependency"] == {"name": "pywin32", "version": "312"}
+    artifacts = profile["artifacts"]
+    assert [item["role"] for item in artifacts] == ["KERNEL", "IDENTITY", "KEY_CUSTODIAN"]
+    assert len({item["name"] for item in artifacts}) == 3
+    assert "separate onedir" in profile["distribution_layout"]
+    assert profile["reproduction"]["clean_builds_required"] == 2
+    assert any("must be measured" in item for item in profile["known_limitations"])
+    assert profile["signing"]["operational"] == "SEPARATE_HUMAN_GATE"
+
+
+def test_hg01_build_lock_is_complete_hash_pinned_and_binary_only():
+    root = Path(__file__).resolve().parents[2]
+    lock = (root / "requirements-hg01-build.txt").read_text(encoding="utf-8").splitlines()
+    assert len(lock) == 8
+    assert all("==" in line and " --hash=sha256:" in line for line in lock)
+    assert any(line.startswith("PyInstaller==6.22.3 ") for line in lock)
+    assert any(line.startswith("pywin32==312 ") for line in lock)
+    profile = json.loads((root / "config/c09-r3/hg01-build-profile.json").read_text(encoding="utf-8"))
+    assert "--require-hashes" in profile["dependency_install"]
+    assert "--only-binary=:all:" in profile["dependency_install"]
+

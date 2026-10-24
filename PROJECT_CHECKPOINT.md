@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_IMPLEMENTATION_AUTHORIZATION_REQUIRED -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I01_SERVICE_ENTRYPOINTS -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -32,6 +32,8 @@ HG-03 remains not approval-ready until an approved operational local keyless sou
 The admitted optional HG-01 investigation found reusable Kernel, Identity, IPC-validation and Witness libraries but no operational SCM service entry point, Named Pipe transport/dispatcher, Custodian service, frozen packaging toolchain, dependency-hashed reproducible build, signed executable or artifact manifest. The accepted architecture fixes the three-service security boundary but does not select a Windows packaging/service-host implementation. `HG01_SERVICE_IMPLEMENTATION_PREREQUISITES_2026-10-24.md` defines the smallest bounded implementation, required artifact and four-principal/fault evidence, a 35–50 point estimate and exact authority boundary. Status is `PROPOSAL_READY / IMPLEMENTATION_NOT_AUTHORIZED / HG01_NOT_APPROVAL_READY`. No source/service/host change occurred. Next action is Owner authorization of the bounded implementation plus packaging/reproducible-build profile selection; activation remains a later separate Human Gate.
 
 Authenticated final capacity at `2026-10-24T18:55:22.3111784+02:00`: 65% five-hour remaining (reset `2026-10-24T21:33:26Z`) and 70% weekly remaining (reset `2026-10-30T18:15:20Z`); ordinary usage allowed. The 15-point reserve remains intact. No governed Bridge state exists in this worktree, so no parallel quota state was invented.
+
+Owner authorization admitted incremental HG-01 implementation from synchronized clean baseline `dd3c947`. Package BP-01 selected and froze CPython 3.14.2 + pywin32 312 + PyInstaller 6.22.3 `onedir`, with eight exact binary-wheel hashes, separate role-specific artifacts, two-clean-build comparison and no reproducibility claim before exact tree equality. Focused verification passed `35`. No dependency was installed, executable built, service implemented/installed or host privilege changed. Status: `BUILD_PROFILE_FROZEN / HG01_IMPLEMENTATION_IN_PROGRESS`; exact next package is HG01-I01 service entry points.
 
 # C09 operational architecture gate resumed — 2026-10-22
 

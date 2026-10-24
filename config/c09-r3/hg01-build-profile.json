@@ -1,0 +1,27 @@
+{
+  "schema": "ai-tax-agent.c09-r3-hg01-build-profile/1.0",
+  "status": "FROZEN_DEVELOPMENT_BUILD_PROFILE",
+  "operational_deployment_authorized": false,
+  "host_platform": "windows-amd64",
+  "python": {"version": "3.14.2", "implementation": "CPython", "executable_for_observed_build": "C:\\Python314\\python.exe"},
+  "packager": {"name": "PyInstaller", "version": "6.22.3", "mode": "onedir", "upx": false, "clean": true},
+  "service_host_dependency": {"name": "pywin32", "version": "312"},
+  "dependency_lock": "requirements-hg01-build.txt",
+  "dependency_install": "python -m pip install --require-hashes --only-binary=:all: -r requirements-hg01-build.txt",
+  "artifacts": [
+    {"role": "KERNEL", "name": "AITaxKernel.exe", "entry_point": "src/agent_lab/c09_kernel_service.py"},
+    {"role": "IDENTITY", "name": "AITaxIdentity.exe", "entry_point": "src/agent_lab/c09_identity_service.py"},
+    {"role": "KEY_CUSTODIAN", "name": "AITaxKeyCustodian.exe", "entry_point": "src/agent_lab/c09_custodian_service.py"}
+  ],
+  "build_root": ".runtime/hg01-build/<source-commit>/<build-id>",
+  "distribution_layout": "separate onedir directory per role; no shared writable runtime directory",
+  "required_environment": {"PYTHONHASHSEED": "0", "SOURCE_DATE_EPOCH": "source commit timestamp", "TZ": "UTC"},
+  "reproduction": {"clean_builds_required": 2, "comparison": "whole-tree relative-path plus SHA-256 manifest", "bit_for_bit_claim_allowed_only_on_exact_match": true},
+  "signing": {"development": "UNSIGNED", "operational": "SEPARATE_HUMAN_GATE", "authenticode_required_for_operational_candidate": true},
+  "known_limitations": [
+    "PyInstaller output reproducibility must be measured; it is not assumed.",
+    "The observed absolute Python path is host evidence, not a portable deployment dependency.",
+    "Unsigned development artifacts cannot satisfy operational HG-01 approval readiness.",
+    "Entry points and build script do not exist until their separately tested implementation packages complete."
+  ]
+}
