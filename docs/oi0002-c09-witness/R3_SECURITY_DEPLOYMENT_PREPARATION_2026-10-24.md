@@ -12,6 +12,8 @@ Reviewer `/root/c09_architecture_independent_review` reviewed exact pushed SHA `
 
 Final distinction: **`R3_PREPARATION_ACCEPTED`** and **`R3_OPERATIONAL_SECURITY_NOT_ACCEPTED`**. Operational path IDs/SDDL, service images/hashes/tokens, current IAM and keyless delivery, non-exportable signing custody, offline Owner restore custody, retention and live GCS remain unproven. HG-01–03 are not approval-ready until their exact artifacts/readbacks are supplied and independently reviewed; HG-04–07 remain conditional/separate. R4 is not started and C09/OI-0002 remain open.
 
+Ending authenticated capacity measured `2026-10-24T11:14:49.6826735Z`: five-hour 62% remaining, reset `2026-10-24T15:51:41Z`; weekly 82% remaining, reset `2026-10-30T18:15:20Z`. The 15-point reserve is preserved.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
