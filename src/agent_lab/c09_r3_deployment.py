@@ -42,6 +42,17 @@ HG03_BLOCKERS = (
     "The Owner user currently has serviceAccountTokenCreator on both identities; this is historical test access, not accepted operational custody.",
     "Live negative enforcement and revocation probes cannot occur until a separately approved IAM change.",
 )
+HG03_KEYLESS_PROPERTIES = {
+    "binding": "exact Windows service principal to exactly one cloud service account",
+    "acquisition": "short-lived service-account access-token impersonation from an independently authenticated non-exportable source credential",
+    "maximum_lifetime_seconds": 3600,
+    "scope": "devstorage.read_write for Writer; devstorage.read_only for Reader",
+    "audience": "Google OAuth token endpoint / Cloud Storage API only; no reusable bearer token may be persisted",
+    "rotation_revocation": "revoke the exact impersonation binding/source credential; cached tokens expire and every refresh fails closed",
+    "failure": "no fallback identity, shared token, user-managed key or Owner interactive credential",
+    "audit": "Cloud Audit Logs plus local correlation ID without token material",
+    "recovery": "Kernel halts; Recovery has no standing Writer/Reader impersonation",
+}
 
 
 def validate_hg03_manifest(manifest: Mapping[str, object], policy: Mapping[str, object]) -> None:
@@ -89,8 +100,7 @@ def validate_hg03_manifest(manifest: Mapping[str, object], policy: Mapping[str, 
     if not isinstance(delivery, Mapping) or delivery.get("operational_status") != "UNRESOLVED_FAIL_CLOSED" or delivery.get("long_lived_keys_allowed") is not False:
         raise R3DeploymentError("invalid credential-delivery posture")
     required = delivery.get("required_properties")
-    required_fields = {"binding", "acquisition", "maximum_lifetime_seconds", "scope", "audience", "rotation_revocation", "failure", "audit", "recovery"}
-    if not isinstance(required, Mapping) or set(required) != required_fields or required.get("maximum_lifetime_seconds") != 3600 or not all(required.get(field) for field in required_fields):
+    if not isinstance(required, Mapping) or dict(required) != HG03_KEYLESS_PROPERTIES:
         raise R3DeploymentError("incomplete keyless credential-delivery contract")
     blockers = manifest.get("approval_blockers")
     if manifest.get("approval_ready") is not False or blockers != list(HG03_BLOCKERS):
@@ -100,8 +110,20 @@ def validate_hg03_manifest(manifest: Mapping[str, object], policy: Mapping[str, 
     policy_bindings = policy.get("bindings")
     if not isinstance(policy_bindings, list):
         raise R3DeploymentError("proposed policy is malformed")
-    service_bindings = [item for item in policy_bindings if isinstance(item, Mapping) and any(str(member).startswith("serviceAccount:") for member in item.get("members", []))]
-    if len(service_bindings) != 3 or any(item.get("condition", {}).get("expression") != expected_conditions.get((str(item["members"][0]).removeprefix("serviceAccount:"), item.get("role"))) for item in service_bindings):
+    expected_policy_bindings = {
+        ("roles/storage.legacyBucketOwner", ("projectEditor:ai-tax-agent-507813", "projectOwner:ai-tax-agent-507813"), None),
+        ("roles/storage.legacyBucketReader", ("projectViewer:ai-tax-agent-507813",), None),
+        ("roles/storage.legacyObjectOwner", ("projectEditor:ai-tax-agent-507813", "projectOwner:ai-tax-agent-507813"), None),
+        ("roles/storage.legacyObjectReader", ("projectViewer:ai-tax-agent-507813",), None),
+        (HG03_WRITER_ROLE, (f"serviceAccount:{PINNED_CLOUD['WITNESS_WRITER']}",), HG03_OBJECT_CONDITION),
+        (HG03_READER_OBJECT_ROLE, (f"serviceAccount:{PINNED_CLOUD['WITNESS_READER']}",), HG03_OBJECT_CONDITION),
+        (HG03_READER_LIST_ROLE, (f"serviceAccount:{PINNED_CLOUD['WITNESS_READER']}",), HG03_BUCKET_CONDITION),
+    }
+    actual_policy_bindings = {
+        (item.get("role"), tuple(item.get("members", [])), item.get("condition", {}).get("expression") if "condition" in item else None)
+        for item in policy_bindings if isinstance(item, Mapping)
+    }
+    if len(policy_bindings) != 7 or actual_policy_bindings != expected_policy_bindings:
         raise R3DeploymentError("proposed policy differs from the exact conditioned bindings")
 
 

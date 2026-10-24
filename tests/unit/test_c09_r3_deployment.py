@@ -229,6 +229,10 @@ def test_hg03_exact_inventory_and_closed_writer_reader_roles():
     lambda m, p: m["observed"].pop("bucket_policy_version_field_present"),
     lambda m, p: m["keyless_delivery"].update(operational_status="ACTIVE"),
     lambda m, p: m["keyless_delivery"].pop("required_properties"),
+    lambda m, p: m["keyless_delivery"]["required_properties"].update(scope="cloud-platform"),
+    lambda m, p: m["keyless_delivery"]["required_properties"].update(failure="fallback shared Owner credential allowed"),
+    lambda m, p: p["bindings"][4]["members"].append("user:attacker@example.com"),
+    lambda m, p: p["bindings"].append({"role": "roles/storage.admin", "members": ["allUsers"]}),
     lambda m, p: m.update(approval_blockers=["placeholder"]),
 ])
 def test_hg03_rejects_substitution_excess_privilege_bad_condition_stale_inventory_and_credentials(mutation):
