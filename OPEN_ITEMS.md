@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG02_INCREMENTAL_EXECUTION -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG02_INDEPENDENT_REVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 have bounded independent PASS. HG-01 exact SHA `7fc27ca` received `HG01_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`: identities/config/blocker are accurate, but implementation/build/artifacts/paths/hashes and privileged evidence do not exist. HG-02/03 remain not approval-ready. | Execute independently bounded HG-02 read-only ACL/SDDL preparation and review. HG-01 requires separately authorized service implementation/build before readiness; operational actions remain forbidden. | `docs/oi0002-c09-witness/R3_SECURITY_DEPLOYMENT_PREPARATION_2026-10-24.md`; `docs/oi0002-c09-witness/R3_OWNER_HUMAN_GATES_2026-10-24.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2/base R3 have bounded independent PASS. HG-01 preparation independently PASS but not ready. HG-02 now has exact absent target roots, canonical protected SDDL and read-only parent/current-state evidence; focused `12` and relevant `248` passed. It remains not ready because roots and executable paths do not exist and elevated file-identity/pre-change ACL readback is unavailable. Independent HG-02 review is pending. | Freeze/push HG-02 and obtain independent exact-SHA review. Then recheck capacity for HG-03. No ACL/root mutation is authorized. | `docs/oi0002-c09-witness/R3_SECURITY_DEPLOYMENT_PREPARATION_2026-10-24.md`; `docs/oi0002-c09-witness/R3_OWNER_HUMAN_GATES_2026-10-24.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |

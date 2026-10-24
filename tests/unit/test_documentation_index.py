@@ -146,7 +146,7 @@ def test_historical_p1_contract_docs_do_not_override_current_e10_readiness() -> 
 def test_canonical_state_markers_are_identical() -> None:
     expected = {
         "CURRENT_PROJECT_STAGE": "SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED",
-        "CURRENT_NEXT_ACTION": "C09_R3_HG02_INCREMENTAL_EXECUTION",
+        "CURRENT_NEXT_ACTION": "C09_R3_HG02_INDEPENDENT_REVIEW",
         "CURRENT_ACTIVE_OPEN_ITEMS": "OI-0002..OI-0008,OI-0010,OI-0012",
     }
     for path in CANONICAL_STATE_FILES:

@@ -26,6 +26,10 @@ Safe work produced `hg01-windows-services.json` with exact service names, pinned
 
 Independent review of exact SHA `7fc27ca51e7123163804ae3041e276ef716cbea4` returned **`HG01_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`**. Independent focused passed `10`, relevant passed `298`, and host evidence again showed exact identities, zero services and no mutation. The blocker is accepted as accurate; it is not readiness. A future candidate must add a separately authorized service implementation/build, exact artifacts/paths/hashes and service dry run, reconcile demand-start versus disabled wording, expand rollback to stop/disable/delete, and retain separate privilege gates.
 
+## Incremental HG-02 readiness package
+
+Five exact future roots are proposed for the two stores, two backups and Key Custody. Read-only host evidence confirms all are absent; the existing parent is owned by Administrators and inherits its ACL. The proposal does not target the broad parent. Each target has a protected canonical SDDL with SYSTEM ownership/full control and only its exact service SID plus bounded Recovery read where applicable. All five descriptors parsed and canonicalized successfully using Windows `RawSecurityDescriptor`; no ACL was applied. Executable targets, file IDs/reparse evidence and pre-change descriptors remain unavailable, so rollback cannot yet be executed. Focused tests passed `12 passed in 0.30s`; relevant passed `248 passed in 10.06s`. Status: **`HG02 NOT_APPROVAL_READY / BLOCKED_ABSENT_ROOTS_EXECUTABLE_PATHS_AND_ELEVATED_READBACK / INDEPENDENT_REVIEW_PENDING`**.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.

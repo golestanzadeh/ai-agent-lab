@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 import pytest
 
@@ -159,4 +159,29 @@ def test_hg01_inventory_is_read_only_and_install_commands_are_never_executed():
     forbidden = ("sc.exe", "New-Service", "Set-Service", "Start-Service", "Stop-Service", "Set-Acl", "Set-LocalUser")
     assert not any(token.casefold() in script.casefold() for token in forbidden)
     assert "Get-LocalUser" in script and "Get-CimInstance Win32_Service" in script
+
+
+def test_hg02_acl_proposal_is_exact_inert_and_separates_principals():
+    root = Path(__file__).resolve().parents[2]
+    proposal = json.loads((root / "config/c09-r3/hg02-acl-proposal.json").read_text(encoding="utf-8"))
+    assert proposal["approval_ready"] is False and proposal["apply_authorized"] is False
+    assert proposal["status"] == "BLOCKED_ABSENT_ROOTS_EXECUTABLE_PATHS_AND_ELEVATED_READBACK"
+    assert len(proposal["targets"]) == 5 and proposal["executable_acl_targets"] == []
+    paths = [PureWindowsPath(item["path"]) for item in proposal["targets"]]
+    assert len({str(path).casefold() for path in paths}) == len(paths)
+    assert not any(left in right.parents or right in left.parents for index, left in enumerate(paths) for right in paths[index + 1:])
+    kernel_sid = "S-1-5-21-212838446-3778166418-3746953556-1020"
+    identity_sid = "S-1-5-21-212838446-3778166418-3746953556-1021"
+    kernel = next(item for item in proposal["targets"] if item["purpose"] == "KERNEL_STORE")
+    identity = next(item for item in proposal["targets"] if item["purpose"] == "IDENTITY_STORE")
+    assert kernel_sid in kernel["sddl"] and identity_sid not in kernel["sddl"]
+    assert identity_sid in identity["sddl"] and kernel_sid not in identity["sddl"]
+
+
+def test_hg02_inventory_script_is_read_only_and_fixed_scope():
+    root = Path(__file__).resolve().parents[2]
+    script = (root / "scripts/inspect-c09-hg02-readonly.ps1").read_text(encoding="utf-8")
+    forbidden = ("Set-Acl", "New-Item", "Remove-Item", "icacls", "takeown", "Set-ItemProperty")
+    assert not any(token.casefold() in script.casefold() for token in forbidden)
+    assert script.count("'C:\\ProgramData\\AI-Tax-Agent") == 6
 

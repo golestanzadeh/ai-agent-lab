@@ -25,6 +25,8 @@ Independent review of exact SHA `7fc27ca51e7123163804ae3041e276ef716cbea4` retur
 
 Gate readiness: **`NOT_APPROVAL_READY`** until exact non-overlapping operational/backup/executable/custody paths, inheritance behavior, complete SDDL descriptors, pre-change readback and dry-run diff are committed and independently reviewed.
 
+Incremental preparation now fixes five exact future store/backup/custody roots and canonical protected SDDL in `config/c09-r3/hg02-acl-proposal.json`. All five roots are absent; no executable target exists because HG-01 has no binary path. Read-only inspection captured the parent owner/inheritance and performed no mutation. Offline descriptor parsing validates every proposed SDDL, but elevated physical file identity/reparse/pre-change descriptor evidence cannot exist until the roots are separately approved and created. The rollback procedure is therefore specified but not currently executable. Independent review remains pending; no Owner approval statement is issued.
+
 1. **Target:** the exact Kernel, Identity, backup, executable and key-provider reference roots approved from the template; never the repository or a broad parent.
 2. **Current state:** prior `OI0002-TEST2` sealed evidence proves a bounded ACL model, but operational roots do not exist/are not approved.
 3. **Change:** create exact roots and apply explicit inheritance-disabled least-privilege ACLs.

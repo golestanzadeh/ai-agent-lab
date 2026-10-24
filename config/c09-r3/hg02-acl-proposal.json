@@ -1,0 +1,29 @@
+{
+  "schema": "ai-tax-agent.c09-r3-hg02-acl/1.0",
+  "gate_id": "HG-C09-R3-02",
+  "approval_ready": false,
+  "status": "BLOCKED_ABSENT_ROOTS_EXECUTABLE_PATHS_AND_ELEVATED_READBACK",
+  "inheritance": "PROTECTED",
+  "owner": "S-1-5-18",
+  "targets": [
+    {"purpose":"KERNEL_STORE","path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Kernel","current_state":"ABSENT","sddl":"O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;0x1301bf;;;S-1-5-21-212838446-3778166418-3746953556-1020)(A;OICI;FR;;;S-1-5-21-212838446-3778166418-3746953556-1023)"},
+    {"purpose":"IDENTITY_STORE","path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Identity","current_state":"ABSENT","sddl":"O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;0x1301bf;;;S-1-5-21-212838446-3778166418-3746953556-1021)(A;OICI;FR;;;S-1-5-21-212838446-3778166418-3746953556-1023)"},
+    {"purpose":"KERNEL_BACKUP","path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS-BACKUP\\Kernel","current_state":"ABSENT","sddl":"O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;0x1301bf;;;S-1-5-21-212838446-3778166418-3746953556-1020)(A;OICI;FR;;;S-1-5-21-212838446-3778166418-3746953556-1023)"},
+    {"purpose":"IDENTITY_BACKUP","path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS-BACKUP\\Identity","current_state":"ABSENT","sddl":"O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;0x1301bf;;;S-1-5-21-212838446-3778166418-3746953556-1021)(A;OICI;FR;;;S-1-5-21-212838446-3778166418-3746953556-1023)"},
+    {"purpose":"KEY_CUSTODY","path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-CUSTODY","current_state":"ABSENT","sddl":"O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;0x1301bf;;;S-1-5-21-212838446-3778166418-3746953556-1022)"}
+  ],
+  "executable_acl_targets": [],
+  "apply_authorized": false,
+  "pre_apply_requirements": [
+    "HG-01 exact executable paths and hashes",
+    "elevated read-only path identity and parent ACL readback",
+    "volume serial/file ID/reparse status for every target",
+    "independent review of the exact SDDL and dry-run delta",
+    "explicit Owner approval of root creation and ACL application"
+  ],
+  "rollback": {
+    "required": "capture exact pre-change owner/group/DACL/SACL and existence for each target before mutation",
+    "procedure": "stop affected services; restore captured descriptor only to the same file identity; remove newly created empty roots only under explicit rollback authority",
+    "current_executable": false
+  }
+}
