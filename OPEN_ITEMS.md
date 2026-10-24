@@ -50,3 +50,7 @@ Read newest checkpoint and governing evidence; test each row against later accep
 
 The October bounded-increment labels UI25-05 through UI25-10 do not close the same-numbered formal UI25 plan packages. In particular, the accepted increment is not formal UI25-10 Approval/Export. Only the exact accepted increment scope may be treated as closed; formal real-data package gates remain governed by the UI25 plan and the dependencies above.
 
+
+## HG01 reviewer handoff reconciliation - 2026-10-24
+
+Independent Codex reviewer package and ready-to-send prompt prepared in docs/oi0002-c09-witness/HG01_CODEX_INDEPENDENT_REVIEW_HANDOFF_2026-10-24.md and HG01_CODEX_REVIEW_PROMPT_2026-10-24.txt. No review has run; OI-0002 remains active and no active row was resolved. Reviewer must establish separate read-only context, capacity admission and exact-SHA findings before independent acceptance.

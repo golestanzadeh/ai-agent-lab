@@ -1607,3 +1607,6 @@ At source f1af82fd1a7c858074db868d412604dba9589833, two clean A/B Windows onedir
 
 # HG01-R4 continuous owner authorization and bounded recovery - 2026-10-24
 Owner authorized nonprivileged stages 1-5A continuously with autonomous repair/retest, mandatory GitHub evidence and OPEN_ITEMS synchronization. Verified reproducibility and full regression remain PASS at f1af82f; independent HG01 implementation review not yet executed. Preserve prior independent R2 synthetic PASS; no live/operational acceptance. Exact staged plan: docs/oi0002-c09-witness/HG01_R4_CONTINUOUS_EXECUTION_2026-10-24.md. OPEN_ITEMS OI-0002 reconciled to latest evidence; no active row closed. Next: genuine independent read-only exact-SHA HG01 review, then synthetic integration/R1/R2 and 5A readiness, with separate Owner gates for privileged actions.
+
+# Codex independent HG01 reviewer handoff prepared - 2026-10-24
+Prepared docs/oi0002-c09-witness/HG01_CODEX_INDEPENDENT_REVIEW_HANDOFF_2026-10-24.md and HG01_CODEX_REVIEW_PROMPT_2026-10-24.txt. Read-only independent review is NOT executed; candidate source f1af82f, documentation baseline bd34918. Await capacity reset and separate reviewer context. Operational Human Gates remain closed. OPEN_ITEMS OI-0002 stays active.
