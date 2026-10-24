@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_AFTER_CAPACITY_RESET_FULL_REGRESSION_REVIEW -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_F01_F04_REMEDIATION_AND_INDEPENDENT_REREVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -1613,3 +1613,6 @@ Prepared docs/oi0002-c09-witness/HG01_CODEX_INDEPENDENT_REVIEW_HANDOFF_2026-10-2
 
 # HG01 independent Codex review FAIL - 2026-10-24
 User-delivered separate Codex review found F01/F02 HIGH, F03/F04 MEDIUM. 309 focused PASS, A/B 75/75 reproducibility PASS, but full regression 1556 passed/5 skipped/1 failed; independent decision INDEPENDENT_FAIL. Supervisor inspected current Custodian shared VERIFY branch, consistent with F01. Detailed handoff docs/oi0002-c09-witness/HG01_INDEPENDENT_FAIL_AND_REMEDIATION_2026-10-24.md. OI-0002 OPEN. Next: repair F01-F04, test and new A/B builds, independent exact-SHA re-review. No privileged operations authorized.
+
+# HG01 F01-F04 containment progress - 2026-10-24
+Unsafe synthetic Custodian VERIFIED/HMAC minting path denied pending pinned Kernel signature and authenticated record verification; this is FAIL-CLOSED containment, NOT functional F01/F02 remediation acceptance. F04 canonical markers aligned, focused 30 passed. F03 new immutable f1af82f evidence and separate service readiness snapshot; historical failures preserved. Full regression running, status not yet known. See docs/oi0002-c09-witness/HG01_F01_F04_REMEDIATION_PROGRESS_2026-10-24.md. OI-0002 OPEN.

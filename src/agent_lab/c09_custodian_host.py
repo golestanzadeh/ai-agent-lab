@@ -69,25 +69,7 @@ class SyntheticCustodianRuntime:
             raise CustodianError("Custodian request is expired or outside the five-second window")
         if not isinstance(request["nonce"], str) or len(request["nonce"].encode()) != 32:
             raise CustodianError("Custodian nonce is invalid")
-        if not self._authorize(request): raise CustodianError("Kernel authorization denied")
-        if not self._receipt_exists(request["transaction_id"], request["staged_receipt_digest"]):
-            raise CustodianError("exact staged receipt is unavailable")
-        if not isinstance(request["witness_preimage"], dict): raise CustodianError("witness preimage is invalid")
-        preimage = canonical_json_bytes(request["witness_preimage"])
-        digest = "sha256:" + hashlib.sha256(preimage).hexdigest()
-        if not hmac.compare_digest(digest, request["witness_preimage_digest"]):
-            raise CustodianError("witness preimage digest mismatch")
-        request_digest = "sha256:" + hashlib.sha256(canonical_json_bytes({k: v for k, v in request.items() if k != "request_digest"})).hexdigest()
-        if not hmac.compare_digest(request_digest, request["request_digest"]):
-            raise CustodianError("Custodian request digest mismatch")
-        replay_key = (request["transaction_id"], request["nonce"])
-        existing = self._replays.get(replay_key)
-        if existing:
-            if not hmac.compare_digest(existing[0], request_digest): raise CustodianError("changed replay denied")
-            return existing[1]
-        authentication = hmac.new(self._key, preimage, hashlib.sha256).hexdigest()
-        signed = dict(request["witness_preimage"]); signed.update(key_id=self._key_id, algorithm="HMAC-SHA-256", authentication=authentication)
-        signed_digest = "sha256:" + hashlib.sha256(canonical_json_bytes(signed)).hexdigest()
-        result = CustodianResult("AUTHENTICATED" if request["operation"] == "AUTHENTICATE_WITNESS" else "VERIFIED", self._key_id, "HMAC-SHA-256", authentication, signed_digest)
-        self._replays[replay_key] = (request_digest, result)
-        return result
+        # No verified pinned Kernel signature or authenticated GCS record exists in this API.
+        # Deny BOTH operations; never synthesize a VERIFIED result or issue a MAC.
+        raise CustodianError("pinned Kernel signature verification unavailable; custody denied")
+

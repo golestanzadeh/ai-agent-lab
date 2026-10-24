@@ -1,0 +1,15 @@
+﻿{
+    "tree_entry_count_b":  75,
+    "historical_evidence":  "config/c09-r3/hg01-build-evidence.json",
+    "build_b_manifest":  ".runtime/hg01-build/f1af82fd1a7c858074db868d412604dba9589833/B/artifact-tree.json",
+    "differing_paths":  0,
+    "full_regression":  "1558 passed, 6 skipped in 288.64s",
+    "schema":  "ai-tax-agent.c09-r3-hg01-build-evidence/1.0",
+    "tree_entry_count_a":  75,
+    "build_a_manifest":  ".runtime/hg01-build/f1af82fd1a7c858074db868d412604dba9589833/A/artifact-tree.json",
+    "status":  "HISTORICAL_REPRODUCIBILITY_PASS_UNSIGNED_NOT_DEPLOYABLE",
+    "notes":  "Immutable record of prior build, not a claim about current patched source; reviewer independently verified A/B parity.",
+    "source_commit":  "f1af82fd1a7c858074db868d412604dba9589833",
+    "bit_for_bit_reproducible":  true,
+    "approval_ready":  false
+}

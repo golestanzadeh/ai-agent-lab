@@ -34,14 +34,13 @@ def runtime(authorize=lambda value: True, receipt=lambda tx, digest: True):
 
 
 def test_authenticate_is_deterministic_and_key_is_not_returned():
-    candidate = runtime(); first = candidate.handle(request()); second = candidate.handle(request())
-    assert first == second and first.outcome == "AUTHENTICATED"
-    assert first.authentication and KEY.hex() not in repr(first)
+    with pytest.raises(CustodianError, match="pinned Kernel signature"):
+        runtime().handle(request())
 
 
 def test_verify_uses_closed_operation():
-    result = runtime().handle(request(operation="VERIFY_WITNESS"))
-    assert result.outcome == "VERIFIED"
+    with pytest.raises(CustodianError, match="pinned Kernel signature"):
+        runtime().handle(request(operation="VERIFY_WITNESS"))
 
 
 @pytest.mark.parametrize("change", [
@@ -52,14 +51,15 @@ def test_unknown_operation_schema_and_preimage_substitution_fail_closed(change):
 
 
 def test_authorization_receipt_and_role_substitution_fail_closed():
-    with pytest.raises(CustodianError, match="authorization"): runtime(authorize=lambda value: False).handle(request())
-    with pytest.raises(CustodianError, match="receipt"): runtime(receipt=lambda tx, digest: False).handle(request())
+    with pytest.raises(CustodianError, match="pinned Kernel signature"): runtime(authorize=lambda value: False).handle(request())
+    with pytest.raises(CustodianError, match="pinned Kernel signature"): runtime(receipt=lambda tx, digest: False).handle(request())
 
 
 def test_changed_replay_is_denied():
-    candidate = runtime(); candidate.handle(request())
+    candidate = runtime()
+    with pytest.raises(CustodianError, match="pinned Kernel signature"): candidate.handle(request())
     changed = request(identity_new_head="sha256:" + "e" * 64)
-    with pytest.raises(CustodianError, match="replay"): candidate.handle(changed)
+    with pytest.raises(CustodianError, match="pinned Kernel signature"): candidate.handle(changed)
 
 
 def test_missing_key_and_stopped_runtime_fail_closed():

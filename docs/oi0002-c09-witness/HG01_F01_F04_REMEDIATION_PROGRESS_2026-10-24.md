@@ -1,0 +1,9 @@
+# HG01 F01-F04 remediation progress - 2026-10-24
+
+Security decision: safe denial is not functional verification. F01/F02 have a containment patch: SyntheticCustodianRuntime denies BOTH AUTHENTICATE_WITNESS and VERIFY_WITNESS before any HMAC issuance because its existing request API cannot verify a manifest-pinned Kernel signature and VERIFY lacks authenticated record bytes/object key/generation/MAC. The old behavior returned VERIFIED after minting a new MAC. This closes that unsafe acceptance path, but does NOT satisfy frozen contract functional acceptance. F01/F02 remain OPEN and require full separate closed schemas, pinned ECDSA proof validation, authenticated record verification, durable replay reservation and adversarial coverage.
+
+F04 canonical CURRENT_NEXT_ACTION markers and documentation guard aligned across OPEN_ITEMS.md, PROJECT_CHECKPOINT.md, CURRENT_STATE.md, ROADMAP.md and tests/unit/test_documentation_index.py. Focused documentation/Custodian tests: 30 passed. Full unit regression launched and logged in ignored .runtime/hg01-remediation-regression.log; do not claim PASS until exit verified.
+
+F03: historical build evidence config/c09-r3/hg01-build-evidence.json remains untouched; added config/c09-r3/hg01-build-evidence-f1af82f.json and hg01-service-readiness-2026-10-24.json as separate, explicitly nondeployment snapshots. Neither constitutes a new build of this patched source. Rebuild/review after functional F01/F02 implementation.
+
+All Owner Human Gates remain closed. No independent PASS, no operational deployment. OI-0002 remains OPEN. Next: implement complete cryptographic request and verification contract with independent acceptance.

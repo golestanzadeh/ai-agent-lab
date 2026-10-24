@@ -58,3 +58,7 @@ Independent Codex reviewer package and ready-to-send prompt prepared in docs/oi0
 ## HG01 independent review FAIL reconciliation - 2026-10-24
 
 Reviewer returned INDEPENDENT_FAIL for F01 VERIFY_WITNESS semantics, F02 Kernel proof verification, F03 stale build/service evidence, F04 canonical marker regression. Evidence and corrective requirements: docs/oi0002-c09-witness/HG01_INDEPENDENT_FAIL_AND_REMEDIATION_2026-10-24.md. OI-0002 stays OPEN; no active item resolved.
+
+## HG01 F01-F04 containment - 2026-10-24
+
+F01/F02 unsafe accept path now denies both Custodian operations, but frozen functional contract remains NOT IMPLEMENTED. F03 historical evidence preserved and separate current baseline snapshots added. F04 markers synchronized; focused 30 passed. Full regression pending. No OI-0002 closure, no independent PASS; see docs/oi0002-c09-witness/HG01_F01_F04_REMEDIATION_PROGRESS_2026-10-24.md.

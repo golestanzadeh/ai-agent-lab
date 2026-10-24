@@ -1,0 +1,17 @@
+﻿{
+    "prior_services_manifest":  "config/c09-r3/hg01-windows-services.json",
+    "service_sources_present":  true,
+    "build_reproducible_at_baseline":  true,
+    "blockers":  [
+                     "F01 and F02 cryptographic verification not implemented",
+                     "No independent PASS on corrected source",
+                     "Operational Owner Human Gates not granted"
+                 ],
+    "baseline_source":  "f1af82fd1a7c858074db868d412604dba9589833",
+    "status":  "SYNTHETIC_ONLY_NOT_DEPLOYABLE",
+    "security_review":  "INDEPENDENT_FAIL",
+    "service_runtime":  "unavailable_runtime",
+    "schema":  "ai-tax-agent.c09-r3-hg01-service-readiness/1.0",
+    "artifacts_signed":  false,
+    "operational_activation_authorized":  false
+}
