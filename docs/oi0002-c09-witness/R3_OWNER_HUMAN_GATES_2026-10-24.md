@@ -27,6 +27,8 @@ Gate readiness: **`NOT_APPROVAL_READY`** until exact non-overlapping operational
 
 Incremental preparation now fixes five exact future store/backup/custody roots and canonical protected SDDL in `config/c09-r3/hg02-acl-proposal.json`. All five roots are absent; no executable target exists because HG-01 has no binary path. Read-only inspection captured the parent owner/inheritance and performed no mutation. Offline descriptor parsing validates every proposed SDDL, but elevated physical file identity/reparse/pre-change descriptor evidence cannot exist until the roots are separately approved and created. The rollback procedure is therefore specified but not currently executable. Independent review remains pending; no Owner approval statement is issued.
 
+Independent review of `74edea4ae36631481aa7d41e2c54de36383a071d` failed because the initial proposal gave Recovery standing read access to stores/backups. The accepted architecture permits Recovery only through governed Kernel transitions. All Recovery ACEs are removed in the remediated proposal and a negative test now requires no Recovery SID in any filesystem DACL. Re-review remains mandatory.
+
 1. **Target:** the exact Kernel, Identity, backup, executable and key-provider reference roots approved from the template; never the repository or a broad parent.
 2. **Current state:** prior `OI0002-TEST2` sealed evidence proves a bounded ACL model, but operational roots do not exist/are not approved.
 3. **Change:** create exact roots and apply explicit inheritance-disabled least-privilege ACLs.

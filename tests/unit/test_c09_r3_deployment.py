@@ -172,10 +172,13 @@ def test_hg02_acl_proposal_is_exact_inert_and_separates_principals():
     assert not any(left in right.parents or right in left.parents for index, left in enumerate(paths) for right in paths[index + 1:])
     kernel_sid = "S-1-5-21-212838446-3778166418-3746953556-1020"
     identity_sid = "S-1-5-21-212838446-3778166418-3746953556-1021"
+    recovery_sid = "S-1-5-21-212838446-3778166418-3746953556-1023"
     kernel = next(item for item in proposal["targets"] if item["purpose"] == "KERNEL_STORE")
     identity = next(item for item in proposal["targets"] if item["purpose"] == "IDENTITY_STORE")
     assert kernel_sid in kernel["sddl"] and identity_sid not in kernel["sddl"]
     assert identity_sid in identity["sddl"] and kernel_sid not in identity["sddl"]
+    assert all(recovery_sid not in item["sddl"] for item in proposal["targets"])
+    assert proposal["recovery_access"] == "NO_STANDING_FILESYSTEM_ACE; governed Kernel-mediated recovery only"
 
 
 def test_hg02_inventory_script_is_read_only_and_fixed_scope():
