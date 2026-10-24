@@ -1,6 +1,8 @@
 {
   "schema": "ai-tax-agent.c09-r3-deployment-preparation/1.0",
   "activation": "DISABLED_HUMAN_GATE_REQUIRED",
+  "approval_ready": false,
+  "approval_blockers": ["exact protected image paths and SHA-256 values", "exact operational root paths", "exact SDDL descriptors", "fresh elevated ACL readback"],
   "deployment_id": "C09-R3-OPERATIONAL-PENDING",
   "windows_principals": [
     {"role":"KERNEL","account":"AITaxKernel","sid":"S-1-5-21-212838446-3778166418-3746953556-1020"},
@@ -22,11 +24,15 @@
     "custodian_allowed_client_sid": "S-1-5-21-212838446-3778166418-3746953556-1020"
   },
   "filesystem_acl_specification": {
-    "kernel_store": {"path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Kernel","modify":["AITaxKernel"],"deny_write":["AITaxIdentity","AITaxKeyCustodian"]},
-    "identity_store": {"path":"C:\\ProgramData\\AI-Tax-Agent\\OI0002-OPS\\Identity","modify":["AITaxIdentity"],"deny_write":["AITaxKernel","AITaxKeyCustodian"]},
+    "kernel_store": {"path":"NOT_APPROVAL_READY","modify":["AITaxKernel"],"deny_write":["AITaxIdentity","AITaxKeyCustodian"]},
+    "identity_store": {"path":"NOT_APPROVAL_READY","modify":["AITaxIdentity"],"deny_write":["AITaxKernel","AITaxKeyCustodian"]},
+    "kernel_backup": {"path":"NOT_APPROVAL_READY","modify":["AITaxKernel"],"deny_write":["AITaxIdentity","AITaxKeyCustodian"]},
+    "identity_backup": {"path":"NOT_APPROVAL_READY","modify":["AITaxIdentity"],"deny_write":["AITaxKernel","AITaxKeyCustodian"]},
+    "service_executables": {"paths":"NOT_APPROVAL_READY","modify":[],"execute":["AITaxKernel","AITaxIdentity","AITaxKeyCustodian"]},
     "witness_key": {"path":"PROVIDER_REFERENCE_REQUIRED","use":["AITaxKeyCustodian"],"export":[]},
     "restore_key": {"path":"OFFLINE_OWNER_CUSTODY_REQUIRED","use":[],"export":[]}
   },
+  "sddl_descriptors": "NOT_APPROVAL_READY",
   "restore_enabled": false,
   "retention_lock_enabled": false,
   "contains_secret_material": false

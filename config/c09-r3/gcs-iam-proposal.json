@@ -1,6 +1,8 @@
 {
   "schema": "ai-tax-agent.c09-r3-gcs-iam-proposal/1.0",
   "proposal_only": true,
+  "approval_ready": false,
+  "approval_blockers": ["fresh IAM policy readback with version and etag", "reviewed custom role IDs", "exact IAM condition expression", "approved local keyless credential delivery mechanism"],
   "project": "ai-tax-agent-507813",
   "bucket": "ai-tax-agent-c09-witness-test-507813",
   "prefix": "witness/v1/C09-R3-OPERATIONAL-PENDING/",
@@ -19,6 +21,11 @@
     }
   ],
   "user_managed_keys_allowed": false,
+  "custom_role_ids": "NOT_APPROVAL_READY",
+  "iam_condition": "NOT_APPROVAL_READY",
+  "policy_version": "NOT_VERIFIED",
+  "policy_etag": "NOT_VERIFIED",
+  "local_keyless_delivery": "NOT_APPROVAL_READY",
   "retention_lock_change": "NOT_AUTHORIZED",
   "apply": false
 }

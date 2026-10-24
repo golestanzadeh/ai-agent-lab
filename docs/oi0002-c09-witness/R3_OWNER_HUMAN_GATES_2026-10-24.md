@@ -4,6 +4,8 @@ Status: `PREPARED / NOT APPROVED / NOT EXECUTED`. Each item is independent. Appr
 
 ## HG-C09-R3-01 — Windows service activation
 
+Gate readiness: **`NOT_APPROVAL_READY`** until exact protected executable paths, SHA-256 values and dry-run service definitions are committed and independently reviewed. The wording below is a future exact-form template and cannot currently authorize execution.
+
 1. **Target:** local services `AITaxKernel`, `AITaxIdentity`, `AITaxKeyCustodian` on `DESKTOP-HVRUQB7`, using the existing SIDs pinned in `config/c09-r3/deployment-preparation.json`.
 2. **Current state:** four accounts exist and are enabled; no matching service exists; legacy tasks run as `rezag` and are not C09 services.
 3. **Change:** install the three disabled-by-default services from exact protected image paths/hashes, then activate only for the bounded synthetic operational campaign.
@@ -13,9 +15,11 @@ Status: `PREPARED / NOT APPROVED / NOT EXECUTED`. Each item is independent. Appr
 7. **Rollback:** stop/disable services, remove service definitions, preserve audit/evidence and accounts.
 8. **Verification:** retained-handle image/SID checks, first-instance/local-only pipe negatives, four-token access matrix and zero unexpected services/tasks.
 9. **Rejection:** R3 remains preparation-only; no operational principal/IPC claim.
-10. **Approval wording:** `I approve HG-C09-R3-01 for the exact three services, pinned SIDs and exact reviewed image paths/hashes, synthetic campaign only; no broader privilege or production activation.`
+10. **Future approval wording (invalid until blockers above are replaced by exact immutable values):** `I approve HG-C09-R3-01 for the exact three services, pinned SIDs and exact reviewed image paths/hashes, synthetic campaign only; no broader privilege or production activation.`
 
 ## HG-C09-R3-02 — Protected NTFS ACL application
+
+Gate readiness: **`NOT_APPROVAL_READY`** until exact non-overlapping operational/backup/executable/custody paths, inheritance behavior, complete SDDL descriptors, pre-change readback and dry-run diff are committed and independently reviewed.
 
 1. **Target:** the exact Kernel, Identity, backup, executable and key-provider reference roots approved from the template; never the repository or a broad parent.
 2. **Current state:** prior `OI0002-TEST2` sealed evidence proves a bounded ACL model, but operational roots do not exist/are not approved.
@@ -26,9 +30,11 @@ Status: `PREPARED / NOT APPROVED / NOT EXECUTED`. Each item is independent. Appr
 7. **Rollback:** restore a pre-captured ACL descriptor only after services stop; never delete data.
 8. **Verification:** effective-access probes under all four actual tokens, plus owner/SYSTEM recovery inspection.
 9. **Rejection:** operational services remain disabled.
-10. **Approval wording:** `I approve HG-C09-R3-02 for the exact reviewed roots and ACL descriptors only, with pre-change readback, rollback capture and four-token verification.`
+10. **Future approval wording (invalid until blockers above are supplied):** `I approve HG-C09-R3-02 for the exact reviewed roots and ACL descriptors only, with pre-change readback, rollback capture and four-token verification.`
 
 ## HG-C09-R3-03 — GCS least-privilege bindings
+
+Gate readiness: **`NOT_APPROVAL_READY`** until a fresh policy version/etag readback, exact custom-role resource names, exact prefix condition and approved local keyless credential-delivery mechanism are committed and independently reviewed. `gcloud.cmd` is unavailable here, so current IAM cannot be asserted.
 
 1. **Target:** project `ai-tax-agent-507813`, bucket `ai-tax-agent-c09-witness-test-507813`, exact deployment prefix and the two existing service accounts in `config/c09-r3/gcs-iam-proposal.json`.
 2. **Current state:** historical isolated writer/reader probes passed; current IAM cannot be read because `gcloud.cmd` is unavailable in this process.
@@ -39,7 +45,7 @@ Status: `PREPARED / NOT APPROVED / NOT EXECUTED`. Each item is independent. Appr
 7. **Rollback:** remove only the exact added bindings after preserving evidence; objects remain protected.
 8. **Verification:** policy readback plus create/get/list/delete/update/admin positive/negative probes under both identities.
 9. **Rejection:** mocked/local tests remain valid; live R3 remains blocked.
-10. **Approval wording:** `I approve HG-C09-R3-03 for the exact existing test bucket, deployment prefix and two service accounts, limited to the reviewed permissions; no new keys, bucket, retention or project-wide role.`
+10. **Future approval wording (invalid until blockers above are supplied):** `I approve HG-C09-R3-03 for the exact existing test bucket, deployment prefix, policy version/etag, custom roles, condition and two service accounts; no new keys, bucket, retention or project-wide role.`
 
 ## HG-C09-R3-04 — Operational Witness signing custody
 

@@ -2,6 +2,10 @@
 
 Status: `R3_PREPARATION_TECHNICAL_PASS / INDEPENDENT_REVIEW_PENDING / OPERATIONAL_NOT_ACCEPTED`.
 
+Independent review 01 of candidate `b2f1b69a982bc5021c94354131e903ed06c77f31` returned `INDEPENDENT_R3_PREPARATION_FAIL`. It reproduced role/account swaps, arbitrary cloud identities, nested stores and mixed-case secret markers, and found HG-01–03 insufficiently exact. The remediation pins the exact account/SID and service-account identities, requires canonical pairwise-separated stores/backups/executables/custody roots, uses strict query/fragment/userinfo-free provider-reference grammar with distinct providers, adds the missing negative tests, and marks HG-01–03 `NOT_APPROVAL_READY` pending immutable deployment artifacts and fresh readbacks. A new exact-SHA review is mandatory.
+
+The remediation additionally requires complete volume-serial/file-ID path evidence and rejects reparse tags or aliased file identities. Its first focused run reported `1 failed, 7 passed` only because a negative test still expected the pre-pinning error wording; that run receives no credit. After correcting the assertion, focused verification passed `8 passed in 0.26s`, relevant regression passed `369 passed in 33.97s`, and full unit regression passed `1492 passed, 5 skipped in 296.00s`. The five skips remain unrelated DR03 protected-source/registration exclusions. Status: `R3_PREPARATION_REMEDIATED / INDEPENDENT_RE_REVIEW_PENDING`.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
