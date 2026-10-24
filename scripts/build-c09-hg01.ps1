@@ -23,8 +23,12 @@ $entries = @(
 )
 foreach ($entry in $entries) {
     $roleRoot = Join-Path $out $entry.Name
+    # PyInstaller emits ordinary progress logs on stderr; rely on its exit code, not PowerShell's NativeCommandError wrapping.
+    $ErrorActionPreference = 'Continue'
     & $python -m PyInstaller --noconfirm --clean --onedir --noupx --name $entry.Name --paths (Join-Path $root 'src') --distpath (Join-Path $roleRoot 'dist') --workpath (Join-Path $roleRoot 'work') --specpath (Join-Path $roleRoot 'spec') (Join-Path $root $entry.Script)
-    if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed for $($entry.Name)." }
+    $buildExitCode = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
+    if ($buildExitCode -ne 0) { throw "PyInstaller failed for $($entry.Name) (exit $buildExitCode)." }
 }
 $manifest = @()
 Get-ChildItem -LiteralPath $out -Recurse -File | Where-Object { $_.FullName -notmatch '\\(work|spec)\\' } | Sort-Object FullName | ForEach-Object {
