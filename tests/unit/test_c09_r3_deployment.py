@@ -288,3 +288,22 @@ def test_hg01_build_lock_is_complete_hash_pinned_and_binary_only():
     assert "--require-hashes" in profile["dependency_install"]
     assert "--only-binary=:all:" in profile["dependency_install"]
 
+
+def test_hg01_build_evidence_records_real_hashes_and_reproducibility_failure():
+    root = Path(__file__).resolve().parents[2]
+    evidence = json.loads((root / "config/c09-r3/hg01-build-evidence.json").read_text(encoding="utf-8"))
+    assert evidence["tree_entry_count_a"] == evidence["tree_entry_count_b"] == 204
+    assert evidence["compare_diff_rows"] == 12 and evidence["bit_for_bit_reproducible"] is False
+    assert len(evidence["differing_logical_paths"]) == 6
+    assert len(evidence["build_a_executables"]) == 3
+    assert all(len(item["sha256"]) == 64 and item["authenticode"] == "NotSigned" for item in evidence["build_a_executables"])
+    assert evidence["approval_ready"] is False
+
+
+def test_hg01_build_script_is_fixed_scope_and_never_installs_or_activates_services():
+    root = Path(__file__).resolve().parents[2]
+    script = (root / "scripts/build-c09-hg01.ps1").read_text(encoding="utf-8")
+    assert "ValidateSet('A','B')" in script and "allowedRoot" in script and "Get-FileHash" in script
+    forbidden = ("new-service", "sc.exe", "start-service", "set-acl", "set-service", "signtool")
+    assert not any(item in script.casefold() for item in forbidden)
+

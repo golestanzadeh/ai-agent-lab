@@ -41,3 +41,11 @@ Status: `TECHNICAL_PASS / SYNTHETIC_KEY_ONLY / OPERATIONAL_PROVIDER_BLOCKED`.
 The bounded Custodian runtime exposes only `AUTHENTICATE_WITNESS` and `VERIFY_WITNESS`, requires exact request fields, a Kernel authorization callback, exact staged-receipt resolver, canonical preimage/request digests, a 32-byte nonce and a maximum five-second valid window. It records transaction/nonce replays: exact retry is deterministic and changed retry is denied. Only authentication and signed-record digests leave the boundary; key bytes are never returned or logged. Missing custody, stopped runtime, role/operation/schema substitution, receipt mismatch, expired/overlong time and preimage changes fail closed.
 
 Verification passes `34` focused service/transport/Custodian tests. The implementation deliberately accepts only injected synthetic key bytes. The service executable remains fail-closed because HG-04 has not supplied an operational non-exportable provider reference; no operational key was created/imported/used.
+
+## HG01-I04 local build and reproducibility result
+
+Status: `BUILD_PASS / REPRODUCIBILITY_FAIL / UNSIGNED_DEVELOPMENT_ONLY`.
+
+The hash-locked wheelhouse installed into an isolated ignored virtual environment. Two clean builds from source commit `97adcca94b845dd931aac13cb4f669571daa62f4` produced three actual onedir executables per build. Each tree contained 204 recorded files. Exact comparison returned 12 differing rows across six logical paths: every role's EXE and `base_library.zip`. Bit-for-bit reproducibility is therefore **not** claimed.
+
+Build A executable SHA-256 values are recorded in `config/c09-r3/hg01-build-evidence.json`. All three Authenticode states are `NotSigned`. Artifacts remain only under the ignored `.runtime` build root and were not installed, started or committed. Because they predate the final candidate and fail exact reproduction/signing, they are evidence of build feasibility—not deployment candidates.

@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I04_REPRODUCIBLE_BUILD -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I05_SIGNING_PROFILE -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -40,6 +40,8 @@ HG01-I01 adds three fixed-role pywin32 SCM entry points and a locked fail-closed
 HG01-I02 implements the Windows-native transport core: frozen Identity/Custodian pipe names, message-mode/local-only/first-instance creation, SYSTEM+Kernel-only DACL, actual client-token impersonation with guaranteed revert, retained server-process handle/SID/image/hash/PID-turnover verification and canonical one-frame bounds. Wrong peer evidence and malformed/trailing/oversized frames fail closed. Verification passed `227` focused and `112` relevant. No operational endpoint or privileged state changed. Exact next package is HG01-I03 Custodian host and service-runtime composition.
 
 HG01-I03 adds a synthetic-only closed Custodian runtime for authenticate/verify, exact Kernel authorization and staged-receipt callbacks, canonical digest binding, five-second expiry, deterministic exact retry and changed-replay rejection. Focused service/transport/Custodian verification passed `34`. No key escapes the boundary. The SCM entry point remains fail-closed pending HG-04 operational non-exportable key-provider authority; no operational key exists. Exact next package is HG01-I04 local reproducible-build evidence.
+
+HG01-I04 used the hash-locked isolated toolchain to produce two clean builds of all three real executables from `97adcca`. Both trees had 204 files, but exact comparison returned 12 diff rows across the three EXEs and three base-library ZIPs. Build feasibility PASSes; bit-for-bit reproducibility FAILs and is not claimed. Build-A executable SHA-256 values and `NotSigned` status are recorded in `hg01-build-evidence.json`; ignored artifacts were not installed or committed. HG-01 remains not approval-ready. Exact next package is I05 signing-profile preparation, followed by capacity reassessment for regression/independent review.
 
 # C09 operational architecture gate resumed — 2026-10-22
 

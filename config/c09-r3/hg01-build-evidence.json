@@ -1,0 +1,27 @@
+{
+  "schema": "ai-tax-agent.c09-r3-hg01-build-evidence/1.0",
+  "source_commit": "97adcca94b845dd931aac13cb4f669571daa62f4",
+  "profile": "config/c09-r3/hg01-build-profile.json",
+  "build_a_root": ".runtime/hg01-build/97adcca94b845dd931aac13cb4f669571daa62f4/A",
+  "build_b_root": ".runtime/hg01-build/97adcca94b845dd931aac13cb4f669571daa62f4/B",
+  "tree_entry_count_a": 204,
+  "tree_entry_count_b": 204,
+  "compare_diff_rows": 12,
+  "bit_for_bit_reproducible": false,
+  "differing_logical_paths": [
+    "AITaxKernel/dist/AITaxKernel/AITaxKernel.exe",
+    "AITaxKernel/dist/AITaxKernel/_internal/base_library.zip",
+    "AITaxIdentity/dist/AITaxIdentity/AITaxIdentity.exe",
+    "AITaxIdentity/dist/AITaxIdentity/_internal/base_library.zip",
+    "AITaxKeyCustodian/dist/AITaxKeyCustodian/AITaxKeyCustodian.exe",
+    "AITaxKeyCustodian/dist/AITaxKeyCustodian/_internal/base_library.zip"
+  ],
+  "build_a_executables": [
+    {"name": "AITaxKernel.exe", "relative_path": "AITaxKernel/dist/AITaxKernel/AITaxKernel.exe", "sha256": "6c7518010288ad64d2a794e8990f4f7cf3486bba2e35a37f93fe3f4c2085d471", "authenticode": "NotSigned"},
+    {"name": "AITaxIdentity.exe", "relative_path": "AITaxIdentity/dist/AITaxIdentity/AITaxIdentity.exe", "sha256": "2769008eb6e6dd0a8111a72a4702f58f3af419f4ce91144a58e9134f605fd35a", "authenticode": "NotSigned"},
+    {"name": "AITaxKeyCustodian.exe", "relative_path": "AITaxKeyCustodian/dist/AITaxKeyCustodian/AITaxKeyCustodian.exe", "sha256": "6924d9ffb76385189d2af8699aff6e8fac89ce48a57b14f8377ea0118965456f", "authenticode": "NotSigned"}
+  ],
+  "status": "BUILD_SUCCEEDED_REPRODUCIBILITY_FAILED_UNSIGNED_DEVELOPMENT_ONLY",
+  "approval_ready": false,
+  "blockers": ["PyInstaller EXE and base_library.zip outputs were not bit-for-bit reproducible", "artifacts are unsigned development builds", "artifacts were built from the pre-build-script source commit, not a final independently reviewed candidate", "operational service composition and Human Gates remain incomplete"]
+}
