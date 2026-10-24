@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import PureWindowsPath
 import re
+from collections.abc import Mapping
 from urllib.parse import urlsplit
 
 
@@ -28,6 +29,54 @@ FORBIDDEN_GCS_PERMISSIONS = frozenset({
     "storage.objects.delete", "storage.objects.update", "storage.buckets.setIamPolicy",
     "storage.buckets.update", "storage.buckets.delete", "storage.objects.setRetention",
 })
+HG03_WRITER_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessWriter"
+HG03_READER_OBJECT_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader"
+HG03_READER_LIST_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister"
+HG03_PREFIX = "witness/v1/C09-R3-OPERATIONAL-PENDING/"
+
+
+def validate_hg03_manifest(manifest: Mapping[str, object]) -> None:
+    """Validate the inert HG-03 readiness package; this function performs no I/O."""
+    if manifest.get("schema") != "ai-tax-agent.c09-r3-gcs-iam-readiness/1.0":
+        raise R3DeploymentError("unknown HG-03 schema")
+    if manifest.get("proposal_only") is not True or manifest.get("apply_authorized") is not False:
+        raise R3DeploymentError("HG-03 package must remain inert")
+    target = manifest.get("target")
+    if not isinstance(target, Mapping) or target.get("project") != "ai-tax-agent-507813" or target.get("bucket") != "ai-tax-agent-c09-witness-test-507813" or target.get("prefix") != HG03_PREFIX or target.get("writer") != PINNED_CLOUD["WITNESS_WRITER"] or target.get("reader") != PINNED_CLOUD["WITNESS_READER"]:
+        raise R3DeploymentError("HG-03 target is not exactly pinned")
+    observed = manifest.get("observed")
+    if not isinstance(observed, Mapping) or observed.get("bucket_policy_version") != 1 or not observed.get("bucket_policy_etag"):
+        raise R3DeploymentError("ambiguous or stale HG-03 inventory")
+    if observed.get("user_managed_writer_keys") != 0 or observed.get("user_managed_reader_keys") != 0:
+        raise R3DeploymentError("user-managed service-account key is forbidden")
+    proposed = manifest.get("proposed")
+    if not isinstance(proposed, Mapping):
+        raise R3DeploymentError("missing HG-03 proposal")
+    roles = proposed.get("custom_roles")
+    expected_roles = {
+        HG03_WRITER_ROLE: ["storage.objects.create"],
+        HG03_READER_OBJECT_ROLE: ["storage.objects.get"],
+        HG03_READER_LIST_ROLE: ["storage.objects.list"],
+    }
+    if not isinstance(roles, list) or {item.get("name"): item.get("permissions") for item in roles if isinstance(item, Mapping)} != expected_roles:
+        raise R3DeploymentError("HG-03 custom roles exceed or differ from the closed allowlist")
+    bindings = proposed.get("bindings")
+    if not isinstance(bindings, list) or len(bindings) != 3:
+        raise R3DeploymentError("HG-03 requires exactly three conditioned bindings")
+    expected = {
+        (PINNED_CLOUD["WITNESS_WRITER"], HG03_WRITER_ROLE, "OBJECT_PREFIX"),
+        (PINNED_CLOUD["WITNESS_READER"], HG03_READER_OBJECT_ROLE, "OBJECT_PREFIX"),
+        (PINNED_CLOUD["WITNESS_READER"], HG03_READER_LIST_ROLE, "EXACT_BUCKET"),
+    }
+    actual = {(item.get("principal"), item.get("role"), item.get("condition_kind")) for item in bindings if isinstance(item, Mapping)}
+    if actual != expected or any(not item.get("condition_expression") for item in bindings if isinstance(item, Mapping)):
+        raise R3DeploymentError("missing, invalid or substituted HG-03 conditioned binding")
+    delivery = manifest.get("keyless_delivery")
+    if not isinstance(delivery, Mapping) or delivery.get("operational_status") != "UNRESOLVED_FAIL_CLOSED" or delivery.get("long_lived_keys_allowed") is not False:
+        raise R3DeploymentError("invalid credential-delivery posture")
+    blockers = manifest.get("approval_blockers")
+    if manifest.get("approval_ready") is not False or not isinstance(blockers, list) or not blockers:
+        raise R3DeploymentError("unverified HG-03 package cannot be approval-ready")
 
 
 @dataclass(frozen=True, slots=True)

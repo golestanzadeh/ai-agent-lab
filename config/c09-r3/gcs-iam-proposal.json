@@ -2,7 +2,8 @@
   "schema": "ai-tax-agent.c09-r3-gcs-iam-proposal/1.0",
   "proposal_only": true,
   "approval_ready": false,
-  "approval_blockers": ["fresh IAM policy readback with version and etag", "reviewed custom role IDs", "exact IAM condition expression", "approved local keyless credential delivery mechanism"],
+  "superseded_detail": "See hg03-gcs-iam-readiness.json and hg03-proposed-bucket-policy.json for the authenticated inventory and exact proposal.",
+  "approval_blockers": ["approved local keyless credential delivery mechanism", "legacy project basic-principal binding remediation", "live negative enforcement after separately approved IAM change"],
   "project": "ai-tax-agent-507813",
   "bucket": "ai-tax-agent-c09-witness-test-507813",
   "prefix": "witness/v1/C09-R3-OPERATIONAL-PENDING/",
@@ -21,11 +22,11 @@
     }
   ],
   "user_managed_keys_allowed": false,
-  "custom_role_ids": "NOT_APPROVAL_READY",
-  "iam_condition": "NOT_APPROVAL_READY",
-  "policy_version": "NOT_VERIFIED",
-  "policy_etag": "NOT_VERIFIED",
-  "local_keyless_delivery": "NOT_APPROVAL_READY",
+  "custom_role_ids": ["projects/ai-tax-agent-507813/roles/c09WitnessWriter", "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader", "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister"],
+  "iam_condition": "EXACT_CONDITIONS_IN_HG03_READINESS_PACKAGE",
+  "policy_version": 1,
+  "policy_etag": "CAQ=",
+  "local_keyless_delivery": "UNRESOLVED_FAIL_CLOSED",
   "retention_lock_change": "NOT_AUTHORIZED",
   "apply": false
 }

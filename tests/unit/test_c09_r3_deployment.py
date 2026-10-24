@@ -5,6 +5,7 @@ import pytest
 
 from agent_lab.c09_r3_deployment import (
     CloudPrincipal, PathIdentity, R3DeploymentError, R3PreparationPlan, WindowsPrincipal,
+    validate_hg03_manifest,
 )
 
 
@@ -187,4 +188,56 @@ def test_hg02_inventory_script_is_read_only_and_fixed_scope():
     forbidden = ("Set-Acl", "New-Item", "Remove-Item", "icacls", "takeown", "Set-ItemProperty")
     assert not any(token.casefold() in script.casefold() for token in forbidden)
     assert script.count("'C:\\ProgramData\\AI-Tax-Agent") == 6
+
+
+def hg03_manifest():
+    root = Path(__file__).resolve().parents[2]
+    return json.loads((root / "config/c09-r3/hg03-gcs-iam-readiness.json").read_text(encoding="utf-8"))
+
+
+def test_hg03_exact_inventory_and_closed_writer_reader_roles():
+    manifest = hg03_manifest()
+    validate_hg03_manifest(manifest)
+    assert manifest["observed"]["bucket_policy_etag"] == "CAQ="
+    assert manifest["observed"]["custom_roles"] == []
+    assert manifest["approval_ready"] is False
+    root = Path(__file__).resolve().parents[2]
+    policy = json.loads((root / "config/c09-r3/hg03-proposed-bucket-policy.json").read_text(encoding="utf-8"))
+    assert policy["version"] == 3 and policy["etag"] == "CAQ="
+    service_bindings = [item for item in policy["bindings"] if any(member.startswith("serviceAccount:") for member in item["members"])]
+    assert len(service_bindings) == 3
+    assert all("condition" in item for item in service_bindings)
+    assert not any(item["role"] in {"roles/storage.objectCreator", "roles/storage.objectViewer"} for item in service_bindings)
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda m: m["target"].update(writer=m["target"]["reader"]),
+    lambda m: m["proposed"]["custom_roles"][0]["permissions"].append("storage.objects.delete"),
+    lambda m: m["proposed"]["custom_roles"][1]["permissions"].append("storage.objects.create"),
+    lambda m: m["proposed"]["bindings"][0].update(condition_expression=""),
+    lambda m: m["observed"].update(bucket_policy_etag=""),
+    lambda m: m["keyless_delivery"].update(operational_status="ACTIVE"),
+])
+def test_hg03_rejects_substitution_excess_privilege_bad_condition_stale_inventory_and_credentials(mutation):
+    import copy
+    manifest = copy.deepcopy(hg03_manifest())
+    mutation(manifest)
+    with pytest.raises(R3DeploymentError):
+        validate_hg03_manifest(manifest)
+
+
+def test_hg03_readonly_inventory_has_no_mutation_or_token_export():
+    root = Path(__file__).resolve().parents[2]
+    script = (root / "scripts/inspect-c09-hg03-readonly.ps1").read_text(encoding="utf-8")
+    forbidden = ("add-iam-policy-binding", "remove-iam-policy-binding", "set-iam-policy", "roles create", "roles update", "keys create", "print-access-token", "auth application-default login")
+    assert not any(token in script.casefold() for token in forbidden)
+    assert "get-iam-policy" in script and "--managed-by=user" in script
+
+
+def test_hg03_revocation_and_fail_closed_are_explicit_and_no_live_enforcement_claimed():
+    manifest = hg03_manifest()
+    delivery = manifest["keyless_delivery"]
+    assert delivery["operational_status"] == "UNRESOLVED_FAIL_CLOSED"
+    assert "every refresh fails closed" in delivery["required_properties"]["rotation_revocation"]
+    assert any("Live negative enforcement" in item for item in manifest["approval_blockers"])
 

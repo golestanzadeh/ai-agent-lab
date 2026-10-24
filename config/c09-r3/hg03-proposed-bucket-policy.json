@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "etag": "CAQ=",
+  "bindings": [
+    {"role": "roles/storage.legacyBucketOwner", "members": ["projectEditor:ai-tax-agent-507813", "projectOwner:ai-tax-agent-507813"]},
+    {"role": "roles/storage.legacyBucketReader", "members": ["projectViewer:ai-tax-agent-507813"]},
+    {"role": "roles/storage.legacyObjectOwner", "members": ["projectEditor:ai-tax-agent-507813", "projectOwner:ai-tax-agent-507813"]},
+    {"role": "roles/storage.legacyObjectReader", "members": ["projectViewer:ai-tax-agent-507813"]},
+    {
+      "role": "projects/ai-tax-agent-507813/roles/c09WitnessWriter",
+      "members": ["serviceAccount:c09-witness-test@ai-tax-agent-507813.iam.gserviceaccount.com"],
+      "condition": {"title": "c09-r3-writer-prefix", "description": "C09 R3 exact Witness prefix only", "expression": "resource.name.startsWith('projects/_/buckets/ai-tax-agent-c09-witness-test-507813/objects/witness/v1/C09-R3-OPERATIONAL-PENDING/')"}
+    },
+    {
+      "role": "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader",
+      "members": ["serviceAccount:c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com"],
+      "condition": {"title": "c09-r3-reader-prefix", "description": "C09 R3 exact Witness prefix only", "expression": "resource.name.startsWith('projects/_/buckets/ai-tax-agent-c09-witness-test-507813/objects/witness/v1/C09-R3-OPERATIONAL-PENDING/')"}
+    },
+    {
+      "role": "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister",
+      "members": ["serviceAccount:c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com"],
+      "condition": {"title": "c09-r3-reader-exact-bucket", "description": "List authorization on the dedicated exact bucket", "expression": "resource.name == 'projects/_/buckets/ai-tax-agent-c09-witness-test-507813'"}
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schema": "ai-tax-agent.c09-r3-gcs-iam-readiness/1.0",
+  "captured_at": "2026-10-24T18:41:52.8025256+02:00",
+  "proposal_only": true,
+  "apply_authorized": false,
+  "approval_ready": false,
+  "status": "HG03_PREPARATION_REVIEW_READY_NOT_APPROVAL_READY",
+  "target": {"project": "ai-tax-agent-507813", "bucket": "ai-tax-agent-c09-witness-test-507813", "prefix": "witness/v1/C09-R3-OPERATIONAL-PENDING/", "writer": "c09-witness-test@ai-tax-agent-507813.iam.gserviceaccount.com", "reader": "c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com"},
+  "observed": {
+    "source": "authenticated gcloud 590.0.0 read-only commands",
+    "project": "ai-tax-agent-507813", "bucket_location": "EUROPE-WEST3", "uniform_bucket_level_access": true, "public_access_prevention": "enforced",
+    "retention_seconds": 604800, "retention_locked": false,
+    "bucket_policy_version": 1, "bucket_policy_version_field_present": false, "bucket_policy_etag": "CAQ=", "project_policy_version": 1, "project_policy_etag": "BwZa0Iovf6w=",
+    "custom_roles": [], "iam_conditions": [], "writer_bucket_role": "roles/storage.objectCreator", "reader_bucket_role": "roles/storage.objectViewer",
+    "user_managed_writer_keys": 0, "user_managed_reader_keys": 0, "workload_identity_pools": [],
+    "service_account_impersonators": ["user:reza.golestanzadeh@gmail.com"], "legacy_project_basic_principal_bindings_present": true
+  },
+  "proposed": {
+    "custom_roles": [
+      {"name": "projects/ai-tax-agent-507813/roles/c09WitnessWriter", "permissions": ["storage.objects.create"]},
+      {"name": "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader", "permissions": ["storage.objects.get"]},
+      {"name": "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister", "permissions": ["storage.objects.list"]}
+    ],
+    "bindings": [
+      {"principal": "c09-witness-test@ai-tax-agent-507813.iam.gserviceaccount.com", "role": "projects/ai-tax-agent-507813/roles/c09WitnessWriter", "condition_kind": "OBJECT_PREFIX", "condition_expression": "resource.name.startsWith('projects/_/buckets/ai-tax-agent-c09-witness-test-507813/objects/witness/v1/C09-R3-OPERATIONAL-PENDING/')"},
+      {"principal": "c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com", "role": "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader", "condition_kind": "OBJECT_PREFIX", "condition_expression": "resource.name.startsWith('projects/_/buckets/ai-tax-agent-c09-witness-test-507813/objects/witness/v1/C09-R3-OPERATIONAL-PENDING/')"},
+      {"principal": "c09-witness-reader@ai-tax-agent-507813.iam.gserviceaccount.com", "role": "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister", "condition_kind": "EXACT_BUCKET", "condition_expression": "resource.name == 'projects/_/buckets/ai-tax-agent-c09-witness-test-507813'"}
+    ],
+    "remove_unconditioned_bindings": ["roles/storage.objectCreator", "roles/storage.objectViewer"], "default_deny": true,
+    "condition_limit": "The list permission is authorized on the bucket resource and cannot itself constrain returned object names to a prefix. The dedicated witness-only bucket, application-side exact-prefix validation, generation-pinned reads and complete-chain validation remain mandatory. IAM Conditions are not claimed as complete object-level isolation."
+  },
+  "keyless_delivery": {
+    "historical_test_mechanism": "interactive gcloud service-account impersonation", "current_source_principal": "user:reza.golestanzadeh@gmail.com", "operational_status": "UNRESOLVED_FAIL_CLOSED", "long_lived_keys_allowed": false,
+    "required_properties": {
+      "binding": "exact Windows service principal to exactly one cloud service account", "acquisition": "short-lived service-account access-token impersonation from an independently authenticated non-exportable source credential",
+      "maximum_lifetime_seconds": 3600, "scope": "devstorage.read_write for Writer; devstorage.read_only for Reader", "audience": "Google OAuth token endpoint / Cloud Storage API only; no reusable bearer token may be persisted",
+      "rotation_revocation": "revoke the exact impersonation binding/source credential; cached tokens expire and every refresh fails closed", "failure": "no fallback identity, shared token, user-managed key or Owner interactive credential",
+      "audit": "Cloud Audit Logs plus local correlation ID without token material", "recovery": "Kernel halts; Recovery has no standing Writer/Reader impersonation"
+    }
+  },
+  "approval_blockers": [
+    "No approved operational local keyless source credential or Windows-service-to-service-account binding exists.",
+    "Current bucket roles are unconditioned predefined roles; proposed custom roles and conditions are not deployed.",
+    "Project legacy basic-principal bucket bindings can bypass the proposed Writer/Reader restrictions and require a separately reviewed safe removal/replacement plan.",
+    "The Owner user currently has serviceAccountTokenCreator on both identities; this is historical test access, not accepted operational custody.",
+    "Live negative enforcement and revocation probes cannot occur until a separately approved IAM change."
+  ],
+  "deployment": {
+    "preconditions": ["exact policy ETag CAQ= still current", "independent exact-SHA review PASS", "Owner approval using the exact gate wording", "approved keyless delivery architecture", "rollback policy captured immediately before change"],
+    "commands_are_proposal_only": true,
+    "verification": ["read back policy version and ETag", "verify exact custom-role permissions", "Writer create succeeds only under prefix", "Writer read/list/delete/update/admin denied", "Reader get/list succeeds only as designed", "Reader create/delete/update/admin and service-account impersonation denied", "stale ETag update rejected"],
+    "rollback": "Using the captured post-change ETag, remove only the three exact conditioned bindings, restore the two exact pre-change bindings, and delete custom roles only after confirming no remaining binding references them. Preserve witness objects and audit evidence.",
+    "cost": "No new service. Existing Cloud Storage object, operation and audit-log charges apply to synthetic verification; exact marginal cost depends on test volume."
+  },
+  "owner_approval_statement": "I approve HG-C09-R3-03 only for project ai-tax-agent-507813, bucket ai-tax-agent-c09-witness-test-507813, prefix witness/v1/C09-R3-OPERATIONAL-PENDING/, the exact three reviewed custom roles and conditioned bindings, and the exact reviewed keyless delivery mechanism at the then-current verified policy ETag; no new keys, bucket, retention change, project-wide role, production data or broader privilege.",
+  "retention_lock_change": "NOT_AUTHORIZED"
+}
