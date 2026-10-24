@@ -195,14 +195,19 @@ def hg03_manifest():
     return json.loads((root / "config/c09-r3/hg03-gcs-iam-readiness.json").read_text(encoding="utf-8"))
 
 
+def hg03_policy():
+    root = Path(__file__).resolve().parents[2]
+    return json.loads((root / "config/c09-r3/hg03-proposed-bucket-policy.json").read_text(encoding="utf-8"))
+
+
 def test_hg03_exact_inventory_and_closed_writer_reader_roles():
     manifest = hg03_manifest()
-    validate_hg03_manifest(manifest)
+    policy = hg03_policy()
+    validate_hg03_manifest(manifest, policy)
     assert manifest["observed"]["bucket_policy_etag"] == "CAQ="
     assert manifest["observed"]["custom_roles"] == []
     assert manifest["approval_ready"] is False
     root = Path(__file__).resolve().parents[2]
-    policy = json.loads((root / "config/c09-r3/hg03-proposed-bucket-policy.json").read_text(encoding="utf-8"))
     assert policy["version"] == 3 and policy["etag"] == "CAQ="
     service_bindings = [item for item in policy["bindings"] if any(member.startswith("serviceAccount:") for member in item["members"])]
     assert len(service_bindings) == 3
@@ -211,19 +216,28 @@ def test_hg03_exact_inventory_and_closed_writer_reader_roles():
 
 
 @pytest.mark.parametrize("mutation", [
-    lambda m: m["target"].update(writer=m["target"]["reader"]),
-    lambda m: m["proposed"]["custom_roles"][0]["permissions"].append("storage.objects.delete"),
-    lambda m: m["proposed"]["custom_roles"][1]["permissions"].append("storage.objects.create"),
-    lambda m: m["proposed"]["bindings"][0].update(condition_expression=""),
-    lambda m: m["observed"].update(bucket_policy_etag=""),
-    lambda m: m["keyless_delivery"].update(operational_status="ACTIVE"),
+    lambda m, p: m["target"].update(writer=m["target"]["reader"]),
+    lambda m, p: m["proposed"]["custom_roles"][0]["permissions"].append("storage.objects.delete"),
+    lambda m, p: m["proposed"]["custom_roles"][1]["permissions"].append("storage.objects.create"),
+    lambda m, p: m["proposed"]["bindings"][0].update(condition_expression="true"),
+    lambda m, p: m["proposed"]["bindings"][0].update(condition_expression=m["proposed"]["bindings"][0]["condition_expression"].replace("ai-tax-agent-c09-witness-test-507813", "wrong-bucket")),
+    lambda m, p: m["proposed"]["bindings"][0].update(condition_expression=m["proposed"]["bindings"][0]["condition_expression"].replace("C09-R3-OPERATIONAL-PENDING", "WRONG-PREFIX")),
+    lambda m, p: m["proposed"]["bindings"][0].update(condition_expression=m["proposed"]["bindings"][0]["condition_expression"].replace("startsWith", "endsWith")),
+    lambda m, p: m["proposed"]["bindings"][0].update(condition_expression=m["proposed"]["bindings"][0]["condition_expression"] + " || true"),
+    lambda m, p: m["observed"].update(bucket_policy_etag="ATTACKER-OR-STALE"),
+    lambda m, p: p.update(etag="ATTACKER-OR-STALE"),
+    lambda m, p: m["observed"].pop("bucket_policy_version_field_present"),
+    lambda m, p: m["keyless_delivery"].update(operational_status="ACTIVE"),
+    lambda m, p: m["keyless_delivery"].pop("required_properties"),
+    lambda m, p: m.update(approval_blockers=["placeholder"]),
 ])
 def test_hg03_rejects_substitution_excess_privilege_bad_condition_stale_inventory_and_credentials(mutation):
     import copy
     manifest = copy.deepcopy(hg03_manifest())
-    mutation(manifest)
+    policy = copy.deepcopy(hg03_policy())
+    mutation(manifest, policy)
     with pytest.raises(R3DeploymentError):
-        validate_hg03_manifest(manifest)
+        validate_hg03_manifest(manifest, policy)
 
 
 def test_hg03_readonly_inventory_has_no_mutation_or_token_export():

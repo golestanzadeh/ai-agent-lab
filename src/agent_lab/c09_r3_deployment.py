@@ -33,9 +33,18 @@ HG03_WRITER_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessWriter"
 HG03_READER_OBJECT_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessObjectReader"
 HG03_READER_LIST_ROLE = "projects/ai-tax-agent-507813/roles/c09WitnessBucketLister"
 HG03_PREFIX = "witness/v1/C09-R3-OPERATIONAL-PENDING/"
+HG03_OBJECT_CONDITION = "resource.name.startsWith('projects/_/buckets/ai-tax-agent-c09-witness-test-507813/objects/witness/v1/C09-R3-OPERATIONAL-PENDING/')"
+HG03_BUCKET_CONDITION = "resource.name == 'projects/_/buckets/ai-tax-agent-c09-witness-test-507813'"
+HG03_BLOCKERS = (
+    "No approved operational local keyless source credential or Windows-service-to-service-account binding exists.",
+    "Current bucket roles are unconditioned predefined roles; proposed custom roles and conditions are not deployed.",
+    "Project legacy basic-principal bucket bindings can bypass the proposed Writer/Reader restrictions and require a separately reviewed safe removal/replacement plan.",
+    "The Owner user currently has serviceAccountTokenCreator on both identities; this is historical test access, not accepted operational custody.",
+    "Live negative enforcement and revocation probes cannot occur until a separately approved IAM change.",
+)
 
 
-def validate_hg03_manifest(manifest: Mapping[str, object]) -> None:
+def validate_hg03_manifest(manifest: Mapping[str, object], policy: Mapping[str, object]) -> None:
     """Validate the inert HG-03 readiness package; this function performs no I/O."""
     if manifest.get("schema") != "ai-tax-agent.c09-r3-gcs-iam-readiness/1.0":
         raise R3DeploymentError("unknown HG-03 schema")
@@ -45,7 +54,7 @@ def validate_hg03_manifest(manifest: Mapping[str, object]) -> None:
     if not isinstance(target, Mapping) or target.get("project") != "ai-tax-agent-507813" or target.get("bucket") != "ai-tax-agent-c09-witness-test-507813" or target.get("prefix") != HG03_PREFIX or target.get("writer") != PINNED_CLOUD["WITNESS_WRITER"] or target.get("reader") != PINNED_CLOUD["WITNESS_READER"]:
         raise R3DeploymentError("HG-03 target is not exactly pinned")
     observed = manifest.get("observed")
-    if not isinstance(observed, Mapping) or observed.get("bucket_policy_version") != 1 or not observed.get("bucket_policy_etag"):
+    if not isinstance(observed, Mapping) or observed.get("bucket_policy_version") != 1 or observed.get("bucket_policy_version_field_present") is not False or not observed.get("bucket_policy_etag"):
         raise R3DeploymentError("ambiguous or stale HG-03 inventory")
     if observed.get("user_managed_writer_keys") != 0 or observed.get("user_managed_reader_keys") != 0:
         raise R3DeploymentError("user-managed service-account key is forbidden")
@@ -69,14 +78,31 @@ def validate_hg03_manifest(manifest: Mapping[str, object]) -> None:
         (PINNED_CLOUD["WITNESS_READER"], HG03_READER_LIST_ROLE, "EXACT_BUCKET"),
     }
     actual = {(item.get("principal"), item.get("role"), item.get("condition_kind")) for item in bindings if isinstance(item, Mapping)}
-    if actual != expected or any(not item.get("condition_expression") for item in bindings if isinstance(item, Mapping)):
+    expected_conditions = {
+        (PINNED_CLOUD["WITNESS_WRITER"], HG03_WRITER_ROLE): HG03_OBJECT_CONDITION,
+        (PINNED_CLOUD["WITNESS_READER"], HG03_READER_OBJECT_ROLE): HG03_OBJECT_CONDITION,
+        (PINNED_CLOUD["WITNESS_READER"], HG03_READER_LIST_ROLE): HG03_BUCKET_CONDITION,
+    }
+    if actual != expected or any(item.get("condition_expression") != expected_conditions.get((item.get("principal"), item.get("role"))) for item in bindings if isinstance(item, Mapping)):
         raise R3DeploymentError("missing, invalid or substituted HG-03 conditioned binding")
     delivery = manifest.get("keyless_delivery")
     if not isinstance(delivery, Mapping) or delivery.get("operational_status") != "UNRESOLVED_FAIL_CLOSED" or delivery.get("long_lived_keys_allowed") is not False:
         raise R3DeploymentError("invalid credential-delivery posture")
+    required = delivery.get("required_properties")
+    required_fields = {"binding", "acquisition", "maximum_lifetime_seconds", "scope", "audience", "rotation_revocation", "failure", "audit", "recovery"}
+    if not isinstance(required, Mapping) or set(required) != required_fields or required.get("maximum_lifetime_seconds") != 3600 or not all(required.get(field) for field in required_fields):
+        raise R3DeploymentError("incomplete keyless credential-delivery contract")
     blockers = manifest.get("approval_blockers")
-    if manifest.get("approval_ready") is not False or not isinstance(blockers, list) or not blockers:
+    if manifest.get("approval_ready") is not False or blockers != list(HG03_BLOCKERS):
         raise R3DeploymentError("unverified HG-03 package cannot be approval-ready")
+    if policy.get("version") != 3 or policy.get("etag") != observed.get("bucket_policy_etag"):
+        raise R3DeploymentError("proposed policy is not bound to the observed ETag")
+    policy_bindings = policy.get("bindings")
+    if not isinstance(policy_bindings, list):
+        raise R3DeploymentError("proposed policy is malformed")
+    service_bindings = [item for item in policy_bindings if isinstance(item, Mapping) and any(str(member).startswith("serviceAccount:") for member in item.get("members", []))]
+    if len(service_bindings) != 3 or any(item.get("condition", {}).get("expression") != expected_conditions.get((str(item["members"][0]).removeprefix("serviceAccount:"), item.get("role"))) for item in service_bindings):
+        raise R3DeploymentError("proposed policy differs from the exact conditioned bindings")
 
 
 @dataclass(frozen=True, slots=True)
