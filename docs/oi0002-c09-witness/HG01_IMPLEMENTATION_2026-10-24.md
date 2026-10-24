@@ -57,3 +57,13 @@ Status: `PROFILE_PASS / OPERATIONAL_SIGNING_HUMAN_GATE`.
 The prepared profile requires Authenticode SHA-256, an RFC3161 SHA-256 timestamp, Code Signing EKU, pinned publisher/thumbprint, valid chain and revocation checks. Missing/invalid/revoked/wrong-signer/wrong-hash evidence denies installation and startup. Development builds may remain `NotSigned` but are never deployment-eligible. The private key must be non-exportable in an Owner-selected provider; selection, provisioning, grant, signing and revocation are separately prohibited Human Gates.
 
 The verifier is read-only and fixed to the ignored HG-01 build root. No certificate/key was created, imported, selected or used. No artifact was modified.
+
+## HG01-I04 deterministic rebuild follow-up - 2026-10-24
+
+Status: TECHNICAL_PASS / REPRODUCIBILITY_PASS / UNSIGNED_DEVELOPMENT_ONLY / INDEPENDENT_REVIEW_PENDING.
+
+The original source 97adcca build remains REPRODUCIBILITY_FAIL, as recorded above; its historical evidence is not rewritten. The first repair stabilized Python hash iteration and native process exit handling (b0628a6, 7c4d201). PowerShell 5.1 UTF8 encoding incompatibility was repaired in f9b807d; two clean builds at f9b807d differed in three role-specific EXEs (75 manifest entries each). The PE timestamp was then pinned to source commit epoch in f1af82f.
+
+At exact source f1af82fd1a7c858074db868d412604dba9589833, independent A and B clean onedir builds each recorded 75 relative-path artifact entries; all 75 path/size/SHA-256 entries matched, zero differing paths. Local evidence: ignored .runtime/hg01-build/f1af82fd1a7c858074db868d412604dba9589833/{A,B}/artifact-tree.json and .runtime/hg01-epoch-{A,B}.log. Full regression log .runtime/hg01-full-regression-f1af82f.log: 1558 passed, 6 skipped in 288.64 seconds. Git branch c09-witness-hardening and origin matched f1af82f before this documentation update.
+
+This proves deterministic unsigned development packaging and regression at the cited source commit, NOT Authenticode signing, real service installation/startup, privileged runtime composition, operational key custody, independent security acceptance, or permission to deploy. Owner HG-01 through HG-07 remain closed to operations. Next authorized step: independent read-only HG01 security/architecture evidence review, with a separate approval gate before any operational changes.
