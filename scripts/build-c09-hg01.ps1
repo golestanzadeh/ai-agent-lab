@@ -10,6 +10,12 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $python = Join-Path $root '.runtime\hg01-build-venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python -PathType Leaf)) { throw 'Pinned HG01 build virtual environment is unavailable.' }
 $head = (& git -C $root rev-parse HEAD).Trim()
+# PyInstaller honors SOURCE_DATE_EPOCH for deterministic PE timestamps.
+# Pin it to the exact candidate commit, as required by the frozen build profile.
+$sourceEpoch = (& git -C $root show -s --format=%ct $head).Trim()
+if ($sourceEpoch -notmatch '^[0-9]{9,12}$') { throw 'Cannot resolve source commit epoch.' }
+$env:SOURCE_DATE_EPOCH = $sourceEpoch
+$env:TZ = 'UTC'
 $out = Join-Path $root ".runtime\hg01-build\$head\$BuildId"
 $allowedRoot = [IO.Path]::GetFullPath((Join-Path $root '.runtime\hg01-build'))
 $resolvedOut = [IO.Path]::GetFullPath($out)
