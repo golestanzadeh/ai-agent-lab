@@ -8,6 +8,8 @@ Gate readiness: **`NOT_APPROVAL_READY`** until exact protected executable paths,
 
 Incremental verification found no operational service entry-point implementation, executable artifact or approved reproducible Windows build process in the repository. `config/c09-r3/hg01-windows-services.json` therefore pins the exact names/accounts/SIDs/IPC/startup/recovery intent but deliberately records null executable paths/hashes and `execution_authorized=false`. The read-only verifier matched all accounts/SIDs and found zero installed C09 services. HG-01 cannot become approval-ready until a separately authorized service implementation and reproducible build produce exact artifacts for independent review.
 
+Independent review of exact SHA `7fc27ca51e7123163804ae3041e276ef716cbea4` returned `HG01_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`; focused `10` and relevant `298` passed independently. A future ready revision must also make startup wording internally exact and expand rollback into explicit stop/disable/delete steps. No Owner approval statement is issued for this incomplete gate.
+
 1. **Target:** local services `AITaxKernel`, `AITaxIdentity`, `AITaxKeyCustodian` on `DESKTOP-HVRUQB7`, using the existing SIDs pinned in `config/c09-r3/deployment-preparation.json`.
 2. **Current state:** four accounts exist and are enabled; no matching service exists; legacy tasks run as `rezag` and are not C09 services.
 3. **Change:** install the three disabled-by-default services from exact protected image paths/hashes, then activate only for the bounded synthetic operational campaign.
