@@ -1,7 +1,7 @@
 # Authoritative current project truth — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I01_SERVICE_ENTRYPOINTS -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_I02_AUTHENTICATED_NAMED_PIPE -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 This section is the current-state entry point. The dated sections below are an append-only evidence ledger: a later accepted result supersedes an earlier `PENDING`, `FAIL`, `BLOCKED` or next-action statement for the same bounded scope. Historical text remains evidence and must not be read as current authorization.
@@ -34,6 +34,8 @@ The admitted optional HG-01 investigation found reusable Kernel, Identity, IPC-v
 Authenticated final capacity at `2026-10-24T18:55:22.3111784+02:00`: 65% five-hour remaining (reset `2026-10-24T21:33:26Z`) and 70% weekly remaining (reset `2026-10-30T18:15:20Z`); ordinary usage allowed. The 15-point reserve remains intact. No governed Bridge state exists in this worktree, so no parallel quota state was invented.
 
 Owner authorization admitted incremental HG-01 implementation from synchronized clean baseline `dd3c947`. Package BP-01 selected and froze CPython 3.14.2 + pywin32 312 + PyInstaller 6.22.3 `onedir`, with eight exact binary-wheel hashes, separate role-specific artifacts, two-clean-build comparison and no reproducibility claim before exact tree equality. Focused verification passed `35`. No dependency was installed, executable built, service implemented/installed or host privilege changed. Status: `BUILD_PROFILE_FROZEN / HG01_IMPLEMENTATION_IN_PROGRESS`; exact next package is HG01-I01 service entry points.
+
+HG01-I01 adds three fixed-role pywin32 SCM entry points and a locked fail-closed lifecycle/configuration boundary. The host authenticates its actual process token SID and rejects role/name/SID substitution, disabled/malformed configuration, unavailable runtime composition and startup/shutdown failure. No role-selection/install CLI exists. Transport/dispatch remain deliberately unavailable, so no protected operation can run. Verification passed `46` focused and `363` relevant. No service/install/account/ACL state changed. Exact next package is HG01-I02 authenticated Named Pipe transport.
 
 # C09 operational architecture gate resumed — 2026-10-22
 
