@@ -1,7 +1,7 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
-<!-- CURRENT_NEXT_ACTION: C09_R3_OWNER_HUMAN_GATES_REQUIRED -->
+<!-- CURRENT_NEXT_ACTION: C09_R3_HG01_HG03_AFTER_CAPACITY_RESET -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
 
 Owner-proposed tracking design, active inventory reconciled after OI-0001 Owner closure (2026-10-08). This file is a **read-only projection** of existing Kernel acceptance, authoritative plans and `PROJECT_CHECKPOINT.md`; it is not a second checkpoint, queue, scheduler or execution authorization.
@@ -14,7 +14,7 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 | ID | Unaccepted part (not the whole process) | Evidence / current status | Dependencies and next review | Governing reference |
 | --- | --- | --- | --- | --- |
-| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2 have bounded independent PASS. Exact R3 preparation SHA `66f06f3` received `INDEPENDENT_R3_PREPARATION_PASS`; local focused `8`, relevant `369`, full unit `1492` and independent `344` passed. This is preparation-only. HG-01–03 are not approval-ready; all operational service/ACL/IAM/key/restore/retention evidence remains absent. No privileged action occurred. | Supply and independently review the exact missing artifacts/readbacks for HG-01–03, then obtain separate explicit Owner approval per ready Human Gate. HG-04–07 remain conditional/separate. R4 is not started; C09/OI-0002 stay open. | `docs/oi0002-c09-witness/R3_SECURITY_DEPLOYMENT_PREPARATION_2026-10-24.md`; `docs/oi0002-c09-witness/R3_OWNER_HUMAN_GATES_2026-10-24.md` |
+| OI-0002 | CASE-001 Identity & Family Persistence (stage 1; mandatory critical path) | R1/R2 have bounded independent PASS and R3 preparation SHA `66f06f3` has independent PASS. HG-01–03 readiness execution is `BLOCKED_CAPACITY` before implementation: 59% five-hour/82% weekly remained, but only 44 usable points after reserve versus a ≥50-point whole-package estimate. HG-01–03 remain not approval-ready; no operational change occurred. | After the five-hour reset, obtain fresh authenticated admission and execute the same indivisible HG-01–03 readiness package through independent exact-SHA review. HG-04–07 remain out of scope; R4 is not started. | `docs/oi0002-c09-witness/R3_SECURITY_DEPLOYMENT_PREPARATION_2026-10-24.md`; `docs/oi0002-c09-witness/R3_OWNER_HUMAN_GATES_2026-10-24.md` |
 | OI-0003 | Package A protected Owner Facts Registration (stage 2) | `HUMAN_REQUIRED/SCHEMA_BLOCKED` at `f9a4b99`; existing declaration integrity PASS but registration not accepted. | OI-0002; subject-bound idempotent registration and independent PASS. | Recovery plan stage 2 |
 | OI-0004 | DR-01 exact accepted declaration lineage reacceptance (stage 3) | Historical PASS superseded for current lineage; immutable request/result/XML identities unrecovered; subsequent independent FAIL. | OI-0002/0003; authoritative recovery/reconstruction, substitution tests, XSD, independent PASS. | Recovery plan stage 3; checkpoint DR-01 2026-10-08 |
 | OI-0005 | DR-02 lineage independent reacceptance (stage 4) | Replay previously FAIL due to placeholders/preconstructed result and substitution risk. | OI-0004; pin exact identities, replay, independent PASS. | Recovery plan stage 4; checkpoint DR-02 2026-10-08 |

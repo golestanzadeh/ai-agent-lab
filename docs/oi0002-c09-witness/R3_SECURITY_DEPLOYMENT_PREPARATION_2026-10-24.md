@@ -14,6 +14,10 @@ Final distinction: **`R3_PREPARATION_ACCEPTED`** and **`R3_OPERATIONAL_SECURITY_
 
 Ending authenticated capacity measured `2026-10-24T11:14:49.6826735Z`: five-hour 62% remaining, reset `2026-10-24T15:51:41Z`; weekly 82% remaining, reset `2026-10-30T18:15:20Z`. The 15-point reserve is preserved.
 
+## HG-01–HG-03 readiness continuation — capacity deferred
+
+The Owner authorized a single readiness package covering exact service binaries/configuration, ACL/SDDL/current-state deltas, and live read-only GCS IAM evidence through independent review. Recovery at `89dbe9466cfc9f0002f071049bac391c6e869b87` was clean and synchronized. Fresh authenticated telemetry at `2026-10-24T11:21:23.3540207Z` was 59% five-hour and 82% weekly remaining. The required reserve leaves 44 usable points, below the conservative ≥50-point cost for build/inventory/cloud-readback, focused/relevant/full tests, independent review, one remediation allowance and reporting. Status is **`BLOCKED_CAPACITY`** before implementation. No Gate state, host/cloud configuration, protected evidence or code changed. Resume only after fresh post-reset admission; reset is `2026-10-24T15:51:41Z` (17:51:41 Europe/Berlin).
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
