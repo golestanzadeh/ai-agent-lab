@@ -29,6 +29,8 @@ Incremental preparation now fixes five exact future store/backup/custody roots a
 
 Independent review of `74edea4ae36631481aa7d41e2c54de36383a071d` failed because the initial proposal gave Recovery standing read access to stores/backups. The accepted architecture permits Recovery only through governed Kernel transitions. All Recovery ACEs are removed in the remediated proposal and a negative test now requires no Recovery SID in any filesystem DACL. Re-review remains mandatory.
 
+Independent re-review of exact SHA `21aee1b3985b4dfef6d920f524889a2ce0af53fc` returned `HG02_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`; focused `12` and relevant `334` passed. The corrected SDDL has no standing Recovery access. No Owner approval statement is issued because roots/executables and mandatory elevated file-identity, SACL/current-state and rollback evidence remain absent.
+
 1. **Target:** the exact Kernel, Identity, backup, executable and key-provider reference roots approved from the template; never the repository or a broad parent.
 2. **Current state:** prior `OI0002-TEST2` sealed evidence proves a bounded ACL model, but operational roots do not exist/are not approved.
 3. **Change:** create exact roots and apply explicit inheritance-disabled least-privilege ACLs.

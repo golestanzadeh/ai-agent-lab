@@ -32,6 +32,8 @@ Five exact future roots are proposed for the two stores, two backups and Key Cus
 
 Independent review of exact `74edea4ae36631481aa7d41e2c54de36383a071d` returned `HG02_PREPARATION_INDEPENDENT_FAIL`: Recovery read ACEs were a direct-data-plane bypass. The remediated SDDL removes Recovery from every store, backup and custody DACL; each path now grants only SYSTEM plus its one owning service SID. Recovery remains Kernel-mediated and separately authorized. A negative test freezes this invariant; exact-SHA re-review is pending.
 
+Independent re-review of exact SHA `21aee1b3985b4dfef6d920f524889a2ce0af53fc` returned **`HG02_PREPARATION_INDEPENDENT_PASS / NOT_APPROVAL_READY`**. Focused `12` and relevant `334` passed independently; injected Recovery access was detected. All roots remain absent and no ACL/root mutation occurred. Post-package capacity is 23% five-hour and 76% weekly remaining; preserving reserve leaves 8 points, below HG-03's 18–22 point estimate. Status: `BLOCKED_CAPACITY_BEFORE_HG03`; resume HG-03 only after fresh post-reset admission.
+
 ## Recovery and admission
 
 Branch `c09-witness-hardening` recovered clean and synchronized at `8004a665d1af92bc31a69a0273cc21f99128d83d`; R2 reviewed candidate is `a159373c768c52197e2c1647259e855a82e38f91`. Authenticated admission measured 99% five-hour and 88% weekly remaining after reset, preserving the mandatory 15-point reserve. The bounded estimate was 35 percentage points including inventory, implementation, regressions, independent review and reporting.
