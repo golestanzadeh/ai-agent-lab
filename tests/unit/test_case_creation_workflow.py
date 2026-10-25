@@ -19,6 +19,7 @@ from agent_lab.case_registry import (
     TaxPeriod,
 )
 from agent_lab.person_entity_registry import PersonEntityRegistry, PersonRecord, RegistryStatus
+from agent_lab.case_persistence import SQLiteCasePersistence
 
 
 def ts() -> datetime:
@@ -175,3 +176,30 @@ def test_storage_failure_prevents_registry_success() -> None:
 
     assert cases.all_records() == ()
     assert audit.events == []
+
+
+def test_durable_workflow_allows_multiple_cases_same_year_and_recovers(tmp_path) -> None:
+    identities = PersonEntityRegistry(); make_person(identities)
+    cases = CaseRegistry(); associations = CaseIdentityAssociationService(identities, cases)
+    persistence = SQLiteCasePersistence(
+        tmp_path / "cases.sqlite3", integrity_key=b"workflow-durable-key-32-bytes-minimum",
+    )
+    workflow = CaseCreationWorkflow(
+        identities, cases, associations, InMemoryStorageScopeCreator(), InMemoryAuditSink(),
+        durable_registrar=persistence, allow_multiple_cases_per_period=True,
+    )
+    first = workflow.create(request("REQ-A", 2025)); second = workflow.create(request("REQ-B", 2025))
+    third = workflow.create(request("REQ-C", 2026))
+    assert (first.case_id, second.case_id, third.case_id) == (
+        "CASE-2025-0001", "CASE-2025-0002", "CASE-2026-0001",
+    )
+    persistence.close()
+    reopened = SQLiteCasePersistence(
+        tmp_path / "cases.sqlite3", integrity_key=b"workflow-durable-key-32-bytes-minimum",
+    )
+    runtime = reopened.load_runtime(
+        owner_id="PERSON-0001", allowed_case_ids=frozenset({first.case_id, second.case_id, third.case_id}),
+    )
+    assert len(runtime.registry.all_records()) == 3
+    assert runtime.state(second.case_id).last_run_id == "CREATE-RUN-REQ-B"
+    reopened.close()

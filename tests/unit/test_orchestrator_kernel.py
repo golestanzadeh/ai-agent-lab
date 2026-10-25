@@ -448,6 +448,18 @@ def test_scoped_read_only_projection_enforces_exact_synthetic_scope(tmp_path):
         )
 
 
+def test_registered_case_context_is_exact_and_rejects_human_gated_task(kernel):
+    context = {"case_id": "TEST-A", "tax_year": 2025, "run_id": "RUN-A"}
+    kernel.register_task(task(task_id="TASK-BOUND", case_context=context), gate_triggers=())
+    assert kernel.registered_case_context("TASK-BOUND") == context
+    kernel.register_task(
+        task(task_id="TASK-GATED", actor_instance_id="AGI-GATED", case_context=context),
+        gate_triggers=("tax_declaration_signing_or_submission",),
+    )
+    with pytest.raises(StateTransitionError, match="not available"):
+        kernel.registered_case_context("TASK-GATED")
+
+
 def test_scoped_read_only_projection_rejects_cross_case_run_reuse(tmp_path):
     database = tmp_path / "kernel.sqlite3"
     with OrchestratorKernel(database, CONTRACT_ROOT) as kernel:

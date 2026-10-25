@@ -880,6 +880,22 @@ class OrchestratorKernel:
             )
         return payload["task_id"]
 
+    def registered_case_context(self, task_id: str) -> dict[str, Any]:
+        """Return the validated immutable case scope for a registered Kernel task."""
+        _require_string(task_id, "task_id")
+        row = self._connection.execute(
+            "SELECT status,payload_json FROM tasks WHERE task_id=?", (task_id,)
+        ).fetchone()
+        if row is None:
+            raise ContractError("task is not registered")
+        if row["status"] != "REGISTERED":
+            raise StateTransitionError("task is not available for durable run binding")
+        context = json.loads(row["payload_json"])["case_context"]
+        if context is None:
+            raise ContractError("task has no case/run context")
+        self._validate_case_context(context)
+        return dict(context)
+
     def record_human_gate_decision(
         self,
         task_id: str,

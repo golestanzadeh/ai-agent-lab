@@ -6,7 +6,7 @@ Document bytes and identity/fact payloads deliberately do not belong here.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import hmac
 import json
@@ -18,14 +18,33 @@ from agent_lab.case_registry import (
     AssessmentMode, CaseRecord, CaseRegistry, CaseType, LifecycleStatus,
     OwnerType, StorageScopeReference, TaxPeriod,
 )
-from agent_lab.case_state import CaseState
+from agent_lab.case_state import CaseState, RunRecord, RunStatus, validate_run_transition
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class CasePersistenceError(RuntimeError):
     pass
+
+
+class CaseRevisionConflict(CasePersistenceError):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class VersionedCaseState:
+    state: CaseState
+    revision: int
+    idempotent: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class VersionedRun:
+    run: RunRecord
+    tax_year: int
+    revision: int
+    idempotent: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,6 +52,7 @@ class DurableCaseRuntime:
     registry: CaseRegistry
     states: tuple[CaseState, ...]
     allowed_case_ids: frozenset[str]
+    runs: tuple[VersionedRun, ...] = ()
 
     def state(self, case_id: str) -> CaseState:
         if case_id not in self.allowed_case_ids:
@@ -41,6 +61,11 @@ class DurableCaseRuntime:
             if state.case_id == case_id:
                 return state
         raise CasePersistenceError("authorized case state is unavailable")
+
+    def case_runs(self, case_id: str) -> tuple[VersionedRun, ...]:
+        if case_id not in self.allowed_case_ids:
+            raise PermissionError("case is outside the authorized runtime scope")
+        return tuple(run for run in self.runs if run.run.case_id == case_id)
 
 
 class SQLiteCasePersistence:
@@ -80,6 +105,10 @@ class SQLiteCasePersistence:
                 raise CasePersistenceError("database is missing while protected anchor exists")
             self._create_schema()
             self._write_anchor()
+        elif version == 1:
+            self._verify_all()
+            self._verify_anchor(schema_version=1)
+            self._migrate_v1_to_v2()
         elif version != SCHEMA_VERSION:
             raise CasePersistenceError("unsupported case persistence schema")
         self._verify_all()
@@ -103,7 +132,8 @@ class SQLiteCasePersistence:
                 CREATE INDEX case_owner_year ON case_record(owner_id,tax_year,case_id);
                 CREATE TABLE case_state(
                     case_id TEXT PRIMARY KEY REFERENCES case_record(case_id),
-                    payload TEXT NOT NULL, digest TEXT NOT NULL);
+                    payload TEXT NOT NULL, revision INTEGER NOT NULL,
+                    digest TEXT NOT NULL CHECK(revision >= 1));
                 CREATE TABLE ui_case_authorization(
                     owner_id TEXT NOT NULL, case_id TEXT NOT NULL REFERENCES case_record(case_id),
                     granted_at TEXT NOT NULL, digest TEXT NOT NULL,
@@ -112,8 +142,45 @@ class SQLiteCasePersistence:
                     event_id INTEGER PRIMARY KEY AUTOINCREMENT, action TEXT NOT NULL,
                     case_id TEXT NOT NULL, payload_digest TEXT NOT NULL,
                     previous_digest TEXT NOT NULL, event_digest TEXT NOT NULL);
-                PRAGMA user_version=1;
+                CREATE TABLE durable_run(
+                    run_id TEXT PRIMARY KEY, case_id TEXT NOT NULL REFERENCES case_record(case_id),
+                    tax_year INTEGER NOT NULL, request_id TEXT,
+                    status TEXT NOT NULL, schema_version INTEGER NOT NULL,
+                    revision INTEGER NOT NULL, created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL, digest TEXT NOT NULL,
+                    UNIQUE(case_id,request_id), CHECK(revision >= 1));
+                CREATE INDEX run_case_year ON durable_run(case_id,tax_year,run_id);
+                CREATE TABLE mutation_request(
+                    request_id TEXT PRIMARY KEY, operation TEXT NOT NULL,
+                    case_id TEXT NOT NULL REFERENCES case_record(case_id),
+                    request_json TEXT NOT NULL, request_digest TEXT NOT NULL, result_json TEXT NOT NULL,
+                    result_digest TEXT NOT NULL);
+                PRAGMA user_version=2;
             """)
+
+    def _migrate_v1_to_v2(self) -> None:
+        try:
+            self._db.execute("BEGIN IMMEDIATE")
+            self._db.execute("ALTER TABLE case_state ADD COLUMN revision INTEGER NOT NULL DEFAULT 1")
+            self._db.execute("""CREATE TABLE durable_run(
+                    run_id TEXT PRIMARY KEY, case_id TEXT NOT NULL REFERENCES case_record(case_id),
+                    tax_year INTEGER NOT NULL, request_id TEXT,
+                    status TEXT NOT NULL, schema_version INTEGER NOT NULL,
+                    revision INTEGER NOT NULL, created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL, digest TEXT NOT NULL,
+                    UNIQUE(case_id,request_id), CHECK(revision >= 1))""")
+            self._db.execute("CREATE INDEX run_case_year ON durable_run(case_id,tax_year,run_id)")
+            self._db.execute("""CREATE TABLE mutation_request(
+                    request_id TEXT PRIMARY KEY, operation TEXT NOT NULL,
+                    case_id TEXT NOT NULL REFERENCES case_record(case_id),
+                    request_json TEXT NOT NULL, request_digest TEXT NOT NULL, result_json TEXT NOT NULL,
+                    result_digest TEXT NOT NULL)""")
+            self._db.execute("PRAGMA user_version=2")
+            self._db.commit()
+            self._write_anchor()
+        except Exception:
+            self._db.rollback()
+            raise
 
     @staticmethod
     def _canonical(value: dict) -> str:
@@ -185,8 +252,8 @@ class SQLiteCasePersistence:
                 )
                 state_json = self._canonical(state_payload)
                 self._db.execute(
-                    "INSERT INTO case_state VALUES(?,?,?)",
-                    (record.case_id, state_json, self._mac(state_json)),
+                    "INSERT INTO case_state(case_id,payload,revision,digest) VALUES(?,?,?,?)",
+                    (record.case_id, state_json, 1, self._mac(state_json)),
                 )
                 self._db.execute(
                     "INSERT INTO ui_case_authorization VALUES(?,?,?,?)",
@@ -221,7 +288,136 @@ class SQLiteCasePersistence:
                 registry.register(record)
                 states.append(self._state(row["payload"]))
             registry.validate()
-            return DurableCaseRuntime(registry, tuple(states), allowed_case_ids)
+            run_rows = self._db.execute(
+                f"SELECT r.* FROM durable_run r JOIN case_record c USING(case_id) "
+                f"WHERE c.owner_id=? AND r.case_id IN ({placeholders}) ORDER BY r.run_id",
+                (owner_id, *sorted(allowed_case_ids)),
+            ).fetchall()
+            runs = tuple(self._versioned_run(row) for row in run_rows)
+            return DurableCaseRuntime(registry, tuple(states), allowed_case_ids, runs)
+
+    def get_state(self, *, owner_id: str, case_id: str, tax_year: int) -> VersionedCaseState:
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            self._authorize(owner_id, case_id, tax_year)
+            row = self._db.execute("SELECT * FROM case_state WHERE case_id=?", (case_id,)).fetchone()
+            return VersionedCaseState(self._state(row["payload"]), row["revision"])
+
+    def mutate_state(
+        self, *, owner_id: str, case_id: str, tax_year: int, request_id: str,
+        expected_revision: int, lifecycle_status: str | None = None,
+        last_run_id: str | None = None, **refs: str | None,
+    ) -> VersionedCaseState:
+        allowed = {"parties_ref", "documents_ref", "evidence_ref", "facts_ref", "assumptions_ref",
+                   "rules_ref", "calculations_ref", "optimization_ref", "challenges_ref",
+                   "approvals_ref", "outputs_ref"}
+        if set(refs) - allowed or not request_id.strip() or expected_revision < 1:
+            raise ValueError("invalid state mutation request")
+        request = {"owner_id": owner_id, "case_id": case_id, "tax_year": tax_year,
+                   "expected_revision": expected_revision, "lifecycle_status": lifecycle_status,
+                   "last_run_id": last_run_id, "refs": refs}
+        with self._lock:
+            cached = self._idempotent_result(request_id, "MUTATE_STATE", case_id, request)
+            if cached is not None:
+                return VersionedCaseState(self._state(cached["payload"]), cached["revision"], True)
+            self._verify_all(); self._verify_anchor()
+            try:
+                self._db.execute("BEGIN IMMEDIATE")
+                self._authorize(owner_id, case_id, tax_year)
+                row = self._db.execute("SELECT * FROM case_state WHERE case_id=?", (case_id,)).fetchone()
+                if row["revision"] != expected_revision:
+                    raise CaseRevisionConflict("case state revision conflict")
+                state = self._state(row["payload"])
+                if last_run_id is not None:
+                    run = self._db.execute("SELECT case_id,tax_year FROM durable_run WHERE run_id=?", (last_run_id,)).fetchone()
+                    if run is None or run["case_id"] != case_id or run["tax_year"] != tax_year:
+                        raise CasePersistenceError("last_run_id is outside the authorized case scope")
+                values = asdict(state) | refs
+                values["lifecycle_status"] = lifecycle_status or state.lifecycle_status
+                values["last_run_id"] = last_run_id if last_run_id is not None else state.last_run_id
+                values["updated_at"] = datetime.now(timezone.utc)
+                updated = CaseState(**values)
+                payload = self._canonical(self._state_payload(updated)); revision = expected_revision + 1
+                self._db.execute("UPDATE case_state SET payload=?,revision=?,digest=? WHERE case_id=?",
+                                 (payload, revision, self._mac(payload), case_id))
+                result = {"payload": payload, "revision": revision}
+                self._record_request(request_id, "MUTATE_STATE", case_id, request, result)
+                self._audit("CASE_STATE_MUTATED", case_id, self._mac(result))
+                self._db.commit(); self._write_anchor()
+                return VersionedCaseState(updated, revision)
+            except Exception:
+                self._db.rollback(); raise
+
+    def create_run(
+        self, *, owner_id: str, case_id: str, tax_year: int, run_id: str,
+        request_id: str, expected_state_revision: int,
+    ) -> VersionedRun:
+        if not run_id.strip() or not request_id.strip() or expected_state_revision < 1:
+            raise ValueError("invalid run creation request")
+        request = {"owner_id": owner_id, "case_id": case_id, "tax_year": tax_year,
+                   "run_id": run_id, "expected_state_revision": expected_state_revision}
+        with self._lock:
+            cached = self._idempotent_result(request_id, "CREATE_RUN", case_id, request)
+            if cached is not None:
+                row = self._db.execute("SELECT * FROM durable_run WHERE run_id=?", (cached["run_id"],)).fetchone()
+                return VersionedRun(self._run(row), row["tax_year"], row["revision"], True)
+            self._verify_all(); self._verify_anchor()
+            try:
+                self._db.execute("BEGIN IMMEDIATE"); self._authorize(owner_id, case_id, tax_year)
+                state_row = self._db.execute("SELECT * FROM case_state WHERE case_id=?", (case_id,)).fetchone()
+                if state_row["revision"] != expected_state_revision:
+                    raise CaseRevisionConflict("case state revision conflict")
+                now = datetime.now(timezone.utc)
+                run = RunRecord(run_id, case_id, request_id, RunStatus.CREATED, 1, now, now)
+                payload = self._run_payload(run, tax_year, 1)
+                self._db.execute("INSERT INTO durable_run VALUES(?,?,?,?,?,?,?,?,?,?)", tuple(payload.values()) + (self._mac(payload),))
+                state = self._state(state_row["payload"])
+                updated = CaseState(**(asdict(state) | {"last_run_id": run_id, "updated_at": now}))
+                state_payload = self._canonical(self._state_payload(updated))
+                self._db.execute("UPDATE case_state SET payload=?,revision=?,digest=? WHERE case_id=?",
+                                 (state_payload, expected_state_revision + 1, self._mac(state_payload), case_id))
+                result = {"run_id": run_id, "revision": 1}
+                self._record_request(request_id, "CREATE_RUN", case_id, request, result)
+                self._audit("RUN_CREATED", case_id, self._mac(payload))
+                self._db.commit(); self._write_anchor()
+                return VersionedRun(run, tax_year, 1)
+            except sqlite3.IntegrityError as exc:
+                self._db.rollback(); raise CasePersistenceError("run identity already exists") from exc
+            except Exception:
+                self._db.rollback(); raise
+
+    def transition_run(
+        self, *, owner_id: str, case_id: str, tax_year: int, run_id: str,
+        request_id: str, expected_revision: int, status: RunStatus,
+    ) -> VersionedRun:
+        request = {"owner_id": owner_id, "case_id": case_id, "tax_year": tax_year,
+                   "run_id": run_id, "expected_revision": expected_revision, "status": status.value}
+        with self._lock:
+            cached = self._idempotent_result(request_id, "TRANSITION_RUN", case_id, request)
+            if cached is not None:
+                row = self._db.execute("SELECT * FROM durable_run WHERE run_id=?", (run_id,)).fetchone()
+                return VersionedRun(self._run(row), tax_year, row["revision"], True)
+            self._verify_all(); self._verify_anchor()
+            try:
+                self._db.execute("BEGIN IMMEDIATE"); self._authorize(owner_id, case_id, tax_year)
+                row = self._db.execute("SELECT * FROM durable_run WHERE run_id=?", (run_id,)).fetchone()
+                if row is None or row["case_id"] != case_id or row["tax_year"] != tax_year:
+                    raise CasePersistenceError("run is outside the authorized case scope")
+                if row["revision"] != expected_revision:
+                    raise CaseRevisionConflict("run revision conflict")
+                run = self._run(row); validate_run_transition(run.status, status)
+                updated = RunRecord(run.run_id, run.case_id, run.request_id, status, run.schema_version,
+                                    run.created_at, datetime.now(timezone.utc))
+                revision = expected_revision + 1; payload = self._run_payload(updated, tax_year, revision)
+                self._db.execute("UPDATE durable_run SET status=?,revision=?,updated_at=?,digest=? WHERE run_id=?",
+                                 (status.value, revision, updated.updated_at.isoformat(), self._mac(payload), run_id))
+                result = {"run_id": run_id, "revision": revision, "status": status.value}
+                self._record_request(request_id, "TRANSITION_RUN", case_id, request, result)
+                self._audit("RUN_TRANSITIONED", case_id, self._mac(payload))
+                self._db.commit(); self._write_anchor()
+                return VersionedRun(updated, tax_year, revision)
+            except Exception:
+                self._db.rollback(); raise
 
     def _record(self, row: sqlite3.Row) -> CaseRecord:
         return CaseRecord(
@@ -244,6 +440,67 @@ class SQLiteCasePersistence:
         value["created_at"] = datetime.fromisoformat(value["created_at"])
         value["updated_at"] = datetime.fromisoformat(value["updated_at"])
         return CaseState(**value)
+
+    @staticmethod
+    def _run(row: sqlite3.Row) -> RunRecord:
+        return RunRecord(
+            row["run_id"], row["case_id"], row["request_id"], RunStatus(row["status"]),
+            row["schema_version"], datetime.fromisoformat(row["created_at"]),
+            datetime.fromisoformat(row["updated_at"]),
+        )
+
+    def _versioned_run(self, row: sqlite3.Row) -> VersionedRun:
+        return VersionedRun(self._run(row), row["tax_year"], row["revision"])
+
+    @staticmethod
+    def _run_payload(run: RunRecord, tax_year: int, revision: int) -> dict:
+        return {
+            "run_id": run.run_id, "case_id": run.case_id, "tax_year": tax_year,
+            "request_id": run.request_id, "status": run.status.value,
+            "schema_version": run.schema_version, "revision": revision,
+            "created_at": run.created_at.isoformat(), "updated_at": run.updated_at.isoformat(),
+        }
+
+    def _authorize(self, owner_id: str, case_id: str, tax_year: int) -> None:
+        if not owner_id.strip() or not case_id.strip() or isinstance(tax_year, bool):
+            raise ValueError("complete owner/case/year scope is required")
+        row = self._db.execute(
+            "SELECT 1 FROM case_record c JOIN ui_case_authorization a USING(case_id) "
+            "WHERE c.case_id=? AND c.owner_id=? AND c.tax_year=? AND a.owner_id=c.owner_id",
+            (case_id, owner_id, tax_year),
+        ).fetchone()
+        if row is None:
+            raise PermissionError("owner/case/year scope is not authorized")
+
+    def _idempotent_result(
+        self, request_id: str, operation: str, case_id: str, request: dict,
+    ) -> dict | None:
+        if not request_id.strip():
+            raise ValueError("request_id is required")
+        row = self._db.execute("SELECT * FROM mutation_request WHERE request_id=?", (request_id,)).fetchone()
+        if row is None:
+            return None
+        request_json = self._canonical(request)
+        request_digest = self._mac({"operation": operation, "case_id": case_id, "request_json": request_json})
+        if (row["operation"] != operation or row["case_id"] != case_id
+                or row["request_json"] != request_json
+                or not hmac.compare_digest(row["request_digest"], request_digest)):
+            raise CasePersistenceError("request_id was already used for different content")
+        if not hmac.compare_digest(row["result_digest"], self._mac(row["result_json"])):
+            raise CasePersistenceError("idempotency result integrity failure")
+        return json.loads(row["result_json"])
+
+    def _record_request(
+        self, request_id: str, operation: str, case_id: str, request: dict, result: dict,
+    ) -> None:
+        result_json = self._canonical(result)
+        request_json = self._canonical(request)
+        self._db.execute(
+            "INSERT INTO mutation_request VALUES(?,?,?,?,?,?,?)",
+            (request_id, operation, case_id, request_json,
+             self._mac({"operation": operation, "case_id": case_id, "request_json": request_json}),
+             result_json, self._mac(result_json)),
+        )
 
     def _audit(self, action: str, case_id: str, payload_digest: str) -> None:
         previous = self._db.execute(
@@ -306,12 +563,38 @@ class SQLiteCasePersistence:
                 if not hmac.compare_digest(row["digest"], self._mac(authorization)):
                     raise CasePersistenceError("case authorization integrity failure")
 
-    def _anchor_payload(self) -> dict:
+            version = self._db.execute("PRAGMA user_version").fetchone()[0]
+            if version >= 2:
+                for row in self._db.execute("SELECT r.*,c.owner_id,c.tax_year AS case_tax_year FROM durable_run r JOIN case_record c USING(case_id)"):
+                    run = self._run(row)
+                    if row["tax_year"] != row["case_tax_year"]:
+                        raise CasePersistenceError("run case/year scope failure")
+                    if not hmac.compare_digest(row["digest"], self._mac(self._run_payload(run, row["tax_year"], row["revision"]))):
+                        raise CasePersistenceError("run integrity failure")
+                for row in self._db.execute("SELECT * FROM mutation_request"):
+                    expected_request = self._mac({
+                        "operation": row["operation"], "case_id": row["case_id"],
+                        "request_json": row["request_json"],
+                    })
+                    if (not hmac.compare_digest(row["request_digest"], expected_request)
+                            or not hmac.compare_digest(row["result_digest"], self._mac(row["result_json"]))):
+                        raise CasePersistenceError("idempotency result integrity failure")
+                    if self._db.execute("SELECT 1 FROM case_record WHERE case_id=?", (row["case_id"],)).fetchone() is None:
+                        raise CasePersistenceError("idempotency case scope failure")
+                for row in self._db.execute("SELECT s.payload FROM case_state s"):
+                    state = self._state(row["payload"])
+                    if state.last_run_id is not None:
+                        run = self._db.execute("SELECT case_id FROM durable_run WHERE run_id=?", (state.last_run_id,)).fetchone()
+                        # Creation workflow run identities predate durable execution runs.
+                        if run is not None and run["case_id"] != state.case_id:
+                            raise CasePersistenceError("case state run scope failure")
+
+    def _anchor_payload(self, *, schema_version: int | None = None) -> dict:
         event = self._db.execute(
             "SELECT event_id,event_digest FROM case_audit ORDER BY event_id DESC LIMIT 1"
         ).fetchone()
         return {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": schema_version or SCHEMA_VERSION,
             "event_count": self._db.execute("SELECT count(*) FROM case_audit").fetchone()[0],
             "head_event_id": event["event_id"] if event else 0,
             "head_digest": event["event_digest"] if event else "0" * 64,
@@ -330,7 +613,7 @@ class SQLiteCasePersistence:
             os.fsync(stream.fileno())
         os.replace(temporary, self._anchor_path)
 
-    def _verify_anchor(self) -> None:
+    def _verify_anchor(self, *, schema_version: int | None = None) -> None:
         try:
             document = json.loads(self._anchor_path.read_text(encoding="utf-8"))
             required = {
@@ -348,6 +631,6 @@ class SQLiteCasePersistence:
                 str(document["key_verifier"]),
                 self._mac("ai-tax-agent.case-persistence/key-verifier/1"),
             )
-            or payload != self._anchor_payload()
+            or payload != self._anchor_payload(schema_version=schema_version)
         ):
             raise CasePersistenceError("case audit anchor integrity failure")

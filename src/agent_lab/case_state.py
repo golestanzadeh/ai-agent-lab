@@ -36,6 +36,12 @@ _ALLOWED_TRANSITIONS: dict[RunStatus, frozenset[RunStatus]] = {
 }
 
 
+def validate_run_transition(current: RunStatus, target: RunStatus) -> None:
+    """Validate the frozen run lifecycle without mutating a store."""
+    if target not in _ALLOWED_TRANSITIONS[current]:
+        raise ValueError(f"invalid run transition: {current.value} -> {target.value}")
+
+
 @dataclass(frozen=True, slots=True)
 class CaseState:
     """Structured operational state for exactly one tax case."""
@@ -207,10 +213,7 @@ class CaseStateStore:
     def transition_run(self, case_id: str, run_id: str, status: RunStatus) -> RunRecord:
         with self._lock:
             run = self.get_run(case_id, run_id)
-            if status not in _ALLOWED_TRANSITIONS[run.status]:
-                raise ValueError(
-                    f"invalid run transition: {run.status.value} -> {status.value}"
-                )
+            validate_run_transition(run.status, status)
             updated = replace(run, status=status, updated_at=self._now())
             self._runs[run_id] = updated
             return updated

@@ -19,6 +19,7 @@ from agent_lab.case_registry import (
     TaxPeriod,
 )
 from agent_lab.person_entity_registry import PersonEntityRegistry
+from agent_lab.case_state import CaseState
 
 
 class CreationStatus(str, Enum):
@@ -88,6 +89,11 @@ class AuditSink(Protocol):
         ...
 
 
+class DurableCaseRegistrar(Protocol):
+    def register_case(self, record: CaseRecord, state: CaseState, *, ui_owner_id: str) -> None:
+        ...
+
+
 class InMemoryStorageScopeCreator:
     REQUIRED_SUBFOLDERS = ("Documents", "Evidence", "Tax_Categories", "Calculations", "Reports", "Audit")
 
@@ -122,6 +128,8 @@ class CaseCreationWorkflow:
         audit: AuditSink,
         *,
         identity_resolver: Callable[[CaseCreationRequest], IdentityResolution] | None = None,
+        durable_registrar: DurableCaseRegistrar | None = None,
+        allow_multiple_cases_per_period: bool = False,
     ) -> None:
         self._identity_registry = identity_registry
         self._case_registry = case_registry
@@ -129,6 +137,8 @@ class CaseCreationWorkflow:
         self._storage = storage
         self._audit = audit
         self._identity_resolver = identity_resolver or self._resolve_existing_identity
+        self._durable_registrar = durable_registrar
+        self._allow_multiple_cases_per_period = allow_multiple_cases_per_period
 
     def create(self, request: CaseCreationRequest) -> CreationResult:
         existing = self._find_idempotent_result(request.request_id)
@@ -141,7 +151,7 @@ class CaseCreationWorkflow:
         self._validate_case_parameters(request)
 
         existing_case = self._find_existing_case(request, resolution.owner_id)
-        if existing_case is not None:
+        if existing_case is not None and not self._allow_multiple_cases_per_period:
             raise ValueError(f"case already exists for owner and tax period: {existing_case.case_id}")
 
         case_id = self._generate_case_id(request.tax_period.year)
@@ -162,6 +172,16 @@ class CaseCreationWorkflow:
             last_run_id=run_id,
         )
 
+        if self._durable_registrar is not None:
+            self._durable_registrar.register_case(
+                record,
+                CaseState(
+                    case_id=case_id, schema_version=request.schema_version,
+                    lifecycle_status="READY", created_at=request.requested_at,
+                    updated_at=request.requested_at, last_run_id=run_id,
+                ),
+                ui_owner_id=resolution.owner_id,
+            )
         self._case_registry.register(record, request_id=request.request_id)
         try:
             self._association_service.associate(resolution.owner_id, case_id)
@@ -202,9 +222,9 @@ class CaseCreationWorkflow:
 
     def _find_existing_case(self, request: CaseCreationRequest, owner_id: str) -> CaseRecord | None:
         result = self._case_registry.resolve_by_owner_type_and_period(request.owner_type, owner_id, request.tax_period)
-        if len(result.case_ids) > 1:
+        if len(result.case_ids) > 1 and not self._allow_multiple_cases_per_period:
             raise ValueError("multiple cases already exist for owner and tax period")
-        return self._case_registry.get(result.case_id) if result.case_ids else None
+        return self._case_registry.get(result.case_id) if len(result.case_ids) == 1 else None
 
     def _find_idempotent_result(self, request_id: str) -> CreationResult | None:
         run_id = f"CREATE-RUN-{request_id}"
