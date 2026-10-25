@@ -77,7 +77,56 @@ execution, network, protected storage, or external action occurred.
 
 ## Continuation
 
-Next safe package: inject this reader into the existing local product launcher
-through an explicit, non-secret, read-only authorization configuration and test
-restart/configuration failure behavior with synthetic registries.  Do not bind
-real records until blockers 1 and 2 above are independently accepted.
+The local product launcher now starts `agent_lab.ui_product_app:app`, not the
+legacy synthetic application.  Its composition root accepts the existing
+`CaseRegistry`, exact owner scope and case allowlist only as one complete unit;
+partial configuration stops startup.  With no accepted source it starts a
+truthful empty Dashboard and exposes no TEST mutation surface.  Re-composition
+after restart preserves exact scope when the same authoritative registry is
+injected and fails closed when an authorized case disappears.
+
+The same composition root can accept the existing read-only Kernel projection.
+It calls that projection only with the selected authorized case ID, that
+record's exact tax year, and the explicitly entered run ID.  It adds no task
+dispatch or mutation capability.
+
+Focused launcher/registry/Dashboard/Kernel verification now passes `69` tests.
+A real Uvicorn loopback smoke returned HTTP 200 with
+`read-only-dashboard/source=unavailable`, rejected `POST /test/cases` with 404,
+and shut down cleanly.
+
+### Exact remaining code prerequisites
+
+1. Implement an accepted durable provider that reconstructs the existing
+   `CaseRegistry` and exact UI authorization after restart.  Current
+   `CaseRegistry` and `CaseStateStore` are in-memory; the functional-test SQLite
+   store and PostgreSQL PoC must not be promoted.
+2. Route case creation through the existing `CaseCreationWorkflow` only after
+   that provider can commit the case, owner association, audit and storage
+   reference atomically/recoverably.  The current workflow is component code,
+   not a durable operational transaction.
+3. After OI-0002/OI-0003 acceptance, compose the existing
+   `GoogleDriveStorageScopeCreator`, case-scoped Drive adapter, document identity
+   store, `GeminiDocumentExtractor`, and `ingest_sparkasse_csv` behind that exact
+   case/year boundary.  These components already exist; the missing work is the
+   accepted protected transaction and result persistence, not another provider
+   or UI database.
+
+### Exact Owner/Human Gate actions
+
+1. OI-0002: approve only privileged deployment actions that remain after the
+   code/security re-review, then obtain independent C01–C13 PASS.  Unsigned
+   development executables do not block the current launcher, but must never be
+   installed as operational services.
+2. OI-0003: authorize/accept durable Person A/Person B identity resolution,
+   CASE-001 role association, and the already-designed subject-bound fact
+   envelope.  The historical stop at `f9a4b99` forbids name-based inference.
+3. Protected Drive/Gemini activation: approve the exact runtime binding after
+   privacy/retention, credential custody and case-isolation evidence; the prior
+   generic Gemini authorization need not be repeated.
+4. Keep content release and ELSTER destination approval separate until an
+   immutable final artifact exists.
+
+Next safe code package is the durable CaseRegistry provider contract and
+recovery tests inside the approved persistence architecture.  It must not create
+a UI-owned store or bind real records before OI-0002/OI-0003 acceptance.

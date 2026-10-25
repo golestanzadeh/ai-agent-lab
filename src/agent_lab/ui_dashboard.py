@@ -228,8 +228,8 @@ def create_dashboard_app(
     """
     if test_store is not None and read_cases is not None:
         raise ValueError("test store and live case resolver must never be mixed")
-    if read_kernel_projection is not None and test_store is None:
-        raise ValueError("Kernel UI projection is restricted to the isolated test dashboard")
+    if read_kernel_projection is not None and test_store is None and read_cases is None:
+        raise ValueError("Kernel projection requires an authorized case source")
     if execute_kernel_task is not None and (test_store is None or read_kernel_projection is None):
         raise ValueError("Kernel execution requires the isolated test store and projection")
     if test_store is not None:
@@ -240,7 +240,10 @@ def create_dashboard_app(
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
-        if test_store is not None and request.method not in {"GET", "HEAD", "OPTIONS"}:
+        if test_store is None and request.url.path.startswith("/test/"):
+            from fastapi.responses import PlainTextResponse
+            response = PlainTextResponse("Not found", status_code=404)
+        elif test_store is not None and request.method not in {"GET", "HEAD", "OPTIONS"}:
             origin = request.headers.get("origin")
             host = request.headers.get("host")
             if origin != "http://127.0.0.1:8766" or host != "127.0.0.1:8766":
@@ -315,6 +318,7 @@ def create_dashboard_app(
             "test_mode": test_store is not None, "detail": detail, "lang": lang, "t": UI_TEXT[lang],
             "run_id": run_id, "kernel_projection": kernel_projection,
             "kernel_projection_error": kernel_projection_error,
+            "kernel_projection_available": read_kernel_projection is not None,
             "ui_error": UI_TEXT[lang]["ui_errors"].get(error),
             "kernel_execution_available": execute_kernel_task is not None,
         })
