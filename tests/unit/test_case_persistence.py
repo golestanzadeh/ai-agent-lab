@@ -151,3 +151,15 @@ def test_anchor_rejects_coordinated_rows_deletion_and_valid_prefix_rollback(tmp_
     db.commit(); db.close()
     with pytest.raises(CasePersistenceError, match="anchor integrity"):
         SQLiteCasePersistence(path, integrity_key=KEY)
+
+
+def test_failed_open_releases_windows_database_handle(tmp_path):
+    path = tmp_path / "case.sqlite3"
+    store = SQLiteCasePersistence(path, integrity_key=KEY)
+    store.register_case(*_case("CASE-2025-0001", "PERSON-A", 2025), ui_owner_id="PERSON-A")
+    store.close()
+    with pytest.raises(CasePersistenceError):
+        SQLiteCasePersistence(path, integrity_key=b"another-protected-integrity-key-value")
+    renamed = tmp_path / "recoverable.sqlite3"
+    path.rename(renamed)
+    renamed.unlink()

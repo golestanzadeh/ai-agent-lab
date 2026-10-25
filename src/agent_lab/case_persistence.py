@@ -58,6 +58,13 @@ class SQLiteCasePersistence:
         self._key = integrity_key
         self._lock = RLock()
         self._db = sqlite3.connect(self.path, check_same_thread=False)
+        try:
+            self._initialize_connection()
+        except BaseException:
+            self._db.close()
+            raise
+
+    def _initialize_connection(self) -> None:
         self._db.row_factory = sqlite3.Row
         self._db.execute("PRAGMA journal_mode=WAL")
         self._db.execute("PRAGMA foreign_keys=ON")
@@ -68,15 +75,12 @@ class SQLiteCasePersistence:
                 "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
             ).fetchall()
             if tables:
-                self._db.close()
                 raise CasePersistenceError("unversioned database is not accepted")
             if self._anchor_path.exists():
-                self._db.close()
                 raise CasePersistenceError("database is missing while protected anchor exists")
             self._create_schema()
             self._write_anchor()
         elif version != SCHEMA_VERSION:
-            self._db.close()
             raise CasePersistenceError("unsupported case persistence schema")
         self._verify_all()
         self._verify_anchor()
