@@ -33,6 +33,16 @@ Acceptance is bounded to F03 code and synthetic verification. Coordinated databa
 
 Next smallest executable package is a non-privileged composition/recovery adapter that reconstructs the accepted durable runtime before `CaseCreationWorkflow`, stages storage scope creation without protected content, and deterministically reconciles an interrupted external-scope creation. It must not activate protected data and requires its own exact-SHA independent review.
 
+## F04 storage provisioning integration independently accepted — 2026-10-25
+
+Schema v3 extends the accepted SQLite authority with durable, exact owner/case/year provisioning intents, deterministic canonical operation identities, attempt/revision state and chained audit transitions. `DurableStorageProvisioningAdapter` composes the existing `CaseCreationWorkflow` and create-only `GoogleDriveStorageScopeCreator` without claiming a cross-system transaction. It records intent before provider I/O, replays the provider's exact-scope private journal after interruption, binds the completed provider/root reference to final case registration and prevents one failed case from corrupting another. Same-year cases and different years retain distinct roots; restart replay creates no duplicate folders.
+
+Candidate `d205d5c9d6c4a4b36961b1ddf63b9c7091a1f4d5` independently failed because two genuine uncertain Drive errors were classified through message substrings and could enter automatic retry. Final exact SHA `abda1c8579710c1e90537cb1d73ae036f63273a1` replaces text inference with stable typed `code` and `retry_safe` metadata. Independent re-review returned **`INDEPENDENT_PASS`**: `93` focused tests and adversarial probes verified both uncertain errors enter `RECONCILIATION_REQUIRED` without another provider call, while an explicitly retry-safe typed failure can recover. No in-scope finding remains.
+
+This is synthetic, non-privileged acceptance only. Real Google Drive activation still requires accepted runtime credential binding, least-privilege permissions, privacy/retention and case-isolation deployment evidence, plus an authorized human reconciliation procedure for uncertain outcomes. C09 coordinated rollback/freshness, OI-0002 operational acceptance and OI-0003 authoritative subject/case bindings remain open. Approval and Submission remain disabled. `OPEN_ITEMS.md` was assessed in this change set; no active row closes.
+
+Next smallest executable integration is the non-privileged case-runtime composition that reconstructs the durable registry, exposes only completed storage references to the existing product services and keeps document/Gemini/CSV mutations disabled until their protected-operation gates are accepted.
+
 ## UI25 local operational unblocking — 2026-10-25
 
 The Owner reaffirmed `C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED` and authorized independently safe, non-privileged product UI integration. A bounded read-only adapter now projects the existing `CaseRegistry` into the existing Dashboard using two simultaneous scopes: exact owner identity and an explicit case allowlist. It exports only case ID, tax year and canonical lifecycle state, supports multiple cases in the same year and across all `TaxPeriod` years, and fails the complete read closed if any allowlisted case is unresolved or cross-owner. No parallel registry/store/orchestrator was created.
