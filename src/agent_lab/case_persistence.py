@@ -359,8 +359,7 @@ class SQLiteCasePersistence:
         with self._lock:
             cached = self._idempotent_result(request_id, "CREATE_RUN", case_id, request)
             if cached is not None:
-                row = self._db.execute("SELECT * FROM durable_run WHERE run_id=?", (cached["run_id"],)).fetchone()
-                return VersionedRun(self._run(row), row["tax_year"], row["revision"], True)
+                return self._versioned_run_result(cached, idempotent=True)
             self._verify_all(); self._verify_anchor()
             try:
                 self._db.execute("BEGIN IMMEDIATE"); self._authorize(owner_id, case_id, tax_year)
@@ -376,7 +375,7 @@ class SQLiteCasePersistence:
                 state_payload = self._canonical(self._state_payload(updated))
                 self._db.execute("UPDATE case_state SET payload=?,revision=?,digest=? WHERE case_id=?",
                                  (state_payload, expected_state_revision + 1, self._mac(state_payload), case_id))
-                result = {"run_id": run_id, "revision": 1}
+                result = {"run": payload}
                 self._record_request(request_id, "CREATE_RUN", case_id, request, result)
                 self._audit("RUN_CREATED", case_id, self._mac(payload))
                 self._db.commit(); self._write_anchor()
@@ -395,8 +394,7 @@ class SQLiteCasePersistence:
         with self._lock:
             cached = self._idempotent_result(request_id, "TRANSITION_RUN", case_id, request)
             if cached is not None:
-                row = self._db.execute("SELECT * FROM durable_run WHERE run_id=?", (run_id,)).fetchone()
-                return VersionedRun(self._run(row), tax_year, row["revision"], True)
+                return self._versioned_run_result(cached, idempotent=True)
             self._verify_all(); self._verify_anchor()
             try:
                 self._db.execute("BEGIN IMMEDIATE"); self._authorize(owner_id, case_id, tax_year)
@@ -411,7 +409,7 @@ class SQLiteCasePersistence:
                 revision = expected_revision + 1; payload = self._run_payload(updated, tax_year, revision)
                 self._db.execute("UPDATE durable_run SET status=?,revision=?,updated_at=?,digest=? WHERE run_id=?",
                                  (status.value, revision, updated.updated_at.isoformat(), self._mac(payload), run_id))
-                result = {"run_id": run_id, "revision": revision, "status": status.value}
+                result = {"run": payload}
                 self._record_request(request_id, "TRANSITION_RUN", case_id, request, result)
                 self._audit("RUN_TRANSITIONED", case_id, self._mac(payload))
                 self._db.commit(); self._write_anchor()
@@ -451,6 +449,22 @@ class SQLiteCasePersistence:
 
     def _versioned_run(self, row: sqlite3.Row) -> VersionedRun:
         return VersionedRun(self._run(row), row["tax_year"], row["revision"])
+
+    @staticmethod
+    def _versioned_run_result(result: dict, *, idempotent: bool) -> VersionedRun:
+        payload = result.get("run")
+        if not isinstance(payload, dict):
+            raise CasePersistenceError("idempotency run result is malformed")
+        try:
+            run = RunRecord(
+                payload["run_id"], payload["case_id"], payload["request_id"],
+                RunStatus(payload["status"]), payload["schema_version"],
+                datetime.fromisoformat(payload["created_at"]),
+                datetime.fromisoformat(payload["updated_at"]),
+            )
+            return VersionedRun(run, payload["tax_year"], payload["revision"], idempotent)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise CasePersistenceError("idempotency run result is malformed") from exc
 
     @staticmethod
     def _run_payload(run: RunRecord, tax_year: int, revision: int) -> dict:

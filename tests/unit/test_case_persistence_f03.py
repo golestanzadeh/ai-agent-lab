@@ -56,6 +56,19 @@ def test_state_and_run_lifecycle_is_versioned_idempotent_and_restart_safe(tmp_pa
         status=RunStatus.RUNNING,
     )
     assert running.revision == 2
+    created_replay = store.create_run(
+        owner_id="PERSON-A", case_id="CASE-2025-0001", tax_year=2025,
+        run_id="RUN-1", request_id="RUN-REQUEST-1", expected_state_revision=2,
+    )
+    transition_replay = store.transition_run(
+        owner_id="PERSON-A", case_id="CASE-2025-0001", tax_year=2025,
+        run_id="RUN-1", request_id="RUN-TRANSITION-1", expected_revision=1,
+        status=RunStatus.RUNNING,
+    )
+    assert created_replay.idempotent and created_replay.run.status is RunStatus.CREATED
+    assert created_replay.revision == 1
+    assert transition_replay.idempotent and transition_replay.run.status is RunStatus.RUNNING
+    assert transition_replay.revision == 2
     store.close()
     reopened = SQLiteCasePersistence(path, integrity_key=KEY)
     runtime = reopened.load_runtime(owner_id="PERSON-A", allowed_case_ids=frozenset({"CASE-2025-0001"}))

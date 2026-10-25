@@ -25,7 +25,8 @@ class DurableKernelRunLifecycle:
         self._require_exact_context(task_id, case_id, tax_year, run_id)
         return self.persistence.create_run(
             owner_id=owner_id, case_id=case_id, tax_year=tax_year, run_id=run_id,
-            request_id=request_id, expected_state_revision=expected_state_revision,
+            request_id=self._kernel_request_id(task_id, request_id),
+            expected_state_revision=expected_state_revision,
         )
 
     def transition_for_registered_task(
@@ -35,8 +36,15 @@ class DurableKernelRunLifecycle:
         self._require_exact_context(task_id, case_id, tax_year, run_id)
         return self.persistence.transition_run(
             owner_id=owner_id, case_id=case_id, tax_year=tax_year, run_id=run_id,
-            request_id=request_id, expected_revision=expected_revision, status=status,
+            request_id=self._kernel_request_id(task_id, request_id),
+            expected_revision=expected_revision, status=status,
         )
+
+    @staticmethod
+    def _kernel_request_id(task_id: str, request_id: str) -> str:
+        if not request_id.strip():
+            raise ValueError("request_id is required")
+        return f"KERNEL-TASK:{task_id}:{request_id}"
 
     def _require_exact_context(self, task_id: str, case_id: str, tax_year: int, run_id: str) -> None:
         actual = self.kernel.registered_case_context(task_id)
