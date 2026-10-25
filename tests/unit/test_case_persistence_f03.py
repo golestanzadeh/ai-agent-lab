@@ -132,6 +132,13 @@ def test_kernel_adapter_requires_exact_registered_context(tmp_path):
     store.close()
 
 
+def test_kernel_task_request_binding_is_injective_for_delimiter_ids():
+    left = DurableKernelRunLifecycle._kernel_request_id("A:B", "C")
+    right = DurableKernelRunLifecycle._kernel_request_id("A", "B:C")
+    assert left != right
+    assert left.startswith("KERNEL-TASK:sha256:")
+
+
 def test_empty_v1_database_migrates_atomically_to_v2(tmp_path):
     path = tmp_path / "v1.sqlite3"
     db = sqlite3.connect(path)

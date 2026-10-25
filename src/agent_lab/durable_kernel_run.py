@@ -7,6 +7,8 @@ when the existing Kernel already owns an exactly matching task context.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import json
 
 from agent_lab.case_persistence import SQLiteCasePersistence, VersionedRun
 from agent_lab.case_state import RunStatus
@@ -42,9 +44,13 @@ class DurableKernelRunLifecycle:
 
     @staticmethod
     def _kernel_request_id(task_id: str, request_id: str) -> str:
-        if not request_id.strip():
-            raise ValueError("request_id is required")
-        return f"KERNEL-TASK:{task_id}:{request_id}"
+        if not task_id.strip() or not request_id.strip():
+            raise ValueError("task_id and request_id are required")
+        encoded = json.dumps(
+            {"request_id": request_id, "task_id": task_id},
+            ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+        ).encode("utf-8")
+        return "KERNEL-TASK:sha256:" + hashlib.sha256(encoded).hexdigest()
 
     def _require_exact_context(self, task_id: str, case_id: str, tax_year: int, run_id: str) -> None:
         actual = self.kernel.registered_case_context(task_id)
