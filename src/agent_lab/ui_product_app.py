@@ -13,6 +13,7 @@ from collections.abc import Iterable
 from fastapi import FastAPI
 
 from agent_lab.case_registry import CaseRegistry
+from agent_lab.case_persistence import SQLiteCasePersistence
 from agent_lab.ui_case_registry_reader import CaseRegistryDashboardReader
 from agent_lab.ui_dashboard import ReadKernelProjection, create_dashboard_app
 
@@ -55,3 +56,23 @@ def create_product_dashboard_app(
 
 
 app = create_product_dashboard_app()
+
+
+def create_persistent_product_dashboard_app(
+    *,
+    persistence: SQLiteCasePersistence,
+    owner_id: str,
+    allowed_case_ids: Iterable[str],
+    read_kernel_projection: ReadKernelProjection | None = None,
+) -> FastAPI:
+    """Compose the product UI from the accepted canonical persistence boundary."""
+    allowed = frozenset(allowed_case_ids)
+    runtime = persistence.load_runtime(owner_id=owner_id, allowed_case_ids=allowed)
+    app = create_product_dashboard_app(
+        registry=runtime.registry,
+        owner_id=owner_id,
+        allowed_case_ids=runtime.allowed_case_ids,
+        read_kernel_projection=read_kernel_projection,
+    )
+    app.state.case_runtime = runtime
+    return app

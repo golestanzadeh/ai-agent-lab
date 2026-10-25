@@ -24,6 +24,8 @@ Current safe UI increment: the existing Dashboard has a tested read-only adapter
 
 Launcher injection is complete: the local product command starts the fail-closed Dashboard, accepts only complete CaseRegistry/owner/allowlist composition, and can display exact-scope read-only Kernel results. Next code prerequisite is a reviewed durable provider for the existing registry/state/authorization contracts. Only after OI-0002/OI-0003 acceptance may case creation and the existing Drive, document, Gemini and bank-CSV components be composed for protected data.
 
+The durable SQLite provider implementation candidate is complete and focused restart/isolation/integrity tests pass. Next: independent persistence/security review of the exact commit, then compose `CaseCreationWorkflow` atomically with identity association and Drive scope after the OI-0003 Owner decision. Drive document ingestion, Gemini and CSV remain existing reusable components but cannot be activated on protected data before those gates.
+
 Completed non-operational C09 design slice (2026-10-21): the six-file witness package in `docs/oi0002-c09-witness/` and isolated simulator define authenticated fixed-key sequencing, crash recovery, version-aware verification and Owner-authorized epoch transition. AT-C09-01..15 pass locally. This is `LOCAL_SIMULATION_PASS`, not operational acceptance; no cloud call or production integration occurred.
 
 ## Local development versus operational IPC acceptance — 2026-10-14

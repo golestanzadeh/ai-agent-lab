@@ -15,7 +15,11 @@ from agent_lab.case_registry import (
     StorageScopeReference,
     TaxPeriod,
 )
-from agent_lab.ui_product_app import create_product_dashboard_app
+from agent_lab.case_persistence import SQLiteCasePersistence
+from agent_lab.case_state import CaseState
+from agent_lab.ui_product_app import (
+    create_persistent_product_dashboard_app, create_product_dashboard_app,
+)
 
 
 def _registry() -> CaseRegistry:
@@ -154,3 +158,33 @@ def test_read_only_kernel_projection_uses_exact_authorized_case_year_and_run() -
 def test_kernel_projection_cannot_start_without_authorized_case_source() -> None:
     with pytest.raises(ValueError, match="configured case source"):
         create_product_dashboard_app(read_kernel_projection=lambda *_: None)
+
+
+def test_persistent_product_composition_recovers_after_database_reopen(tmp_path) -> None:
+    path = tmp_path / "case.sqlite3"
+    key = b"product-composition-integrity-key-32-bytes"
+    registry = _registry()
+    store = SQLiteCasePersistence(path, integrity_key=key)
+    for case_id in ("TEST-LOCAL-2023-A", "TEST-LOCAL-2023-B", "TEST-LOCAL-2027-A"):
+        record = registry.get(case_id)
+        assert record is not None
+        store.register_case(
+            record,
+            CaseState(case_id, 1, "READY", record.created_at, record.updated_at),
+            ui_owner_id="TEST-OWNER-A",
+        )
+    store.close()
+
+    reopened = SQLiteCasePersistence(path, integrity_key=key)
+    app = create_persistent_product_dashboard_app(
+        persistence=reopened,
+        owner_id="TEST-OWNER-A",
+        allowed_case_ids={"TEST-LOCAL-2023-A", "TEST-LOCAL-2027-A"},
+    )
+    page = TestClient(app).get("/")
+    assert page.status_code == 200
+    assert "TEST-LOCAL-2023-A" in page.text
+    assert "TEST-LOCAL-2027-A" in page.text
+    assert "TEST-LOCAL-2023-B" not in page.text
+    assert app.state.case_runtime.state("TEST-LOCAL-2027-A").lifecycle_status == "READY"
+    reopened.close()

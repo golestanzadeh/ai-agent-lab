@@ -130,3 +130,31 @@ and shut down cleanly.
 Next safe code package is the durable CaseRegistry provider contract and
 recovery tests inside the approved persistence architecture.  It must not create
 a UI-owned store or bind real records before OI-0002/OI-0003 acceptance.
+
+## Durable case provider implementation candidate
+
+`SQLiteCasePersistence` now implements the frozen one-database local pattern
+for case metadata, `CaseState`, and exact UI case authorization.  It uses WAL,
+foreign keys, schema versioning, transactional case/state/authorization/audit
+registration, a protected runtime HMAC key, canonical row digests and an HMAC
+audit chain.  It rejects synchronized-folder placement, unversioned/unsupported
+databases, wrong keys, altered rows, deleted state, cross-owner authorization,
+incomplete allowlists and reused case identities with changed content.
+
+The provider preserves multiple independent case IDs for one owner/year and
+multiple years.  After close/reopen it reconstructs the existing
+`CaseRegistry`, returns exact durable `CaseState` values, and supplies the
+allowlist consumed by the existing product composition root.  It stores no
+document bodies, identity facts, Gemini output or bank data and is not a new
+Kernel/Identity authority.
+
+Focused provider/UI/registry/state/launcher verification passes `65`.  This is
+an implementation candidate requiring independent persistence/security review;
+it is not OI-0002 acceptance or authorization for protected records.
+
+The remaining code boundary is operational transaction composition: case
+creation must commit this provider together with accepted identity association,
+audit and Drive scope semantics without partial side effects.  Existing Drive,
+Gemini and CSV components should then be injected behind the same exact
+case/year authorization.  That composition cannot safely precede OI-0003's
+authoritative Person A/Person B mapping and subject-fact decision.
