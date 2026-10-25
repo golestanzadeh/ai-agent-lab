@@ -152,6 +152,14 @@ Focused provider/UI/registry/state/launcher verification passes `65`.  This is
 an implementation candidate requiring independent persistence/security review;
 it is not OI-0002 acceptance or authorization for protected records.
 
+Independent review of `dd831b7` returned FAIL: coordinated deletion and valid-
+prefix rollback were accepted, an empty database was not key-bound, and durable
+CaseState/run mutation was absent.  The first two findings are remediated with a
+separately protected HMAC anchor binding the key verifier, schema, case count and
+audit event count/head; focused remediation tests pass `17`.  The third finding
+remains outside the accepted read-only scope and prevents operational-persistence
+acceptance pending a separate mutation/recovery implementation and re-review.
+
 The remaining code boundary is operational transaction composition: case
 creation must commit this provider together with accepted identity association,
 audit and Drive scope semantics without partial side effects.  Existing Drive,

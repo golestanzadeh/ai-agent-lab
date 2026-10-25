@@ -54,6 +54,7 @@ class SQLiteCasePersistence:
         if any(marker in lowered for marker in ("/onedrive/", "/google drive/", "/dropbox/")):
             raise ValueError("live SQLite database cannot be placed in a synced folder")
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._anchor_path = self.path.with_suffix(self.path.suffix + ".audit-anchor")
         self._key = integrity_key
         self._lock = RLock()
         self._db = sqlite3.connect(self.path, check_same_thread=False)
@@ -69,11 +70,16 @@ class SQLiteCasePersistence:
             if tables:
                 self._db.close()
                 raise CasePersistenceError("unversioned database is not accepted")
+            if self._anchor_path.exists():
+                self._db.close()
+                raise CasePersistenceError("database is missing while protected anchor exists")
             self._create_schema()
+            self._write_anchor()
         elif version != SCHEMA_VERSION:
             self._db.close()
             raise CasePersistenceError("unsupported case persistence schema")
         self._verify_all()
+        self._verify_anchor()
 
     def close(self) -> None:
         self._db.close()
@@ -184,6 +190,7 @@ class SQLiteCasePersistence:
                 )
                 self._audit("CASE_REGISTERED", record.case_id, self._mac(case_payload))
                 self._db.commit()
+                self._write_anchor()
             except Exception:
                 self._db.rollback()
                 raise
@@ -294,3 +301,49 @@ class SQLiteCasePersistence:
                 authorization = {key: row[key] for key in ("owner_id", "case_id", "granted_at")}
                 if not hmac.compare_digest(row["digest"], self._mac(authorization)):
                     raise CasePersistenceError("case authorization integrity failure")
+
+    def _anchor_payload(self) -> dict:
+        event = self._db.execute(
+            "SELECT event_id,event_digest FROM case_audit ORDER BY event_id DESC LIMIT 1"
+        ).fetchone()
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "event_count": self._db.execute("SELECT count(*) FROM case_audit").fetchone()[0],
+            "head_event_id": event["event_id"] if event else 0,
+            "head_digest": event["event_digest"] if event else "0" * 64,
+            "case_count": self._db.execute("SELECT count(*) FROM case_record").fetchone()[0],
+            "key_verifier": self._mac("ai-tax-agent.case-persistence/key-verifier/1"),
+        }
+
+    def _write_anchor(self) -> None:
+        import os
+        payload = self._anchor_payload()
+        document = payload | {"anchor_mac": self._mac(payload)}
+        temporary = self._anchor_path.with_suffix(self._anchor_path.suffix + ".writing")
+        with temporary.open("x", encoding="utf-8") as stream:
+            stream.write(self._canonical(document))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, self._anchor_path)
+
+    def _verify_anchor(self) -> None:
+        try:
+            document = json.loads(self._anchor_path.read_text(encoding="utf-8"))
+            required = {
+                "schema_version", "event_count", "head_event_id", "head_digest",
+                "case_count", "key_verifier", "anchor_mac",
+            }
+            if not isinstance(document, dict) or set(document) != required:
+                raise ValueError
+            payload = {key: document[key] for key in document if key != "anchor_mac"}
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            raise CasePersistenceError("case audit anchor unavailable or malformed") from exc
+        if (
+            not hmac.compare_digest(str(document["anchor_mac"]), self._mac(payload))
+            or not hmac.compare_digest(
+                str(document["key_verifier"]),
+                self._mac("ai-tax-agent.case-persistence/key-verifier/1"),
+            )
+            or payload != self._anchor_payload()
+        ):
+            raise CasePersistenceError("case audit anchor integrity failure")

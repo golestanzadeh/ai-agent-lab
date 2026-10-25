@@ -103,6 +103,10 @@ def test_rejects_wrong_key_synced_path_and_unversioned_database(tmp_path):
     store.close()
     with pytest.raises(CasePersistenceError):
         SQLiteCasePersistence(path, integrity_key=b"another-protected-integrity-key-value")
+    empty = tmp_path / "empty.sqlite3"
+    SQLiteCasePersistence(empty, integrity_key=KEY).close()
+    with pytest.raises(CasePersistenceError, match="anchor integrity"):
+        SQLiteCasePersistence(empty, integrity_key=b"another-protected-integrity-key-value")
     with pytest.raises(ValueError, match="synced"):
         SQLiteCasePersistence(tmp_path / "OneDrive" / "case.sqlite3", integrity_key=KEY)
     unknown = tmp_path / "unknown.sqlite3"
@@ -124,3 +128,26 @@ def test_deleted_or_cross_owner_scope_rows_fail_reopen(tmp_path):
         db = sqlite3.connect(path); db.execute(statement); db.commit(); db.close()
         with pytest.raises(CasePersistenceError, match="completeness|scope|integrity"):
             SQLiteCasePersistence(path, integrity_key=KEY)
+
+
+def test_anchor_rejects_coordinated_rows_deletion_and_valid_prefix_rollback(tmp_path):
+    path = tmp_path / "case.sqlite3"
+    store = SQLiteCasePersistence(path, integrity_key=KEY)
+    store.register_case(*_case("CASE-2024-0001", "PERSON-A", 2024), ui_owner_id="PERSON-A")
+    backup = tmp_path / "prefix.sqlite3"
+    source = sqlite3.connect(path); target = sqlite3.connect(backup); source.backup(target)
+    source.close(); target.close()
+    store.register_case(*_case("CASE-2025-0001", "PERSON-A", 2025), ui_owner_id="PERSON-A")
+    store.close()
+
+    path.write_bytes(backup.read_bytes())
+    with pytest.raises(CasePersistenceError, match="anchor integrity"):
+        SQLiteCasePersistence(path, integrity_key=KEY)
+
+    db = sqlite3.connect(path)
+    db.execute("PRAGMA foreign_keys=OFF")
+    for table in ("case_state", "ui_case_authorization", "case_audit", "case_record"):
+        db.execute(f"DELETE FROM {table}")
+    db.commit(); db.close()
+    with pytest.raises(CasePersistenceError, match="anchor integrity"):
+        SQLiteCasePersistence(path, integrity_key=KEY)
