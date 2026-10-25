@@ -17,6 +17,14 @@ from agent_lab.case_registry import StorageScopeReference, TaxPeriod
 class ProvisioningError(RuntimeError):
     """Safe diagnostic: never contains provider IDs or raw provider errors."""
 
+    def __init__(
+        self, message: str, *, code: str = "PROVIDER_RECONCILIATION_REQUIRED",
+        retry_safe: bool = False,
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.retry_safe = retry_safe
+
 
 @dataclass(frozen=True)
 class ProvisioningEvent:

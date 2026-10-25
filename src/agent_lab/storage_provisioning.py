@@ -71,13 +71,12 @@ class DurableStorageProvisioningAdapter:
             if self._after_provider is not None:
                 self._after_provider(scope)
         except ProvisioningError as exc:
-            uncertain = "uncertain" in str(exc).casefold() or "requires inspection" in str(exc).casefold()
             self._persistence.transition_storage_provisioning(
                 operation_id=operation_id, expected_statuses=frozenset({"IN_PROGRESS"}),
-                status="RECONCILIATION_REQUIRED" if uncertain else "RETRYABLE_FAILURE",
-                failure_code="PROVIDER_OUTCOME_UNCERTAIN" if uncertain else "PROVIDER_RETRYABLE_FAILURE",
+                status="RETRYABLE_FAILURE" if exc.retry_safe else "RECONCILIATION_REQUIRED",
+                failure_code=exc.code,
             )
-            if uncertain:
+            if not exc.retry_safe:
                 raise StorageReconciliationRequired(
                     "storage outcome is uncertain; explicit reconciliation required"
                 ) from None

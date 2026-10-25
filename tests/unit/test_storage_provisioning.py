@@ -15,6 +15,7 @@ from agent_lab.case_registry import (
 from agent_lab.case_state import CaseState
 from agent_lab.person_entity_registry import PersonEntityRegistry, PersonRecord, RegistryStatus
 from agent_lab.storage_provisioning import DurableStorageProvisioningAdapter
+from agent_lab.google_drive_provisioning import ProvisioningError
 
 
 KEY = b"storage-provisioning-test-key-32-bytes-minimum"
@@ -156,3 +157,27 @@ def test_case_creation_workflow_commits_completed_scope_and_recovers(tmp_path):
     assert len(runtime.registry.all_records()) == 3
     assert len({record.storage_scope_reference.root_id for record in runtime.registry.all_records()}) == 3
     reopened.close()
+
+
+@pytest.mark.parametrize("message", [
+    "unrecorded folder at intended placement; explicit reconciliation required",
+    "provisioning locked; inspect prior execution before retry",
+])
+def test_typed_google_drive_failures_require_reconciliation_not_retry(tmp_path, message):
+    class UncertainCreator:
+        def create_case_scope(self, tax_period, case_id):
+            raise ProvisioningError(message)
+    store = SQLiteCasePersistence(tmp_path / "cases.sqlite3", integrity_key=KEY)
+    adapter = DurableStorageProvisioningAdapter(store, UncertainCreator())
+    with pytest.raises(RuntimeError, match="explicit reconciliation"):
+        adapter.provision_case_scope(
+            owner_id="OWNER-A", tax_period=TaxPeriod("CALENDAR_YEAR", 2025),
+            case_id="CASE-2025-A", request_id="REQ-A",
+        )
+    operation = adapter.operation_id(
+        request_id="REQ-A", owner_id="OWNER-A", case_id="CASE-2025-A", tax_year=2025,
+    )
+    intent = store.get_storage_provisioning(operation_id=operation)
+    assert intent.status == "RECONCILIATION_REQUIRED"
+    assert intent.failure_code == "PROVIDER_RECONCILIATION_REQUIRED"
+    store.close()
