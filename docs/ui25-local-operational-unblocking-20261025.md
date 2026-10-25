@@ -160,6 +160,13 @@ audit event count/head; focused remediation tests pass `17`.  The third finding
 remains outside the accepted read-only scope and prevents operational-persistence
 acceptance pending a separate mutation/recovery implementation and re-review.
 
+Final independent review of exact `e1410514295253bd1e171faba10cf7348ddf6c79`
+returned PASS for immutable initial registration, restart reconstruction and
+read-only Dashboard projection.  Reviewer verification passed `40`, including
+Windows wrong-key/tamper rejection followed by immediate rename/delete.  F03
+durable state/run mutation and coordinated DB+anchor rollback are explicit
+exclusions; this is not complete operational or protected-data acceptance.
+
 The remaining code boundary is operational transaction composition: case
 creation must commit this provider together with accepted identity association,
 audit and Drive scope semantics without partial side effects.  Existing Drive,

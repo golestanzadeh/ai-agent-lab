@@ -26,6 +26,8 @@ Launcher injection is complete: the local product command starts the fail-closed
 
 The durable SQLite provider implementation candidate is complete and focused restart/isolation/integrity tests pass. Next: independent persistence/security review of the exact commit, then compose `CaseCreationWorkflow` atomically with identity association and Drive scope after the OI-0003 Owner decision. Drive document ingestion, Gemini and CSV remain existing reusable components but cannot be activated on protected data before those gates.
 
+Independent persistence review PASSes `e141051` for immutable initial registration/restart/read-only UI only. Next executable package is F03 durable CaseState/run mutation and atomic existing-Kernel/CaseCreationWorkflow integration, with optimistic revision, audit/restart negatives and independent review. OI-0003 identity/relationship decisions and C09 coordinated DB+anchor rollback protection remain separate mandatory gates before protected activation.
+
 Completed non-operational C09 design slice (2026-10-21): the six-file witness package in `docs/oi0002-c09-witness/` and isolated simulator define authenticated fixed-key sequencing, crash recovery, version-aware verification and Owner-authorized epoch transition. AT-C09-01..15 pass locally. This is `LOCAL_SIMULATION_PASS`, not operational acceptance; no cloud call or production integration occurred.
 
 ## Local development versus operational IPC acceptance — 2026-10-14
