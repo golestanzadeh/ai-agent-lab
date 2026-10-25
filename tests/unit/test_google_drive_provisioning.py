@@ -6,6 +6,8 @@ import pytest
 from agent_lab.case_creation_workflow import InMemoryAuditSink
 from agent_lab.case_registry import TaxPeriod
 from agent_lab.google_drive_provisioning import GoogleDriveStorageScopeCreator as Creator, ProvisioningError
+from agent_lab.case_persistence import SQLiteCasePersistence
+from agent_lab.storage_provisioning import DurableStorageProvisioningAdapter
 
 
 class FakeDrive:
@@ -159,3 +161,27 @@ def test_confirmed_partial_folders_resume_without_duplicates(env):
     drive.get = original_get
     creator.create_case_scope(TaxPeriod("CALENDAR_YEAR", 2024), "CASE-001")
     assert len(drive.objects) == 11
+
+
+def test_durable_adapter_replays_existing_google_drive_scope_after_restart(env, tmp_path):
+    creator, drive, _ = env
+    database = tmp_path / "cases.sqlite3"
+    store = SQLiteCasePersistence(
+        database, integrity_key=b"google-drive-adapter-test-key-32-bytes",
+    )
+    adapter = DurableStorageProvisioningAdapter(store, creator)
+    first = adapter.provision_case_scope(
+        owner_id="PERSON-A", tax_period=TaxPeriod("CALENDAR_YEAR", 2028),
+        case_id="CASE-2028-0001", request_id="REQ-2028-1",
+    )
+    store.close()
+    reopened = SQLiteCasePersistence(
+        database, integrity_key=b"google-drive-adapter-test-key-32-bytes",
+    )
+    replay = DurableStorageProvisioningAdapter(reopened, creator).provision_case_scope(
+        owner_id="PERSON-A", tax_period=TaxPeriod("CALENDAR_YEAR", 2028),
+        case_id="CASE-2028-0001", request_id="REQ-2028-1",
+    )
+    assert replay == first
+    assert len([call for call in drive.calls if call[0] == "create"]) == 10
+    reopened.close()

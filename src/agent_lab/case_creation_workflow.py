@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
+from threading import RLock
 from typing import Callable, Protocol
 
 from agent_lab.case_identity_association import CaseIdentityAssociationService
@@ -84,6 +85,13 @@ class StorageScopeCreator(Protocol):
         ...
 
 
+class RecoverableStorageScopeCreator(Protocol):
+    def provision_case_scope(
+        self, *, owner_id: str, tax_period: TaxPeriod, case_id: str, request_id: str,
+    ) -> StorageScopeReference:
+        ...
+
+
 class AuditSink(Protocol):
     def record(self, event: AuditEvent) -> None:
         ...
@@ -139,8 +147,13 @@ class CaseCreationWorkflow:
         self._identity_resolver = identity_resolver or self._resolve_existing_identity
         self._durable_registrar = durable_registrar
         self._allow_multiple_cases_per_period = allow_multiple_cases_per_period
+        self._lock = RLock()
 
     def create(self, request: CaseCreationRequest) -> CreationResult:
+        with self._lock:
+            return self._create_locked(request)
+
+    def _create_locked(self, request: CaseCreationRequest) -> CreationResult:
         existing = self._find_idempotent_result(request.request_id)
         if existing is not None:
             return existing
@@ -156,7 +169,13 @@ class CaseCreationWorkflow:
 
         case_id = self._generate_case_id(request.tax_period.year)
         run_id = f"CREATE-RUN-{request.request_id}"
-        storage_scope = self._storage.create_case_scope(request.tax_period, case_id)
+        if hasattr(self._storage, "provision_case_scope"):
+            storage_scope = self._storage.provision_case_scope(
+                owner_id=resolution.owner_id, tax_period=request.tax_period,
+                case_id=case_id, request_id=request.request_id,
+            )
+        else:
+            storage_scope = self._storage.create_case_scope(request.tax_period, case_id)
         record = CaseRecord(
             case_id=case_id,
             owner_type=resolution.owner_type,

@@ -156,7 +156,7 @@ def test_empty_v1_database_migrates_atomically_to_v2(tmp_path):
                "key_verifier": mac("ai-tax-agent.case-persistence/key-verifier/1")}
     path.with_suffix(".sqlite3.audit-anchor").write_text(canonical(payload | {"anchor_mac": mac(payload)}), encoding="utf-8")
     store = SQLiteCasePersistence(path, integrity_key=KEY)
-    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 2
+    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 3
     assert store._db.execute("SELECT revision FROM case_state").fetchall() == []
     store.close()
 

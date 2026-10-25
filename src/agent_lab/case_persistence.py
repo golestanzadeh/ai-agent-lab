@@ -21,7 +21,7 @@ from agent_lab.case_registry import (
 from agent_lab.case_state import CaseState, RunRecord, RunStatus, validate_run_transition
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 class CasePersistenceError(RuntimeError):
@@ -45,6 +45,21 @@ class VersionedRun:
     tax_year: int
     revision: int
     idempotent: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class StorageProvisioningIntent:
+    operation_id: str
+    request_id: str
+    owner_id: str
+    case_id: str
+    tax_year: int
+    status: str
+    attempt_count: int
+    storage_provider: str | None
+    storage_root_id: str | None
+    failure_code: str | None
+    revision: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,7 +124,12 @@ class SQLiteCasePersistence:
             self._verify_all()
             self._verify_anchor(schema_version=1)
             self._migrate_v1_to_v2()
-        elif version != SCHEMA_VERSION:
+            version = 2
+        if version == 2:
+            self._verify_all()
+            self._verify_anchor(schema_version=2)
+            self._migrate_v2_to_v3()
+        elif version not in {0, 1, SCHEMA_VERSION}:
             raise CasePersistenceError("unsupported case persistence schema")
         self._verify_all()
         self._verify_anchor()
@@ -155,7 +175,15 @@ class SQLiteCasePersistence:
                     case_id TEXT NOT NULL REFERENCES case_record(case_id),
                     request_json TEXT NOT NULL, request_digest TEXT NOT NULL, result_json TEXT NOT NULL,
                     result_digest TEXT NOT NULL);
-                PRAGMA user_version=2;
+                CREATE TABLE storage_provisioning(
+                    operation_id TEXT PRIMARY KEY, request_id TEXT NOT NULL UNIQUE,
+                    owner_id TEXT NOT NULL, case_id TEXT NOT NULL UNIQUE,
+                    tax_year INTEGER NOT NULL, status TEXT NOT NULL,
+                    attempt_count INTEGER NOT NULL, storage_provider TEXT,
+                    storage_root_id TEXT, failure_code TEXT, revision INTEGER NOT NULL,
+                    created_at TEXT NOT NULL, updated_at TEXT NOT NULL, digest TEXT NOT NULL,
+                    CHECK(attempt_count >= 0), CHECK(revision >= 1));
+                PRAGMA user_version=3;
             """)
 
     def _migrate_v1_to_v2(self) -> None:
@@ -177,10 +205,26 @@ class SQLiteCasePersistence:
                     result_digest TEXT NOT NULL)""")
             self._db.execute("PRAGMA user_version=2")
             self._db.commit()
-            self._write_anchor()
+            self._write_anchor(schema_version=2)
         except Exception:
             self._db.rollback()
             raise
+
+    def _migrate_v2_to_v3(self) -> None:
+        try:
+            self._db.execute("BEGIN IMMEDIATE")
+            self._db.execute("""CREATE TABLE storage_provisioning(
+                operation_id TEXT PRIMARY KEY, request_id TEXT NOT NULL UNIQUE,
+                owner_id TEXT NOT NULL, case_id TEXT NOT NULL UNIQUE,
+                tax_year INTEGER NOT NULL, status TEXT NOT NULL,
+                attempt_count INTEGER NOT NULL, storage_provider TEXT,
+                storage_root_id TEXT, failure_code TEXT, revision INTEGER NOT NULL,
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL, digest TEXT NOT NULL,
+                CHECK(attempt_count >= 0), CHECK(revision >= 1))""")
+            self._db.execute("PRAGMA user_version=3")
+            self._db.commit(); self._write_anchor()
+        except Exception:
+            self._db.rollback(); raise
 
     @staticmethod
     def _canonical(value: dict) -> str:
@@ -224,6 +268,19 @@ class SQLiteCasePersistence:
         }
         with self._lock:
             self._verify_all()
+            provisioning = self._db.execute(
+                "SELECT * FROM storage_provisioning WHERE case_id=?", (record.case_id,)
+            ).fetchone()
+            if provisioning is not None:
+                intent = self._intent(provisioning)
+                if (
+                    intent.status != "COMPLETE"
+                    or intent.owner_id != record.owner_id
+                    or intent.tax_year != record.tax_period.year
+                    or intent.storage_provider != record.storage_scope_reference.provider
+                    or intent.storage_root_id != record.storage_scope_reference.root_id
+                ):
+                    raise CasePersistenceError("completed provisioning does not match case registration")
             existing = self._db.execute(
                 "SELECT digest FROM case_record WHERE case_id=?", (record.case_id,)
             ).fetchone()
@@ -302,6 +359,109 @@ class SQLiteCasePersistence:
             self._authorize(owner_id, case_id, tax_year)
             row = self._db.execute("SELECT * FROM case_state WHERE case_id=?", (case_id,)).fetchone()
             return VersionedCaseState(self._state(row["payload"]), row["revision"])
+
+    def prepare_storage_provisioning(
+        self, *, operation_id: str, request_id: str, owner_id: str,
+        case_id: str, tax_year: int,
+    ) -> StorageProvisioningIntent:
+        values = (operation_id, request_id, owner_id, case_id)
+        if any(not isinstance(value, str) or not value.strip() for value in values):
+            raise ValueError("complete provisioning identity is required")
+        if isinstance(tax_year, bool) or not isinstance(tax_year, int):
+            raise ValueError("tax_year must be an integer")
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            existing = self._db.execute(
+                "SELECT * FROM storage_provisioning WHERE operation_id=? OR request_id=? OR case_id=?",
+                (operation_id, request_id, case_id),
+            ).fetchall()
+            if existing:
+                if len(existing) != 1:
+                    raise CasePersistenceError("conflicting provisioning identities")
+                intent = self._intent(existing[0])
+                if (intent.operation_id, intent.request_id, intent.owner_id, intent.case_id, intent.tax_year) != (
+                    operation_id, request_id, owner_id, case_id, tax_year,
+                ):
+                    raise CasePersistenceError("provisioning identity already has different scope")
+                return intent
+            case = self._db.execute("SELECT owner_id,tax_year FROM case_record WHERE case_id=?", (case_id,)).fetchone()
+            if case is not None and (case["owner_id"] != owner_id or case["tax_year"] != tax_year):
+                raise PermissionError("provisioning scope conflicts with registered case")
+            now = datetime.now(timezone.utc).isoformat()
+            payload = self._provisioning_payload(
+                operation_id, request_id, owner_id, case_id, tax_year, "INTENT", 0,
+                None, None, None, 1, now, now,
+            )
+            try:
+                self._db.execute("BEGIN IMMEDIATE")
+                self._db.execute("INSERT INTO storage_provisioning VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                 tuple(payload.values()) + (self._mac(payload),))
+                self._audit("STORAGE_PROVISIONING_INTENT", case_id, self._mac(payload))
+                self._db.commit(); self._write_anchor()
+            except Exception:
+                self._db.rollback(); raise
+            row = self._db.execute("SELECT * FROM storage_provisioning WHERE operation_id=?", (operation_id,)).fetchone()
+            return self._intent(row)
+
+    def transition_storage_provisioning(
+        self, *, operation_id: str, expected_statuses: frozenset[str], status: str,
+        storage_scope: StorageScopeReference | None = None, failure_code: str | None = None,
+    ) -> StorageProvisioningIntent:
+        allowed = {"IN_PROGRESS", "COMPLETE", "RETRYABLE_FAILURE", "RECONCILIATION_REQUIRED"}
+        if status not in allowed or not expected_statuses:
+            raise ValueError("invalid provisioning transition")
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            try:
+                self._db.execute("BEGIN IMMEDIATE")
+                row = self._db.execute("SELECT * FROM storage_provisioning WHERE operation_id=?", (operation_id,)).fetchone()
+                if row is None:
+                    raise CasePersistenceError("unknown provisioning operation")
+                current = self._intent(row)
+                if current.status == "COMPLETE" and status == "COMPLETE":
+                    if storage_scope is None or (current.storage_provider, current.storage_root_id) != (
+                        storage_scope.provider, storage_scope.root_id,
+                    ):
+                        raise CasePersistenceError("completed storage scope does not match")
+                    self._db.rollback(); return current
+                if current.status not in expected_statuses:
+                    raise CaseRevisionConflict("provisioning status conflict")
+                if status == "COMPLETE" and storage_scope is None:
+                    raise ValueError("completed provisioning requires storage scope")
+                if status != "COMPLETE" and storage_scope is not None:
+                    raise ValueError("storage scope is only valid for completion")
+                now = datetime.now(timezone.utc).isoformat(); revision = current.revision + 1
+                attempts = current.attempt_count + (1 if status == "IN_PROGRESS" else 0)
+                payload = self._provisioning_payload(
+                    current.operation_id, current.request_id, current.owner_id, current.case_id,
+                    current.tax_year, status, attempts,
+                    storage_scope.provider if storage_scope else current.storage_provider,
+                    storage_scope.root_id if storage_scope else current.storage_root_id,
+                    failure_code, revision, row["created_at"], now,
+                )
+                self._db.execute("""UPDATE storage_provisioning SET status=?,attempt_count=?,
+                    storage_provider=?,storage_root_id=?,failure_code=?,revision=?,updated_at=?,digest=?
+                    WHERE operation_id=?""", (
+                    status, attempts, payload["storage_provider"], payload["storage_root_id"],
+                    failure_code, revision, now, self._mac(payload), operation_id,
+                ))
+                self._audit(f"STORAGE_PROVISIONING_{status}", current.case_id, self._mac(payload))
+                self._db.commit(); self._write_anchor()
+                return StorageProvisioningIntent(
+                    operation_id, current.request_id, current.owner_id, current.case_id,
+                    current.tax_year, status, attempts, payload["storage_provider"],
+                    payload["storage_root_id"], failure_code, revision,
+                )
+            except Exception:
+                self._db.rollback(); raise
+
+    def get_storage_provisioning(self, *, operation_id: str) -> StorageProvisioningIntent:
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            row = self._db.execute("SELECT * FROM storage_provisioning WHERE operation_id=?", (operation_id,)).fetchone()
+            if row is None:
+                raise CasePersistenceError("unknown provisioning operation")
+            return self._intent(row)
 
     def mutate_state(
         self, *, owner_id: str, case_id: str, tax_year: int, request_id: str,
@@ -516,6 +676,29 @@ class SQLiteCasePersistence:
              result_json, self._mac(result_json)),
         )
 
+    @staticmethod
+    def _provisioning_payload(
+        operation_id: str, request_id: str, owner_id: str, case_id: str, tax_year: int,
+        status: str, attempt_count: int, storage_provider: str | None,
+        storage_root_id: str | None, failure_code: str | None, revision: int,
+        created_at: str, updated_at: str,
+    ) -> dict:
+        return {
+            "operation_id": operation_id, "request_id": request_id, "owner_id": owner_id,
+            "case_id": case_id, "tax_year": tax_year, "status": status,
+            "attempt_count": attempt_count, "storage_provider": storage_provider,
+            "storage_root_id": storage_root_id, "failure_code": failure_code,
+            "revision": revision, "created_at": created_at, "updated_at": updated_at,
+        }
+
+    @staticmethod
+    def _intent(row: sqlite3.Row) -> StorageProvisioningIntent:
+        return StorageProvisioningIntent(
+            row["operation_id"], row["request_id"], row["owner_id"], row["case_id"],
+            row["tax_year"], row["status"], row["attempt_count"], row["storage_provider"],
+            row["storage_root_id"], row["failure_code"], row["revision"],
+        )
+
     def _audit(self, action: str, case_id: str, payload_digest: str) -> None:
         previous = self._db.execute(
             "SELECT event_digest FROM case_audit ORDER BY event_id DESC LIMIT 1"
@@ -602,23 +785,52 @@ class SQLiteCasePersistence:
                         # Creation workflow run identities predate durable execution runs.
                         if run is not None and run["case_id"] != state.case_id:
                             raise CasePersistenceError("case state run scope failure")
+            if version >= 3:
+                allowed_statuses = {
+                    "INTENT", "IN_PROGRESS", "COMPLETE", "RETRYABLE_FAILURE",
+                    "RECONCILIATION_REQUIRED",
+                }
+                for row in self._db.execute("SELECT * FROM storage_provisioning"):
+                    payload = self._provisioning_payload(*(
+                        row[key] for key in (
+                            "operation_id", "request_id", "owner_id", "case_id", "tax_year",
+                            "status", "attempt_count", "storage_provider", "storage_root_id",
+                            "failure_code", "revision", "created_at", "updated_at",
+                        )
+                    ))
+                    if row["status"] not in allowed_statuses or not hmac.compare_digest(row["digest"], self._mac(payload)):
+                        raise CasePersistenceError("storage provisioning integrity failure")
+                    case = self._db.execute("SELECT owner_id,tax_year,storage_provider,storage_root_id FROM case_record WHERE case_id=?", (row["case_id"],)).fetchone()
+                    if case is not None and (
+                        row["status"] != "COMPLETE" or case["owner_id"] != row["owner_id"]
+                        or case["tax_year"] != row["tax_year"]
+                        or case["storage_provider"] != row["storage_provider"]
+                        or case["storage_root_id"] != row["storage_root_id"]
+                    ):
+                        raise CasePersistenceError("storage provisioning case association failure")
 
     def _anchor_payload(self, *, schema_version: int | None = None) -> dict:
         event = self._db.execute(
             "SELECT event_id,event_digest FROM case_audit ORDER BY event_id DESC LIMIT 1"
         ).fetchone()
-        return {
-            "schema_version": schema_version or SCHEMA_VERSION,
+        effective_version = schema_version or SCHEMA_VERSION
+        payload = {
+            "schema_version": effective_version,
             "event_count": self._db.execute("SELECT count(*) FROM case_audit").fetchone()[0],
             "head_event_id": event["event_id"] if event else 0,
             "head_digest": event["event_digest"] if event else "0" * 64,
             "case_count": self._db.execute("SELECT count(*) FROM case_record").fetchone()[0],
             "key_verifier": self._mac("ai-tax-agent.case-persistence/key-verifier/1"),
         }
+        if effective_version >= 3:
+            payload["provisioning_count"] = self._db.execute(
+                "SELECT count(*) FROM storage_provisioning"
+            ).fetchone()[0]
+        return payload
 
-    def _write_anchor(self) -> None:
+    def _write_anchor(self, *, schema_version: int | None = None) -> None:
         import os
-        payload = self._anchor_payload()
+        payload = self._anchor_payload(schema_version=schema_version)
         document = payload | {"anchor_mac": self._mac(payload)}
         temporary = self._anchor_path.with_suffix(self._anchor_path.suffix + ".writing")
         with temporary.open("x", encoding="utf-8") as stream:
@@ -634,6 +846,8 @@ class SQLiteCasePersistence:
                 "schema_version", "event_count", "head_event_id", "head_digest",
                 "case_count", "key_verifier", "anchor_mac",
             }
+            if (schema_version or SCHEMA_VERSION) >= 3:
+                required.add("provisioning_count")
             if not isinstance(document, dict) or set(document) != required:
                 raise ValueError
             payload = {key: document[key] for key in document if key != "anchor_mac"}
