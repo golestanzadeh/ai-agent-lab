@@ -28,6 +28,8 @@ The durable SQLite provider implementation candidate is complete and focused res
 
 Independent persistence review PASSes `e141051` for immutable initial registration/restart/read-only UI only. Next executable package is F03 durable CaseState/run mutation and atomic existing-Kernel/CaseCreationWorkflow integration, with optimistic revision, audit/restart negatives and independent review. OI-0003 identity/relationship decisions and C09 coordinated DB+anchor rollback protection remain separate mandatory gates before protected activation.
 
+F03 is independently accepted at `8d08f7a72465922e8878c326a1db286d61f5f774`: schema-v2 durable CaseState/Run lifecycle, optimistic revisions, deterministic idempotency, restart/migration verification, multi-case/multi-year creation and exact registered-Kernel scope binding pass. No dispatch or protected activation is included. Next smallest safe package is deterministic composition/recovery for an interrupted external storage-scope creation around the accepted durable CaseCreationWorkflow boundary. It must remain non-privileged and synthetic until OI-0002/OI-0003 operational prerequisites are accepted; C09 coordinated rollback remains separate.
+
 Completed non-operational C09 design slice (2026-10-21): the six-file witness package in `docs/oi0002-c09-witness/` and isolated simulator define authenticated fixed-key sequencing, crash recovery, version-aware verification and Owner-authorized epoch transition. AT-C09-01..15 pass locally. This is `LOCAL_SIMULATION_PASS`, not operational acceptance; no cloud call or production integration occurred.
 
 ## Local development versus operational IPC acceptance — 2026-10-14
