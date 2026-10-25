@@ -21,6 +21,14 @@ OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical 
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
 
+## UI25 local operational unblocking — 2026-10-25
+
+The Owner reaffirmed `C09_NOT_ACCEPTED != PROJECT_EXECUTION_BLOCKED` and authorized independently safe, non-privileged product UI integration. A bounded read-only adapter now projects the existing `CaseRegistry` into the existing Dashboard using two simultaneous scopes: exact owner identity and an explicit case allowlist. It exports only case ID, tax year and canonical lifecycle state, supports multiple cases in the same year and across all `TaxPeriod` years, and fails the complete read closed if any allowlisted case is unresolved or cross-owner. No parallel registry/store/orchestrator was created.
+
+Focused verification passed `33` tests covering registry and Dashboard behavior, multi-case/multi-year rendering, cross-owner and non-allowlisted denial, fail-closed source failure, bilingual UI regression and the absent submission route. Only synthetic records were used. Drive, Gemini, Kernel execution, protected persistence, credentials and external I/O were not activated; Approval/Submission remains disabled.
+
+The narrow blocker assessment is recorded in `docs/ui25-local-operational-unblocking-20261025.md`. C09/HG-01/GCS gaps do not block this read-only package. Protected local processing still requires the accepted OI-0002/OI-0003 identity/persistence boundary and exact case-scoped protected document/provider binding; external export/ELSTER separately requires the two exact Human Gate approvals in `contracts/orchestrator/v2/human-gates.json`. `OPEN_ITEMS.md` was assessed in the same change set: no active row is resolved or removed. Exact next independently safe package is explicit local-launcher injection of this read-only reader with synthetic restart/configuration-failure tests; real records remain prohibited.
+
 # C09 R3 HG-03 preparation independently accepted — 2026-10-24
 
 Fresh authenticated admission was 98% five-hour and 75% weekly remaining, preserving the mandatory 15-point reserve. Authenticated read-only Cloud SDK inventory verified project `ai-tax-agent-507813`, bucket `ai-tax-agent-c09-witness-test-507813`, effective bucket policy v1/ETag `CAQ=`, project policy v1/ETag `BwZa0Iovf6w=`, exact Writer/Reader accounts, zero user-managed keys, no custom roles, no IAM Conditions and no Workload Identity pool. Current unconditioned predefined roles, legacy project basic-principal bindings and Owner Token Creator access remain explicit blockers.

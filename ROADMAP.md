@@ -20,6 +20,8 @@ Mandatory remaining path:
 
 C09 remains OPEN / NOT ACCEPTED but does not globally block safe independent development. OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`. OI-0011 is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not a technical PASS; outbound notification-provider activation is removed from every development, acceptance and release dependency. Either item may be reactivated only by a new explicit Owner directive. OI-0010 is an optional operational enhancement, not a mandatory product-critical blocker. The remainder of this file is a historical and planning ledger; its older status sentences do not override this section.
 
+Current safe UI increment: the existing Dashboard has a tested read-only adapter to the existing CaseRegistry with exact owner and case-allowlist scope. It supports multiple cases per year and all supported calendar years without creating persistence or enabling protected operations. Next safe work is explicit local-launcher injection and synthetic restart/configuration-failure verification. Protected records remain gated by OI-0002/OI-0003 and the protected document/provider boundary; Approval/Submission stays disabled.
+
 Completed non-operational C09 design slice (2026-10-21): the six-file witness package in `docs/oi0002-c09-witness/` and isolated simulator define authenticated fixed-key sequencing, crash recovery, version-aware verification and Owner-authorized epoch transition. AT-C09-01..15 pass locally. This is `LOCAL_SIMULATION_PASS`, not operational acceptance; no cloud call or production integration occurred.
 
 ## Local development versus operational IPC acceptance — 2026-10-14

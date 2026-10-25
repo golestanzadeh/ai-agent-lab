@@ -13,6 +13,8 @@
 - `ui25-01-independent-audit-and-ipc-continuation-20261014.md` - independent UI audit PASS and verified IPC host architecture blocker.
 - `ui25-01-lifecycle-status-localization-20261014.md` - bounded German/Persian status usability increment, tests and remaining persistence gate.
 - `ui25-post-11-continuation-20261014.md` - Owner-accepted UI25-11 continuation handoff and fresh-admission requirement.
+- `tax2025-real-data-readiness-20261025.md` - privacy-safe readiness inventory for the existing local 2025 runtime and protected-data blockers.
+- `ui25-local-operational-unblocking-20261025.md` - C09-independent read-only CaseRegistry/Dashboard integration, critical-path assessment and focused verification.
 
 Start with the repository-root `PROJECT_CHECKPOINT.md`. This directory contains focused contracts and implementation references, not current project status.
 
