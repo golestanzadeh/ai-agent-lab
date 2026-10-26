@@ -32,6 +32,10 @@ class CaseRevisionConflict(CasePersistenceError):
     pass
 
 
+class StorageProvisioningUnavailable(CasePersistenceError):
+    """A valid committed case has no completed provisioning record yet."""
+
+
 @dataclass(frozen=True, slots=True)
 class VersionedCaseState:
     state: CaseState
@@ -497,7 +501,7 @@ class SQLiteCasePersistence:
                     "SELECT * FROM storage_provisioning WHERE case_id=?", (record.case_id,)
                 ).fetchone()
                 if row is None:
-                    raise CasePersistenceError("completed storage provisioning is unavailable")
+                    raise StorageProvisioningUnavailable("completed storage provisioning is unavailable")
                 intent = self._intent(row)
                 expected = record.storage_scope_reference
                 if (

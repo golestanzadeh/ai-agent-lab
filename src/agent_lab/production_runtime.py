@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Mapping
 
 from agent_lab.case_creation_workflow import CaseCreationWorkflow
-from agent_lab.case_persistence import SQLiteCasePersistence
+from agent_lab.case_persistence import SQLiteCasePersistence, StorageProvisioningUnavailable
 from agent_lab.identity_persistence import IdentityPersistence
 from agent_lab.orchestrator_kernel import OrchestratorKernel
 from agent_lab.ui_dashboard import DashboardCase, DashboardUnavailable
@@ -72,7 +72,7 @@ class ProductionRuntime:
         try:
             self._persistence.load_completed_storage_references(owner_id=self._owner,allowed_case_ids=frozenset({case_id}))
             storage="COMPLETE"
-        except Exception:
+        except StorageProvisioningUnavailable:
             # A valid case may predate provisioning. No provider/folder inference.
             storage="UNAVAILABLE"
         return RuntimeCaseProjection(case_id,tax_year,state.state.lifecycle_status,state.revision,

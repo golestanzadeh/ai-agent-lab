@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from agent_lab.case_creation_workflow import CaseCreationWorkflow, InMemoryAuditSink
 from agent_lab.case_identity_association import CaseIdentityAssociationService
-from agent_lab.case_persistence import SQLiteCasePersistence
+from agent_lab.case_persistence import SQLiteCasePersistence,CasePersistenceError,StorageProvisioningUnavailable
 from agent_lab.case_registry import AssessmentMode,CaseRecord,CaseType,LifecycleStatus,OwnerType,StorageScopeReference,TaxPeriod
 from agent_lab.case_state import CaseState,RunStatus
 from agent_lab.identity_persistence import IdentityPersistence
@@ -105,9 +105,28 @@ def test_incomplete_storage_is_explicitly_unavailable_and_root_never_exposed(tmp
     runtime,identity,kernel=compose(tmp_path,store)
     original=store.load_completed_storage_references
     def unavailable(**kwargs):
-        raise RuntimeError("controlled unavailable provider reference")
+        raise StorageProvisioningUnavailable("controlled absent provisioning reference")
     store.load_completed_storage_references=unavailable
     projection=runtime.read_case("CASE-2023-A",2023)
     assert projection.storage_state=="UNAVAILABLE"
     store.load_completed_storage_references=original
+    identity.close();kernel.close();store.close()
+
+
+@pytest.mark.parametrize("failure",[
+    CasePersistenceError("case audit anchor integrity failure"),
+    PermissionError("storage scope is not authorized"),
+    OSError("storage authority read failed"),
+])
+def test_storage_integrity_authorization_and_io_failures_propagate(tmp_path,failure):
+    store=SQLiteCasePersistence(tmp_path/"cases.sqlite",integrity_key=KEY); seed(store)
+    runtime,identity,kernel=compose(tmp_path,store)
+    def corrupted(**kwargs): raise failure
+    store.load_completed_storage_references=corrupted
+    with pytest.raises(type(failure)):
+        runtime.read_case("CASE-2023-A",2023)
+    client=TestClient(create_runtime_product_dashboard_app(runtime=runtime))
+    response=client.get("/?case_id=CASE-2023-A")
+    assert 'data-persisted-state=' not in response.text
+    assert 'data-storage-state="COMPLETE"' not in response.text
     identity.close();kernel.close();store.close()
