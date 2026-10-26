@@ -3,6 +3,8 @@
 Baseline: `f429cad56dad8a7cd1da468cac2da429316b0242`.
 Accepted F06: `5f2547a2707a785f34766361ab22148535725086`.
 
+Final preparation status: `INDEPENDENT_PASS` at exact `de0ef2ee1bd612c173774b54902b0070c5d557be`. Operational service-client integration is `PREREQUISITE_BLOCKED / NOT_IMPLEMENTED`, not accepted. Independent verification: 41 F07/runtime/UI tests, adversarial direct-construction/digest probes exit 0, and clean diff verification. Candidate `790abc4` failed F07-R01 MEDIUM on public-constructor validation bypass; final construction and assessment validation reject raw secrets, oversized IDs, duplicate refs and forged/stale digests. No preparation findings remain. Existing service-host/Named-Pipe regression: 22 passed. No privileged deployment or protected activation occurred.
+
 ## Existing service boundary
 
 Inspection found no operational Kernel/Identity service client to connect. The fixed-role entry points in `c09_kernel_service.py` and `c09_identity_service.py` delegate to `run_scm_service`; `c09_service_host.py` composes `ServiceHost(role, unavailable_runtime)`. That factory raises `operational component composition is not implemented`. The accepted Named Pipe token/process verification primitives exist in `c09_named_pipe.py`, but do not constitute a client/dispatcher or operational acceptance. `DurableC09TransactionState` is explicitly synthetic and must not be substituted. This is a code-level unmet prerequisite, not a new Owner architecture question.
