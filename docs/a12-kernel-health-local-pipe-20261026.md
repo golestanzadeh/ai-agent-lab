@@ -8,4 +8,6 @@ This is a *development process endpoint*, not the fixed SCM Kernel role. It deli
 
 Next mandatory steps before service acceptance: independently review transport; add pinned server process evidence and robust bounded I/O cancellation/reconnect/restart; define and review separate operational endpoint ACL and deployment configuration; compose Kernel service lifecycle using the existing SCM role with actual principal validation; test hostile client, peer substitution, hanging I/O, crash/restart. Privileged install and protected activation remain separate Owner gates.
 
+Independent review of commit cb0c9ec reported P2: pywin32 was missing from the standard dependency set. Remediation: pin `pywin32==312; sys_platform == "win32"` in root `requirements.txt`; rerun focused integration tests and re-review the exact remediation commit. This does not address the separate authentication and end-to-end timeout blockers.
+
 No claim of operational service, C09/OI-0002 closure, real case creation, Drive access, or production readiness.
