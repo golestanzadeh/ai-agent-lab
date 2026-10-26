@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+Authorized F07 preparation files (2026-10-26): `src/agent_lab/runtime_activation.py`, `tests/unit/test_runtime_activation.py` and `docs/f07-runtime-activation-preparation-20261026.md` define closed non-secret configuration references and operation readiness within ProductionRuntime. Existing SCM composition remains unavailable; no alternate service-client, orchestrator or operational authority is authorized by this preparation package.
+
 Authorized F06 runtime package (2026-10-26): `src/agent_lab/production_runtime.py` composes the existing authorities and read-only product projection; `tests/unit/test_production_runtime.py` verifies startup/restart, isolation, durable state/run/storage visibility and explicit audited provider denial. Independent exact-SHA acceptance is required before this package is recorded as accepted; protected activation is excluded.
 
 F06 final disposition: `5f2547a2707a785f34766361ab22148535725086` is independently accepted for that read-only scope (37 UI/runtime and 91 relevant independent tests). The storage-integrity exception finding is corrected. Next activation dependency is governed operational Identity service/finality acceptance and trusted runtime host configuration, followed by evidence-bound OI-0003 registration and exact provider deployment approval. No new architecture choice is pending and no protected provider is enabled by F06.

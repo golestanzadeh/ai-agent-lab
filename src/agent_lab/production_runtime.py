@@ -87,3 +87,25 @@ class ProductionRuntime:
     def request_activation(self, *, case_id: str, tax_year: int) -> None:
         """Credentials/configuration alone can never grant operational authority."""
         self.request_operation("provider_activation",case_id=case_id,tax_year=tax_year)
+
+    def verify_run_reference(self, case_id: str, tax_year: int, run_id: str) -> None:
+        projection=self.read_case(case_id,tax_year)
+        if not isinstance(run_id,str) or not run_id.strip() or run_id not in {run[0] for run in projection.runs}:
+            raise PermissionError("run is outside the committed case/year scope")
+
+    def verify_activation_scope(self, owner_id: str, configured_case: str, configured_year: int,
+                                configured_run: str, case_id: str, tax_year: int, run_id: str) -> None:
+        self.verify_run_reference(case_id,tax_year,run_id)
+        if (owner_id,configured_case,configured_year,configured_run)!=(self._owner,case_id,tax_year,run_id):
+            raise PermissionError("activation configuration scope mismatch")
+
+    def storage_requires_reconciliation(self, case_id: str, tax_year: int) -> bool:
+        self.read_case(case_id,tax_year)
+        status=self._persistence.read_provisioning_status(owner_id=self._owner,case_id=case_id,tax_year=tax_year)
+        return status in {"IN_PROGRESS","RECONCILIATION_REQUIRED"}
+
+    def assess_readiness(self, configuration=None, *, case_id: str, tax_year: int,
+                         run_id: str, authority_references=None):
+        from agent_lab.runtime_activation import assess_runtime_readiness
+        return assess_runtime_readiness(self,configuration,case_id=case_id,tax_year=tax_year,
+            run_id=run_id,authority_references=authority_references)

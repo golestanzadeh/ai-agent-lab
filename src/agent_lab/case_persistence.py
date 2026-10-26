@@ -488,6 +488,14 @@ class SQLiteCasePersistence:
                 raise CasePersistenceError("unknown provisioning operation")
             return self._intent(row)
 
+    def read_provisioning_status(self, *, owner_id: str, case_id: str, tax_year: int) -> str|None:
+        with self._lock:
+            self._verify_all(); self._verify_anchor(); self._authorize(owner_id,case_id,tax_year)
+            row=self._db.execute("SELECT owner_id,tax_year,status FROM storage_provisioning WHERE case_id=?",(case_id,)).fetchone()
+            if row is None: return None
+            if row["owner_id"]!=owner_id or row["tax_year"]!=tax_year: raise PermissionError("provisioning scope mismatch")
+            return row["status"]
+
     def load_completed_storage_references(
         self, *, owner_id: str, allowed_case_ids: frozenset[str],
     ) -> tuple[CommittedStorageReference, ...]:

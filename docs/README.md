@@ -1,5 +1,7 @@
 # Documentation Index
 
+- `f07-runtime-activation-preparation-20261026.md` — governed runtime configuration references, operation gates, read-only readiness and the exact operational service-client prerequisite.
+
 - `oi0002-c09-witness/` - witness protocol, crash/recovery evidence, governed R1/R2 results, non-privileged R3 preparation, exact Owner Human Gates, provider/cost comparison and Owner decision report.
 - `ui25-05-synthetic-kernel-execution-20261016.md` - one-shot user-initiated synthetic Kernel worker, genuine UI result, security tests and remaining real-case gates.
 - `ui25-kernel-read-only-projection-20261016.md` - synthetic-only Dashboard projection of exact, integrity-checked Kernel case/run/task status without dispatch.

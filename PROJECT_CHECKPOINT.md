@@ -21,6 +21,10 @@ OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical 
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
 
+## F07 governed activation preparation resumed — 2026-10-26
+
+Recovery verified clean synchronized `f429cad56dad8a7cd1da468cac2da429316b0242`; authenticated admission was 100% five-hour / 89% weekly, with 15 points reserved and a complete 30–45 point estimate. Existing F03–F06 accepted scope remains intact. Inspection establishes a specific unmet prerequisite: `c09_service_host.run_scm_service` still uses `unavailable_runtime`; no operational Kernel/Identity service-client/dispatcher exists to connect. The synthetic C09 adapter cannot substitute. F07 safely implements non-secret scoped configuration-reference contracts, per-operation gates and read-only deterministic readiness on the existing ProductionRuntime, pending independent review. No protected operation is activated and no active OPEN_ITEMS row closes. Details: `docs/f07-runtime-activation-preparation-20261026.md`.
+
 ## F06 production runtime composition independently accepted — 2026-10-26
 
 Owner-authorized F06 recovered clean synchronized baseline `9c79a8c0e843a2a15f0bb60ef05fe3f379e92813`. Authenticated admission was 53% five-hour and 93% weekly remaining; the complete bounded 25–35 point estimate fit within 38 points after the mandatory 15-point reserve. Accepted F03/F04/F05 remain intact.

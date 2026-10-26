@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+F07 preparation resumed 2026-10-26: configuration/gate/readiness code is a candidate pending independent review. The exact service integration prerequisite is the existing SCM host's `unavailable_runtime` composition and absent operational client/dispatcher; no synthetic adapter was promoted. No active row closes. See `docs/f07-runtime-activation-preparation-20261026.md`.
+
 F06 independently accepts `5f2547a2707a785f34766361ab22148535725086` for the existing production runtime's read-only composition, fresh authorized multi-case/year state/Run/storage display and audited disabled provider/activation boundaries. Independent tests: 37 UI/runtime and 91 relevant persistence/Identity; storage-integrity fail-open finding is resolved. The trusted operational host/configuration, OI-0002/C09 service/finality acceptance, protected OI-0003 registration and provider deployment gates remain outstanding. No active row closes; this is not operational activation.
 
 2026-10-26 Owner architecture decision for OI-0003: `OWNER_APPROVED / IMPLEMENTATION_PENDING`. Separate opaque successor internal Person A/B IDs, unmapped legacy owner preservation, explicit marriage relationship scope and existing SubjectFactEnvelope individual facts are approved. These are no longer Owner questions. Implementation, evidence-bound protected registration and independent operational acceptance remain required; no active row closes.
