@@ -254,7 +254,7 @@ def test_reviewed_empty_v1_migration_to_v2(tmp_path):
         PRAGMA user_version=1;
         """)
     store=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
-    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 2
+    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 3
     store.close()
 
 
@@ -387,7 +387,7 @@ def test_f07_post_commit_interruption_leaves_verified_v2(tmp_path):
     with pytest.raises(RuntimeError,match="interruption"):
         IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY,fault_injector=fault)
     reopened=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
-    assert reopened._db.execute("PRAGMA user_version").fetchone()[0] == 2
+    assert reopened._db.execute("PRAGMA user_version").fetchone()[0] == 3
     reopened.close()
 
 

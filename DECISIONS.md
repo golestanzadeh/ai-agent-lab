@@ -1,5 +1,9 @@
 # Decision Log
 
+## OI-0003 subject and relationship architecture — 2026-10-26
+
+Status: `OWNER_APPROVED / IMPLEMENTATION_PENDING`. Owner explicitly authorizes separate stable, non-derivable internal successor IDs for the two subjects through the existing Identity authority. Preserve the legacy owner reference without automatic subject mapping. Use SubjectFactEnvelope for individual facts and explicit relationship-scoped envelopes for shared marriage facts. Preserve previously approved confirmation and original evidence; no reconfirmation is required. Operational protected activation remains subject to independent acceptance. This decision supersedes prior unresolved architecture options for this bounded scope.
+
 ## D-OI0002-DEVBASE-20261014 — Local development is distinct from operational anti-rollback acceptance
 
 **Status:** Owner-approved deployment baseline; C09 and operational IPC remain unaccepted.

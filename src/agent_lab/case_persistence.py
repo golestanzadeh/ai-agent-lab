@@ -63,6 +63,14 @@ class StorageProvisioningIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class CommittedStorageReference:
+    owner_id: str
+    case_id: str
+    tax_year: int
+    scope: StorageScopeReference
+
+
+@dataclass(frozen=True, slots=True)
 class DurableCaseRuntime:
     registry: CaseRegistry
     states: tuple[CaseState, ...]
@@ -462,6 +470,34 @@ class SQLiteCasePersistence:
             if row is None:
                 raise CasePersistenceError("unknown provisioning operation")
             return self._intent(row)
+
+    def load_completed_storage_references(
+        self, *, owner_id: str, allowed_case_ids: frozenset[str],
+    ) -> tuple[CommittedStorageReference, ...]:
+        """Resolve only committed, verified storage scopes for an exact UI/service scope."""
+        runtime = self.load_runtime(owner_id=owner_id, allowed_case_ids=allowed_case_ids)
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            results = []
+            for record in runtime.registry.all_records():
+                row = self._db.execute(
+                    "SELECT * FROM storage_provisioning WHERE case_id=?", (record.case_id,)
+                ).fetchone()
+                if row is None:
+                    raise CasePersistenceError("completed storage provisioning is unavailable")
+                intent = self._intent(row)
+                expected = record.storage_scope_reference
+                if (
+                    intent.status != "COMPLETE" or intent.owner_id != owner_id
+                    or intent.tax_year != record.tax_period.year
+                    or intent.storage_provider != expected.provider
+                    or intent.storage_root_id != expected.root_id
+                ):
+                    raise CasePersistenceError("completed storage provisioning is incomplete or mismatched")
+                results.append(CommittedStorageReference(
+                    owner_id, record.case_id, record.tax_period.year, expected,
+                ))
+            return tuple(sorted(results, key=lambda item: item.case_id))
 
     def mutate_state(
         self, *, owner_id: str, case_id: str, tax_year: int, request_id: str,

@@ -156,6 +156,18 @@ def test_case_creation_workflow_commits_completed_scope_and_recovers(tmp_path):
     )
     assert len(runtime.registry.all_records()) == 3
     assert len({record.storage_scope_reference.root_id for record in runtime.registry.all_records()}) == 3
+    references=reopened.load_completed_storage_references(
+        owner_id="PERSON-A",allowed_case_ids=frozenset({first.case_id,second.case_id,third.case_id}),
+    )
+    assert len(references)==3 and {r.tax_year for r in references}=={2025,2026}
+    from agent_lab.ui_product_app import create_storage_integrated_product_dashboard_app
+    app=create_storage_integrated_product_dashboard_app(
+        persistence=reopened,owner_id="PERSON-A",allowed_case_ids={first.case_id},
+    )
+    assert app.state.storage_access_mode=="read-only-reference"
+    assert app.state.committed_storage_references[0].case_id==first.case_id
+    with pytest.raises(CasePersistenceError):
+        reopened.load_completed_storage_references(owner_id="OTHER",allowed_case_ids=frozenset({first.case_id}))
     reopened.close()
 
 

@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import sqlite3
 from typing import Callable
 
@@ -21,7 +22,8 @@ from agent_lab.person_entity_registry import (
     EntityRecord, PersonEntityRegistry, PersonRecord, RecordType, RegistryStatus,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+RECORD_SCHEMA_VERSION = 2
 SHA_REFERENCE = re.compile(r"^sha256:[0-9a-f]{64}$")
 PARTY_ROLES = frozenset({
     "PRIMARY_TAXPAYER", "SPOUSE_OR_PARTNER", "CHILD",
@@ -70,6 +72,37 @@ class SubjectFactEnvelope:
     revision: int = 1
 
 
+@dataclass(frozen=True, slots=True)
+class SubjectRelationship:
+    relationship_id: str
+    case_id: str
+    relationship_type: str
+    subject_a_id: str
+    subject_b_id: str
+    valid_from: date
+    valid_to_exclusive: date | None
+    evidence_ref: str
+    authorization_ref: str
+    revision: int = 1
+
+
+@dataclass(frozen=True, slots=True)
+class RelationshipFactEnvelope:
+    request_id: str
+    case_id: str
+    tax_year: int
+    relationship_id: str
+    semantic_key: str
+    fact_artifact_ref: str
+    declaration_artifact_ref: str
+    confirmation_ref: str
+    authorization_ref: str
+    valid_from: date
+    valid_to_exclusive: date
+    audit_lineage: tuple[str, ...]
+    revision: int = 1
+
+
 class IdentityPersistence:
     """One protected SQLite authority composed with the existing Case Registry."""
 
@@ -79,6 +112,7 @@ class IdentityPersistence:
         evidence_resolver: Callable[[str, str, str, int, str, date, date], None],
         integrity_key: bytes,
         fault_injector: Callable[[str], None] | None = None,
+        successor_id_factory: Callable[[], str] | None = None,
     ) -> None:
         if not isinstance(integrity_key, bytes) or len(integrity_key) < 32:
             raise ValueError("a protected integrity key of at least 32 bytes is required")
@@ -94,6 +128,9 @@ class IdentityPersistence:
         self._resolve_evidence = evidence_resolver
         self._key = integrity_key
         self._fault = fault_injector
+        self._successor_id_factory = successor_id_factory or (
+            lambda: "PERSON-SUCC-" + secrets.token_hex(16).upper()
+        )
         self._db = sqlite3.connect(str(self._path))
         self._db.row_factory = sqlite3.Row
         self._db.execute("PRAGMA journal_mode=WAL")
@@ -110,9 +147,14 @@ class IdentityPersistence:
                 raise ValueError("unversioned existing database requires reviewed migration")
             self._create_schema()
             created_empty = True
+            version = 3
         elif version == 1:
             self._migrate_v1()
-        elif version != SCHEMA_VERSION:
+            version = 2
+        if version == 2:
+            self._migrate_v2_to_v3()
+            version = 3
+        if version != SCHEMA_VERSION:
             self._db.close()
             raise ValueError("unsupported database schema version")
         with self._db:
@@ -173,7 +215,50 @@ class IdentityPersistence:
     def _create_schema(self) -> None:
         with self._db:
             self._create_schema_objects()
-            self._db.execute("PRAGMA user_version=2")
+            self._create_v3_schema_objects()
+            self._db.execute("PRAGMA user_version=3")
+
+    def _create_v3_schema_objects(self) -> None:
+        self._db.execute("""CREATE TABLE successor_identity_allocation(
+            request_id TEXT PRIMARY KEY, case_id TEXT NOT NULL, person_id TEXT NOT NULL UNIQUE,
+            declaration_ref TEXT NOT NULL, authorization_ref TEXT NOT NULL,
+            created_at TEXT NOT NULL, digest TEXT NOT NULL)""")
+        self._db.execute("""CREATE TABLE legacy_identity_reference(
+            legacy_reference TEXT PRIMARY KEY, case_id TEXT NOT NULL,
+            mapped_subject_id TEXT, status TEXT NOT NULL CHECK(status='PRESERVED_UNMAPPED'),
+            evidence_ref TEXT NOT NULL, authorization_ref TEXT NOT NULL,
+            created_at TEXT NOT NULL, digest TEXT NOT NULL,
+            CHECK(mapped_subject_id IS NULL))""")
+        self._db.execute("""CREATE TABLE subject_relationship(
+            relationship_id TEXT PRIMARY KEY, case_id TEXT NOT NULL,
+            relationship_type TEXT NOT NULL CHECK(relationship_type='MARRIAGE'),
+            subject_a_id TEXT NOT NULL REFERENCES identity_record(identity_id),
+            subject_b_id TEXT NOT NULL REFERENCES identity_record(identity_id),
+            valid_from TEXT NOT NULL, valid_to_exclusive TEXT,
+            evidence_ref TEXT NOT NULL, authorization_ref TEXT NOT NULL,
+            revision INTEGER NOT NULL CHECK(revision>=1), digest TEXT NOT NULL,
+            CHECK(subject_a_id < subject_b_id))""")
+        self._db.execute("""CREATE TABLE relationship_fact_binding(
+            request_id TEXT PRIMARY KEY, case_id TEXT NOT NULL, tax_year INTEGER NOT NULL,
+            relationship_id TEXT NOT NULL REFERENCES subject_relationship(relationship_id),
+            semantic_key TEXT NOT NULL, fact_payload TEXT NOT NULL,
+            fact_artifact_ref TEXT NOT NULL, declaration_artifact_ref TEXT NOT NULL,
+            confirmation_ref TEXT NOT NULL, authorization_ref TEXT NOT NULL,
+            valid_from TEXT NOT NULL, valid_to_exclusive TEXT NOT NULL,
+            audit_lineage TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision>=1),
+            digest TEXT NOT NULL)""")
+        self._db.execute("CREATE INDEX idx_relationship_scope ON subject_relationship(case_id,subject_a_id,subject_b_id)")
+        self._db.execute("CREATE INDEX idx_relationship_fact_scope ON relationship_fact_binding(case_id,tax_year,relationship_id)")
+
+    def _migrate_v2_to_v3(self) -> None:
+        try:
+            self._db.execute("BEGIN IMMEDIATE")
+            self._create_v3_schema_objects()
+            self._db.execute("PRAGMA user_version=3")
+            self._db.commit()
+        except Exception:
+            if self._db.in_transaction: self._db.rollback()
+            self._db.close(); raise
 
     def _create_schema_objects(self, *, include_indexes: bool = True) -> None:
         statements = (
@@ -394,6 +479,20 @@ class IdentityPersistence:
             payload={**asdict(env),"valid_from":env.valid_from.isoformat(),"valid_to_exclusive":env.valid_to_exclusive.isoformat(),"audit_lineage":list(lineage),"fact_payload":fact_payload}
             if row["schema_version"] != 2 or not hmac.compare_digest(self._mac(payload), row["digest"]):
                 raise ValueError("fact lineage integrity failure")
+        for row in self._db.execute("SELECT * FROM successor_identity_allocation"):
+            payload={key:row[key] for key in ("request_id","case_id","person_id","declaration_ref","authorization_ref","created_at")}
+            if not hmac.compare_digest(self._mac(payload),row["digest"]): raise ValueError("successor identity allocation integrity failure")
+        for row in self._db.execute("SELECT * FROM legacy_identity_reference"):
+            payload={key:row[key] for key in ("legacy_reference","case_id","mapped_subject_id","status","evidence_ref","authorization_ref","created_at")}
+            if row["mapped_subject_id"] is not None or row["status"]!="PRESERVED_UNMAPPED" or not hmac.compare_digest(self._mac(payload),row["digest"]): raise ValueError("legacy identity reference integrity failure")
+        for row in self._db.execute("SELECT * FROM subject_relationship"):
+            payload={key:row[key] for key in ("relationship_id","case_id","relationship_type","subject_a_id","subject_b_id","valid_from","valid_to_exclusive","evidence_ref","authorization_ref","revision")}
+            if row["subject_a_id"]>=row["subject_b_id"] or not hmac.compare_digest(self._mac(payload),row["digest"]): raise ValueError("subject relationship integrity failure")
+        for row in self._db.execute("SELECT * FROM relationship_fact_binding"):
+            fact_payload=json.loads(row["fact_payload"]); lineage=tuple(json.loads(row["audit_lineage"])["items"])
+            env=RelationshipFactEnvelope(row["request_id"],row["case_id"],row["tax_year"],row["relationship_id"],row["semantic_key"],row["fact_artifact_ref"],row["declaration_artifact_ref"],row["confirmation_ref"],row["authorization_ref"],date.fromisoformat(row["valid_from"]),date.fromisoformat(row["valid_to_exclusive"]),lineage,row["revision"])
+            payload={**asdict(env),"valid_from":env.valid_from.isoformat(),"valid_to_exclusive":env.valid_to_exclusive.isoformat(),"audit_lineage":list(lineage),"fact_payload":fact_payload}
+            if not hmac.compare_digest(self._mac(payload),row["digest"]): raise ValueError("relationship fact integrity failure")
 
     def _append_audit(self, action: str, case_id: str | None, subject_id: str, details: dict) -> None:
         last = self._db.execute("SELECT event_id,event_mac FROM identity_audit ORDER BY event_id DESC LIMIT 1").fetchone()
@@ -442,7 +541,7 @@ class IdentityPersistence:
         row = self._db.execute("SELECT * FROM identity_record WHERE identity_id=?", (identity_id,)).fetchone()
         if row is None: return None
         payload = json.loads(row["payload"])
-        if row["schema_version"] != SCHEMA_VERSION or not hmac.compare_digest(self._mac(payload), row["digest"]):
+        if row["schema_version"] != RECORD_SCHEMA_VERSION or not hmac.compare_digest(self._mac(payload), row["digest"]):
             self._failure("INTEGRITY_FAILURE", None, "identity integrity failure", permission=False)
         cls = PersonRecord if row["record_type"] == RecordType.PERSON.value else EntityRecord
         record = cls(**{("person_id" if cls is PersonRecord else "entity_id"):identity_id},
@@ -466,6 +565,100 @@ class IdentityPersistence:
             self._db.execute("INSERT INTO identity_history VALUES(?,?,?,?)",(identity_id,1,_canonical(payload),digest))
             self._append_audit("IDENTITY_REGISTER",case_id,identity_id,{"digest":digest})
         self._commit("IDENTITY_REGISTER",op)
+
+    def allocate_successor_person(
+        self, *, request_id: str, case_id: str, declaration_ref: str,
+        authorization_ref: str,
+    ) -> PersonRecord:
+        """Create an opaque internal person identity under Identity authority."""
+        self._check_access("register_identity",case_id,authorization_ref)
+        self._verify_data_integrity()
+        if not request_id.strip() or not SHA_REFERENCE.fullmatch(declaration_ref) or not SHA_REFERENCE.fullmatch(authorization_ref):
+            self._failure("VALIDATION_DENIED",case_id,"canonical successor identity authority is required",permission=False)
+        existing=self._db.execute("SELECT * FROM successor_identity_allocation WHERE request_id=?",(request_id,)).fetchone()
+        if existing:
+            if existing["case_id"]!=case_id or existing["declaration_ref"]!=declaration_ref or existing["authorization_ref"]!=authorization_ref:
+                self._failure("VALIDATION_DENIED",case_id,"successor request conflicts with prior allocation",permission=False)
+            return self._load_identity(existing["person_id"],require_active=True)
+        person_id=self._successor_id_factory()
+        if not isinstance(person_id,str) or re.fullmatch(r"PERSON-SUCC-[0-9A-F]{32}",person_id) is None:
+            self._failure("VALIDATION_DENIED",case_id,"identity authority returned an invalid successor id",permission=False)
+        if self._db.execute("SELECT 1 FROM identity_record WHERE identity_id=?",(person_id,)).fetchone():
+            self._failure("VALIDATION_DENIED",case_id,"identity authority returned a duplicate successor id",permission=False)
+        year=self._cases.get(case_id).tax_period.year; start=date(year,1,1); end=date(year+1,1,1)
+        try:
+            self._resolve_evidence("OWNER_DECLARATION",declaration_ref,case_id,year,person_id,start,end)
+            self._resolve_evidence("IDENTITY_AUTHORIZATION",authorization_ref,case_id,year,person_id,start,end)
+        except Exception: self._failure("EVIDENCE_DENIED",case_id,"successor identity evidence is unavailable or mismatched",permission=True)
+        now=datetime.now(timezone.utc); record=PersonRecord(person_id,RegistryStatus.ACTIVE,None,now,now,1)
+        identity_payload=self._identity_payload(record); created=now.isoformat()
+        allocation={"request_id":request_id,"case_id":case_id,"person_id":person_id,"declaration_ref":declaration_ref,"authorization_ref":authorization_ref,"created_at":created}
+        def op():
+            digest=self._mac(identity_payload)
+            self._db.execute("INSERT INTO identity_record VALUES(?,?,?,?,?,2)",(person_id,"PERSON",_canonical(identity_payload),digest,1))
+            self._db.execute("INSERT INTO identity_history VALUES(?,?,?,?)",(person_id,1,_canonical(identity_payload),digest))
+            self._db.execute("INSERT INTO successor_identity_allocation VALUES(?,?,?,?,?,?,?)",(*allocation.values(),self._mac(allocation)))
+            self._append_audit("SUCCESSOR_IDENTITY_ALLOCATE",case_id,person_id,{"request_id":request_id,"declaration_ref":declaration_ref})
+        self._commit("SUCCESSOR_IDENTITY_ALLOCATE",op)
+        return record
+
+    def preserve_legacy_reference(
+        self, *, legacy_reference: str, case_id: str, evidence_ref: str,
+        authorization_ref: str,
+    ) -> None:
+        """Preserve a legacy reference explicitly without mapping it to a subject."""
+        self._check_access("register_identity",case_id,authorization_ref)
+        self._verify_data_integrity()
+        if not legacy_reference.strip() or not SHA_REFERENCE.fullmatch(evidence_ref) or not SHA_REFERENCE.fullmatch(authorization_ref):
+            self._failure("VALIDATION_DENIED",case_id,"canonical legacy reference evidence is required",permission=False)
+        old=self._db.execute("SELECT * FROM legacy_identity_reference WHERE legacy_reference=?",(legacy_reference,)).fetchone()
+        if old:
+            if old["case_id"]==case_id and old["evidence_ref"]==evidence_ref and old["authorization_ref"]==authorization_ref and old["mapped_subject_id"] is None: return
+            self._failure("VALIDATION_DENIED",case_id,"legacy reference conflicts with preserved record",permission=False)
+        year=self._cases.get(case_id).tax_period.year
+        try:
+            self._resolve_evidence("OWNER_DECLARATION",evidence_ref,case_id,year,"LEGACY_REFERENCE:"+legacy_reference,date(year,1,1),date(year+1,1,1))
+            self._resolve_evidence("IDENTITY_AUTHORIZATION",authorization_ref,case_id,year,"LEGACY_REFERENCE:"+legacy_reference,date(year,1,1),date(year+1,1,1))
+        except Exception: self._failure("EVIDENCE_DENIED",case_id,"legacy reference evidence is unavailable or mismatched",permission=True)
+        created=datetime.now(timezone.utc).isoformat()
+        payload={"legacy_reference":legacy_reference,"case_id":case_id,"mapped_subject_id":None,"status":"PRESERVED_UNMAPPED","evidence_ref":evidence_ref,"authorization_ref":authorization_ref,"created_at":created}
+        def op():
+            self._db.execute("INSERT INTO legacy_identity_reference VALUES(?,?,?,?,?,?,?,?)",(*payload.values(),self._mac(payload)))
+            self._append_audit("LEGACY_REFERENCE_PRESERVE",case_id,"UNMAPPED",{"legacy_reference_digest":self._mac(legacy_reference)})
+        self._commit("LEGACY_REFERENCE_PRESERVE",op)
+
+    def bind_relationship(self, relationship: SubjectRelationship) -> SubjectRelationship:
+        self._check_access("bind_party",relationship.case_id,relationship.authorization_ref)
+        self._verify_data_integrity()
+        if not relationship.relationship_id.strip() or relationship.revision != 1:
+            self._failure("VALIDATION_DENIED",relationship.case_id,"initial relationship identity and revision are required",permission=False)
+        if relationship.relationship_type!="MARRIAGE" or relationship.subject_a_id>=relationship.subject_b_id:
+            self._failure("VALIDATION_DENIED",relationship.case_id,"canonical distinct relationship subjects are required",permission=False)
+        if relationship.valid_to_exclusive is not None and relationship.valid_from>=relationship.valid_to_exclusive:
+            self._failure("VALIDATION_DENIED",relationship.case_id,"invalid relationship interval",permission=False)
+        if not SHA_REFERENCE.fullmatch(relationship.evidence_ref) or not SHA_REFERENCE.fullmatch(relationship.authorization_ref):
+            self._failure("VALIDATION_DENIED",relationship.case_id,"canonical relationship evidence is required",permission=False)
+        case=self._cases.get(relationship.case_id); year=case.tax_period.year
+        end=relationship.valid_to_exclusive or date(year+1,1,1)
+        for subject in (relationship.subject_a_id,relationship.subject_b_id):
+            record=self._load_identity(subject,require_active=True)
+            if record is None or record.record_type is not RecordType.PERSON: self._failure("VALIDATION_DENIED",relationship.case_id,"unknown relationship person",permission=False)
+            if not any(p.subject_id==subject and (p.valid_to_exclusive is None or p.valid_to_exclusive>=end) for p in self.list_parties(relationship.case_id,on_date=relationship.valid_from,authorization_ref=relationship.authorization_ref)):
+                self._failure("SECURITY_DENIED",relationship.case_id,"relationship subject is not a case party",permission=True)
+            try: self._resolve_evidence("RELATIONSHIP_EVIDENCE",relationship.evidence_ref,relationship.case_id,year,subject,relationship.valid_from,end)
+            except Exception: self._failure("EVIDENCE_DENIED",relationship.case_id,"relationship evidence is unavailable or mismatched",permission=True)
+        payload={**asdict(relationship),"valid_from":relationship.valid_from.isoformat(),"valid_to_exclusive":relationship.valid_to_exclusive.isoformat() if relationship.valid_to_exclusive else None}
+        old=self._db.execute("SELECT * FROM subject_relationship WHERE relationship_id=?",(relationship.relationship_id,)).fetchone()
+        if old:
+            if hmac.compare_digest(old["digest"],self._mac(payload)): return relationship
+            self._failure("VALIDATION_DENIED",relationship.case_id,"relationship identity conflict",permission=False)
+        for other in self._db.execute("SELECT * FROM subject_relationship WHERE case_id=? AND (subject_a_id IN (?,?) OR subject_b_id IN (?,?))",(relationship.case_id,relationship.subject_a_id,relationship.subject_b_id,relationship.subject_a_id,relationship.subject_b_id)):
+            if (relationship.valid_to_exclusive is None or date.fromisoformat(other["valid_from"])<relationship.valid_to_exclusive) and (other["valid_to_exclusive"] is None or relationship.valid_from<date.fromisoformat(other["valid_to_exclusive"])):
+                self._failure("VALIDATION_DENIED",relationship.case_id,"overlapping marriage relationship",permission=False)
+        def op():
+            self._db.execute("INSERT INTO subject_relationship VALUES(?,?,?,?,?,?,?,?,?,?,?)",(*payload.values(),self._mac(payload)))
+            self._append_audit("SUBJECT_RELATIONSHIP_BIND",relationship.case_id,relationship.relationship_id,{"digest":self._mac(payload)})
+        self._commit("SUBJECT_RELATIONSHIP_BIND",op); return relationship
 
     def update_identity_status(self, *, case_id: str, identity_id: str, status: RegistryStatus, authorization_ref: str) -> None:
         self._check_access("update_identity",case_id,authorization_ref)
@@ -612,6 +805,77 @@ class IdentityPersistence:
             self._db.execute("INSERT INTO subject_fact_binding VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,2)",(request_id,case_id,tax_year,subject_type,subject_id,fact.semantic_key,_canonical(fact_payload),ref,declaration_artifact_ref,confirmation_ref,authorization_ref,valid_from.isoformat(),valid_to_exclusive.isoformat(),_canonical({"items":list(env.audit_lineage)}),1,digest))
             self._append_audit("SUBJECT_FACT_BIND",case_id,subject_id,{"digest":digest})
         self._commit("SUBJECT_FACT_BIND",op); return env
+
+    def bind_relationship_fact(
+        self, *, request_id: str, case_id: str, tax_year: int, relationship_id: str,
+        fact: HumanDeclaredFact, declaration_artifact_ref: str, confirmation_ref: str,
+        valid_from: date, valid_to_exclusive: date, authorization_ref: str,
+    ) -> RelationshipFactEnvelope:
+        try: fact.assert_consumable(case_id=case_id,tax_year=tax_year)
+        except Exception: self._failure("VALIDATION_DENIED",case_id,"relationship fact is not consumable in scope",permission=False)
+        case=self._cases.get(case_id)
+        if case is None or case.tax_period.year!=tax_year: self._failure("SECURITY_DENIED",case_id,"case/year mismatch",permission=True)
+        self._check_access("bind_fact",case_id,authorization_ref)
+        self._verify_data_integrity()
+        refs=(declaration_artifact_ref,confirmation_ref,authorization_ref,*fact.audit_references)
+        if not request_id or any(not SHA_REFERENCE.fullmatch(ref) for ref in refs): self._failure("VALIDATION_DENIED",case_id,"canonical immutable relationship fact lineage is required",permission=False)
+        if authorization_ref!=fact.authorization_reference: self._failure("SECURITY_DENIED",case_id,"matching authorization required",permission=True)
+        if not (date(tax_year,1,1)<=valid_from<valid_to_exclusive<=date(tax_year+1,1,1)): self._failure("VALIDATION_DENIED",case_id,"relationship fact validity must be within tax year",permission=False)
+        relationship=self._db.execute("SELECT * FROM subject_relationship WHERE relationship_id=? AND case_id=?",(relationship_id,case_id)).fetchone()
+        if relationship is None: self._failure("SECURITY_DENIED",case_id,"relationship is not bound to case",permission=True)
+        rel_start=date.fromisoformat(relationship["valid_from"]); rel_end=date.fromisoformat(relationship["valid_to_exclusive"]) if relationship["valid_to_exclusive"] else None
+        if rel_start>valid_from or (rel_end is not None and rel_end<valid_to_exclusive): self._failure("SECURITY_DENIED",case_id,"relationship does not cover fact validity",permission=True)
+        self._validate_relationship_members(relationship,valid_from,valid_to_exclusive,authorization_ref)
+        rel_subject=f"RELATIONSHIP:{relationship_id}"
+        for kind,ref in (("OWNER_DECLARATION",declaration_artifact_ref),("OWNER_CONFIRMATION",confirmation_ref),("IDENTITY_AUTHORIZATION",authorization_ref),*(("IDENTITY_AUDIT",r) for r in fact.audit_references)):
+            try: self._resolve_evidence(kind,ref,case_id,tax_year,rel_subject,valid_from,valid_to_exclusive)
+            except Exception: self._failure("EVIDENCE_DENIED",case_id,"relationship fact evidence is unavailable or mismatched",permission=True)
+        fact_payload=self._fact_payload(fact); ref=fact.artifact_identity.reference
+        env=RelationshipFactEnvelope(request_id,case_id,tax_year,relationship_id,fact.semantic_key,ref,declaration_artifact_ref,confirmation_ref,authorization_ref,valid_from,valid_to_exclusive,tuple(fact.audit_references))
+        payload={**asdict(env),"valid_from":valid_from.isoformat(),"valid_to_exclusive":valid_to_exclusive.isoformat(),"audit_lineage":list(env.audit_lineage),"fact_payload":fact_payload}
+        old=self._db.execute("SELECT digest FROM relationship_fact_binding WHERE request_id=?",(request_id,)).fetchone()
+        if old:
+            if hmac.compare_digest(old["digest"],self._mac(payload)): return env
+            self._failure("VALIDATION_DENIED",case_id,"relationship fact request conflict",permission=False)
+        def op():
+            self._db.execute("INSERT INTO relationship_fact_binding VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(request_id,case_id,tax_year,relationship_id,fact.semantic_key,_canonical(fact_payload),ref,declaration_artifact_ref,confirmation_ref,authorization_ref,valid_from.isoformat(),valid_to_exclusive.isoformat(),_canonical({"items":list(env.audit_lineage)}),1,self._mac(payload)))
+            self._append_audit("RELATIONSHIP_FACT_BIND",case_id,relationship_id,{"digest":self._mac(payload)})
+        self._commit("RELATIONSHIP_FACT_BIND",op); return env
+
+    def read_relationship_facts(self, *, case_id: str, tax_year: int, relationship_id: str, authorization_ref: str) -> tuple[RelationshipFactEnvelope,...]:
+        self._check_access("read_fact",case_id,authorization_ref)
+        self._verify_data_integrity()
+        if self._cases.get(case_id) is None or self._cases.get(case_id).tax_period.year!=tax_year: raise PermissionError("invalid scope")
+        relationship=self._db.execute("SELECT * FROM subject_relationship WHERE relationship_id=? AND case_id=?",(relationship_id,case_id)).fetchone()
+        if relationship is None: raise PermissionError("relationship is not bound to case")
+        result=[]
+        for row in self._db.execute("SELECT * FROM relationship_fact_binding WHERE case_id=? AND tax_year=? AND relationship_id=? ORDER BY request_id",(case_id,tax_year,relationship_id)):
+            fact_payload=json.loads(row["fact_payload"]); lineage=tuple(json.loads(row["audit_lineage"])["items"])
+            env=RelationshipFactEnvelope(row["request_id"],row["case_id"],row["tax_year"],row["relationship_id"],row["semantic_key"],row["fact_artifact_ref"],row["declaration_artifact_ref"],row["confirmation_ref"],row["authorization_ref"],date.fromisoformat(row["valid_from"]),date.fromisoformat(row["valid_to_exclusive"]),lineage,row["revision"])
+            payload={**asdict(env),"valid_from":env.valid_from.isoformat(),"valid_to_exclusive":env.valid_to_exclusive.isoformat(),"audit_lineage":list(lineage),"fact_payload":fact_payload}
+            if row["authorization_ref"]!=authorization_ref or not hmac.compare_digest(self._mac(payload),row["digest"]): self._failure("INTEGRITY_FAILURE",case_id,"relationship fact integrity failure",permission=False)
+            fact=self._restore_fact(fact_payload)
+            fact.assert_consumable(case_id=case_id,tax_year=tax_year)
+            if fact.artifact_identity.reference!=env.fact_artifact_ref: raise ValueError("relationship fact artifact mismatch")
+            self._validate_relationship_members(relationship,env.valid_from,env.valid_to_exclusive,authorization_ref)
+            for kind,ref in (("OWNER_DECLARATION",env.declaration_artifact_ref),("OWNER_CONFIRMATION",env.confirmation_ref),("IDENTITY_AUTHORIZATION",env.authorization_ref),*(("IDENTITY_AUDIT",r) for r in env.audit_lineage)):
+                try: self._resolve_evidence(kind,ref,case_id,tax_year,"RELATIONSHIP:"+relationship_id,env.valid_from,env.valid_to_exclusive)
+                except Exception: raise PermissionError("relationship fact evidence unavailable or mismatched")
+            result.append(env)
+        return tuple(result)
+
+    def _validate_relationship_members(self, relationship, start: date, end: date, authorization_ref: str) -> None:
+        case_id=relationship["case_id"]; year=self._cases.get(case_id).tax_period.year
+        if date.fromisoformat(relationship["valid_from"])>start or (relationship["valid_to_exclusive"] is not None and date.fromisoformat(relationship["valid_to_exclusive"])<end):
+            raise PermissionError("relationship does not cover fact validity")
+        parties=self.list_parties(case_id,on_date=start,authorization_ref=authorization_ref)
+        for subject in (relationship["subject_a_id"],relationship["subject_b_id"]):
+            record=self._load_identity(subject,require_active=True)
+            if record is None or record.record_type is not RecordType.PERSON: raise PermissionError("relationship person unavailable")
+            if not any(p.subject_id==subject and p.valid_from<=start and (p.valid_to_exclusive is None or p.valid_to_exclusive>=end) for p in parties):
+                raise PermissionError("relationship subject role does not cover validity")
+            try: self._resolve_evidence("RELATIONSHIP_EVIDENCE",relationship["evidence_ref"],case_id,year,subject,start,end)
+            except Exception: raise PermissionError("relationship evidence unavailable or mismatched")
 
     def read_facts(self, *, case_id: str, tax_year: int, subject_id: str, authorization_ref: str) -> tuple[SubjectFactEnvelope,...]:
         self._check_access("read_fact",case_id,authorization_ref); case=self._cases.get(case_id)

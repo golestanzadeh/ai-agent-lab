@@ -76,3 +76,25 @@ def create_persistent_product_dashboard_app(
     )
     app.state.case_runtime = runtime
     return app
+
+
+def create_storage_integrated_product_dashboard_app(
+    *, persistence: SQLiteCasePersistence, owner_id: str,
+    allowed_case_ids: Iterable[str],
+    read_kernel_projection: ReadKernelProjection | None = None,
+) -> FastAPI:
+    """Compose read-only product services from verified completed storage scopes.
+
+    This does not access provider content or enable any document mutation.
+    """
+    allowed = frozenset(allowed_case_ids)
+    references = persistence.load_completed_storage_references(
+        owner_id=owner_id, allowed_case_ids=allowed,
+    )
+    app = create_persistent_product_dashboard_app(
+        persistence=persistence, owner_id=owner_id, allowed_case_ids=allowed,
+        read_kernel_projection=read_kernel_projection,
+    )
+    app.state.committed_storage_references = references
+    app.state.storage_access_mode = "read-only-reference"
+    return app

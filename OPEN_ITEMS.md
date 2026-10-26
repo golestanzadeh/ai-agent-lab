@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+2026-10-26 Owner architecture decision for OI-0003: `OWNER_APPROVED / IMPLEMENTATION_PENDING`. Separate opaque successor internal Person A/B IDs, unmapped legacy owner preservation, explicit marriage relationship scope and existing SubjectFactEnvelope individual facts are approved. These are no longer Owner questions. Implementation, evidence-bound protected registration and independent operational acceptance remain required; no active row closes.
+
 The 2026-10-25 local operational-unblocking slice added an owner-scoped, explicit-allowlist, read-only CaseRegistry projection to the existing Dashboard and passed 33 focused tests with synthetic data. It resolves no active row below: OI-0002/OI-0003 remain the protected identity/persistence boundary, while C09/HG-01/GCS gaps do not globally block unrelated non-privileged UI development. See `docs/ui25-local-operational-unblocking-20261025.md`.
 
 Continuation connected that reader and exact-scope read-only Kernel projection to the real local product launcher; startup/restart/configuration and isolation verification passes `69`. This still resolves no active row: the missing durable provider for the existing CaseRegistry/CaseState authorization composition is part of the OI-0002/OI-0003 protected boundary, not authorization to promote the test SQLite store or PostgreSQL PoC.

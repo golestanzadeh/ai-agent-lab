@@ -21,6 +21,10 @@ OI-0009 is `OWNER_TERMINATED / PERMANENTLY_OUT_OF_SCOPE`; it is not a technical 
 
 The active projection is `OPEN_ITEMS.md`. Every stage transition must update or explicitly assess both files in one governed change set. No implementation or new stage is authorized by this reconciliation.
 
+## F05 and OI-0003 Owner architecture authorization — 2026-10-26
+
+Owner decision is `OWNER_APPROVED / IMPLEMENTATION_PENDING`: Person A and Person B receive separate stable, opaque, non-derivable successor internal IDs through the existing Identity authority; these are not external authoritative identifiers. `CASE-001-OWNER` is preserved as an unmapped legacy reference. Individual facts retain `SubjectFactEnvelope`; shared marriage facts use an explicit relationship between the two subjects and relationship-scoped evidence. Previously confirmed facts remain confirmed and must not be requested again. These architecture choices supersede earlier open-question text; operational acceptance and protected registration remain pending. F05 implements read-only committed storage-reference composition, exact owner/case/year scope, and the authorized Identity schema/association contracts, subject to focused tests and independent review. No active OPEN_ITEMS row closes at this candidate boundary.
+
 ## F03 durable state and Run integration independently accepted — 2026-10-25
 
 Starting from accepted immutable-registration boundary `e1410514295253bd1e171faba10cf7348ddf6c79`, schema v2 now adds exact owner/case/year-scoped, versioned `CaseState` mutations and durable Run lifecycle records. Expected revisions reject stale writers; canonical request identities provide deterministic idempotency; state, Run, request record and chained audit changes share one SQLite transaction; committed state and Runs reconstruct after restart. The v1-to-v2 migration verifies the accepted v1 database and protected anchor before applying atomic DDL. Multiple cases in one year and cases across years remain supported.
