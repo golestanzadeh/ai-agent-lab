@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+F05 continuation (2026-10-26) independently accepts `7b1706ac2ccd75022f05aad42cfe9e595b663a4f` for committed storage-reference composition and OI-0003 successor/legacy/relationship/fact schema contracts. Owner architecture questions are resolved. Next code package is production-runtime composition with exact authorized durable case and completed storage references, plus disabled existing document/provider interfaces and activation checks. Actual protected identity/party/fact registration awaits the operational Identity boundary and independent acceptance; no renewed architecture decision is needed.
+
 The current accepted experience is synthetic-only. October execution-order labels UI25-05 through UI25-10 identify bounded increments; they do **not** mean that the same-numbered formal packages below are complete. The UI25-10 navigation/conflict increment is Owner-browser accepted, while formal UI25-10 Approval/Export remains disabled and unaccepted.
 
 Mandatory remaining path:

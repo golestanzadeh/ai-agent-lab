@@ -2,6 +2,8 @@
 
 ## Status
 
+Owner-approved OI-0003 extension (2026-10-26): internal successor subject IDs are opaque random 128-bit values allocated only by the existing IdentityPersistence authority under its existing identity-create authorization and protected declaration resolver. They are stable across tax years, separate from external tax identifiers and never derived from names, case IDs or folder paths. Allocation request, person record, immutable history and audit are committed together. Exact request replay returns the original allocation; conflicting requests fail closed. Legacy owner references are explicitly retained as `PRESERVED_UNMAPPED` and cannot automatically resolve to a person. Protected bootstrap and operational activation require the remaining operational acceptance gates.
+
 Foundational model. Implementation is not yet complete.
 
 ## Purpose

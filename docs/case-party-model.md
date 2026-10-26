@@ -2,6 +2,8 @@
 
 ## Status
 
+Owner-approved OI-0003 implementation extension (2026-10-26): individual facts retain SubjectFactEnvelope. Shared marriage facts use RelationshipFactEnvelope bound to one explicit MARRIAGE relationship between two distinct active case subjects, in canonical subject-ID order, with effective intervals, immutable evidence/confirmation/authorization references and audit lineage. The existing Identity authority and Kernel permissions remain required. Legacy owner references do not establish either relationship subject. Prior Owner confirmations are preserved; the schema does not require renewed approval of unchanged facts. This extension does not activate protected processing.
+
 **Approved architectural requirement — Phase 10**
 
 This document defines how the system identifies the people and relationships that participate in a tax case. It is a foundational requirement for document attribution, fact extraction, calculation, optimization, reconciliation, and final-form generation.

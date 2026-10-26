@@ -4,6 +4,8 @@
 
 Status: `OWNER_APPROVED / IMPLEMENTATION_PENDING`. Owner explicitly authorizes separate stable, non-derivable internal successor IDs for the two subjects through the existing Identity authority. Preserve the legacy owner reference without automatic subject mapping. Use SubjectFactEnvelope for individual facts and explicit relationship-scoped envelopes for shared marriage facts. Preserve previously approved confirmation and original evidence; no reconfirmation is required. Operational protected activation remains subject to independent acceptance. This decision supersedes prior unresolved architecture options for this bounded scope.
 
+Implementation update: exact `7b1706ac2ccd75022f05aad42cfe9e595b663a4f` is independently accepted for the bounded schema/association code. Protected registration/activation remains pending; the Owner architecture decision itself is settled.
+
 ## D-OI0002-DEVBASE-20261014 — Local development is distinct from operational anti-rollback acceptance
 
 **Status:** Owner-approved deployment baseline; C09 and operational IPC remain unaccepted.
