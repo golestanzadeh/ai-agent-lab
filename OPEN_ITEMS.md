@@ -12,6 +12,9 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+2026-10-26 local dashboard discovery documented in `docs/dashboard-local-execution-handoff-20261026.md` and linked from `PROJECT_CHECKPOINT.md`: port 8766 is the no-source read-only product app in the c09-continuation worktree; existing F06 runtime and F07 readiness code must be reused. The operational service client/dispatcher and SCM composition remain missing, and protected case creation / Drive mutation remain gated. This is documentation only; no active row closes, no acceptance or stage transition occurs.
+
+
 F07 preparation resumed 2026-10-26: configuration/gate/readiness code is a candidate pending independent review. The exact service integration prerequisite is the existing SCM host's `unavailable_runtime` composition and absent operational client/dispatcher; no synthetic adapter was promoted. No active row closes. See `docs/f07-runtime-activation-preparation-20261026.md`.
 
 F07 preparation final `de0ef2ee1bd612c173774b54902b0070c5d557be` received `INDEPENDENT_PASS` (41 focused tests plus adversarial configuration probes); constructor-validation finding is resolved. Overall operational service integration remains prerequisite-blocked, not accepted: the existing-role client/dispatcher and SCM composition are absent. All protected gates, operational C09/OI-0002, OI-0003 evidence-bound registration and provider/Owner Human Gates remain active. No row closes.
