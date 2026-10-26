@@ -63,6 +63,9 @@ def validate_response(raw: bytes, request_raw: bytes) -> dict:
     for key in _REQ:
         if response[key] != request[key]:
             raise HealthProtocolError("request correlation mismatch")
-    if response["status"] != "ALIVE_RESTRICTED" or not hmac.compare_digest(response["request_digest"], "sha256:" + hashlib.sha256(request_raw).hexdigest()):
+    digest = response["request_digest"]
+    if (response["status"] != "ALIVE_RESTRICTED" or not isinstance(digest, str)
+            or not re.fullmatch(r"sha256:[0-9a-f]{64}", digest)
+            or not hmac.compare_digest(digest, "sha256:" + hashlib.sha256(request_raw).hexdigest())):
         raise HealthProtocolError("invalid status or digest")
     return response

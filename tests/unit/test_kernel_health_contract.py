@@ -32,6 +32,16 @@ def test_denies_extra_field():
     with pytest.raises(HealthProtocolError):
         handle_request(json.dumps(value, sort_keys=True, separators=(",", ":")).encode(), "deployment-1")
 
+@pytest.mark.parametrize("bad_digest", [1, None, {}, [], True, "sha256:INVALID", "sha256:" + "0" * 63])
+def test_rejects_nonstring_or_malformed_digest(bad_digest):
+    request = encode_request("deployment-1", "req-1")
+    response = json.loads(handle_request(request, "deployment-1"))
+    response["request_digest"] = bad_digest
+    raw = json.dumps(response, sort_keys=True, separators=(",", ":")).encode()
+    with pytest.raises(HealthProtocolError, match="invalid status or digest"):
+        validate_response(raw, request)
+
+
 def test_rejects_wrong_correlation_and_digest():
     request = encode_request("deployment-1", "req-1")
     response = handle_request(request, "deployment-1")
