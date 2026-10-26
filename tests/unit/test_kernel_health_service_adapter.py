@@ -22,6 +22,17 @@ def test_existing_host_rejects_unprivileged_windows_user():
     assert host.state is Lifecycle.HALTED
 
 
+def test_adapter_rejects_invalid_direct_configuration():
+    from dataclasses import replace
+    from agent_lab.kernel_health_service_adapter import RestrictedHealthRuntime
+    valid = _config()
+    for malformed in (replace(valid, schema="unknown"),
+                      replace(valid, deployment_id=""),
+                      replace(valid, deployment_id="x" * 129)):
+        with pytest.raises(ServiceHostError, match="binding rejected"):
+            RestrictedHealthRuntime(malformed)
+
+
 def test_existing_host_lifecycle_synthetic_only():
     host = create_restricted_health_host()
     config = _config()
