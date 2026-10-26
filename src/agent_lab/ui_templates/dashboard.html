@@ -29,6 +29,7 @@
     <div class="page">
       {% if tab == 'cases' and real_case_creation_available %}
       <section class="panel"><h2>{{ 'ایجاد پرونده واقعی' if lang == 'fa-IR' else 'Neuen echten Steuerfall anlegen' }}</h2>
+        <p>{{ 'پوشه‌ها در Google Drive Desktop ساخته می‌شوند؛ تکمیل همگام‌سازی ابری باید جداگانه تأیید شود. ارسال مالیاتی غیرفعال است.' if lang == 'fa-IR' else 'Ordner werden in Google Drive Desktop erstellt. Cloud-Synchronisierung muss separat bestätigt werden. Steuerübermittlung bleibt deaktiviert.' }}</p>
         <form method="post" action="/cases/create">
           <input type="hidden" name="lang" value="{{ lang }}">
           <label>{{ 'سال مالیاتی' if lang == 'fa-IR' else 'Steuerjahr' }} <input name="tax_year" type="number" min="1900" max="9999" required></label>

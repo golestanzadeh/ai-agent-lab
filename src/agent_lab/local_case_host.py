@@ -21,6 +21,8 @@ from agent_lab.case_registry import (
 from agent_lab.case_persistence import SQLiteCasePersistence
 from agent_lab.person_entity_registry import PersonEntityRegistry, PersonRecord, RegistryStatus
 from agent_lab.ui_dashboard import DashboardCase, create_dashboard_app
+from agent_lab.drive_desktop_provisioning import DriveDesktopScopeCreator
+from agent_lab.storage_provisioning import DurableStorageProvisioningAdapter
 
 
 def windows_owner_sid() -> str:
@@ -99,7 +101,13 @@ class LocalCaseHost:
             self.associations.associate(self.owner_id, record.case_id)
         self.workflow = CaseCreationWorkflow(
             self.identities, self.registry, self.associations,
-            LocalCaseScope(self.root), InMemoryAuditSink(),
+            DurableStorageProvisioningAdapter(
+                self.persistence,
+                DriveDesktopScopeCreator(
+                    drive_root=Path(os.environ.get("AI_TAX_DRIVE_ROOT", r"G:\My Drive\AI-Tax-Agent")),
+                    journal_root=self.root / "drive-provisioning-journal",
+                ),
+            ), InMemoryAuditSink(),
             durable_registrar=self.persistence)
 
     def read_cases(self):
@@ -109,10 +117,6 @@ class LocalCaseHost:
                          for r in self.registry.all_records())
 
     def create_case(self, year: int, assessment: str):
-        # Do not repeat the local-only provisioning mistake for real cases.
-        # Re-enable only after a verified Google Drive creator and durable
-        # reconciliation path are wired into the canonical workflow.
-        raise PermissionError("Google Drive provisioning is not configured; real creation paused")
         with self._lock:
             self._reload()
             result = self.workflow.create(CaseCreationRequest(
