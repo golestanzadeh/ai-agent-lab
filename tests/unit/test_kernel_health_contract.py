@@ -21,6 +21,12 @@ def test_denies_other_deployment():
     with pytest.raises(HealthProtocolError, match="deployment"):
         handle_request(encode_request("deployment-1", "req-1"), "deployment-2")
 
+@pytest.mark.parametrize("invalid_deployment", ["déployment-1", "", " " * 2, None, 42])
+def test_rejects_invalid_expected_deployment_deterministically(invalid_deployment):
+    with pytest.raises(HealthProtocolError, match="deployment mismatch"):
+        handle_request(encode_request("deployment-1", "req-1"), invalid_deployment)
+
+
 def test_denies_extra_operation():
     raw = encode_request("deployment-1", "req-1").replace(b"HEALTH", b"CREATE_CASE")
     with pytest.raises(HealthProtocolError):

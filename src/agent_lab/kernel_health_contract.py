@@ -50,7 +50,8 @@ def encode_request(deployment_id: str, request_id: str) -> bytes:
 
 def handle_request(raw: bytes, expected_deployment_id: str) -> bytes:
     request = _parse(raw, _REQ)
-    if not isinstance(expected_deployment_id, str) or not hmac.compare_digest(request["deployment_id"], expected_deployment_id):
+    if (not isinstance(expected_deployment_id, str) or not _ID.fullmatch(expected_deployment_id)
+            or not hmac.compare_digest(request["deployment_id"], expected_deployment_id)):
         raise HealthProtocolError("deployment mismatch")
     response = dict(request)
     response["status"] = "ALIVE_RESTRICTED"
