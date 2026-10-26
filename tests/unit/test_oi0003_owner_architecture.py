@@ -119,5 +119,25 @@ def test_deleted_authority_row_is_rejected_on_restart(tmp_path,table):
     store.close()
     with sqlite3.connect(tmp_path/"identity.sqlite") as db:
         db.execute(f"DELETE FROM {table}")
+    db.close()
     with pytest.raises(ValueError,match="completeness"):
         IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=lambda *args:True,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    renamed=tmp_path/"quarantined.sqlite"
+    (tmp_path/"identity.sqlite").rename(renamed)
+    renamed.unlink()
+
+
+@pytest.mark.parametrize("corruption",["audit","identity"])
+def test_rejected_startup_releases_windows_handle(tmp_path,corruption):
+    cases,store=open_owner_store(tmp_path)
+    store.allocate_successor_person(request_id="A",case_id="C1",declaration_ref=D1,authorization_ref=A1)
+    store.close()
+    with sqlite3.connect(tmp_path/"identity.sqlite") as db:
+        if corruption=="audit": db.execute("UPDATE identity_audit SET event_payload='{}'")
+        else: db.execute("UPDATE identity_record SET payload='{}'")
+    db.close()
+    with pytest.raises(ValueError):
+        IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=lambda *args:True,evidence_resolver=evidence_resolver,integrity_key=KEY)
+    renamed=tmp_path/"recovery.sqlite"
+    (tmp_path/"identity.sqlite").rename(renamed)
+    renamed.unlink()

@@ -132,6 +132,13 @@ class IdentityPersistence:
             lambda: "PERSON-SUCC-" + secrets.token_hex(16).upper()
         )
         self._db = sqlite3.connect(str(self._path))
+        try:
+            self._initialize_connection()
+        except BaseException:
+            self._db.close()
+            raise
+
+    def _initialize_connection(self) -> None:
         self._db.row_factory = sqlite3.Row
         self._db.execute("PRAGMA journal_mode=WAL")
         self._db.execute("PRAGMA foreign_keys=ON")
