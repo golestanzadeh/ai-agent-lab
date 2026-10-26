@@ -27,6 +27,16 @@
   <main id="content" class="main">
     <header class="toolbar"><span class="breadcrumb">AI Tax Agent <span class="sep">/</span> {{ t[tab] }}</span><a class="language" href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}{% if run_id %}run_id={{ run_id|urlencode }}&{% endif %}tab={{ tab }}&lang={{ t.switch_code }}">{{ t.switch }}</a><span class="privacy">◈ {{ t.privacy }}</span></header>
     <div class="page">
+      {% if tab == 'cases' and real_case_creation_available %}
+      <section class="panel"><h2>{{ 'ایجاد پرونده واقعی' if lang == 'fa-IR' else 'Neuen echten Steuerfall anlegen' }}</h2>
+        <form method="post" action="/cases/create">
+          <input type="hidden" name="lang" value="{{ lang }}">
+          <label>{{ 'سال مالیاتی' if lang == 'fa-IR' else 'Steuerjahr' }} <input name="tax_year" type="number" min="1900" max="9999" required></label>
+          <label>{{ 'نوع اظهارنامه' if lang == 'fa-IR' else 'Veranlagungsart' }} <select name="assessment_mode"><option value="JOINT_ASSESSMENT">{{ 'مشترک' if lang == 'fa-IR' else 'Zusammenveranlagung' }}</option><option value="INDIVIDUAL_ASSESSMENT">{{ 'انفرادی' if lang == 'fa-IR' else 'Einzelveranlagung' }}</option></select></label>
+          <button type="submit">{{ 'ایجاد و ذخیره پرونده' if lang == 'fa-IR' else 'Fall erstellen und speichern' }}</button>
+        </form>
+      </section>
+      {% endif %}
       {% if test_mode %}<div class="test-banner"><strong>{{ t.test_only_title }}</strong><p>{{ t.test_only_body }}</p></div>{% endif %}
       {% if runtime_configured and selected %}
       <section class="panel" aria-label="{{ 'وضعیت ذخیره‌شده پرونده' if lang == 'fa-IR' else 'Gespeicherter Fallstatus' }}">

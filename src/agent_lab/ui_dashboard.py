@@ -221,6 +221,7 @@ def create_dashboard_app(
     read_kernel_projection: ReadKernelProjection | None = None,
     execute_kernel_task: ExecuteKernelTask | None = None,
     read_runtime_case: Callable[[str,int],object] | None = None,
+    create_real_case: Callable[[int,str],str] | None = None,
 ) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 
@@ -244,7 +245,7 @@ def create_dashboard_app(
         if test_store is None and request.url.path.startswith("/test/"):
             from fastapi.responses import PlainTextResponse
             response = PlainTextResponse("Not found", status_code=404)
-        elif test_store is not None and request.method not in {"GET", "HEAD", "OPTIONS"}:
+        elif (test_store is not None or create_real_case is not None) and request.method not in {"GET", "HEAD", "OPTIONS"}:
             origin = request.headers.get("origin")
             host = request.headers.get("host")
             if origin != "http://127.0.0.1:8766" or host != "127.0.0.1:8766":
@@ -256,7 +257,7 @@ def create_dashboard_app(
             response = await call_next(request)
         for name, value in LOCAL_SECURITY_HEADERS.items():
             response.headers[name] = value
-        if test_store is not None:
+        if test_store is not None or create_real_case is not None:
             response.headers["content-security-policy"] = response.headers["content-security-policy"].replace("form-action "+chr(39)+"none"+chr(39), "form-action "+chr(39)+"self"+chr(39))
             # Chrome serializes a form POST's Origin as ``null`` when the
             # source document uses the production ``no-referrer`` policy.
@@ -331,6 +332,7 @@ def create_dashboard_app(
             "kernel_execution_available": execute_kernel_task is not None,
             "runtime_case":runtime_case,"runtime_unavailable":runtime_unavailable,
             "runtime_configured":read_runtime_case is not None,
+            "real_case_creation_available":create_real_case is not None,
         })
 
     def execution_error_redirect(exc: Exception, *, case_id: str, lang: str):
@@ -365,6 +367,22 @@ def create_dashboard_app(
         if lang not in UI_TEXT:
             raise HTTPException(status_code=400, detail="Unsupported language")
         return lang
+
+    @app.post("/cases/create")
+    async def create_authorized_case(tax_year: int = Form(...), assessment_mode: str = Form(...), lang: str = Form("fa-IR")):
+        if create_real_case is None:
+            raise HTTPException(status_code=503, detail="Real case creation authority unavailable")
+        if lang not in UI_TEXT or not 1900 <= tax_year <= 9999:
+            raise HTTPException(status_code=400, detail="Invalid case parameters")
+        if assessment_mode not in {"JOINT_ASSESSMENT", "INDIVIDUAL_ASSESSMENT"}:
+            raise HTTPException(status_code=400, detail="Invalid assessment mode")
+        try:
+            new_id = create_real_case(tax_year, assessment_mode)
+        except (PermissionError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail="Case creation rejected") from exc
+        if not isinstance(new_id, str) or not new_id.startswith(f"CASE-{tax_year}-"):
+            raise HTTPException(status_code=503, detail="Invalid committed case identity")
+        return RedirectResponse("/?" + urlencode({"tab":"cases", "case_id":new_id, "lang":lang}), status_code=303)
 
     @app.post("/test/cases")
     async def create_test_case(case_id: str = Form(...), tax_year: int = Form(...)):
