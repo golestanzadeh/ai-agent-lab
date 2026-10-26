@@ -20,6 +20,17 @@ def test_configuration_is_closed_nonsecret_and_deterministic():
         with pytest.raises(ValueError): configuration(**changes)
 
 
+def test_direct_constructor_rejects_raw_secrets_oversize_and_forged_digest():
+    valid=configuration()
+    for changes in (
+        {"deployment_id":"D"*1000},
+        {"references":tuple((key,"raw-secret-value") for key in CONFIG_FIELDS)},
+        {"digest":"forged-digest"},
+        {"references":valid.references+(valid.references[0],)},
+    ):
+        with pytest.raises(ValueError): replace(valid,**changes)
+
+
 def test_readiness_has_exact_scopes_no_mutations_and_never_enables_protected_operations(tmp_path):
     store=SQLiteCasePersistence(tmp_path/"cases.sqlite",integrity_key=KEY);seed(store)
     runtime,identity,kernel=compose(tmp_path,store)
@@ -34,6 +45,10 @@ def test_readiness_has_exact_scopes_no_mutations_and_never_enables_protected_ope
     blocked=runtime.assess_readiness(configuration(),authority_references=refs,**scope)
     assert all(item.status is ReadinessStatus.SECURITY_GATE_BLOCKED and not item.executable for item in blocked[1:])
     assert store._db.execute("SELECT count(*) FROM case_audit").fetchone()[0]==before
+    tampered=configuration()
+    object.__setattr__(tampered,"digest","forged-digest")
+    with pytest.raises(ValueError,match="digest mismatch"):
+        runtime.assess_readiness(tampered,**scope)
     for wrong in (configuration(owner_id="OTHER"),configuration(case_id="CASE-2023-B"),configuration(tax_year=2028),configuration(run_id="OTHER-RUN")):
         with pytest.raises(PermissionError): runtime.assess_readiness(wrong,**scope)
     with pytest.raises(PermissionError): runtime.assess_readiness(configuration(),case_id="CASE-2023-A",tax_year=2023,run_id="UNKNOWN")

@@ -53,8 +53,25 @@ class RuntimeActivationConfiguration:
     references: tuple[tuple[str,str|None],...]
     digest: str
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.references,tuple) or any(not isinstance(item,tuple) or len(item)!=2 for item in self.references):
+            raise ValueError("immutable closed configuration references are required")
+        refs=dict(self.references)
+        if len(refs)!=len(self.references): raise ValueError("duplicate configuration reference")
+        payload={"schema":"ai-tax-agent.runtime-activation-preparation/1.0",
+                 "deployment_id":self.deployment_id,"owner_id":self.owner_id,
+                 "case_id":self.case_id,"tax_year":self.tax_year,"run_id":self.run_id,
+                 "references":refs}
+        expected=self._validate_payload(payload)
+        if self.digest!=expected: raise ValueError("activation configuration digest mismatch")
+
     @classmethod
     def parse(cls,payload: dict) -> "RuntimeActivationConfiguration":
+        digest=cls._validate_payload(payload)
+        return cls(payload["deployment_id"],payload["owner_id"],payload["case_id"],payload["tax_year"],payload["run_id"],tuple(sorted(payload["references"].items())),digest)
+
+    @staticmethod
+    def _validate_payload(payload: dict) -> str:
         fields={"schema","deployment_id","owner_id","case_id","tax_year","run_id","references"}
         if not isinstance(payload,dict) or set(payload)!=fields or payload["schema"]!="ai-tax-agent.runtime-activation-preparation/1.0":
             raise ValueError("activation configuration schema mismatch")
@@ -69,7 +86,7 @@ class RuntimeActivationConfiguration:
         if any(value is not None and (not isinstance(value,str) or _REF.fullmatch(value) is None) for value in refs.values()):
             raise ValueError("configuration accepts immutable references only, never credentials")
         canonical=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()
-        return cls(payload["deployment_id"],payload["owner_id"],payload["case_id"],payload["tax_year"],payload["run_id"],tuple(sorted(refs.items())),"sha256:"+hashlib.sha256(canonical).hexdigest())
+        return "sha256:"+hashlib.sha256(canonical).hexdigest()
 
 
 @dataclass(frozen=True,slots=True)
@@ -91,6 +108,9 @@ def assess_runtime_readiness(runtime, configuration: RuntimeActivationConfigurat
     projection=runtime.read_case(case_id,tax_year)
     runtime.verify_run_reference(case_id,tax_year,run_id)
     if configuration is not None:
+        if not isinstance(configuration,RuntimeActivationConfiguration):
+            raise ValueError("validated runtime activation configuration is required")
+        configuration.__post_init__()
         runtime.verify_activation_scope(configuration.owner_id,configuration.case_id,configuration.tax_year,configuration.run_id,case_id,tax_year,run_id)
     authorities=dict(authority_references or {})
     if set(authorities)-{gate.operation for gate in GATES}: raise ValueError("unknown authority operation")
