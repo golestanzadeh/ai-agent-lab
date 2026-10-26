@@ -562,6 +562,31 @@ class IdentityPersistence:
         if not allowed:
             self._failure("SECURITY_DENIED", case_id, "case authorization denied", permission=True)
 
+    def verify_runtime_cases(self, records: tuple) -> None:
+        """Validate composition metadata without exposing protected identity rows."""
+        if self._authorize is None:
+            raise PermissionError("Identity runtime authorization configuration is missing")
+        # UI requests may execute on a different thread. Borrow a read-only
+        # connection to the same authority; never share its writer connection.
+        from copy import copy
+        connection=sqlite3.connect(self._path.as_uri()+"?mode=ro",uri=True)
+        try:
+            connection.row_factory=sqlite3.Row
+            connection.execute("PRAGMA query_only=ON")
+            connection.execute("BEGIN")
+            reader=copy(self); reader._db=connection
+            count,head=reader._audit_head()
+            document=json.loads(self._anchor_path.read_text(encoding="utf-8"))
+            payload={key:document[key] for key in ("schema_version","event_count","head_mac")}
+            if not hmac.compare_digest(self._mac(payload),document.get("anchor_mac","")) or payload!=self._anchor_payload(count,head):
+                raise ValueError("Identity runtime audit continuity failure")
+            reader._verify_data_integrity()
+        finally:
+            connection.close()
+        for record in records:
+            if self._cases.get(record.case_id)!=record:
+                raise PermissionError("Identity runtime case scope mismatch")
+
     @staticmethod
     def _identity_payload(record: PersonRecord | EntityRecord) -> dict:
         identity_id = record.person_id if isinstance(record, PersonRecord) else record.entity_id

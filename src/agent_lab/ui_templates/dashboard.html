@@ -28,6 +28,19 @@
     <header class="toolbar"><span class="breadcrumb">AI Tax Agent <span class="sep">/</span> {{ t[tab] }}</span><a class="language" href="/?{% if selected %}case_id={{ selected.case_id|urlencode }}&{% endif %}{% if run_id %}run_id={{ run_id|urlencode }}&{% endif %}tab={{ tab }}&lang={{ t.switch_code }}">{{ t.switch }}</a><span class="privacy">◈ {{ t.privacy }}</span></header>
     <div class="page">
       {% if test_mode %}<div class="test-banner"><strong>{{ t.test_only_title }}</strong><p>{{ t.test_only_body }}</p></div>{% endif %}
+      {% if runtime_configured and selected %}
+      <section class="panel" aria-label="{{ 'وضعیت ذخیره‌شده پرونده' if lang == 'fa-IR' else 'Gespeicherter Fallstatus' }}">
+        {% if runtime_unavailable %}
+        <p role="status">{{ 'وضعیت ذخیره‌شده در دسترس نیست؛ عملیات حفاظت‌شده مسدود است.' if lang == 'fa-IR' else 'Gespeicherter Status nicht verfügbar; geschützte Vorgänge sind gesperrt.' }}</p>
+        {% elif runtime_case %}
+        <h2>{{ 'وضعیت ذخیره‌شده پرونده' if lang == 'fa-IR' else 'Gespeicherter Fallstatus' }}</h2>
+        <p>{{ 'وضعیت' if lang == 'fa-IR' else 'Status' }}: <span data-persisted-state="{{ runtime_case.state_status }}">{{ runtime_case.state_status }}</span> · {{ 'نسخه' if lang == 'fa-IR' else 'Revision' }} {{ runtime_case.state_revision }}</p>
+        <p data-storage-state="{{ runtime_case.storage_state }}">{{ 'فضای ذخیره‌سازی: آماده' if lang == 'fa-IR' and runtime_case.storage_state == 'COMPLETE' else 'Speicher: bereit' if runtime_case.storage_state == 'COMPLETE' else 'فضای ذخیره‌سازی: در دسترس نیست' if lang == 'fa-IR' else 'Speicher: nicht verfügbar' }}</p>
+        <ul>{% for run_id_value,run_status,revision in runtime_case.runs %}<li><span>{{ run_id_value }}</span> · <span data-durable-run-status="{{ run_status }}">{{ run_status }}</span> · {{ revision }}</li>{% else %}<li>{{ 'اجرایی ثبت نشده است.' if lang == 'fa-IR' else 'Kein Lauf gespeichert.' }}</li>{% endfor %}</ul>
+        <p role="status">{{ 'ورود مدارک، استخراج، پردازش CSV، ایجاد پرونده، تأیید و ارسال تا پذیرش عملیاتی غیرفعال‌اند.' if lang == 'fa-IR' else 'Dokumentimport, Extraktion, CSV-Verarbeitung, Fallerstellung, Freigabe und Übermittlung sind bis zur Betriebsabnahme deaktiviert.' }}</p>
+        {% endif %}
+      </section>
+      {% endif %}
       {% if tab != "overview" %}
       {% include "_dashboard_tab.html" %}
       {% else %}

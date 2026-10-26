@@ -220,6 +220,7 @@ def create_dashboard_app(
     *, read_cases: ReadCases | None = None, test_store=None,
     read_kernel_projection: ReadKernelProjection | None = None,
     execute_kernel_task: ExecuteKernelTask | None = None,
+    read_runtime_case: Callable[[str,int],object] | None = None,
 ) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 
@@ -301,6 +302,13 @@ def create_dashboard_app(
         elif case_id is not None:
             raise HTTPException(status_code=503, detail="Verified case source unavailable")
         detail = None
+        runtime_case = None
+        runtime_unavailable = False
+        if read_runtime_case is not None and selected is not None:
+            try:
+                runtime_case=read_runtime_case(selected.case_id,selected.tax_year)
+            except Exception:
+                runtime_unavailable=True
         if test_store is not None and selected is not None:
             detail = test_store.detail(selected.case_id)
         kernel_projection = None
@@ -321,6 +329,8 @@ def create_dashboard_app(
             "kernel_projection_available": read_kernel_projection is not None,
             "ui_error": UI_TEXT[lang]["ui_errors"].get(error),
             "kernel_execution_available": execute_kernel_task is not None,
+            "runtime_case":runtime_case,"runtime_unavailable":runtime_unavailable,
+            "runtime_configured":read_runtime_case is not None,
         })
 
     def execution_error_redirect(exc: Exception, *, case_id: str, lang: str):

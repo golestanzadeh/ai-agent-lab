@@ -153,6 +153,11 @@ class CaseCreationWorkflow:
         with self._lock:
             return self._create_locked(request)
 
+    def verify_runtime_cases(self, records: tuple) -> None:
+        for record in records:
+            if self._case_registry.get(record.case_id)!=record:
+                raise PermissionError("case creation runtime scope mismatch")
+
     def _create_locked(self, request: CaseCreationRequest) -> CreationResult:
         existing = self._find_idempotent_result(request.request_id)
         if existing is not None:

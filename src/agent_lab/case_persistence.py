@@ -368,6 +368,19 @@ class SQLiteCasePersistence:
             row = self._db.execute("SELECT * FROM case_state WHERE case_id=?", (case_id,)).fetchone()
             return VersionedCaseState(self._state(row["payload"]), row["revision"])
 
+    def record_runtime_denial(self, *, owner_id: str, case_id: str, tax_year: int, operation: str) -> None:
+        allowed={"case_creation","document_ingestion","gemini_extraction","csv_processing","drive_mutation","approval","submission","provider_activation"}
+        if operation not in allowed: raise ValueError("unknown protected operation")
+        with self._lock:
+            self._verify_all(); self._verify_anchor()
+            try:
+                self._db.execute("BEGIN IMMEDIATE")
+                self._authorize(owner_id,case_id,tax_year)
+                self._audit("RUNTIME_OPERATION_DENIED",case_id,self._mac({"operation":operation,"reason":"OPERATIONAL_ACCEPTANCE_REQUIRED"}))
+                self._db.commit(); self._write_anchor()
+            except BaseException:
+                self._db.rollback(); raise
+
     def prepare_storage_provisioning(
         self, *, operation_id: str, request_id: str, owner_id: str,
         case_id: str, tax_year: int,

@@ -98,3 +98,14 @@ def create_storage_integrated_product_dashboard_app(
     app.state.committed_storage_references = references
     app.state.storage_access_mode = "read-only-reference"
     return app
+
+
+def create_runtime_product_dashboard_app(*, runtime) -> FastAPI:
+    """Use one validated production composition for every case read."""
+    from agent_lab.production_runtime import ProductionRuntime
+    if not isinstance(runtime,ProductionRuntime):
+        raise ValueError("validated production runtime is required")
+    app=create_dashboard_app(read_cases=runtime.read_cases,read_runtime_case=runtime.read_case)
+    app.state.production_runtime=runtime
+    app.state.product_case_source="configured"
+    return app
