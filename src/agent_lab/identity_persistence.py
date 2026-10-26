@@ -493,6 +493,32 @@ class IdentityPersistence:
             env=RelationshipFactEnvelope(row["request_id"],row["case_id"],row["tax_year"],row["relationship_id"],row["semantic_key"],row["fact_artifact_ref"],row["declaration_artifact_ref"],row["confirmation_ref"],row["authorization_ref"],date.fromisoformat(row["valid_from"]),date.fromisoformat(row["valid_to_exclusive"]),lineage,row["revision"])
             payload={**asdict(env),"valid_from":env.valid_from.isoformat(),"valid_to_exclusive":env.valid_to_exclusive.isoformat(),"audit_lineage":list(lineage),"fact_payload":fact_payload}
             if not hmac.compare_digest(self._mac(payload),row["digest"]): raise ValueError("relationship fact integrity failure")
+        self._verify_v3_completeness()
+
+    def _verify_v3_completeness(self) -> None:
+        """Every immutable v3 authority row must have exactly one anchored event."""
+        expected={action:[] for action in (
+            "SUCCESSOR_IDENTITY_ALLOCATE","LEGACY_REFERENCE_PRESERVE",
+            "SUBJECT_RELATIONSHIP_BIND","RELATIONSHIP_FACT_BIND",
+        )}
+        for row in self._db.execute("SELECT * FROM successor_identity_allocation"):
+            identity=self._db.execute("SELECT 1 FROM identity_record WHERE identity_id=? AND record_type='PERSON'",(row["person_id"],)).fetchone()
+            if identity is None: raise ValueError("successor identity completeness failure")
+            expected["SUCCESSOR_IDENTITY_ALLOCATE"].append((row["case_id"],row["person_id"],self._mac({"request_id":row["request_id"],"declaration_ref":row["declaration_ref"]})))
+        for row in self._db.execute("SELECT * FROM legacy_identity_reference"):
+            expected["LEGACY_REFERENCE_PRESERVE"].append((row["case_id"],"UNMAPPED",self._mac({"legacy_reference_digest":self._mac(row["legacy_reference"])})))
+        for row in self._db.execute("SELECT * FROM subject_relationship"):
+            expected["SUBJECT_RELATIONSHIP_BIND"].append((row["case_id"],row["relationship_id"],self._mac({"digest":row["digest"]})))
+        for row in self._db.execute("SELECT * FROM relationship_fact_binding"):
+            expected["RELATIONSHIP_FACT_BIND"].append((row["case_id"],row["relationship_id"],self._mac({"digest":row["digest"]})))
+        observed={action:[] for action in expected}
+        for row in self._db.execute("SELECT event_payload FROM identity_audit ORDER BY event_id"):
+            event=json.loads(row["event_payload"])
+            if event["action"] in observed:
+                observed[event["action"]].append((event["case_id"],event["subject_id"],event["details_digest"]))
+        for action in expected:
+            if sorted(expected[action])!=sorted(observed[action]):
+                raise ValueError("identity v3 authority completeness failure: "+action)
 
     def _append_audit(self, action: str, case_id: str | None, subject_id: str, details: dict) -> None:
         last = self._db.execute("SELECT event_id,event_mac FROM identity_audit ORDER BY event_id DESC LIMIT 1").fetchone()

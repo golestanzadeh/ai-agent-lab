@@ -1,4 +1,5 @@
 from datetime import date
+import sqlite3
 
 import pytest
 
@@ -100,3 +101,23 @@ def test_relationship_rejects_same_subject_wrong_order_and_cross_case(tmp_path):
         with pytest.raises((ValueError,PermissionError)):
             store.bind_relationship(invalid)
     store.close()
+
+
+@pytest.mark.parametrize("table",[
+    "successor_identity_allocation","legacy_identity_reference",
+    "subject_relationship","relationship_fact_binding",
+])
+def test_deleted_authority_row_is_rejected_on_restart(tmp_path,table):
+    cases,store=open_owner_store(tmp_path)
+    a=store.allocate_successor_person(request_id="A",case_id="C1",declaration_ref=D1,authorization_ref=A1)
+    b=store.allocate_successor_person(request_id="B",case_id="C1",declaration_ref=D1,authorization_ref=A1)
+    store.preserve_legacy_reference(legacy_reference="LEGACY-OWNER",case_id="C1",evidence_ref=E1,authorization_ref=A1)
+    for subject,binding in ((a.person_id,"RA"),(b.person_id,"RB")):
+        store.bind_party(role(subject,binding=binding,role_code="OTHER_DEPENDENT_OR_RELEVANT_PERSON"))
+    store.bind_relationship(SubjectRelationship("REL-1","C1","MARRIAGE",min(a.person_id,b.person_id),max(a.person_id,b.person_id),date(2025,1,1),None,E1,A1))
+    store.bind_relationship_fact(request_id="RF1",case_id="C1",tax_year=2025,relationship_id="REL-1",fact=fact(),declaration_artifact_ref=D1,confirmation_ref=C1,valid_from=date(2025,1,1),valid_to_exclusive=date(2026,1,1),authorization_ref=A1)
+    store.close()
+    with sqlite3.connect(tmp_path/"identity.sqlite") as db:
+        db.execute(f"DELETE FROM {table}")
+    with pytest.raises(ValueError,match="completeness"):
+        IdentityPersistence(tmp_path/"identity.sqlite",cases=cases,authorize=lambda *args:True,evidence_resolver=evidence_resolver,integrity_key=KEY)
