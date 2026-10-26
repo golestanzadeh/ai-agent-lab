@@ -109,6 +109,10 @@ class LocalCaseHost:
                          for r in self.registry.all_records())
 
     def create_case(self, year: int, assessment: str):
+        # Do not repeat the local-only provisioning mistake for real cases.
+        # Re-enable only after a verified Google Drive creator and durable
+        # reconciliation path are wired into the canonical workflow.
+        raise PermissionError("Google Drive provisioning is not configured; real creation paused")
         with self._lock:
             self._reload()
             result = self.workflow.create(CaseCreationRequest(
