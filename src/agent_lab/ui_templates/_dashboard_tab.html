@@ -12,6 +12,20 @@
 {% if selected %}<p role="status">{{ selected.case_id }} {{ 'انتخاب و فعال است.' if lang == 'fa-IR' else 'ist ausgewählt und aktiv.' }}</p>{% endif %}
 </section>
 {% endif %}
+{% if tab == "cases" and selected and not test_mode %}
+<section class="panel" aria-label="Empty case deletion preflight">
+  <h2>{{ 'بررسی حذف پرونده خالی' if lang == 'fa-IR' else 'Leeren Steuerfall zur Löschung prüfen' }}</h2>
+  <p>{{ 'ابتدا دیتابیس و سپس پوشه Google Drive بررسی می‌شود. در این مرحله چیزی حذف نمی‌شود.' if lang == 'fa-IR' else 'Zuerst SQLite, dann Google Drive prüfen. Bei dieser Prüfung wird nichts gelöscht.' }}</p>
+  <form id="empty-case-preview-form" action="/cases/delete/preview" method="post">
+    <input type="hidden" name="case_id" value="{{ selected.case_id }}">
+    <input type="hidden" name="tax_year" value="{{ selected.tax_year }}">
+    <button type="submit">{{ 'بررسی آمادگی حذف' if lang == 'fa-IR' else 'L?schbereitschaft prüfen' }}</button>
+  </form>
+  <p id="empty-case-preview-result" role="status" aria-live="polite"></p>
+  <p>{{ '??? ????? ?? بررسی آمادگی حذف? ??????? ???.' if lang == 'fa-IR' else 'Die tatsächliche Löschung bleibt bis zur sicheren Transaktion deaktiviert.' }}</p>
+</section>
+<script src="{{ url_for('static', path='/empty_case_preview.js') }}" defer></script>
+{% endif %}
 <section class="panel tab-panel">
   <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>
   <div class="tab-body">
