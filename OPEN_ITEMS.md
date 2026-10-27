@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+Independent6b6e99b4 re-review found one HIGH lifecycle finding after the earlier three fixes: unexpected internal authenticated errors could leave service healthy. Candidate now halts/closes the worker and propagates HALTED;18 runtime/host tests pass including two native fault injections. Final exact-SHA review pending. The separately reviewed Identity denial correction remains bounded PASS. No active item closes or protected operation activates.
+
 F07 candidate44fa0c3 independent FAIL findings are corrected in the next candidate: bootstrap refusal audit, authenticated Custodian anchor recovery, no artificial Witness history cap. Existing-role runtime composition now has actual isolated native response/stop/restart verification (not service-principal deployment);65 focused and23 native/security pass. Exact-SHA re-review, deployment bindings/custody, live enrollment and logical mutation implementation remain distinct unresolved prerequisites. No active row closes.
 
 F07 Identity31b2ac44 independently passed its bounded enrollment/read scope; Custodian1.1 contract4cecbd04 independently passed. Kernel/Custodian/Witness integration and exact witnessed-prefix/recovery closure are candidate work, not operational acceptance. Integrated29 tests pass with temporary/controlled ports; SCM composition and mutation continuity remain incomplete. No active row is resolved or removed, and no live protected enrollment is authorized.

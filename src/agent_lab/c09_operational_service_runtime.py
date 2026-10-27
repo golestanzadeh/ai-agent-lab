@@ -70,6 +70,7 @@ class AuthorityPipeRuntime:
             self._ready.set()
             while not self._stop.is_set():
                 connected=False
+                authenticated=False
                 try:
                     try:
                         overlapped_io(self._handle,lambda ov:win32pipe.ConnectNamedPipe(self._handle,ov),OperationDeadline(5,self._stop))
@@ -85,6 +86,9 @@ class AuthorityPipeRuntime:
                     # and revert before any decoding, signature or domain work.
                     raw=read_message(MAX_FRAME_BYTES+1)
                     authorize_connected_kernel(self._handle)
+                    authenticated=True
+                    try:decode_frame(raw)
+                    except ValueError:continue  # Wire syntax only; no authority entered.
                     if self._config.role is ServiceRole.IDENTITY:
                         reply=dispatch_stateful_identity_read(self._handle,lambda bound:raw,authority,allowed_case_ids=self._cases)
                     else:
@@ -101,14 +105,17 @@ class AuthorityPipeRuntime:
                 except PipeDeadlineError:
                     from agent_lab.c09_pipe_transport import _halted
                     if _halted.is_set():raise ServiceHostError("native cancellation not acknowledged; host halted")
-                except (ValueError,PermissionError):
-                    # Malformed/unauthorized input confers no authority or reply.
-                    pass
                 except Exception as exc:
-                    # Authenticator/dispatcher errors also deny this connection.
-                    # Store corruption is rechecked by every authority operation.
-                    if not connected:raise
+                    from agent_lab.c09_named_pipe import PipeSecurityError
+                    from agent_lab.c09_identity_dispatch import IdentityDispatchError
                     self._connection_error=exc
+                    if not authenticated and isinstance(exc,PipeSecurityError):continue
+                    if isinstance(exc,PermissionError):continue
+                    if isinstance(exc,IdentityDispatchError) and isinstance(exc.__cause__,PermissionError):continue
+                    # Integrity/internal faults are sticky: never advertise a
+                    # healthy authority or admit another connection afterward.
+                    self._stop.set()
+                    raise
                 finally:
                     if connected:
                         try:win32pipe.DisconnectNamedPipe(self._handle)
