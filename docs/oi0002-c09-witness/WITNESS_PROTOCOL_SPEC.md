@@ -10,6 +10,8 @@ Required independent assumptions are: (1) provider conditional-create and strong
 
 ## Record contract
 
+Owner Option A operational mapping (2026-10-27), pending exact-SHA contract review: preserve this record schema and Custodian MAC protocol; identity_head commits the closed tagged logical-plus-audit preimage specified in `KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md` (identity-witness-commitment/1). IPC 1.1 exposes logical head and exact audit cut separately; they are never interchangeable. Authorized audit-only checkpoints advance witness sequence while logical epoch stays fixed. Existing older vectors remain historical and are not retroactively reinterpreted. Exact preimages, pending cuts, startup prefix-extension checks and no acknowledgement before readback follow that operational section. No new witness authority/field/type or live activation is granted here.
+
 Canonical JSON is UTF-8, lexicographically sorted by key, with no insignificant whitespace, duplicate keys, floats or Unicode normalization ambiguity. Maximum encoded size is 4096 bytes. The exact object key is:
 
 `witness/v1/<deployment-id>/epoch-<20-digit-epoch>/sequence-<20-digit-sequence>.json`
