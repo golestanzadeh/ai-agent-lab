@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+F07 existing SCM composition now uses `src/agent_lab/c09_operational_service_runtime.py` and focused `tests/unit/test_c09_operational_service_runtime.py`: concrete Kernel-to-Identity/Witness client, role-bound authority workers and native pipe lifecycle. It supplies no credentials/enrollment/service installation and does not replace the default fail-closed entrypoint with an unapproved loader. Existing deployment binding/custody and live Human Gates remain prerequisites.
+
 Authorized F07 Kernel/Witness integration adds `src/agent_lab/c09_custodian_operational.py`, `tests/unit/test_c09_custodian_operational.py` and `tests/unit/test_kernel_identity_operational.py` within existing authorities/stores. These implement/test exact Custodian1.1 records, real Kernel gate/manifest issuance and checkpoint release; controlled test ports do not establish live deployment acceptance. Existing SCM composition and logical mutation integration follow independent exact-SHA review.
 
 After Option A contract61d3aa9 independent PASS, authorized focused runtime verification is `tests/unit/test_identity_logical_runtime.py`; it exercises the existing Identity SQLite authority, not a parallel provider. Candidate schema4/enrollment/nonce/result/checkpoint implementation requires separate exact-SHA acceptance. Kernel protocol state/signing and existing SCM composition follow continuously; live protected enrollment/key/service activation remains Human-gated.

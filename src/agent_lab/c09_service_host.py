@@ -119,6 +119,20 @@ class ServiceHost:
             self._runtime = None
             self._state = Lifecycle.STOPPED
 
+    def check_health(self) -> None:
+        with self._lock:
+            if self._state is not Lifecycle.RUNNING or self._runtime is None:
+                raise ServiceHostError("service is not running")
+            check=getattr(self._runtime,"check_health",None)
+            if check is not None:
+                try:check()
+                except Exception as exc:
+                    self._state=Lifecycle.HALTED
+                    try:self._runtime.stop()
+                    except Exception:pass
+                    self._runtime=None
+                    raise ServiceHostError("component health failed closed") from exc
+
 
 def current_process_sid() -> str:
     """Read the actual process token; no caller-supplied identity is accepted."""
@@ -164,14 +178,15 @@ def run_scm_service(role: ServiceRole, runtime_factory=None) -> None:
 
         def SvcStop(self):
             self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
-            self._host.stop()
             win32event.SetEvent(self._stop_event)
 
         def SvcDoRun(self):
             config = ServiceConfiguration.load(fixed_config_path(role), role)
             self._host.start(config, current_process_sid())
             servicemanager.LogInfoMsg(f"{service_name} entered RUNNING")
-            win32event.WaitForSingleObject(self._stop_event, win32event.INFINITE)
+            while win32event.WaitForSingleObject(self._stop_event,500)!=win32event.WAIT_OBJECT_0:
+                self._host.check_health()
+            self._host.stop()  # SQLite shutdown stays on its owning SCM thread.
 
     servicemanager.Initialize()
     servicemanager.PrepareToHostSingle(FixedRoleService)

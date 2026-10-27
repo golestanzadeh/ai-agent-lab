@@ -77,7 +77,7 @@ def actual_named_pipe_client_sid(pipe_handle) -> str:
         import win32con
         import win32pipe
         import win32security
-        win32pipe.ImpersonateNamedPipeClient(pipe_handle)
+        win32security.ImpersonateNamedPipeClient(pipe_handle)
         try:
             token = win32security.OpenThreadToken(win32api.GetCurrentThread(), win32con.TOKEN_QUERY, True)
             try:

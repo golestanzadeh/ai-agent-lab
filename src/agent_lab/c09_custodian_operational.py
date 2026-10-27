@@ -51,13 +51,14 @@ def public_unsigned(raw):
 
 
 class OperationalCustodianRuntime:
-    def __init__(self,*,deployment_id,key_id,protected_key,kernel_key_id,kernel_public_key,replay_db_path):
+    def __init__(self,*,deployment_id,key_id,protected_key,kernel_key_id,kernel_public_key,replay_db_path,fault_injector=None):
         if not isinstance(protected_key,bytes) or len(protected_key)<32:raise ValueError("protected Custodian key unavailable")
         if not isinstance(kernel_public_key,ec.EllipticCurvePublicKey) or not isinstance(kernel_public_key.curve,ec.SECP256R1):raise ValueError("pinned Kernel key unavailable")
         for value in (deployment_id,key_id,kernel_key_id):
             if not isinstance(value,str) or not 1<=len(value.encode())<=256:raise ValueError("pinned Custodian metadata required")
         self._deployment=deployment_id;self._key_id=key_id;self._key=protected_key
         self._kernel_id=kernel_key_id;self._public=kernel_public_key;self._running=False
+        self._fault=fault_injector
         path=Path(replay_db_path).resolve()
         if not path.is_file():raise ValueError("preprovisioned existing Custodian store required")
         self._anchor=path.with_suffix(path.suffix+".custodian11-anchor")
@@ -68,7 +69,9 @@ class OperationalCustodianRuntime:
                 payload_json TEXT NOT NULL,previous_mac TEXT NOT NULL,event_mac TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS custodian11_auth(
                 deployment_id TEXT NOT NULL,transaction_id TEXT NOT NULL,payload_json TEXT NOT NULL,record_mac TEXT NOT NULL,
-                PRIMARY KEY(deployment_id,transaction_id));""")
+                PRIMARY KEY(deployment_id,transaction_id));
+                CREATE TABLE IF NOT EXISTS custodian11_anchor_pending(
+                singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload_json TEXT NOT NULL,receipt_mac TEXT NOT NULL);""")
             self._db.execute("PRAGMA synchronous=FULL")
             if not self._anchor.exists() and not self._db.execute("SELECT 1 FROM custodian11_event").fetchone():self._write_anchor(0,"0"*64)
             self._verify_store()
@@ -91,13 +94,31 @@ class OperationalCustodianRuntime:
             previous=row[5]
             if data["request"]["operation"]=="AUTHENTICATE_WITNESS":expected_auth[(self._deployment,data["request"]["transaction_id"])]=data["auth_record"]
         anchor=json.loads(self._anchor.read_text())
-        if anchor!={"count":str(count),"head":previous,"mac":self._mac({"count":str(count),"head":previous})}:raise ValueError("Custodian anchor gap/deletion")
+        target={"count":str(count),"head":previous}
+        pending=self._db.execute("SELECT payload_json,receipt_mac FROM custodian11_anchor_pending WHERE singleton=1").fetchone()
+        receipt=json.loads(pending[0]) if pending else None
+        if pending and (set(receipt)!={"previous_count","previous_head","count","head"} or pending[1]!=self._mac(receipt) or {k:receipt[k] for k in target}!=target):
+            raise ValueError("Custodian pending anchor receipt corrupt")
+        expected={**target,"mac":self._mac(target)}
+        repair=False
+        if anchor!=expected:
+            prior={"count":receipt["previous_count"],"head":receipt["previous_head"]} if receipt else None
+            if prior is None or anchor!={**prior,"mac":self._mac(prior)} or int(prior["count"])+1!=count:
+                raise ValueError("Custodian anchor gap/deletion")
+            prior_row=self._db.execute("SELECT event_mac FROM custodian11_event WHERE sequence=?",(int(prior["count"]),)).fetchone()
+            if prior["head"]!=(prior_row[0] if prior_row else "0"*64):raise ValueError("Custodian recovery prefix mismatch")
+            repair=True
         observed={}
         for deployment,transaction,payload,mac in self._db.execute("SELECT * FROM custodian11_auth"):
             value=json.loads(payload)
             if mac!=self._mac(value):raise ValueError("Custodian AUTH integrity")
             observed[(deployment,transaction)]=value
         if expected_auth!=observed:raise ValueError("Custodian AUTH completeness")
+        if repair:
+            self._write_anchor(count,previous)
+            if json.loads(self._anchor.read_text())!=expected:raise ValueError("Custodian recovery anchor readback")
+        if pending:
+            self._db.execute("DELETE FROM custodian11_anchor_pending WHERE singleton=1");self._db.commit()
         return count,previous
 
     def start(self):self._verify_store();self._running=True
@@ -152,7 +173,15 @@ class OperationalCustodianRuntime:
             body={"sequence":str(count+1),"request_digest":request["request_digest"],"nonce":request["nonce"],"data":data,"previous_mac":previous}
             mac=self._mac(body)
             self._db.execute("INSERT INTO custodian11_event VALUES(?,?,?,?,?,?)",(count+1,request["request_digest"],request["nonce"],C(data).decode(),previous,mac))
-            self._db.commit();self._write_anchor(count+1,mac)
+            receipt={"previous_count":str(count),"previous_head":previous,"count":str(count+1),"head":mac}
+            self._db.execute("INSERT INTO custodian11_anchor_pending VALUES(1,?,?)",(C(receipt).decode(),self._mac(receipt)))
+            if self._fault:self._fault("BEFORE_COMMIT")
+            self._db.commit()
+            if self._fault:self._fault("AFTER_COMMIT")
+            self._write_anchor(count+1,mac)
+            if self._fault:self._fault("AFTER_ANCHOR")
+            self._verify_store()
+            if self._fault:self._fault("AFTER_RECEIPT_CONSUMED")
             return response
         except BaseException:
             if self._db.in_transaction:self._db.rollback()

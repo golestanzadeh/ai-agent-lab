@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+F07 candidate44fa0c3 independent FAIL findings are corrected in the next candidate: bootstrap refusal audit, authenticated Custodian anchor recovery, no artificial Witness history cap. Existing-role runtime composition now has actual isolated native response/stop/restart verification (not service-principal deployment);65 focused and23 native/security pass. Exact-SHA re-review, deployment bindings/custody, live enrollment and logical mutation implementation remain distinct unresolved prerequisites. No active row closes.
+
 F07 Identity31b2ac44 independently passed its bounded enrollment/read scope; Custodian1.1 contract4cecbd04 independently passed. Kernel/Custodian/Witness integration and exact witnessed-prefix/recovery closure are candidate work, not operational acceptance. Integrated29 tests pass with temporary/controlled ports; SCM composition and mutation continuity remain incomplete. No active row is resolved or removed, and no live protected enrollment is authorized.
 
 Option A contract61d3aa9 independently PASS; decision/specification stop is resolved and stateful implementation has continued. Identity schema4/enrollment/durable read candidate is under exact-SHA review; no live enrollment or operational acceptance is claimed. Kernel proof/checkpoint and existing SCM integration remain in progress. No active OI row closes.

@@ -859,6 +859,22 @@ class IdentityPersistence:
                 for kind,reference in (("OWNER_DECLARATION",item["declaration_artifact_ref"]),("OWNER_CONFIRMATION",item["confirmation_ref"]),("IDENTITY_AUTHORIZATION",item["authorization_ref"]),*(("IDENTITY_AUDIT",ref) for ref in item["audit_lineage"])):
                     self._resolve_evidence(kind,reference,case,year,subject,date.fromisoformat(item["valid_from"]),date.fromisoformat(item["valid_to_exclusive"]))
 
+    @_serialized_identity
+    def record_enrollment_boundary_denial(self,request) -> None:
+        """Revalidate signed Owner bootstrap before a metadata-only refusal audit."""
+        from agent_lab.ipc_operational_read import validate_request
+        logical=self._logical_row()
+        if logical is None or self._continuity_keys is None:raise PermissionError("enrollment unavailable")
+        keys=self._continuity_keys
+        expected={name:request[name] for name in "deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()}
+        validate_request(request,keys.kernel_public_key,expected_scope=expected,
+            expected_key_id=keys.kernel_key_id,now=datetime.now(timezone.utc).replace(tzinfo=None),
+            expected_contract="oi0002.kernel-identity-c09/1.1",bootstrap_artifact=logical["artifact"])
+        if request["message_type"]!="GET_ENROLLMENT_STATUS" or request["deployment_id"]!=logical["deployment_id"]:
+            raise PermissionError("deployment bootstrap required")
+        self._commit("IPC_ENROLLMENT_DENIED",lambda:self._append_audit("IPC_ENROLLMENT_DENIED",None,"REDACTED",
+            {"deployment_id":logical["deployment_id"],"request_digest":request["request_digest"],"reason":"RECONCILIATION_REQUIRED"}))
+
     def record_ipc_boundary_denial(self, *, case_id: str, tax_year: int,
                                    request_digest: str, operation: str) -> None:
         """Audit an authenticated boundary refusal; never authorize/read domain data."""

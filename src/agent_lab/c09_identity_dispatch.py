@@ -27,10 +27,15 @@ def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed
         request=decode_frame(read_message(MAX_FRAME_BYTES+1))
         try:response=authority.read_operational_identity(request,allowed_case_ids=allowed_case_ids)
         except LogicalReconciliationRequired:
-            authority.record_ipc_boundary_denial(case_id=request["case_id"],tax_year=int(request["tax_year"]),request_digest=request["request_digest"],operation=request["domain_operation"])
+            if request["message_type"]=="GET_ENROLLMENT_STATUS":
+                authority.record_enrollment_boundary_denial(request)
+            else:
+                authority.record_ipc_boundary_denial(case_id=request["case_id"],tax_year=int(request["tax_year"]),request_digest=request["request_digest"],operation=request["domain_operation"])
             response={name:request[name] for name in ("contract","message_type","transaction_id","request_digest")}
             response.update(outcome="DENIED",identity_epoch="",identity_head="",identity_audit_count="",identity_audit_head="",staged_receipt_digest="",witness_preimage_digest="",signed_record_digest="",denial_code="RECONCILIATION_REQUIRED",result="")
             response["response_digest"]=canonical_sha256(response)
+            from agent_lab.ipc_operational_read import validate_response
+            validate_response(response,request)
         return encode_frame(response)
     except Exception as exc:raise IdentityDispatchError("stateful Identity read failed closed") from exc
 

@@ -116,3 +116,25 @@ def test_signed_substitution_and_downgrade_rejected(tmp_path,field):
         bad=sign_kernel_proof(bad,KERNEL)
         with pytest.raises((ValueError,PermissionError)):host.handle(bad)
     finally:host.close();identity.close();kernel.close()
+
+
+@pytest.mark.parametrize("boundary",["BEFORE_COMMIT","AFTER_COMMIT","AFTER_ANCHOR","AFTER_RECEIPT_CONSUMED"])
+def test_custodian_anchor_crash_exact_retry(tmp_path,boundary):
+    kernel,identity,owner,pending,host,client,provider,session=fixture(tmp_path);requests=[]
+    def capture(frame,*args,**kwargs):
+        requests.append(decode_frame(frame));raise ConnectionError("capture only")
+    try:
+        with patch("agent_lab.c09_pipe_transport.exchange_custodian_control",side_effect=capture):
+            with pytest.raises(ConnectionError):client.authenticate(pending,KERNEL,"TEST-KERNEL-KEY-1")
+        def fail(stage):
+            if stage==boundary:raise RuntimeError("injected crash")
+        host._fault=fail
+        with pytest.raises(RuntimeError):host.handle(requests[0])
+        host.close()
+        host=OperationalCustodianRuntime(deployment_id=owner["deployment_id"],key_id="TEST-CUSTODIAN-KEY",protected_key=MAC,kernel_key_id="TEST-KERNEL-KEY-1",kernel_public_key=KERNEL.public_key(),replay_db_path=tmp_path/"existing-custodian.sqlite")
+        host.start();response=host.handle(requests[0]);again=host.handle(requests[0])
+        assert response==again
+        assert WitnessRecord.from_bytes(unpack(response["authenticated_record_bytes"]),MAC).operation_id.startswith("AUDIT:")
+        assert host._db.execute("SELECT COUNT(*) FROM custodian11_event").fetchone()[0]==1
+        assert host._db.execute("SELECT COUNT(*) FROM custodian11_anchor_pending").fetchone()[0]==0
+    finally:host.close();identity.close();kernel.close()

@@ -73,3 +73,33 @@ def test_kill_switch_blocks_proof_before_transport(tmp_path):
         with pytest.raises(PermissionDenied):issue(kernel,owner)
         assert kernel._connection.execute("SELECT count(*) FROM identity_kernel_request").fetchone()[0]==0
     finally:identity.close();kernel.close()
+
+
+@pytest.mark.parametrize("attack",["missing_prefix","wrong_prefix","lost_result"])
+def test_bootstrap_reconciliation_returns_audited_correlated_denial(tmp_path,attack):
+    from unittest.mock import patch
+    from agent_lab.identity_logical_continuity import sign_kernel_proof
+    from agent_lab.c09_identity_dispatch import dispatch_stateful_identity_read
+    from agent_lab.ipc_wire_primitives import encode_frame,decode_frame
+    from agent_lab.ipc_operational_read import validate_response
+    kernel,identity,owner,state=bootstrap(tmp_path)
+    try:
+        from contextlib import nullcontext
+        from agent_lab.identity_persistence import LogicalReconciliationRequired
+        from agent_lab.ipc_operational_read import read_projection
+        request=issue(kernel,owner);projection=request["kernel_proof"]["kernel_projection"]
+        if attack=="lost_result":
+            projection["recovery_request_digest"]="sha256:"+"f"*64
+            request["kernel_proof"]["pending_row_digest"]=H(read_projection(request))
+        request=sign_kernel_proof(request,KERNEL)
+        before=identity._audit_head()[0]
+        fault=nullcontext() if attack=="lost_result" else patch.object(identity,"read_operational_identity",side_effect=LogicalReconciliationRequired(attack))
+        with patch("agent_lab.c09_identity_dispatch.authorize_connected_kernel"),patch.object(identity,"_read_protocol_domain",side_effect=AssertionError("no domain access")),fault:
+            result=decode_frame(dispatch_stateful_identity_read(None,lambda bound:encode_frame(request),identity,allowed_case_ids=frozenset()))
+        validate_response(result,request)
+        assert result["outcome"]=="DENIED" and result["denial_code"]=="RECONCILIATION_REQUIRED"
+        assert identity._audit_head()[0]==before+1
+        assert identity._db.execute("SELECT COUNT(*) FROM identity_protocol_attempt").fetchone()[0]==0
+        assert identity._db.execute("SELECT COUNT(*) FROM identity_protocol_result").fetchone()[0]==0
+        identity._verify_audit_continuity()
+    finally:identity.close();kernel.close()

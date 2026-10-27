@@ -104,8 +104,6 @@ class GCSWitnessAdapter:
         page_token: str | None = None
         seen_tokens: set[str] = set()
         while True:
-            if len(seen_tokens)>=100 or len(observed)>10000:
-                raise WitnessError('complete witness history exceeds bounded recovery window')
             params = {'prefix': prefix, 'versions': 'true'}
             if page_token is not None:
                 params['pageToken'] = page_token
@@ -134,8 +132,6 @@ class GCSWitnessAdapter:
                 ):
                     raise WitnessError('multiple versions, deletion, or invalid witness metadata')
                 observed[name] = generation
-                if len(observed)>10000:
-                    raise WitnessError('complete witness history exceeds bounded recovery window')
             next_token = listing.get('nextPageToken')
             if next_token is None:
                 break

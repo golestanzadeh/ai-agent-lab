@@ -23,6 +23,19 @@ class Session:
             return Response(self.upload_status, {'generation': '123'})
         return Response(self.download_status, content=self.payload)
 
+
+def test_complete_history_has_no_artificial_page_or_record_ceiling():
+    class Pages:
+        def request(self,method,path,**kwargs):
+            if path.endswith('/o'):
+                page=int(kwargs['params'].get('pageToken','0'))
+                items=[{'name':f'witness/v1/DEPLOY/{i:020d}','generation':'1'} for i in range(page*100,(page+1)*100)]
+                return Response(200,{'items':items,**({'nextPageToken':str(page+1)} if page<101 else {})})
+            return Response(200,content=b'controlled record')
+    adapter=GCSWitnessAdapter('test',lambda:'writer',lambda:'reader',Pages())
+    records=adapter._read_complete_chain_objects('DEPLOY')
+    assert len(records)==10200
+
 def fixture():
     h = WitnessProtocolHarness()
     h.execute('OP-1')

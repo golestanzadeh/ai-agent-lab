@@ -52,7 +52,20 @@ def overlapped_io(handle, operation, deadline: OperationDeadline):
                 return result,count
     except BaseException:
         if started:
-            try:win32file.CancelIoEx(handle,overlap)
+            try:
+                if hasattr(win32file,"CancelIoEx"):
+                    win32file.CancelIoEx(handle,overlap)
+                else:
+                    # This pywin32 distribution omits the binding. Each owned
+                    # handle has exactly one outstanding operation; native
+                    # CancelIoEx(handle,NULL) cancels it without thread limits.
+                    import ctypes
+                    from ctypes import wintypes
+                    native=ctypes.WinDLL("kernel32",use_last_error=True).CancelIoEx
+                    native.argtypes=[wintypes.HANDLE,ctypes.c_void_p];native.restype=wintypes.BOOL
+                    if not native(int(handle),None):
+                        error=ctypes.get_last_error()
+                        if error!=1168:raise pywintypes.error(error,"CancelIoEx","native cancellation failed")
             except pywintypes.error as exc:
                 if exc.winerror!=1168:
                     _halted.set();_quarantined.append((handle,overlap,result));overlap=None
