@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+Owner reinstated quota-safe controlled stop at authenticated five-hour<=15%, superseding the F07 threshold waiver; explicit Owner authorization is required after that stop. Recovery verified clean remote0917580; authenticated25%/88% differed from Owner-reported81%. Proposed typed protected-resolution/same-Identity-DB atomic-consumption mapping is under independent contract review; no implementation/acceptance/live source binding is claimed and no active row closes.
+
 Final bounded inactive read/runtime/budget implementationba5b8b17a64c81a507ac3004e8600f8bffa09d65 independently PASS (final10 Kernel tests; prior51focused/7native). All scoped findings closed; no active OI row closes. Exact remaining operational mutation prerequisite is the typed protected-resolver trust-root and atomic evidence-consumption contract/interface; default live loader/configuration, actual services, enrollment, mutation/backup/restore and four-principal acceptance remain gated. No quota/global-C09 stop or renewed personal-fact confirmation is required. See canonical checkpoint and existing F07 report for exact continuation/evidence.
 
 Bounded inactive read/runtime896b47e independently PASS51focused/7native; all scoped findings closed. Added narrow durable budget-stop correction passes40 Kernel tests and awaits exact-SHA independent review. Actual services/configs remain absent; protected resolver/atomic evidence-consumption interface, mutation/backup/restore and deployment/enrollment acceptance remain. No active row closes; no global C09 development stop is introduced.
