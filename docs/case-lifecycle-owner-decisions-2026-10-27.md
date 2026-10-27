@@ -61,3 +61,11 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - Focused baseline tests: tests/unit/test_ui_dashboard.py and tests/unit/test_ui_app.py: 33 passed, 1 warning. Owner visual test and independent acceptance PENDING.
 - Existing uncommitted source changes for case creation and Drive provisioning were preserved and excluded from this commit.
 - S1 currently retains the existing default first-case selection when no case_id is supplied; changing that behavior requires a separate tested scope decision before deletion is enabled.
+
+## Owner-reported 2026 creation loop: runtime investigation (2026-10-27)
+- Root cause in case-create confirmation: an empty year yields empty snapshot string; an empty form field may be parsed as None, causing a repeated confirmation. Local backend comparison normalized to (confirmed_cases or '') while still requiring the signed token and current registry snapshot.
+- The actual Uvicorn server on 127.0.0.1:8766 was started at 19:39, before the correction was loaded. Restarted server from the existing local source at 127.0.0.1:8766, confirmed startup.
+- Read-only dashboard HTTP GET: 200 and four 2025 case options. Nonmutating 2026 confirmation preview: HTTP 200, requires_confirmation=true, empty snapshot, proposed CASE-2026-0001.
+- Focused synthetic first-year confirmation regression: PASS (no live case created). Real Owner-confirmed creation remains pending Owner retest; no actual 2026 case created during this investigation.
+- Backend source ui_dashboard.py contains other preexisting uncommitted edits; do not bundle them blindly. This log records operational correction, not full independent acceptance.
+
