@@ -189,7 +189,9 @@ class KernelServiceRuntime:
     """SCM lifetime for the existing Kernel and concrete Identity service client."""
     def __init__(self,config,kernel_factory,*,identity_server,custodian,provider,signing_key,key_id):
         name,sid=ROLE_BINDINGS[ServiceRole.KERNEL]
-        if config.role is not ServiceRole.KERNEL or config.service_name!=name or config.principal_sid!=sid or config.enabled is not True:
+        if (config.schema!="ai-tax-agent.c09-service-config/1.0" or config.role is not ServiceRole.KERNEL or
+            config.service_name!=name or config.principal_sid!=sid or config.enabled is not True or
+            not isinstance(config.deployment_id,str) or not config.deployment_id or len(config.deployment_id.encode())>128):
             raise ServiceHostError("fixed Kernel deployment required")
         self._config=config;self._factory=kernel_factory;self._kernel=None;self.client=None
         self._bindings=dict(identity_server=identity_server,custodian=custodian,provider=provider,signing_key=signing_key,key_id=key_id)
@@ -211,3 +213,7 @@ class KernelServiceRuntime:
     def stop(self):
         self.client=None
         if self._kernel is not None:self._kernel.close();self._kernel=None
+
+
+def create_kernel_service_host(kernel_factory,**bindings):
+    return ServiceHost(ServiceRole.KERNEL,lambda config:KernelServiceRuntime(config,kernel_factory,**bindings))

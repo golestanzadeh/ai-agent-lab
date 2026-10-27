@@ -45,10 +45,12 @@ class ObjectSession:
         return Response(200,content=stored[1]+(b"corrupt" if self.corrupt else b""))
 
 
-def fixture(tmp_path):
+def fixture(tmp_path,*,prepare=True):
     kernel,identity,owner,state=bootstrap(tmp_path)
-    request=issue(kernel,owner);response=identity.read_operational_identity(request,allowed_case_ids=frozenset())
-    pending=kernel.stage_identity_audit_checkpoint(request,response)
+    pending=None
+    if prepare:
+        request=issue(kernel,owner);response=identity.read_operational_identity(request,allowed_case_ids=frozenset())
+        pending=kernel.stage_identity_audit_checkpoint(request,response)
     path=tmp_path/"existing-custodian.sqlite"
     with sqlite3.connect(path):pass
     host=OperationalCustodianRuntime(deployment_id=owner["deployment_id"],key_id="TEST-CUSTODIAN-KEY",protected_key=MAC,kernel_key_id="TEST-KERNEL-KEY-1",kernel_public_key=KERNEL.public_key(),replay_db_path=path)

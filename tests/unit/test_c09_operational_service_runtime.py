@@ -26,6 +26,19 @@ def test_actual_wrong_service_token_cannot_open_authority():
     assert opened==[]
 
 
+def test_kernel_service_wrong_token_and_stopped_client(tmp_path):
+    from agent_lab.c09_operational_service_runtime import KernelServiceRuntime
+    name,sid=ROLE_BINDINGS[ServiceRole.KERNEL]
+    config=ServiceConfiguration("ai-tax-agent.c09-service-config/1.0","TEST-DEPLOYMENT",ServiceRole.KERNEL,name,sid,True)
+    opened=[]
+    runtime=KernelServiceRuntime(config,lambda cfg:opened.append(cfg),identity_server=None,custodian=None,provider=None,signing_key=None,key_id="")
+    with patch("agent_lab.c09_operational_service_runtime.current_process_sid",return_value="UNAUTHORIZED"):
+        with pytest.raises(ServiceHostError,match="token"):runtime.start()
+    assert opened==[] and runtime.client is None
+    runtime.stop()
+    with pytest.raises(ServiceHostError,match="stopped"):runtime.check_health()
+
+
 @pytest.mark.skipif(sys.platform!="win32",reason="real native Windows pipe")
 @pytest.mark.parametrize("authorized",[True,False])
 def test_actual_native_authority_response_and_stop_restart(tmp_path,authorized):
@@ -59,3 +72,23 @@ def test_actual_native_authority_response_and_stop_restart(tmp_path,authorized):
                 finally:runtime.stop()
                 assert not runtime._thread.is_alive()
     finally:kernel.close()
+
+
+def test_concrete_kernel_service_client_releases_only_after_witness(tmp_path):
+    from agent_lab.c09_operational_service_runtime import KernelIdentityServiceClient
+    from agent_lab.identity_logical_continuity import H
+    from test_c09_custodian_operational import fixture,rpc
+    from test_identity_logical_runtime import KERNEL
+    kernel,identity,owner,pending,host,custodian,provider,session=fixture(tmp_path,prepare=False)
+    pin=PinnedProcess(ROLE_BINDINGS[ServiceRole.IDENTITY][1],r"C:\Controlled\Identity.exe","sha256:"+"b"*64)
+    client=KernelIdentityServiceClient(kernel,deployment_id=owner["deployment_id"],identity_server=pin,custodian=custodian,provider=provider,signing_key=KERNEL,key_id="TEST-KERNEL-KEY-1")
+    def identity_port(frame,*args,**kwargs):
+        assert not session.objects
+        request=decode_frame(frame)
+        return encode_frame(identity.read_operational_identity(request,allowed_case_ids=frozenset()))
+    try:
+        with patch("agent_lab.c09_pipe_transport.exchange_operational_identity_read",side_effect=identity_port),patch("agent_lab.c09_pipe_transport.exchange_custodian_control",side_effect=rpc(host)):
+            result=client.read(manifest_id=owner["bootstrap_manifest_id"],task_id=owner["bootstrap_task_id"],run_id=owner["bootstrap_run_id"],case_id="*",tax_year="*",operation="READ_ENROLLMENT_STATUS",payload={"enrollment_id":owner["enrollment_id"],"owner_authorization_digest":H(owner)},authorization_references=[H(owner)])
+        assert result["outcome"]=="ENROLLMENT_READY" and len(session.objects)==1
+        assert kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_checkpoint WHERE payload_json LIKE '%RELEASED%'").fetchone()[0]==1
+    finally:host.close();identity.close();kernel.close()
