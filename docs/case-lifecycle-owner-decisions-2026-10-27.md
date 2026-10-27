@@ -92,3 +92,7 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 5. Verify post-delete SQLite and Drive states independently and report actual success/failure for each. Never report success for partial completion; preserve audit lineage and number-reuse contract.
 - Completed workflow cases cannot be deleted. Deleting the final case of a tax year requires the previously approved additional warning. Google Drive trash/permanent-deletion semantics must be disclosed accurately.
 - This sequence supersedes any earlier ambiguous UI preview order. Owner has not selected any specific real case for deletion; implementation and synthetic testing only until the Owner confirms a target in the UI.
+## Stage 2 implementation increment: non-mutating preflight
+- Added src/agent_lab/empty_case_preflight.py. It checks exact authorized case/year, canonical SQLite integrity and anchor, lifecycle CREATED, durable runs, mutation requests, state references and completed storage provisioning before accessing Drive.
+- Drive inspection verifies exact case root, expected structural subfolders and that each is empty using paginated Google Drive API listing. Unexpected objects, mismatched scope, incomplete provisioning or API failures fail closed.
+- This is an implementation increment only: no destructive endpoint or user-facing delete action is enabled. The persistence layer still needs an audited deletion transaction, identity tombstone/number reuse, cross-store recovery and post-delete readback. Do not claim the feature is ready for Owner deletion testing.
