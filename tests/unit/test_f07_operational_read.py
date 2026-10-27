@@ -83,3 +83,34 @@ def test_unacknowledged_io_is_retained_and_future_exchanges_halt(monkeypatch):
     assert transport._halted.is_set() and len(transport._quarantined)==1
     assert closed==[]
     with pytest.raises(PipeDeadlineError):transport.exchange_operational_identity_read(b"not-parsed",None)
+
+
+def test_dispatcher_audits_denial_and_never_calls_domain_read(tmp_path):
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from f07_contract_vectors import sign
+    from test_identity_persistence import open_store
+    from agent_lab.c09_identity_dispatch import dispatch_operational_identity_read
+    _,authority=open_store(tmp_path)
+    request=deepcopy(V["vectors"][3]["request"])
+    request.update(case_id="C1",tax_year="2025")
+    request=sign(request,ec.derive_private_key(1,ec.SECP256R1()))
+    scope={name:request[name] for name in SCOPE}
+    try:
+        with patch("agent_lab.c09_identity_dispatch.authorize_connected_kernel"),patch.object(authority,"read_facts",side_effect=AssertionError("domain read forbidden")):
+            response=decode_frame(dispatch_operational_identity_read(None,lambda size:encode_frame(request),authority,KEY,expected_scope=scope,expected_key_id="TEST-KERNEL-KEY-1",now=NOW))
+        assert response["outcome"]=="DENIED" and response["result"]==""
+        validate_response(response,request)
+        authority._verify_audit_continuity()
+        assert authority._audit_head()[0]==1
+    finally:authority.close()
+    _,reopened=open_store(tmp_path)
+    try:assert reopened._audit_head()[0]==1
+    finally:reopened.close()
+
+
+def test_dispatcher_rejects_wrong_principal_before_reading_frame():
+    from agent_lab.c09_identity_dispatch import dispatch_operational_identity_read,IdentityDispatchError
+    observed=[]
+    with patch("agent_lab.c09_identity_dispatch.authorize_connected_kernel",side_effect=PermissionError("wrong SID")):
+        with pytest.raises(IdentityDispatchError):dispatch_operational_identity_read(None,lambda n:observed.append(n),None,KEY,expected_scope=SCOPE,expected_key_id="TEST-KERNEL-KEY-1",now=NOW)
+    assert observed==[]

@@ -562,6 +562,17 @@ class IdentityPersistence:
         if not allowed:
             self._failure("SECURITY_DENIED", case_id, "case authorization denied", permission=True)
 
+    def record_ipc_boundary_denial(self, *, case_id: str, tax_year: int,
+                                   request_digest: str, operation: str) -> None:
+        """Audit an authenticated boundary refusal; never authorize/read domain data."""
+        case=self._cases.get(case_id)
+        if case is None or type(tax_year) is not int or case.tax_period.year!=tax_year:
+            raise PermissionError("IPC case/year mismatch")
+        if operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS"} or not SHA_REFERENCE.fullmatch(request_digest):
+            raise ValueError("invalid IPC denial metadata")
+        self._commit("IPC_BOUNDARY_DENIED",lambda:self._append_audit("IPC_BOUNDARY_DENIED",case_id,"REDACTED",
+            {"request_digest":request_digest,"operation":operation,"reason":"CONTINUITY_CONTRACT_REQUIRED"}))
+
     def verify_runtime_cases(self, records: tuple) -> None:
         """Validate composition metadata without exposing protected identity rows."""
         if self._authorize is None:
