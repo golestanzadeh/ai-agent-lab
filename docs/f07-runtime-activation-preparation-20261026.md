@@ -1,5 +1,38 @@
 # F07 governed runtime activation preparation
 
+## Final bounded F07 integration outcome — 2026-10-27
+
+Overall mission: `BLOCKED_SPEC_GAP / LOGICAL_CONTINUITY_BOOTSTRAP`. Safe components: `INDEPENDENT_BOUNDED_IMPLEMENTATION_PASS` at exact4052b5b32b48617920959bbc2c822f06caf5cced, separate read-only reviewer `/root/c09_architecture_independent_review`. No full F07 implementation/operational PASS is claimed. No residual defect was reproduced in the bounded components. Source/contract/fixtures at the reviewed commit are unchanged by final reporting.
+
+| Phase | Actual completed scope / boundary |
+| --- | --- |
+| A client/transport | Operational read-only closed schema/proof/response validation, golden-vector compatibility, strict configured scope and canonical bytes; native authenticated server exchange. No proof signer or authority grant. |
+| B deadline/cancel | Shared monotonic connect/write/read deadline, explicit cancellation, peer-process/token retention, bounded cancellation acknowledgement, buffer/handle quarantine and sticky transport halt on ambiguous unacknowledged I/O; no automatic retry. Cleanup acknowledgement has a bounded one-second grace after operation expiry. |
+| C dispatcher | Actual Kernel token checked before parsing; signed schema validated; existing IdentityPersistence durably records privacy-minimized refusal before returning correlated DENIED/TEMPORARY_FAILURE. Cannot call domain read, return READ_OK or consume an operational proof. |
+| D SCM/stateful composition | Not implemented/accepted: blocked at logical-continuity/genesis contract mapping below. Existing fail-closed entrypoints remain; no fake replacement runtime was wired. |
+| E verification | Worker final372 F07/IPC/host,88 Kernel/Identity/F06/F07 regression and18 documentation passed; independent73 focused/native passed; no real four-principal/SCM or protected-data acceptance. |
+| F independent review | Bounded PASS only; no self-approval, service/cloud/protected-state action or operational acceptance. |
+
+Implementation lineage: c5b494712b609dfa3cc81d586920e282aeb9351e (client/schema/native transport), 9fa9394d78c8c5cadb53de8043bb8aa46650611e (audited denial and precise state-mapping stop), 4052b5b32b48617920959bbc2c822f06caf5cced (adversarial/read-specific/audit-failure evidence and normalized errors). Independent initial9fa review found medium malformed outgoing frame ValueError leakage before the closed PipeSecurityError boundary;4052 corrected c09_pipe_transport.py lines76–77. No residual bounded finding remained.
+
+Independent commands, PYTHONPATH=src;tests/unit, exact4052:
+
+- `python -m pytest -q -p no:cacheprovider --basetemp C:\Users\rezag\ai-agent-lab\.tmp-f07-independent-review tests/unit/test_f07_operational_read.py`:63 passed, exit0.
+- Same command with `tests/unit/test_f07_native_transport.py`:10 passed, exit0; actual Windows Named Pipes outside process isolation, current-user-only ephemeral endpoints, not service principals.
+- `git diff --check 9fa9394d78c8c5cadb53de8043bb8aa46650611e 4052b5b32b48617920959bbc2c822f06caf5cced`:exit0.
+
+Final worker command `python -m pytest -q tests/unit/test_f07_operational_read.py tests/unit/test_f07_native_transport.py tests/unit/test_f07_contract_resolution.py tests/unit/test_ipc_wire_primitives.py tests/unit/test_ipc_envelope.py tests/unit/test_ipc_response.py tests/unit/test_c09_named_pipe.py tests/unit/test_c09_pipe_transport.py tests/unit/test_c09_identity_boundary.py tests/unit/test_c09_service_host.py tests/unit/test_c09_scm_factory_wiring.py`:372 passed,exit0. Existing Kernel/Identity/runtime regression88 and documentation18 commands/results below remain valid. Native/proof/audit fault cases are development evidence, not operational activation.
+
+Read-only SCM query opened only SCM_CONNECT and SERVICE_QUERY_STATUS for AITaxKernel and AITaxIdentity: both Windows error1060, both fixed config paths absent, current token Owner SID ending1001. No operational Kernel/Kill Switch state is available; UNKNOWN must not be interpreted as RUNNING or permission. An initial inventory invocation lacked PYTHONPATH and exited1/no evidence; corrected query exited0. No service installation, process impersonation as a service, existing ACL mutation, credential/key/cloud/provider/real taxpayer operation occurred.
+
+### Exact next Owner decision (not approved by this report)
+
+Choose/authorize the bounded logical-continuity contract clarification before stateful implementation. Two materially different models remain possible: **A**, one Identity-owned logical epoch/head per deployment, with exact case/year authorization and a separately bound audit head; **B**, logical epoch/head per case/year plus a defined aggregate deployment commitment for the existing Witness. Neither is silently selected; the current Kernel table is case/year-scoped while Witness has one deployment chain and conflates audit/head wording. The decision must also explicitly authorize the initial enrollment/genesis evidence of an existing populated Identity DB, then freeze canonical genesis/next-head preimages, separate audit commitments and atomic proof/domain/head/audit effects. Live enrollment remains an Owner Human Gate, not implied by approving design. No new database, orchestrator, protocol authority or arbitrary trusted-head callback is permitted.
+
+After that bounded clarification receives independent contract acceptance, continue the same mission with versioned state in the existing service DBs, authenticated READ_OK dispatcher, Kernel proof reservation/signing and actual SCM runtime composition; then exact-SHA independent implementation and separately gated real-principal deployment tests. No new ordinary development approval or quota reset is required to repair this already-authorized mission, but unresolved contract semantics cannot be invented by the worker.
+
+Quota is not the stop reason. Telemetry observed a reset from12%/69% to93%/99% without any agent reset call or reported service interruption. Authenticated reporting snapshot2026-10-27T13:55:03Z: five-hour88%,reset2026-10-27T18:50:02Z; weekly98%,reset2026-11-03T13:50:02Z. Owner's mission-only reserve/positive-threshold exception remains binding; no general policy was weakened. No active OPEN_ITEMS row closes. Approval, Submission, protected persistence/data/provider operations and C09/OI-0002/OI-0003 operational acceptance remain disabled/unaccepted.
+
 ## Operational integration implementation in progress — 2026-10-27
 
 ### Independently confirmed state-mapping boundary
