@@ -19,14 +19,14 @@ class IdentityClientError(RuntimeError):
 
 def exchange_operational_identity_read(request_frame, expected_server, public_key, *,
                                        expected_scope, now, expected_key_id,
-                                       deadline=None):
+                                       deadline=None,contract_version="oi0002.kernel-identity-c09/1.0",bootstrap_artifact=None):
     """Validate the frozen operational read profile; never create authority/proofs."""
     from agent_lab.ipc_operational_read import validate_request,validate_response
     from agent_lab.ipc_wire_primitives import decode_frame
     from agent_lab.c09_pipe_transport import exchange_operational_identity_read as exchange
     try:
         request=decode_frame(request_frame)
-        validate_request(request,public_key,expected_scope=expected_scope,now=now,expected_key_id=expected_key_id)
+        validate_request(request,public_key,expected_scope=expected_scope,now=now,expected_key_id=expected_key_id,expected_contract=contract_version,bootstrap_artifact=bootstrap_artifact)
         response=decode_frame(exchange(request_frame,expected_server,deadline=deadline))
         validate_response(response,request)
         return response

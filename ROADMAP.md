@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+Authorized F07 Kernel/Witness integration adds `src/agent_lab/c09_custodian_operational.py`, `tests/unit/test_c09_custodian_operational.py` and `tests/unit/test_kernel_identity_operational.py` within existing authorities/stores. These implement/test exact Custodian1.1 records, real Kernel gate/manifest issuance and checkpoint release; controlled test ports do not establish live deployment acceptance. Existing SCM composition and logical mutation integration follow independent exact-SHA review.
+
 After Option A contract61d3aa9 independent PASS, authorized focused runtime verification is `tests/unit/test_identity_logical_runtime.py`; it exercises the existing Identity SQLite authority, not a parallel provider. Candidate schema4/enrollment/nonce/result/checkpoint implementation requires separate exact-SHA acceptance. Kernel protocol state/signing and existing SCM composition follow continuously; live protected enrollment/key/service activation remains Human-gated.
 
 Owner-approved Option A F07 continuation (2026-10-27) authorizes value helpers in `src/agent_lab/identity_logical_continuity.py`, focused `tests/unit/test_identity_logical_continuity.py` and canonical fixture `tests/fixtures/f07-option-a-v1.json`, then versioned stateful extensions in the existing Identity/Kernel databases and existing SCM composition after independent contract PASS. No live protected enrollment is authorized. The existing v2 Permission Matrix gets a denied-by-default A6 exact-Owner-broker bootstrap metadata capability, never a standing role grant; existing identity_read retains case/run scope.

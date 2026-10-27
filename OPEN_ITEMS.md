@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+F07 Identity31b2ac44 independently passed its bounded enrollment/read scope; Custodian1.1 contract4cecbd04 independently passed. Kernel/Custodian/Witness integration and exact witnessed-prefix/recovery closure are candidate work, not operational acceptance. Integrated29 tests pass with temporary/controlled ports; SCM composition and mutation continuity remain incomplete. No active row is resolved or removed, and no live protected enrollment is authorized.
+
 Option A contract61d3aa9 independently PASS; decision/specification stop is resolved and stateful implementation has continued. Identity schema4/enrollment/durable read candidate is under exact-SHA review; no live enrollment or operational acceptance is claimed. Kernel proof/checkpoint and existing SCM integration remain in progress. No active OI row closes.
 
 F07 Option A second review010ae815 found two remaining bootstrap-capability/identifier exactness issues; closed Owner-broker A6 binding and golden identifier corrections are awaiting exact-SHA re-review. Prior four findings are resolved; no Owner architecture question is reopened. Canonical helpers pass11 focused tests, without enrollment/activation. All active OI rows remain.

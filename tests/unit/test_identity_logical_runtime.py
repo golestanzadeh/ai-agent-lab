@@ -47,12 +47,14 @@ def enrolled(path):
     return store,value,logical
 
 
-def request_for(logical,*,case="C1",year="2025",nonce="a"*64,transaction="tx:v1:123e4567-e89b-42d3-a456-426614174001",operation="READ_CASE_IDENTITY"):
+def request_for(logical,*,case="C1",year="2025",nonce="a"*64,transaction="tx:v1:123e4567-e89b-42d3-a456-426614174001",operation="READ_CASE_IDENTITY",recovery_digest="",witnessed_cut=None):
     index={"READ_CASE_IDENTITY":1,"LIST_PARTIES":2,"READ_FACTS":3}[operation]
     value=deepcopy(V["vectors"][index]["request"])
     value.update(contract="oi0002.kernel-identity-c09/1.1",case_id=case,tax_year=year,transaction_id=transaction,authorization_references=[A1 if case=="C1" else B1],expected_epoch=str(logical["epoch"]),expected_head=logical["head"])
     value["payload"]={"subject_id":"" if operation=="LIST_PARTIES" else "P1","as_of_date":"" if operation=="READ_FACTS" else year+"-06-01"}
     value["kernel_proof"]["nonce"]=nonce
+    count,head=witnessed_cut or (logical["artifact"]["enrollment_audit_count"],logical["artifact"]["enrollment_audit_head"])
+    value["kernel_proof"]["kernel_projection"]={"witnessed_audit_count":count,"witnessed_audit_head":head,"recovery_request_digest":recovery_digest}
     return sign(value,KERNEL)
 
 
@@ -78,7 +80,7 @@ def test_read_consumption_audit_checkpoint_and_stored_snapshot_retry(tmp_path):
     assert result["identity_head"]==logical["head"] and result["identity_epoch"]=="0"
     assert int(result["identity_audit_count"])==before+1
     with pytest.raises(PermissionError):store.read_operational_identity(request,allowed_case_ids=frozenset({"C1"}),now=NOW)
-    retry=request_for(logical,nonce="b"*64)
+    retry=request_for(logical,nonce="b"*64,recovery_digest=request["request_digest"])
     with patch.object(store,"read_case_identity",side_effect=AssertionError("cached result must not reread")):
         repeated=store.read_operational_identity(retry,allowed_case_ids=frozenset({"C1"}),now=NOW)
     assert repeated["result"]==result["result"]
@@ -163,3 +165,22 @@ def test_read_postcommit_anchor_interruption_fails_closed(tmp_path):
     assert store._db.execute("SELECT COUNT(*) FROM identity_protocol_attempt").fetchone()[0]==1
     store._db.close()
     with pytest.raises(ValueError,match="anchor continuity"):store_at(path)
+
+
+@pytest.mark.parametrize("attack",["missing_prefix","wrong_prefix","lost_result"])
+def test_witnessed_prefix_and_recovery_checked_before_domain_access(tmp_path,attack):
+    store,_,logical=enrolled(tmp_path/"identity.sqlite")
+    first=request_for(logical)
+    before=store._audit_head()
+    kwargs={"nonce":"e"*64}
+    if attack=="missing_prefix":kwargs["witnessed_cut"]=(str(before[0]+100),"sha256:"+"a"*64)
+    elif attack=="wrong_prefix":kwargs["witnessed_cut"]=(str(before[0]),"sha256:"+"a"*64)
+    else:kwargs["recovery_digest"]=first["request_digest"]
+    request=request_for(logical,**kwargs)
+    try:
+        with patch.object(store,"read_case_identity",side_effect=AssertionError("no domain access before reconciliation")):
+            with pytest.raises(PermissionError,match="prefix|unavailable"):
+                store.read_operational_identity(request,allowed_case_ids=frozenset({"C1"}),now=NOW)
+        assert store._audit_head()==before
+        assert store._db.execute("SELECT COUNT(*) FROM identity_protocol_attempt").fetchone()[0]==0
+    finally:store.close()

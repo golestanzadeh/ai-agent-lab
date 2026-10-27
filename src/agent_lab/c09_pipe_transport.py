@@ -68,15 +68,12 @@ def overlapped_io(handle, operation, deadline: OperationDeadline):
         if overlap is not None:win32file.CloseHandle(overlap.hEvent)
 
 
-def exchange_operational_identity_read(frame: bytes, expected_server: PinnedProcess,
-                                       *, deadline: OperationDeadline | None = None) -> bytes:
-    """Frozen operational read transport; no mutation or automatic retry after write."""
+def _exchange_canonical(frame: bytes,expected_server: PinnedProcess,*,pipe_name,deadline=None):
+    """Shared bounded byte transport; public role wrappers close the allowlist."""
     from agent_lab.ipc_wire_primitives import decode_frame
     if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
     try:request=decode_frame(frame)
     except ValueError as exc:raise PipeSecurityError("invalid operational frame") from exc
-    if request.get("contract")!="oi0002.kernel-identity-c09/1.0" or request.get("message_type")!="READ_IDENTITY_STATE":
-        raise PipeSecurityError("only operational read frames are permitted")
     deadline=deadline or OperationDeadline()
     import pywintypes
     import win32con
@@ -87,7 +84,7 @@ def exchange_operational_identity_read(frame: bytes, expected_server: PinnedProc
         while handle is None:
             deadline.milliseconds()
             try:
-                handle=win32file.CreateFile(IDENTITY_PIPE,win32con.GENERIC_READ|win32con.GENERIC_WRITE,0,None,win32con.OPEN_EXISTING,win32con.FILE_FLAG_OVERLAPPED,None)
+                handle=win32file.CreateFile(pipe_name,win32con.GENERIC_READ|win32con.GENERIC_WRITE,0,None,win32con.OPEN_EXISTING,win32con.FILE_FLAG_OVERLAPPED,None)
             except pywintypes.error as exc:
                 if exc.winerror not in (2,231):raise
                 deadline.cancellation.wait(min(.01,deadline.milliseconds()/1000))
@@ -104,6 +101,25 @@ def exchange_operational_identity_read(frame: bytes, expected_server: PinnedProc
     except Exception as exc:raise PipeSecurityError("operational read exchange failed; reconciliation required") from exc
     finally:
         if handle is not None and not any(entry[0]==handle for entry in _quarantined):win32file.CloseHandle(handle)
+
+
+def exchange_operational_identity_read(frame,expected_server,*,deadline=None):
+    if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
+    from agent_lab.ipc_wire_primitives import decode_frame
+    try:request=decode_frame(frame)
+    except ValueError as exc:raise PipeSecurityError("invalid operational frame") from exc
+    if request.get("contract") not in {"oi0002.kernel-identity-c09/1.0","oi0002.kernel-identity-c09/1.1"} or request.get("message_type") not in {"READ_IDENTITY_STATE","GET_ENROLLMENT_STATUS"} or request.get("message_type")=="GET_ENROLLMENT_STATUS" and request.get("contract")!="oi0002.kernel-identity-c09/1.1":raise PipeSecurityError("only operational read frames are permitted")
+    return _exchange_canonical(frame,expected_server,pipe_name=IDENTITY_PIPE,deadline=deadline)
+
+
+def exchange_custodian_control(frame,expected_server,*,deadline=None):
+    if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
+    from agent_lab.ipc_wire_primitives import decode_frame
+    from agent_lab.c09_named_pipe import CUSTODIAN_PIPE
+    try:request=decode_frame(frame)
+    except ValueError as exc:raise PipeSecurityError("invalid Custodian frame") from exc
+    if request.get("contract")!="ai-tax-agent.c09-custodian/1.1" or request.get("operation") not in {"AUTHENTICATE_WITNESS","VERIFY_WITNESS"}:raise PipeSecurityError("closed Custodian control required")
+    return _exchange_canonical(frame,expected_server,pipe_name=CUSTODIAN_PIPE,deadline=deadline)
 
 
 def exchange_identity_read(frame: bytes, expected_server: PinnedProcess) -> bytes:

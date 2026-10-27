@@ -165,6 +165,7 @@ class OrchestratorKernel:
 
     def __init__(self, database_path: Path | str, contract_root: Path | str) -> None:
         self.database_path = Path(database_path)
+        self._identity_verified_heads={}
         self.contract_root = Path(contract_root)
         self.contracts = self._load_contracts()
         self.contract_set_id = self.contracts["contract-set.json"]["contract_set_id"]
@@ -420,6 +421,12 @@ class OrchestratorKernel:
                     expires_at TEXT NOT NULL,
                     consumed_at TEXT
                 );
+                CREATE TABLE IF NOT EXISTS identity_kernel_state (
+                    deployment_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL,digest TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS identity_kernel_request (
+                    nonce TEXT PRIMARY KEY,payload_json TEXT NOT NULL,digest TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS identity_kernel_checkpoint (
+                    checkpoint_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL,digest TEXT NOT NULL);
                 """
             )
             row = self._connection.execute(
@@ -432,6 +439,9 @@ class OrchestratorKernel:
                 )
             elif row["version"] != KERNEL_SCHEMA_VERSION:
                 raise ContractError("unsupported orchestrator database schema")
+            identity_version=self._connection.execute("SELECT version FROM kernel_schema WHERE component='identity_ipc'").fetchone()
+            if identity_version is None:self._connection.execute("INSERT INTO kernel_schema VALUES('identity_ipc',1)")
+            elif identity_version[0]!=1:raise ContractError("unsupported Identity IPC Kernel component")
             created = self._connection.execute(
                 "INSERT OR IGNORE INTO kill_switch(singleton, state, updated_at, authority_reference) VALUES(1, 'HALTED', ?, 'SYSTEM_SAFE_DEFAULT')",
                 (_utc_now().isoformat(),),
@@ -1334,6 +1344,246 @@ class OrchestratorKernel:
                 return KernelDecision(False, "DENY", "case/run scope mismatch")
         return KernelDecision(True, "ALLOW", "capability matches active manifest and scope")
 
+    def _verify_identity_protocol_state(self):
+        self.verify_audit_chain()
+        expected={}
+        for row in self._connection.execute("SELECT entity_id,payload_json FROM audit_events WHERE event_type='IDENTITY_PROTOCOL_RECORDED' ORDER BY event_id"):
+            expected[row["entity_id"]]=json.loads(row["payload_json"])["payload_digest"]
+        observed={}
+        for table,key in (("identity_kernel_state","deployment_id"),("identity_kernel_request","nonce"),("identity_kernel_checkpoint","checkpoint_id")):
+            for row in self._connection.execute("SELECT * FROM "+table):
+                payload=json.loads(row["payload_json"])
+                if _digest(payload)!=row["digest"]:raise IntegrityError("Kernel Identity row integrity failure")
+                observed[table+":"+row[key]]=row["digest"]
+        if expected!=observed:raise IntegrityError("Kernel Identity protocol deletion/substitution")
+
+    def _identity_payload(self,table,key,value):
+        if (table,key) not in {("identity_kernel_state","deployment_id"),("identity_kernel_request","nonce"),("identity_kernel_checkpoint","checkpoint_id")}:raise ContractError("closed Identity ledger required")
+        row=self._connection.execute("SELECT payload_json FROM "+table+" WHERE "+key+"=?",(value,)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def _store_identity_payload(self,table,key,value,payload):
+        self._identity_payload(table,key,value)
+        digest=_digest(payload)
+        self._connection.execute("INSERT INTO "+table+" VALUES(?,?,?) ON CONFLICT("+key+") DO UPDATE SET payload_json=excluded.payload_json,digest=excluded.digest",(value,_canonical(payload),digest))
+        self._append_event("IDENTITY_PROTOCOL_RECORDED","IDENTITY_PROTOCOL",table+":"+value,"AGENT_FACTORY_KERNEL",{"payload_digest":digest})
+
+    def bind_identity_enrollment(self,artifact,owner_public_key,owner_key_id):
+        """Exact Owner broker action; ordinary A6 Agent permission stays denied."""
+        from agent_lab.identity_logical_continuity import verify_enrollment,H,genesis_preimage
+        digest=verify_enrollment(artifact,owner_public_key,owner_key_id,_utc_now())
+        self._verify_identity_protocol_state()
+        row=self._manifest_row(artifact["bootstrap_manifest_id"]);payload=json.loads(row["payload_json"])
+        gate=self._connection.execute("SELECT * FROM task_human_gates WHERE task_id=? AND trigger='IDENTITY_ENROLLMENT'",(artifact["bootstrap_task_id"],)).fetchone()
+        if (gate is None or gate["status"]!="APPROVED" or gate["authority_reference"]!=digest or row["state"]!="ACTIVE" or _parse_timestamp(row["expires_at"],"expires_at")<=_utc_now() or self.kill_switch_state()!="RUNNING" or payload["scope"]["case_context"] is not None or payload["inputs"].count(digest)!=1):raise PermissionDenied("exact active Owner enrollment gate/manifest required")
+        for column,field in (("task_id","bootstrap_task_id"),("actor_instance_id","bootstrap_actor_instance_id"),("role_id","bootstrap_role_id")):
+            if row[column]!=artifact[field]:raise PermissionDenied("Owner enrollment broker scope mismatch")
+        task=self._connection.execute("SELECT payload_json FROM tasks WHERE task_id=?",(row["task_id"],)).fetchone()
+        if json.loads(task[0])["inputs"].count(digest)!=1:raise PermissionDenied("Owner reference missing from task")
+        with self.atomic_execution():
+            old=self._identity_payload("identity_kernel_state","deployment_id",artifact["deployment_id"])
+            if old:
+                if old["artifact_digest"]!=digest:raise PermissionDenied("deployment enrollment conflict")
+                return old
+            state={"artifact":artifact,"artifact_digest":digest,"store_id":artifact["store_id"],"logical_epoch":"0","logical_head":H(genesis_preimage(artifact)),"status":"GENESIS_PENDING","witness_epoch":0,"witness_sequence":0,"previous_record":"sha256:"+"0"*64,"last_cut":None}
+            self._store_identity_payload("identity_kernel_state","deployment_id",artifact["deployment_id"],state)
+            return state
+
+    def issue_identity_read(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
+                            operation,payload,authorization_references,signing_key,key_id,transaction_id=None):
+        """Reserve in the real Kernel, reread durable authority, then sign once."""
+        import secrets,uuid
+        from datetime import timedelta
+        from agent_lab.identity_logical_continuity import H,sign_kernel_proof
+        from agent_lab.ipc_operational_read import read_projection,validate_request
+        self._verify_identity_protocol_state()
+        with self.atomic_execution():
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            if state is None:raise PermissionDenied("enrollment unavailable")
+            manifest=self._manifest_row(manifest_id);manifest_payload=json.loads(manifest["payload_json"])
+            bootstrap=operation=="READ_ENROLLMENT_STATUS"
+            if bootstrap:
+                owner=state["artifact"]
+                if state["status"]!="GENESIS_PENDING" or self.kill_switch_state()!="RUNNING":raise PermissionDenied("bootstrap already consumed or halted")
+                for actual,expected in ((manifest_id,owner["bootstrap_manifest_id"]),(task_id,owner["bootstrap_task_id"]),(run_id,owner["bootstrap_run_id"]),(manifest["actor_instance_id"],owner["bootstrap_actor_instance_id"]),(manifest["role_id"],owner["bootstrap_role_id"])):
+                    if actual!=expected:raise PermissionDenied("bootstrap binding mismatch")
+                gate=self._connection.execute("SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='IDENTITY_ENROLLMENT'",(task_id,)).fetchone()
+                if gate is None or tuple(gate)!=("APPROVED",state["artifact_digest"]) or manifest["state"]!="ACTIVE" or manifest_payload["scope"]["case_context"] is not None or _parse_timestamp(owner["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("bootstrap gate expired/revoked")
+                if (case_id,tax_year)!=("*","*") or authorization_references!=[state["artifact_digest"]]:raise PermissionDenied("bootstrap authority reference mismatch")
+                capability="identity_enrollment_status";message="GET_ENROLLMENT_STATUS";scope_kind="DEPLOYMENT_STORE"
+            else:
+                if state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"] or operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS"}:raise PermissionDenied("fresh externally verified genesis/read state required")
+                self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,case_id=case_id,tax_year=tax_year,run_id=run_id,operation=operation)
+                if not self.permission_decision(manifest_id,"identity_read",case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:raise PermissionDenied("Kernel identity_read denied")
+                if len(authorization_references)!=1 or authorization_references[0] not in manifest_payload["inputs"]:raise PermissionDenied("authorization not in manifest input")
+                capability="identity_read";message="READ_IDENTITY_STATE";scope_kind="CASE_YEAR"
+            if _parse_timestamp(manifest["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("manifest expired")
+            if not self.consume_budget(manifest_id,tool_calls=1).allowed:raise PermissionDenied("read budget exhausted")
+            now=_utc_now();expiry=min(now+timedelta(seconds=5),_parse_timestamp(manifest["expires_at"],"expires_at"))
+            if bootstrap:expiry=min(expiry,_parse_timestamp(state["artifact"]["expires_at"],"expires_at"))
+            stamp=lambda value:value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            version=self._connection.execute("SELECT COALESCE(MAX(event_id),0)+1 FROM audit_events").fetchone()[0]
+            request={"contract":"oi0002.kernel-identity-c09/1.1","message_type":message,"transaction_id":transaction_id or "tx:v1:"+str(uuid.uuid4()),"request_digest":"","deployment_id":deployment_id,"scope_kind":scope_kind,"case_id":case_id,"tax_year":str(tax_year),"run_id":run_id,"task_id":task_id,"manifest_id":manifest_id,"actor_instance_id":manifest["actor_instance_id"],"role_id":manifest["role_id"],"capability":capability,"domain_operation":operation,"expected_epoch":state["logical_epoch"],"expected_head":state["logical_head"],"authorization_references":authorization_references,"expires_at":stamp(expiry),"payload":payload,"prepared_request_digest":"","kernel_proof":{"proof_version":"1","key_id":key_id,"algorithm":"ECDSA-P256-SHA256","pending_row_digest":"","kernel_projection":{},"authorization_state_version":str(version),"nonce":secrets.token_hex(32),"issued_at":stamp(now),"not_after":stamp(expiry),"signature":""}}
+            first=None
+            for stored in self._connection.execute("SELECT payload_json FROM identity_kernel_request"):
+                value=json.loads(stored[0])
+                if value["status"]=="DISPATCHED" and value["request"]["transaction_id"]==request["transaction_id"] and value["request"]["message_type"]==message:
+                    if first is None or int(value["request"]["kernel_proof"]["authorization_state_version"])<int(first["request"]["kernel_proof"]["authorization_state_version"]):first=value
+            if first:
+                from copy import deepcopy
+                before=deepcopy(first["request"]);after=deepcopy(request)
+                for item in (before,after):
+                    for name in ("request_digest","kernel_proof","expires_at"):item.pop(name)
+                if H(before)!=H(after):raise PermissionDenied("recovery stage content changed")
+            cut=state["last_cut"]
+            request["kernel_proof"]["kernel_projection"]={"witnessed_audit_count":owner["enrollment_audit_count"] if bootstrap else cut["audit_cut_count"],"witnessed_audit_head":owner["enrollment_audit_head"] if bootstrap else cut["audit_cut_head"],"recovery_request_digest":first["first_request_digest"] if first else ""}
+            request["kernel_proof"]["kernel_projection"]=read_projection(request)
+            request["kernel_proof"]["pending_row_digest"]=H(request["kernel_proof"]["kernel_projection"])
+            nonce=request["kernel_proof"]["nonce"]
+            self._store_identity_payload("identity_kernel_request","nonce",nonce,{"request":request,"status":"RESERVED"})
+        # Reservation is committed before any proof leaves the Kernel.
+        self._verify_identity_protocol_state()
+        with self.atomic_execution():
+            stored=self._identity_payload("identity_kernel_request","nonce",nonce)
+            if stored["request"]!=request or self.kill_switch_state()!="RUNNING" or self._manifest_row(manifest_id)["state"]!="ACTIVE":raise PermissionDenied("reservation authority changed")
+            signed=sign_kernel_proof(request,signing_key)
+            expected={name:signed[name] for name in "deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()}
+            validate_request(signed,signing_key.public_key(),expected_scope=expected,now=_utc_now().replace(tzinfo=None),expected_key_id=key_id,expected_contract="oi0002.kernel-identity-c09/1.1",bootstrap_artifact=state["artifact"] if bootstrap else None)
+            self._store_identity_payload("identity_kernel_request","nonce",nonce,{"request":signed,"status":"DISPATCHED","first_request_digest":signed["kernel_proof"]["kernel_projection"]["recovery_request_digest"] or signed["request_digest"]})
+            return signed
+
+    def stage_identity_audit_checkpoint(self,request,response):
+        """Persist the observed result and receipt before any Witness/Custodian I/O."""
+        from copy import deepcopy
+        from agent_lab.identity_logical_continuity import H,checkpoint_identifiers,witness_commitment,witness_slot
+        from agent_lab.ipc_operational_read import validate_response
+        from agent_lab.c09_witness_protocol import WitnessRecord,canonical_bytes
+        from agent_lab.c09_custodian_operational import pack
+        self._verify_identity_protocol_state();validate_response(response,request)
+        if response["outcome"] not in {"READ_OK","ENROLLMENT_READY"}:raise PermissionDenied("no successful Identity result to checkpoint")
+        with self.atomic_execution():
+            issued=self._identity_payload("identity_kernel_request","nonce",request["kernel_proof"]["nonce"])
+            if issued is None or issued["status"]!="DISPATCHED" or issued["request"]!=request:raise IntegrityError("unreserved/substituted Identity result")
+            state=self._identity_payload("identity_kernel_state","deployment_id",request["deployment_id"])
+            if state is None:raise IntegrityError("deployment missing")
+            if response["identity_head"]!=state["logical_head"] or response["identity_epoch"]!=state["logical_epoch"]:raise IntegrityError("unexpected logical read head")
+            if response["outcome"]=="ENROLLMENT_READY":
+                owner=state["artifact"]
+                expected={"enrollment_id":owner["enrollment_id"],"store_id":owner["store_id"],"owner_authorization_digest":state["artifact_digest"],"domain_snapshot_digest":owner["domain_snapshot_digest"],"genesis_head":state["logical_head"]}
+                if response["result"]!=expected or state["status"]!="GENESIS_PENDING":raise IntegrityError("genesis enrollment substitution/reuse")
+            cp_id,operation_id=checkpoint_identifiers(request["deployment_id"],request["transaction_id"],request["request_digest"],response["response_digest"])
+            old=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",cp_id)
+            if old:return old
+            for row in self._connection.execute("SELECT payload_json FROM identity_kernel_checkpoint"):
+                previous=json.loads(row[0])
+                if previous["receipt"]["deployment_id"]==request["deployment_id"] and previous["status"]=="AUDIT_CHECKPOINT_PENDING":raise StateTransitionError("earlier audit checkpoint requires reconciliation")
+            if state["last_cut"] is not None and int(response["identity_audit_count"])<=int(state["last_cut"]["audit_cut_count"]):raise IntegrityError("audit cut not advancing")
+            stable=deepcopy(request)
+            for name in ("request_digest","kernel_proof","expires_at"):stable.pop(name)
+            receipt={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":state["store_id"],"checkpoint_id":cp_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":H(stable),"response_outcome":response["outcome"],"logical_epoch":response["identity_epoch"],"logical_head":response["identity_head"],"audit_cut_count":response["identity_audit_count"],"audit_cut_head":response["identity_audit_head"],"backup_generation":state["artifact"]["backup_generation"]}
+            composite=witness_commitment(deployment_id=request["deployment_id"],logical_epoch=response["identity_epoch"],logical_head=response["identity_head"],audit_cut_count=response["identity_audit_count"],audit_cut_head=response["identity_audit_head"])
+            epoch,sequence=witness_slot(state["witness_epoch"],state["witness_sequence"],state["previous_record"])
+            event=self._append_event("IDENTITY_AUDIT_CHECKPOINT_PENDING","IDENTITY_CHECKPOINT",cp_id,"AGENT_FACTORY_KERNEL",{"receipt_digest":H(receipt),"witness_epoch":epoch,"witness_sequence":sequence,"previous_record":state["previous_record"]})
+            pending_head=self._connection.execute("SELECT event_hash FROM audit_events WHERE event_id=?",(event,)).fetchone()[0]
+            record=WitnessRecord("ai-tax-agent.c09-witness/1",request["deployment_id"],epoch,sequence,state["previous_record"],pending_head,H(composite),int(receipt["backup_generation"]),operation_id)
+            pending={"status":"AUDIT_CHECKPOINT_PENDING","receipt":receipt,"composite":composite,"request":request,"response":response,"unsigned_record_bytes":pack(canonical_bytes(record.unsigned())),"signed_record_bytes":"","generation":"","object_key":record.object_key}
+            self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",cp_id,pending)
+            return pending
+
+    def _current_identity_release_authority(self,pending):
+        request=pending["request"];manifest=self._manifest_row(request["manifest_id"])
+        if self.kill_switch_state()!="RUNNING" or manifest["state"]!="ACTIVE" or _parse_timestamp(manifest["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("current release authority unavailable")
+        for name in ("task_id","actor_instance_id","role_id"):
+            if manifest[name]!=request[name]:raise PermissionDenied("release task/actor/role changed")
+        if request["message_type"]=="READ_IDENTITY_STATE":
+            if not self.permission_decision(request["manifest_id"],"identity_read",case_id=request["case_id"],tax_year=int(request["tax_year"]),run_id=request["run_id"]).allowed:raise PermissionDenied("read release denied")
+        else:
+            gate=self._connection.execute("SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='IDENTITY_ENROLLMENT'",(request["task_id"],)).fetchone()
+            if gate is None or tuple(gate)!=("APPROVED",request["payload"]["owner_authorization_digest"]):raise PermissionDenied("enrollment release gate changed")
+
+    def witness_identity_checkpoint(self,checkpoint_id,*,custodian,provider,signing_key,kernel_key_id):
+        """Concrete authenticated ports only; no boolean 'witness_ready' authority."""
+        from agent_lab.c09_custodian_operational import CustodianServiceClient,pack,unpack
+        from agent_lab.c09_gcs_witness_adapter import GCSWitnessAdapter
+        from agent_lab.c09_witness_protocol import WitnessRecord,ZERO,digest
+        if not isinstance(custodian,CustodianServiceClient) or not isinstance(provider,GCSWitnessAdapter):raise PermissionDenied("accepted concrete Custodian/GCS interfaces required")
+        self._verify_identity_protocol_state()
+        pending=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id)
+        if pending is None:raise IntegrityError("checkpoint unavailable")
+        self._current_identity_release_authority(pending)
+        if pending["status"]=="RELEASED":
+            state=self._identity_payload("identity_kernel_state","deployment_id",pending["receipt"]["deployment_id"])
+            if self._identity_verified_heads.get(pending["receipt"]["deployment_id"])!=state["previous_record"]:self.verify_identity_witness_state(pending["receipt"]["deployment_id"],custodian=custodian,provider=provider,signing_key=signing_key,kernel_key_id=kernel_key_id)
+            return pending["response"]
+        deployment=pending["receipt"]["deployment_id"]
+        if custodian.deployment_id!=deployment:raise PermissionDenied("Custodian deployment mismatch")
+        if pending["status"]=="AUDIT_CHECKPOINT_PENDING":
+            if not pending["signed_record_bytes"]:
+                raw=custodian.authenticate(pending,signing_key,kernel_key_id)
+                pending["signed_record_bytes"]=pack(raw)
+                with self.atomic_execution():self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id,pending)
+            raw=unpack(pending["signed_record_bytes"],4096);record=WitnessRecord.from_public_bytes(raw)
+            # Inspect the complete external history before any conditional retry.
+            chain=provider.read_complete_chain(deployment)
+            previous=ZERO;epoch=1;sequence=1;seen=set();found=None;last=None
+            for generation,payload in chain:
+                self._current_identity_release_authority(pending)
+                observed=custodian.verify(payload,generation,pending["receipt"]["transaction_id"],signing_key,kernel_key_id)
+                ordinary=observed.record_type=="COMMIT" and (observed.epoch,observed.sequence)==(epoch,sequence)
+                restore=observed.record_type=="RESTORE" and observed.epoch==epoch+1 and observed.sequence==1
+                if observed.deployment_id!=deployment or observed.previous_record!=previous or observed.operation_id in seen or not (ordinary or restore):raise IntegrityError("external Witness chain fork/gap")
+                if observed.object_key==record.object_key:
+                    if payload!=raw:raise IntegrityError("reserved Witness slot substituted")
+                    found=generation
+                previous=observed.commitment;seen.add(observed.operation_id);epoch=observed.epoch;sequence=observed.sequence+1;last=observed
+            if found is None:
+                if record.previous_record!=previous or (record.epoch,record.sequence)!=(epoch,sequence):raise IntegrityError("Witness/local predecessor mismatch")
+                self._current_identity_release_authority(pending)
+                generation=provider.append_authenticated(raw)
+            else:
+                if last.object_key!=record.object_key:raise IntegrityError("unreconciled Witness history ahead")
+                generation=found
+            readback=provider.readback_authenticated(raw,generation)
+            verified=custodian.verify(readback,generation,pending["receipt"]["transaction_id"],signing_key,kernel_key_id)
+            if verified.to_bytes()!=raw or verified.object_key!=pending["object_key"]:raise IntegrityError("Witness readback substitution")
+            with self.atomic_execution():
+                self._current_identity_release_authority(pending)
+                pending.update(status="WITNESSED",generation=generation)
+                self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id,pending)
+                state=self._identity_payload("identity_kernel_state","deployment_id",deployment)
+                state.update(status="ACTIVE",witness_epoch=record.epoch,witness_sequence=record.sequence,previous_record=record.commitment,last_cut=pending["composite"])
+                self._store_identity_payload("identity_kernel_state","deployment_id",deployment,state)
+            self._identity_verified_heads[deployment]=record.commitment
+        elif self._identity_verified_heads.get(deployment)!=self._identity_payload("identity_kernel_state","deployment_id",deployment)["previous_record"]:
+            self.verify_identity_witness_state(deployment,custodian=custodian,provider=provider,signing_key=signing_key,kernel_key_id=kernel_key_id)
+        with self.atomic_execution():
+            self._current_identity_release_authority(pending)
+            if pending["status"]!="WITNESSED":raise IntegrityError("result cannot precede Witness")
+            pending["status"]="RELEASED"
+            self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id,pending)
+            return pending["response"]
+
+    def verify_identity_witness_state(self,deployment_id,*,custodian,provider,signing_key,kernel_key_id):
+        """Re-establish freshness from the entire authenticated external chain."""
+        from agent_lab.c09_custodian_operational import CustodianServiceClient
+        from agent_lab.c09_gcs_witness_adapter import GCSWitnessAdapter
+        from agent_lab.identity_logical_continuity import H
+        from agent_lab.c09_witness_protocol import ZERO
+        if not isinstance(custodian,CustodianServiceClient) or not isinstance(provider,GCSWitnessAdapter) or custodian.deployment_id!=deployment_id:raise PermissionDenied("concrete current deployment interfaces required")
+        self._identity_verified_heads.pop(deployment_id,None)
+        self._verify_identity_protocol_state();state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+        if state is None or state["status"]!="ACTIVE" or state["last_cut"] is None:raise PermissionDenied("witnessed deployment unavailable")
+        previous=ZERO;epoch=1;sequence=1;seen=set();last=None
+        for generation,raw in provider.read_complete_chain(deployment_id):
+            record=custodian.verify(raw,generation,"VERIFY:"+previous[7:].upper(),signing_key,kernel_key_id)
+            ordinary=record.record_type=="COMMIT" and (record.epoch,record.sequence)==(epoch,sequence)
+            restore=record.record_type=="RESTORE" and record.epoch==epoch+1 and record.sequence==1
+            if record.deployment_id!=deployment_id or record.previous_record!=previous or record.operation_id in seen or not (ordinary or restore):raise IntegrityError("Witness startup chain fork/gap")
+            seen.add(record.operation_id);previous=record.commitment;epoch=record.epoch;sequence=record.sequence+1;last=record
+        if last is None or last.commitment!=state["previous_record"] or last.identity_head!=H(state["last_cut"]) or (last.epoch,last.sequence)!=(state["witness_epoch"],state["witness_sequence"]):raise IntegrityError("Kernel rollback/ahead state versus external Witness")
+        self._identity_verified_heads[deployment_id]=last.commitment
+        return state["last_cut"]
+
     def _identity_continuity_context(
         self, *, manifest_id: str, task_id: str, case_id: str, tax_year: int,
         run_id: str, operation: str,
@@ -1763,6 +2013,9 @@ class OrchestratorKernel:
             "milestone_packages": rows("SELECT * FROM milestone_packages ORDER BY authority_id, sequence"),
             "stop_diagnostics": rows("SELECT * FROM stop_diagnostics ORDER BY diagnostic_id"),
             "dispatch_attempts": rows("SELECT * FROM dispatch_attempts ORDER BY task_id, ordinal"),
+            "identity_kernel_state": rows("SELECT * FROM identity_kernel_state ORDER BY deployment_id"),
+            "identity_kernel_request": rows("SELECT * FROM identity_kernel_request ORDER BY nonce"),
+            "identity_kernel_checkpoint": rows("SELECT * FROM identity_kernel_checkpoint ORDER BY checkpoint_id"),
         }
 
     def recover_latest_checkpoint(self) -> dict[str, Any]:

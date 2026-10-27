@@ -16,6 +16,25 @@ class IdentityDispatchError(RuntimeError):
     pass
 
 
+def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed_case_ids):
+    """Actual token first; only the existing authority can consume and read."""
+    from agent_lab.identity_persistence import IdentityPersistence,LogicalReconciliationRequired
+    from agent_lab.ipc_wire_primitives import decode_frame,encode_frame,canonical_sha256
+    from agent_lab.c09_named_pipe import MAX_FRAME_BYTES
+    try:
+        authorize_connected_kernel(pipe_handle)
+        if not isinstance(authority,IdentityPersistence):raise IdentityDispatchError("existing Identity authority required")
+        request=decode_frame(read_message(MAX_FRAME_BYTES+1))
+        try:response=authority.read_operational_identity(request,allowed_case_ids=allowed_case_ids)
+        except LogicalReconciliationRequired:
+            authority.record_ipc_boundary_denial(case_id=request["case_id"],tax_year=int(request["tax_year"]),request_digest=request["request_digest"],operation=request["domain_operation"])
+            response={name:request[name] for name in ("contract","message_type","transaction_id","request_digest")}
+            response.update(outcome="DENIED",identity_epoch="",identity_head="",identity_audit_count="",identity_audit_head="",staged_receipt_digest="",witness_preimage_digest="",signed_record_digest="",denial_code="RECONCILIATION_REQUIRED",result="")
+            response["response_digest"]=canonical_sha256(response)
+        return encode_frame(response)
+    except Exception as exc:raise IdentityDispatchError("stateful Identity read failed closed") from exc
+
+
 def dispatch_operational_identity_read(pipe_handle,read_message,authority,public_key,*,
                                        expected_scope,expected_key_id,now=None):
     """Authenticated/audited denial until logical continuity bootstrap is accepted.

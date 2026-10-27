@@ -175,6 +175,17 @@ def checkpoint_identifiers(deployment_id,transaction_id,request_digest,response_
     return "CP:"+suffix,"AUDIT:"+suffix.upper()
 
 
+def sign_kernel_proof(request,private_key):
+    """Kernel-owned key only; caller must first durably reserve the exact request."""
+    from agent_lab.ipc_operational_read import unsigned,signing_bytes
+    if not isinstance(private_key,ec.EllipticCurvePrivateKey) or not isinstance(private_key.curve,ec.SECP256R1):raise ValueError("pinned Kernel P-256 key required")
+    value=deepcopy(request)
+    value["request_digest"]=H(unsigned(value,True))
+    r,s=utils.decode_dss_signature(private_key.sign(signing_bytes(value),ec.ECDSA(hashes.SHA256())))
+    value["kernel_proof"]["signature"]=base64.urlsafe_b64encode(r.to_bytes(32,"big")+min(s,ORDER-s).to_bytes(32,"big")).rstrip(b"=").decode()
+    return value
+
+
 def domain_result(connection,operation,case_id,tax_year,object_id):
     """Exact committed-row projection; caller retains all authority checks."""
     number(tax_year);text(case_id);text(object_id)

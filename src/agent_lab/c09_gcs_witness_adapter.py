@@ -5,6 +5,7 @@ Caller supplies independent credentials and MAC key; never logs them.
 from __future__ import annotations
 
 from urllib.parse import quote
+import re
 
 import requests
 from .c09_witness_protocol import WitnessError, WitnessRecord, verify_chain
@@ -45,6 +46,26 @@ class GCSWitnessAdapter:
         self.verify_exact(record, mac_key, generation)
         return generation
 
+    def append_authenticated(self,record_bytes: bytes):
+        """Transport exact Custodian output; public parsing confers no authenticity."""
+        record=WitnessRecord.from_public_bytes(record_bytes)
+        endpoint='https://storage.googleapis.com/upload/storage/v1/b/'+quote(self.bucket,safe='')+'/o'
+        response=self._request('POST',endpoint,params={'uploadType':'media','name':record.object_key,'ifGenerationMatch':'0'},headers={'Content-Type':'application/json'},data=record_bytes)
+        if response.status_code!=200:raise WitnessError('conditional append denied or ambiguous: HTTP '+str(response.status_code))
+        try:generation=str(response.json()['generation'])
+        except (ValueError,KeyError,TypeError) as exc:raise WitnessError('generation unavailable') from exc
+        if not re.fullmatch(r'[1-9][0-9]{0,29}',generation):raise WitnessError('invalid generation')
+        self.readback_authenticated(record_bytes,generation)
+        return generation
+
+    def readback_authenticated(self,record_bytes: bytes,generation: str):
+        record=WitnessRecord.from_public_bytes(record_bytes)
+        if not isinstance(generation,str) or not re.fullmatch(r'[1-9][0-9]{0,29}',generation):raise WitnessError('invalid exact generation')
+        endpoint='https://storage.googleapis.com/storage/v1/b/'+quote(self.bucket,safe='')+'/o/'+quote(record.object_key,safe='')
+        response=self._request('GET',endpoint,reader=True,params={'alt':'media','generation':generation})
+        if response.status_code!=200 or response.content!=record_bytes:raise WitnessError('exact authenticated bytes readback mismatch')
+        return response.content
+
     def verify_exact(self, record: WitnessRecord, mac_key: bytes, generation: str):
         record.verify(mac_key)
         endpoint = 'https://storage.googleapis.com/storage/v1/b/' + quote(self.bucket, safe='') + '/o/' + quote(record.object_key, safe='')
@@ -67,7 +88,11 @@ class GCSWitnessAdapter:
 
     def read_complete_chain(self, deployment_id: str) -> tuple[tuple[str, bytes], ...]:
         """WitnessClient-compatible generation/bytes view of the complete chain."""
-        return tuple((generation, payload) for _name, generation, payload in self._read_complete_chain_objects(deployment_id))
+        output=[]
+        for name,generation,payload in self._read_complete_chain_objects(deployment_id):
+            if WitnessRecord.from_public_bytes(payload).object_key!=name:raise WitnessError('Witness content/object-key substitution')
+            output.append((generation,payload))
+        return tuple(output)
 
     def _read_complete_chain_objects(self, deployment_id: str) -> tuple[tuple[str, str, bytes], ...]:
         """Read every strongly-listed generation; any pagination ambiguity denies."""
@@ -79,6 +104,8 @@ class GCSWitnessAdapter:
         page_token: str | None = None
         seen_tokens: set[str] = set()
         while True:
+            if len(seen_tokens)>=100 or len(observed)>10000:
+                raise WitnessError('complete witness history exceeds bounded recovery window')
             params = {'prefix': prefix, 'versions': 'true'}
             if page_token is not None:
                 params['pageToken'] = page_token
@@ -101,12 +128,14 @@ class GCSWitnessAdapter:
                 generation = item.get('generation')
                 if (
                     not isinstance(name, str) or not name.startswith(prefix)
-                    or not isinstance(generation, str) or not generation.isdigit()
+                    or not isinstance(generation, str) or not re.fullmatch(r'[1-9][0-9]{0,29}',generation)
                     or item.get('timeDeleted') is not None
                     or name in observed
                 ):
                     raise WitnessError('multiple versions, deletion, or invalid witness metadata')
                 observed[name] = generation
+                if len(observed)>10000:
+                    raise WitnessError('complete witness history exceeds bounded recovery window')
             next_token = listing.get('nextPageToken')
             if next_token is None:
                 break

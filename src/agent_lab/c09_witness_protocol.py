@@ -89,13 +89,20 @@ class WitnessRecord:
         return replace(self, mac="hmac-sha256:" + tag)
 
     def verify(self, key: bytes) -> None:
+        self.validate_public_schema()
+        expected = self.signed(key).mac
+        if not isinstance(self.mac, str) or not hmac.compare_digest(expected, self.mac):
+            raise WitnessError("invalid witness authentication")
+
+    def validate_public_schema(self) -> None:
+        """Public syntax only. Never a substitute for Custodian authentication."""
         if self.protocol != PROTOCOL or type(self.epoch) is not int or type(self.sequence) is not int:
             raise WitnessError("invalid witness contract")
-        if self.epoch < 1 or self.sequence < 1:
+        if not 1<=self.epoch<10**20 or not 1<=self.sequence<10**20:
             raise WitnessError("invalid witness contract")
-        if not re.fullmatch(r"[A-Z][A-Z0-9-]{2,63}", self.deployment_id):
+        if not isinstance(self.deployment_id,str) or not re.fullmatch(r"[A-Z][A-Z0-9-]{2,63}", self.deployment_id):
             raise WitnessError("invalid deployment identity")
-        if not re.fullmatch(r"[A-Z][A-Z0-9:-]{2,127}", self.operation_id):
+        if not isinstance(self.operation_id,str) or not re.fullmatch(r"[A-Z][A-Z0-9:-]{2,127}", self.operation_id):
             raise WitnessError("invalid operation identity")
         if self.record_type not in {"COMMIT", "RESTORE"}:
             raise WitnessError("invalid record type")
@@ -112,9 +119,7 @@ class WitnessRecord:
             raise WitnessError("invalid Owner authorization commitment")
         if type(self.backup_generation) is not int or self.backup_generation < 0:
             raise WitnessError("invalid backup generation")
-        expected = self.signed(key).mac
-        if not isinstance(self.mac, str) or not hmac.compare_digest(expected, self.mac):
-            raise WitnessError("invalid witness authentication")
+        if not isinstance(self.mac,str) or not re.fullmatch(r"hmac-sha256:[0-9a-f]{64}",self.mac):raise WitnessError("invalid MAC spelling")
         if len(self.to_bytes()) > 4096:
             raise WitnessError("witness record too large")
 
@@ -123,6 +128,13 @@ class WitnessRecord:
 
     @classmethod
     def from_bytes(cls, payload: bytes, key: bytes) -> "WitnessRecord":
+        record=cls.from_public_bytes(payload)
+        record.verify(key)
+        return record
+
+    @classmethod
+    def from_public_bytes(cls,payload: bytes) -> "WitnessRecord":
+        """Parse exact bytes without access to the Custodian key (NOT verified)."""
         if not isinstance(payload, bytes) or len(payload) > 4096:
             raise WitnessError("invalid witness encoding")
         try:
@@ -144,7 +156,7 @@ class WitnessRecord:
             record = cls(**value)
         except TypeError as exc:
             raise WitnessError("witness schema mismatch") from exc
-        record.verify(key)
+        record.validate_public_schema()
         return record
 
     @property

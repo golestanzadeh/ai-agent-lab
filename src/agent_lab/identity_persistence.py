@@ -36,6 +36,9 @@ PARTY_ROLES = frozenset({
 EXCLUSIVE_ROLES = frozenset({"PRIMARY_TAXPAYER", "SPOUSE_OR_PARTNER"})
 
 
+class LogicalReconciliationRequired(PermissionError):pass
+
+
 def _serialized_identity(method):
     """Bounded OS exclusion spans SQLite commit AND external anchor replacement."""
     @wraps(method)
@@ -331,20 +334,20 @@ class IdentityPersistence:
             data=json.loads(row["payload_json"])
             if row["nonce"]!=data["request"]["kernel_proof"]["nonce"] or row["request_digest"]!=data["request"]["request_digest"] or row["transaction_id"]!=data["request"]["transaction_id"]:raise ValueError("attempt index substitution")
             expected.append(self._mac(data["audit_details"]))
-            checkpoints.add(data["checkpoint_id"]);results.add((row["transaction_id"],"READ_IDENTITY_STATE"))
+            checkpoints.add(data["checkpoint_id"]);results.add((row["transaction_id"],data["request"]["message_type"]))
             request=data["request"];response=data["response"]
             validate_response(response,request)
             details={"request_digest":request["request_digest"],"nonce_commitment":H({"deployment_id":request["deployment_id"],"nonce":row["nonce"]}),"result_digest":H(response["result"]),"logical_head":response["identity_head"]}
             if data["audit_details"]!=details:raise ValueError("attempt/audit result binding failure")
             cp=self._db.execute("SELECT * FROM identity_audit_checkpoint WHERE checkpoint_id=?",(data["checkpoint_id"],)).fetchone()
-            cache=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type='READ_IDENTITY_STATE'",(row["transaction_id"],)).fetchone()
+            cache=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type=?",(row["transaction_id"],request["message_type"])).fetchone()
             if cp is None or cache is None:raise ValueError("committed read result/checkpoint missing")
             cached=json.loads(cache["payload_json"])
             if cached["result"]!=response["result"]:raise ValueError("cached result substitution")
             checkpoint=json.loads(cp["payload_json"]);receipt=checkpoint["receipt"]
             cp_id,_=checkpoint_identifiers(request["deployment_id"],request["transaction_id"],request["request_digest"],response["response_digest"])
             if cp_id!=data["checkpoint_id"] or cp["response_digest"]!=response["response_digest"]:raise ValueError("checkpoint index substitution")
-            receipt_expected={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":cp_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":cached["stage_content_digest"],"response_outcome":"READ_OK","logical_epoch":response["identity_epoch"],"logical_head":response["identity_head"],"audit_cut_count":response["identity_audit_count"],"audit_cut_head":response["identity_audit_head"],"backup_generation":logical["backup_generation"]}
+            receipt_expected={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":cp_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":cached["stage_content_digest"],"response_outcome":response["outcome"],"logical_epoch":response["identity_epoch"],"logical_head":response["identity_head"],"audit_cut_count":response["identity_audit_count"],"audit_cut_head":response["identity_audit_head"],"backup_generation":logical["backup_generation"]}
             if receipt!=receipt_expected:raise ValueError("checkpoint receipt substitution")
             prefix=self._db.execute("SELECT event_mac FROM identity_audit WHERE event_id=?",(int(receipt["audit_cut_count"]),)).fetchone()
             if prefix is None or "sha256:"+prefix[0]!=receipt["audit_cut_head"]:raise ValueError("checkpoint audit prefix unavailable")
@@ -756,9 +759,15 @@ class IdentityPersistence:
         if now.tzinfo is None:raise ValueError("aware verification time required")
         scope_names="deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()
         scope={name:request[name] for name in scope_names}
-        validate_request(request,keys.kernel_public_key,expected_scope=scope,now=now.astimezone(timezone.utc).replace(tzinfo=None),expected_key_id=keys.kernel_key_id,expected_contract="oi0002.kernel-identity-c09/1.1")
+        bootstrap=request.get("message_type")=="GET_ENROLLMENT_STATUS"
+        local=self._logical_row()
+        if local is None:raise PermissionError("Identity authority has no accepted enrollment")
+        if bootstrap:
+            from agent_lab.identity_logical_continuity import verify_enrollment
+            verify_enrollment(local["artifact"],keys.owner_public_key,keys.owner_key_id,now)
+        validate_request(request,keys.kernel_public_key,expected_scope=scope,now=now.astimezone(timezone.utc).replace(tzinfo=None),expected_key_id=keys.kernel_key_id,expected_contract="oi0002.kernel-identity-c09/1.1",bootstrap_artifact=local["artifact"] if bootstrap else None)
         case=self._cases.get(request["case_id"])
-        if not isinstance(allowed_case_ids,frozenset) or case is None or request["case_id"] not in allowed_case_ids or str(case.tax_period.year)!=request["tax_year"] or len(request["authorization_references"])!=1:raise PermissionError("exact configured case/year/authorization scope required")
+        if not bootstrap and (not isinstance(allowed_case_ids,frozenset) or case is None or request["case_id"] not in allowed_case_ids or str(case.tax_period.year)!=request["tax_year"] or len(request["authorization_references"])!=1):raise PermissionError("exact configured case/year/authorization scope required")
         self._verify_audit_continuity();self._verify_data_integrity();self._verify_logical_integrity()
         from copy import deepcopy
         stable=deepcopy(request)
@@ -768,18 +777,28 @@ class IdentityPersistence:
         try:
             logical=self._logical_row()
             if logical is None or logical["deployment_id"]!=request["deployment_id"] or str(logical["epoch"])!=request["expected_epoch"] or logical["head"]!=request["expected_head"]:raise PermissionError("missing/stale logical continuity")
+            projection=request["kernel_proof"]["kernel_projection"]
+            prefix_count=int(projection["witnessed_audit_count"])
+            prefix=self._db.execute("SELECT event_mac FROM identity_audit WHERE event_id=?",(prefix_count,)).fetchone() if prefix_count else None
+            prefix_head="sha256:"+(prefix[0] if prefix is not None else "0"*64)
+            if (prefix_count and prefix is None) or prefix_head!=projection["witnessed_audit_head"]:raise LogicalReconciliationRequired("witnessed audit prefix missing or divergent")
             nonce=request["kernel_proof"]["nonce"]
             if self._db.execute("SELECT 1 FROM identity_protocol_attempt WHERE nonce=?",(nonce,)).fetchone():raise PermissionError("proof nonce already consumed")
-            cached=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type='READ_IDENTITY_STATE'",(request["transaction_id"],)).fetchone()
+            cached=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type=?",(request["transaction_id"],request["message_type"])).fetchone()
+            recovery=projection["recovery_request_digest"]
+            if recovery:
+                prior=self._db.execute("SELECT transaction_id FROM identity_protocol_attempt WHERE request_digest=?",(recovery,)).fetchone()
+                if cached is None or prior is None or prior[0]!=request["transaction_id"]:raise LogicalReconciliationRequired("original committed result unavailable; no reexecution")
+            elif cached is not None:raise LogicalReconciliationRequired("fresh proof omitted original dispatched digest")
             self._protocol_transaction=True;self._protocol_context=request
             if cached:
                 original=json.loads(cached["payload_json"])
-                if original["stage_content_digest"]!=stage_digest:raise PermissionError("read transaction content substitution")
+                if original["stage_content_digest"]!=stage_digest or original["original_request_digest"]!=recovery:raise LogicalReconciliationRequired("read recovery content/original digest mismatch")
                 result=original["result"]
                 # Revalidate current lifecycle/evidence even for stored snapshot reuse.
-                self._revalidate_read_snapshot(request,result)
+                if not bootstrap:self._revalidate_read_snapshot(request,result)
             else:
-                values=self._read_protocol_domain(request)
+                values=() if bootstrap else self._read_protocol_domain(request)
                 def encode(value):
                     if value is None:return ""
                     if isinstance(value,Enum):return value.value
@@ -790,17 +809,18 @@ class IdentityPersistence:
                     if isinstance(value,(tuple,list)):return [encode(v) for v in value]
                     return value
                 result={name:request[name] for name in ("case_id","tax_year","run_id","domain_operation")}|{"items":[encode(asdict(value)) for value in values]}
-                original={"stage_content_digest":stage_digest,"result":result}
-                self._db.execute("INSERT INTO identity_protocol_result VALUES(?,'READ_IDENTITY_STATE',?,?)",(request["transaction_id"],_canonical(original),self._mac(original)))
+                if bootstrap:result={"enrollment_id":logical["artifact"]["enrollment_id"],"store_id":logical["store_id"],"owner_authorization_digest":logical["artifact_digest"],"domain_snapshot_digest":logical["domain_snapshot_digest"],"genesis_head":logical["genesis_head"]}
+                original={"stage_content_digest":stage_digest,"original_request_digest":request["request_digest"],"result":result}
+                self._db.execute("INSERT INTO identity_protocol_result VALUES(?,?,?,?)",(request["transaction_id"],request["message_type"],_canonical(original),self._mac(original)))
             details={"request_digest":request["request_digest"],"nonce_commitment":H({"deployment_id":request["deployment_id"],"nonce":nonce}),"result_digest":H(result),"logical_head":logical["head"]}
-            self._append_audit("IDENTITY_READ_COMMIT",request["case_id"],"REDACTED",details)
+            self._append_audit("IDENTITY_READ_COMMIT",None if bootstrap else request["case_id"],"REDACTED",details)
             count,head=self._audit_head()
             response={name:request[name] for name in ("contract","message_type","transaction_id","request_digest")}
-            response.update(outcome="READ_OK",identity_epoch=str(logical["epoch"]),identity_head=logical["head"],identity_audit_count=str(count),identity_audit_head="sha256:"+head,staged_receipt_digest="",witness_preimage_digest="",signed_record_digest="",denial_code="",result=result)
+            response.update(outcome="ENROLLMENT_READY" if bootstrap else "READ_OK",identity_epoch=str(logical["epoch"]),identity_head=logical["head"],identity_audit_count=str(count),identity_audit_head="sha256:"+head,staged_receipt_digest="",witness_preimage_digest="",signed_record_digest="",denial_code="",result=result)
             response["response_digest"]=H(response)
             validate_response(response,request)
             checkpoint_id,_=checkpoint_identifiers(request["deployment_id"],request["transaction_id"],request["request_digest"],response["response_digest"])
-            receipt={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":checkpoint_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":stage_digest,"response_outcome":"READ_OK","logical_epoch":str(logical["epoch"]),"logical_head":logical["head"],"audit_cut_count":str(count),"audit_cut_head":"sha256:"+head,"backup_generation":logical["backup_generation"]}
+            receipt={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":checkpoint_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":stage_digest,"response_outcome":response["outcome"],"logical_epoch":str(logical["epoch"]),"logical_head":logical["head"],"audit_cut_count":str(count),"audit_cut_head":"sha256:"+head,"backup_generation":logical["backup_generation"]}
             composite=witness_commitment(deployment_id=request["deployment_id"],logical_epoch=str(logical["epoch"]),logical_head=logical["head"],audit_cut_count=str(count),audit_cut_head="sha256:"+head)
             checkpoint={"receipt":receipt,"composite":composite}
             attempt={"request":request,"response":response,"checkpoint_id":checkpoint_id,"audit_details":details,"consumed_at":now.isoformat()}

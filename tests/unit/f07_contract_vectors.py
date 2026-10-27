@@ -71,7 +71,8 @@ def pending_projection(request):
 
 def sign(request,key):
     value=deepcopy(request)
-    value["kernel_proof"]["kernel_projection"]=pending_projection(value)
+    extra={name:value["kernel_proof"].get("kernel_projection",{}).get(name) for name in ("witnessed_audit_count","witnessed_audit_head","recovery_request_digest")} if value["contract"]=="oi0002.kernel-identity-c09/1.1" else {}
+    value["kernel_proof"]["kernel_projection"]={**pending_projection(value),**extra}
     value["kernel_proof"]["pending_row_digest"]=canonical_sha256(value["kernel_proof"]["kernel_projection"])
     return seal(value,key)
 

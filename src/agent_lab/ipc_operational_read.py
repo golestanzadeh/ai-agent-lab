@@ -69,9 +69,17 @@ def unsigned(request,for_digest=False):
 
 def signing_bytes(request): return DOMAIN+canonical_json_bytes(unsigned(request))
 
-def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT):
+def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT,bootstrap_artifact=None):
     exact(value,FIELDS)
-    if value["message_type"]!="READ_IDENTITY_STATE" or value["domain_operation"] not in READ_OPERATIONS:raise ValueError("protected or unknown operation disabled")
+    bootstrap=bootstrap_artifact is not None
+    if bootstrap:
+        from agent_lab.identity_logical_continuity import H,genesis_preimage
+        if expected_contract!="oi0002.kernel-identity-c09/1.1" or value["message_type"]!="GET_ENROLLMENT_STATUS" or value["domain_operation"]!="READ_ENROLLMENT_STATUS" or value["capability"]!="identity_enrollment_status":raise ValueError("closed bootstrap operation required")
+        owner=bootstrap_artifact
+        for field,target in (("task_id","bootstrap_task_id"),("manifest_id","bootstrap_manifest_id"),("run_id","bootstrap_run_id"),("actor_instance_id","bootstrap_actor_instance_id"),("role_id","bootstrap_role_id")):
+            if value[field]!=owner[target]:raise ValueError("bootstrap Owner scope mismatch")
+        if value["deployment_id"]!=owner["deployment_id"] or value["authorization_references"]!=[H(owner)] or value["expected_epoch"]!="0" or value["expected_head"]!=H(genesis_preimage(owner)):raise ValueError("bootstrap authority/head mismatch")
+    elif value["message_type"]!="READ_IDENTITY_STATE" or value["domain_operation"] not in READ_OPERATIONS:raise ValueError("protected or unknown operation disabled")
     exact(expected_scope,set("deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()))
     for scoped in expected_scope.values():text(scoped)
     text(expected_key_id)
@@ -79,16 +87,21 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     for name in FIELDS-{"payload","kernel_proof","authorization_references"}:text(value[name],name=="prepared_request_digest")
     digest(value["request_digest"]);digest(value["expected_head"])
     if not NUM.fullmatch(value["expected_epoch"]):raise ValueError("epoch")
-    if value["scope_kind"]!="CASE_YEAR" or not re.fullmatch(r"\d{4}",value["tax_year"]) or not 1900<=int(value["tax_year"])<=9998:raise ValueError("scope")
+    if bootstrap:
+        if value["scope_kind"]!="DEPLOYMENT_STORE" or value["case_id"]!="*" or value["tax_year"]!="*":raise ValueError("bootstrap metadata scope")
+    elif value["scope_kind"]!="CASE_YEAR" or not re.fullmatch(r"\d{4}",value["tax_year"]) or not 1900<=int(value["tax_year"])<=9998:raise ValueError("scope")
     if {k:value[k] for k in expected_scope}!=expected_scope:raise ValueError("cross scope")
     operation=value["domain_operation"];message=value["message_type"]
-    if operation not in OPERATION_CAPABILITIES or value["capability"]!=OPERATION_CAPABILITIES[operation]:raise ValueError("capability")
-    reads=operation in READ_OPERATIONS
-    if reads and message!="READ_IDENTITY_STATE" or not reads and message not in {"PREPARE_MUTATION","COMMIT_MUTATION","FINALIZE_MUTATION","GET_TRANSACTION","ABORT_PREPARED"}:raise ValueError("message mapping")
+    if not bootstrap and (operation not in OPERATION_CAPABILITIES or value["capability"]!=OPERATION_CAPABILITIES[operation]):raise ValueError("capability")
+    reads=operation in READ_OPERATIONS or bootstrap
+    if not bootstrap and (reads and message!="READ_IDENTITY_STATE" or not reads and message not in {"PREPARE_MUTATION","COMMIT_MUTATION","FINALIZE_MUTATION","GET_TRANSACTION","ABORT_PREPARED"}):raise ValueError("message mapping")
     if message=="COMMIT_MUTATION":digest(value["prepared_request_digest"])
     elif value["prepared_request_digest"]!="":raise ValueError("unexpected prepared digest")
     payload=value["payload"]
-    if reads:
+    if bootstrap:
+        exact(payload,{"enrollment_id","owner_authorization_digest"})
+        if payload!={"enrollment_id":owner["enrollment_id"],"owner_authorization_digest":H(owner)}:raise ValueError("bootstrap artifact substitution")
+    elif reads:
         exact(payload,{"subject_id","as_of_date"});text(payload["subject_id"],operation=="LIST_PARTIES")
         if operation=="LIST_PARTIES" and payload["subject_id"]!="":raise ValueError("list subject must be empty")
         if operation=="READ_FACTS" and payload["as_of_date"]!="":raise ValueError("facts use tax year")
@@ -108,6 +121,7 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     if proof["proof_version"]!="1" or proof["algorithm"]!="ECDSA-P256-SHA256" or proof["key_id"]!=expected_key_id:raise ValueError("proof identity")
     digest(proof["pending_row_digest"])
     projection=proof["kernel_projection"];expected=read_projection(value);exact(projection,set(expected))
+    if bootstrap and (projection["witnessed_audit_count"],projection["witnessed_audit_head"])!=(owner["enrollment_audit_count"],owner["enrollment_audit_head"]):raise ValueError("bootstrap witnessed prefix substitution")
     if canonical_sha256(projection)!=proof["pending_row_digest"]:raise ValueError("projection digest")
     for name in expected:
         if name not in {"projected_epoch","projected_head","kernel_pending_head"} and projection[name]!=expected[name]:raise ValueError("projection correlation")
@@ -186,15 +200,16 @@ def validate_result(result,request):
 
 def validate_response(value,request):
     version11=request["contract"]=="oi0002.kernel-identity-c09/1.1"
+    if request["message_type"]=="GET_ENROLLMENT_STATUS" and not version11:raise ValueError("bootstrap requires 1.1")
     exact(value,RESP|{"identity_audit_count","identity_audit_head"} if version11 else RESP)
     for name in ("contract","message_type","transaction_id","request_digest"):
         if value[name]!=request[name]:raise ValueError("response correlation")
     body=deepcopy(value);body.pop("response_digest");digest(value["response_digest"])
     if canonical_sha256(body)!=value["response_digest"]:raise ValueError("response digest")
-    outcomes={"PREPARE_MUTATION":{"PREPARED","DENIED","CONFLICT"},"COMMIT_MUTATION":{"IDENTITY_COMMITTED","DENIED","CONFLICT","NOT_FINALIZABLE"},"READ_IDENTITY_STATE":{"READ_OK","DENIED","CONFLICT"}}
+    outcomes={"PREPARE_MUTATION":{"PREPARED","DENIED","CONFLICT"},"COMMIT_MUTATION":{"IDENTITY_COMMITTED","DENIED","CONFLICT","NOT_FINALIZABLE"},"READ_IDENTITY_STATE":{"READ_OK","DENIED","CONFLICT"},"GET_ENROLLMENT_STATUS":{"ENROLLMENT_READY","DENIED","CONFLICT"}}
     if value["outcome"] not in outcomes.get(request["message_type"],set()):raise ValueError("response outcome")
     if value["outcome"] in {"DENIED","CONFLICT"}:
-        if value["denial_code"] not in DENIALS or any(value[k]!="" for k in ("identity_epoch","identity_head","staged_receipt_digest","witness_preimage_digest","signed_record_digest","result")):raise ValueError("denial disclosure")
+        if value["denial_code"] not in (DENIALS|{"RECONCILIATION_REQUIRED"} if version11 else DENIALS) or any(value[k]!="" for k in ("identity_epoch","identity_head","staged_receipt_digest","witness_preimage_digest","signed_record_digest","result")):raise ValueError("denial disclosure")
         if version11 and (value["identity_audit_count"]!="" or value["identity_audit_head"]!=""):raise ValueError("denial audit disclosure")
     else:
         if value["denial_code"]!="" or not NUM.fullmatch(value["identity_epoch"]):raise ValueError("outcome metadata")
@@ -202,10 +217,14 @@ def validate_response(value,request):
         if version11:
             if not isinstance(value["identity_audit_count"],str) or not NUM.fullmatch(value["identity_audit_count"]):raise ValueError("audit count")
             digest(value["identity_audit_head"])
-            if value["outcome"]=="READ_OK" and (value["identity_epoch"],value["identity_head"])!=(request["expected_epoch"],request["expected_head"]):raise ValueError("read logical head changed")
-        if value["outcome"]=="READ_OK":validate_result(value["result"],request)
+            if value["outcome"] in {"READ_OK","ENROLLMENT_READY"} and (value["identity_epoch"],value["identity_head"])!=(request["expected_epoch"],request["expected_head"]):raise ValueError("read logical head changed")
+        if value["outcome"]=="ENROLLMENT_READY":
+            exact(value["result"],set("enrollment_id store_id owner_authorization_digest domain_snapshot_digest genesis_head".split()))
+            if value["result"]["enrollment_id"]!=request["payload"]["enrollment_id"] or value["result"]["owner_authorization_digest"]!=request["payload"]["owner_authorization_digest"] or value["result"]["genesis_head"]!=value["identity_head"]:raise ValueError("bootstrap result binding")
+            text(value["result"]["store_id"]);digest(value["result"]["domain_snapshot_digest"])
+        elif value["outcome"]=="READ_OK":validate_result(value["result"],request)
         elif value["result"]!="":raise ValueError("nonread result")
-        if value["outcome"] in {"READ_OK","PREPARED"} and any(value[k]!="" for k in ("staged_receipt_digest","witness_preimage_digest","signed_record_digest")):raise ValueError("unexpected receipt")
+        if value["outcome"] in {"READ_OK","PREPARED","ENROLLMENT_READY"} and any(value[k]!="" for k in ("staged_receipt_digest","witness_preimage_digest","signed_record_digest")):raise ValueError("unexpected receipt")
         if value["outcome"]=="IDENTITY_COMMITTED":
             digest(value["staged_receipt_digest"]);digest(value["witness_preimage_digest"])
             if value["signed_record_digest"]!="":raise ValueError("premature final receipt")
@@ -217,4 +236,11 @@ def read_projection(request):
     content=deepcopy(request);content.pop("request_digest");content.pop("kernel_proof")
     stable=deepcopy(content);stable.pop("expires_at")
     value.update(authorization_state_version=request["kernel_proof"]["authorization_state_version"],projected_epoch=request["expected_epoch"],projected_head=request["expected_head"],kernel_pending_head="",request_content_digest=canonical_sha256(content),stage_content_digest=canonical_sha256(stable))
+    if request["contract"]=="oi0002.kernel-identity-c09/1.1":
+        supplied=request["kernel_proof"]["kernel_projection"]
+        count=supplied["witnessed_audit_count"];head=supplied["witnessed_audit_head"];recovery=supplied["recovery_request_digest"]
+        if not isinstance(count,str) or not NUM.fullmatch(count):raise ValueError("witnessed audit count")
+        digest(head)
+        if recovery!="":digest(recovery)
+        value.update(witnessed_audit_count=count,witnessed_audit_head=head,recovery_request_digest=recovery)
     return value
