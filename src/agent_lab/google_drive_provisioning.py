@@ -125,6 +125,17 @@ class GoogleDriveStorageScopeCreator:
             q=f"'{parent}' in parents and name = '{name}' and trashed = false",
             fields="files(id),nextPageToken", pageSize=1,
         ).execute()
+        # The canonical Tax_Years folder predates this provisioning journal.
+        # Adopt only this one exact verified ancestor, never an unrecorded
+        # tax year or case folder. Duplicate names remain fail-closed.
+        if path == "Tax_Years" and not state["folders"] and not state["events"] and state["pending"] is None:
+            matches = found.get("files", [])
+            if len(matches) == 1 and not found.get("nextPageToken"):
+                object_id = matches[0]["id"]
+                self._verify(self._metadata(object_id), object_id, parent, name)
+                state["folders"][path] = object_id
+                self._event(state, case_id, year, path, "VERIFIED_EXISTING_ANCESTOR")
+                return object_id
         if found.get("files") or found.get("nextPageToken"):
             raise ProvisioningError("unrecorded folder at intended placement; explicit reconciliation required")
         if self._metadata(parent).get("capabilities", {}).get("canAddChildren") is not True:
@@ -145,6 +156,36 @@ class GoogleDriveStorageScopeCreator:
         state["pending"] = None
         self._event(state, case_id, year, path, "CREATED")
         return object_id
+
+    def forget_deleted_empty_case(self, *, tax_year: int, case_id: str,
+                                  case_root_id: str) -> None:
+        """Remove only case-specific create-journal mappings after verified Drive trash."""
+        if not self.path.exists():
+            raise ProvisioningError('provisioning journal missing')
+        lock = self.path.with_suffix(self.path.suffix + '.lock')
+        try:
+            handle = lock.open('x')
+        except FileExistsError:
+            raise ProvisioningError('provisioning journal locked') from None
+        try:
+            state = json.loads(self.path.read_text(encoding='utf-8'))
+            prefix = f'Tax_Years/{tax_year}/Cases/{case_id}'
+            if (state.get('version') != 1 or state.get('root') != self.root
+                    or state.get('pending') is not None
+                    or state.get('cases', {}).get(case_id) != tax_year
+                    or state.get('folders', {}).get(prefix) != case_root_id):
+                raise ProvisioningError('case journal scope mismatch')
+            state['cases'].pop(case_id)
+            for key in list(state['folders']):
+                if key == prefix or key.startswith(prefix + '/'):
+                    del state['folders'][key]
+            state['events'].append(asdict(ProvisioningEvent(
+                case_id, tax_year, 'delete_empty_case', prefix, 'DRIVE_TRASH_VERIFIED',
+                datetime.now(timezone.utc).isoformat())))
+            self._save(state)
+        finally:
+            handle.close()
+            lock.unlink()
 
     def documents_scope(self, tax_period: TaxPeriod, case_id: str) -> StorageScopeReference:
         self.create_case_scope(tax_period, case_id)

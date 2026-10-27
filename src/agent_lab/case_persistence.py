@@ -760,6 +760,59 @@ class SQLiteCasePersistence:
             row["storage_root_id"], row["failure_code"], row["revision"],
         )
 
+    def delete_verified_empty_case(self, *, owner_id: str, case_id: str,
+                                   tax_year: int, storage_root_id: str) -> None:
+        """Audited metadata deletion after a separately verified empty Drive scope.
+
+        The Drive operation must have completed and been verified before this call.
+        A failure here is recoverable by reconciling the retained audit/journal.
+        """
+        with self._lock:
+            self._verify_all()
+            self._verify_anchor()
+            self._authorize(owner_id, case_id, tax_year)
+            record = self._db.execute(
+                "SELECT lifecycle_status,storage_root_id FROM case_record "
+                "WHERE case_id=? AND owner_id=? AND tax_year=?",
+                (case_id, owner_id, tax_year),
+            ).fetchone()
+            if (record is None or record['lifecycle_status'] != 'CREATED'
+                    or record['storage_root_id'] != storage_root_id):
+                raise CasePersistenceError('case identity or lifecycle changed')
+            for table in ('durable_run', 'mutation_request'):
+                if self._db.execute(f'SELECT 1 FROM {table} WHERE case_id=?', (case_id,)).fetchone():
+                    raise CasePersistenceError('case dependencies block deletion')
+            state = self._db.execute('SELECT payload FROM case_state WHERE case_id=?', (case_id,)).fetchone()
+            if state is None:
+                raise CasePersistenceError('missing case state')
+            state_payload = json.loads(state['payload'])
+            if any(state_payload.get(field) for field in (
+                    'documents_ref', 'evidence_ref', 'facts_ref', 'calculations_ref',
+                    'outputs_ref', 'approvals_ref')):
+                raise CasePersistenceError('case references block deletion')
+            if state_payload.get('last_run_id') and not str(state_payload['last_run_id']).startswith('CREATE-RUN-LOCAL-'):
+                raise CasePersistenceError('unexpected run reference')
+            intent = self._db.execute(
+                'SELECT status,storage_root_id FROM storage_provisioning WHERE case_id=?', (case_id,)
+            ).fetchone()
+            if intent is None or intent['status'] != 'COMPLETE' or intent['storage_root_id'] != storage_root_id:
+                raise CasePersistenceError('provisioning state mismatch')
+            try:
+                self._db.execute('BEGIN IMMEDIATE')
+                self._db.execute('DELETE FROM ui_case_authorization WHERE case_id=?', (case_id,))
+                self._db.execute('DELETE FROM case_state WHERE case_id=?', (case_id,))
+                self._db.execute('DELETE FROM storage_provisioning WHERE case_id=?', (case_id,))
+                self._db.execute('DELETE FROM case_record WHERE case_id=?', (case_id,))
+                self._audit('EMPTY_CASE_DELETED', case_id, self._mac({
+                    'owner_id': owner_id, 'tax_year': tax_year, 'storage_root_id': storage_root_id}))
+                self._verify_all()
+                self._db.commit()
+                self._write_anchor()
+                self._verify_anchor()
+            except Exception:
+                self._db.rollback()
+                raise
+
     def _audit(self, action: str, case_id: str, payload_digest: str) -> None:
         previous = self._db.execute(
             "SELECT event_digest FROM case_audit ORDER BY event_id DESC LIMIT 1"
@@ -793,13 +846,20 @@ class SQLiteCasePersistence:
             case_ids = {
                 row[0] for row in self._db.execute("SELECT case_id FROM case_record")
             }
-            registered_ids = [
-                row[0] for row in self._db.execute(
-                    "SELECT case_id FROM case_audit WHERE action='CASE_REGISTERED'"
-                )
-            ]
-            if len(registered_ids) != len(set(registered_ids)) or set(registered_ids) != case_ids:
-                raise CasePersistenceError("case audit completeness failure")
+            active_from_audit = set()
+            for event in self._db.execute(
+                    "SELECT action,case_id FROM case_audit WHERE action IN ('CASE_REGISTERED','EMPTY_CASE_DELETED') ORDER BY event_id"):
+                case_id = event['case_id']
+                if event['action'] == 'CASE_REGISTERED':
+                    if case_id in active_from_audit:
+                        raise CasePersistenceError('duplicate case registration in audit')
+                    active_from_audit.add(case_id)
+                else:
+                    if case_id not in active_from_audit:
+                        raise CasePersistenceError('deletion without active registration in audit')
+                    active_from_audit.remove(case_id)
+            if active_from_audit != case_ids:
+                raise CasePersistenceError('case audit completeness failure')
             previous = "0" * 64
             for row in self._db.execute("SELECT * FROM case_audit ORDER BY event_id"):
                 event = {key: row[key] for key in ("action", "case_id", "payload_digest", "previous_digest")}
