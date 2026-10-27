@@ -3,7 +3,7 @@
 No database ownership, orchestration, credentials, enrollment or I/O activation.
 """
 from copy import deepcopy
-from dataclasses import asdict,fields
+from dataclasses import asdict,fields,dataclass
 from datetime import datetime,timezone
 from enum import Enum
 import base64
@@ -31,6 +31,19 @@ SCHEMA={
 }
 REGISTRY_FIELDS=set("case_id owner_type owner_id tax_period case_type assessment_mode lifecycle_status storage_scope_reference schema_version created_at updated_at last_run_id".split())
 ENROLLMENT_FIELDS=set("contract deployment_id store_id enrollment_id schema_version domain_snapshot_digest enrollment_audit_count enrollment_audit_head case_manifest_digest backup_generation nonce issued_at not_before expires_at key_id algorithm signature bootstrap_task_id bootstrap_manifest_id bootstrap_run_id bootstrap_actor_instance_id bootstrap_role_id".split())
+
+
+@dataclass(frozen=True)
+class ContinuityKeys:
+    owner_key_id: str
+    owner_public_key: object
+    kernel_key_id: str
+    kernel_public_key: object
+
+    def __post_init__(self):
+        for key in (self.owner_public_key,self.kernel_public_key):
+            if not isinstance(key,ec.EllipticCurvePublicKey) or not isinstance(key.curve,ec.SECP256R1):raise ValueError("pinned P-256 verification keys required")
+        for name in (self.owner_key_id,self.kernel_key_id):text(name)
 
 
 def exact(value,names):

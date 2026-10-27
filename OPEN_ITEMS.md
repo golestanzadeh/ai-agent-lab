@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+Option A contract61d3aa9 independently PASS; decision/specification stop is resolved and stateful implementation has continued. Identity schema4/enrollment/durable read candidate is under exact-SHA review; no live enrollment or operational acceptance is claimed. Kernel proof/checkpoint and existing SCM integration remain in progress. No active OI row closes.
+
 F07 Option A second review010ae815 found two remaining bootstrap-capability/identifier exactness issues; closed Owner-broker A6 binding and golden identifier corrections are awaiting exact-SHA re-review. Prior four findings are resolved; no Owner architecture question is reopened. Canonical helpers pass11 focused tests, without enrollment/activation. All active OI rows remain.
 
 Option A contract review of6629c8f returned FAIL on four precise mapping gaps; bounded corrections are proposed in the existing architecture and await independent re-review. Owner architecture approval remains valid and is not reopened. No active OI row closes and no live enrollment/deployment/processing is activated.

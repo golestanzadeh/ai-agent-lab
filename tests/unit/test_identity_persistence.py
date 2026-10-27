@@ -254,7 +254,7 @@ def test_reviewed_empty_v1_migration_to_v2(tmp_path):
         PRAGMA user_version=1;
         """)
     store=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
-    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 3
+    assert store._db.execute("PRAGMA user_version").fetchone()[0] == 4
     store.close()
 
 
@@ -387,7 +387,7 @@ def test_f07_post_commit_interruption_leaves_verified_v2(tmp_path):
     with pytest.raises(RuntimeError,match="interruption"):
         IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY,fault_injector=fault)
     reopened=IdentityPersistence(path,cases=registry(),authorize=authorizer,evidence_resolver=evidence_resolver,integrity_key=KEY)
-    assert reopened._db.execute("PRAGMA user_version").fetchone()[0] == 3
+    assert reopened._db.execute("PRAGMA user_version").fetchone()[0] == 4
     reopened.close()
 
 
@@ -450,6 +450,10 @@ def test_f07_invalid_legacy_receipt_is_rejected_before_upgrade(tmp_path,invalid)
     digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
     if invalid == "digest": digest="f"*64
     with sqlite3.connect(path) as db:
+        # This fixture is a real pre-v4 legacy schema, not a deletion of a v4 receipt.
+        for table in ("identity_logical_state","identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint"):
+            db.execute("DROP TABLE "+table)
+        db.execute("PRAGMA user_version=3")
         db.execute("DROP TABLE schema_migration_receipt")
         db.execute("CREATE TABLE schema_migration_receipt(migration_id TEXT PRIMARY KEY,from_version INTEGER,to_version INTEGER,event_count INTEGER,head_mac TEXT,digest TEXT)")
         db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*payload.values(),digest))
@@ -465,6 +469,9 @@ def test_f07_valid_legacy_receipt_upgrades_as_consumed_when_anchor_exists(tmp_pa
     payload={"migration_id":"IDENTITY_SCHEMA_V1_TO_V2","from_version":1,"to_version":2,"event_count":0,"head_mac":"0"*64}
     digest=hmac.new(KEY,_canonical(payload).encode(),hashlib.sha256).hexdigest()
     with sqlite3.connect(path) as db:
+        for table in ("identity_logical_state","identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint"):
+            db.execute("DROP TABLE "+table)
+        db.execute("PRAGMA user_version=3")
         db.execute("DROP TABLE schema_migration_receipt")
         db.execute("CREATE TABLE schema_migration_receipt(migration_id TEXT PRIMARY KEY,from_version INTEGER,to_version INTEGER,event_count INTEGER,head_mac TEXT,digest TEXT)")
         db.execute("INSERT INTO schema_migration_receipt VALUES(?,?,?,?,?,?)",(*payload.values(),digest))

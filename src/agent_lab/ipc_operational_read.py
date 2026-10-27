@@ -69,13 +69,13 @@ def unsigned(request,for_digest=False):
 
 def signing_bytes(request): return DOMAIN+canonical_json_bytes(unsigned(request))
 
-def validate_request(value,public_key,*,expected_scope,now,expected_key_id):
+def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT):
     exact(value,FIELDS)
     if value["message_type"]!="READ_IDENTITY_STATE" or value["domain_operation"] not in READ_OPERATIONS:raise ValueError("protected or unknown operation disabled")
     exact(expected_scope,set("deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()))
     for scoped in expected_scope.values():text(scoped)
     text(expected_key_id)
-    if value["contract"]!=CONTRACT or not UUID.fullmatch(value["transaction_id"]):raise ValueError("contract or transaction")
+    if expected_contract not in {CONTRACT,"oi0002.kernel-identity-c09/1.1"} or value["contract"]!=expected_contract or not UUID.fullmatch(value["transaction_id"]):raise ValueError("contract or transaction")
     for name in FIELDS-{"payload","kernel_proof","authorization_references"}:text(value[name],name=="prepared_request_digest")
     digest(value["request_digest"]);digest(value["expected_head"])
     if not NUM.fullmatch(value["expected_epoch"]):raise ValueError("epoch")
@@ -185,7 +185,8 @@ def validate_result(result,request):
         if keys!=sorted(set(keys)):raise ValueError("result order")
 
 def validate_response(value,request):
-    exact(value,RESP)
+    version11=request["contract"]=="oi0002.kernel-identity-c09/1.1"
+    exact(value,RESP|{"identity_audit_count","identity_audit_head"} if version11 else RESP)
     for name in ("contract","message_type","transaction_id","request_digest"):
         if value[name]!=request[name]:raise ValueError("response correlation")
     body=deepcopy(value);body.pop("response_digest");digest(value["response_digest"])
@@ -194,9 +195,14 @@ def validate_response(value,request):
     if value["outcome"] not in outcomes.get(request["message_type"],set()):raise ValueError("response outcome")
     if value["outcome"] in {"DENIED","CONFLICT"}:
         if value["denial_code"] not in DENIALS or any(value[k]!="" for k in ("identity_epoch","identity_head","staged_receipt_digest","witness_preimage_digest","signed_record_digest","result")):raise ValueError("denial disclosure")
+        if version11 and (value["identity_audit_count"]!="" or value["identity_audit_head"]!=""):raise ValueError("denial audit disclosure")
     else:
         if value["denial_code"]!="" or not NUM.fullmatch(value["identity_epoch"]):raise ValueError("outcome metadata")
         digest(value["identity_head"])
+        if version11:
+            if not isinstance(value["identity_audit_count"],str) or not NUM.fullmatch(value["identity_audit_count"]):raise ValueError("audit count")
+            digest(value["identity_audit_head"])
+            if value["outcome"]=="READ_OK" and (value["identity_epoch"],value["identity_head"])!=(request["expected_epoch"],request["expected_head"]):raise ValueError("read logical head changed")
         if value["outcome"]=="READ_OK":validate_result(value["result"],request)
         elif value["result"]!="":raise ValueError("nonread result")
         if value["outcome"] in {"READ_OK","PREPARED"} and any(value[k]!="" for k in ("staged_receipt_digest","witness_preimage_digest","signed_record_digest")):raise ValueError("unexpected receipt")

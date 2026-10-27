@@ -11,6 +11,9 @@ from pathlib import Path
 import re
 import secrets
 import sqlite3
+import threading
+import time
+from functools import wraps
 from typing import Callable
 
 from agent_lab.case_registry import CaseRegistry
@@ -22,7 +25,7 @@ from agent_lab.person_entity_registry import (
     EntityRecord, PersonEntityRegistry, PersonRecord, RecordType, RegistryStatus,
 )
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 RECORD_SCHEMA_VERSION = 2
 SHA_REFERENCE = re.compile(r"^sha256:[0-9a-f]{64}$")
 PARTY_ROLES = frozenset({
@@ -31,6 +34,48 @@ PARTY_ROLES = frozenset({
     "INSURER", "DONATION_RECIPIENT", "SERVICE_PROVIDER", "TAX_AUTHORITY_CONTACT",
 })
 EXCLUSIVE_ROLES = frozenset({"PRIMARY_TAXPAYER", "SPOUSE_OR_PARTNER"})
+
+
+def _serialized_identity(method):
+    """Bounded OS exclusion spans SQLite commit AND external anchor replacement."""
+    @wraps(method)
+    def wrapped(self,*args,**kwargs):
+        local=self._serialization
+        if getattr(local,"depth",0):return method(self,*args,**kwargs)
+        path=self._path.with_suffix(self._path.suffix+".authority-lock")
+        if path.is_symlink():raise PermissionError("authority lock cannot be redirected")
+        stream=open(path,"a+b");acquired=False
+        try:
+            stream.seek(0,2)
+            if stream.tell()==0:stream.write(b"0");stream.flush()
+            end=time.monotonic()+5
+            while not acquired:
+                try:
+                    stream.seek(0)
+                    if os.name=="nt":
+                        import msvcrt
+                        msvcrt.locking(stream.fileno(),msvcrt.LK_NBLCK,1)
+                    else:
+                        import fcntl
+                        fcntl.flock(stream.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+                    acquired=True
+                except OSError:
+                    if time.monotonic()>=end:raise TimeoutError("Identity authority busy; no operation admitted")
+                    time.sleep(.01)
+            local.depth=1
+            return method(self,*args,**kwargs)
+        finally:
+            local.depth=0
+            if acquired:
+                stream.seek(0)
+                if os.name=="nt":
+                    import msvcrt
+                    msvcrt.locking(stream.fileno(),msvcrt.LK_UNLCK,1)
+                else:
+                    import fcntl
+                    fcntl.flock(stream.fileno(),fcntl.LOCK_UN)
+            stream.close()
+    return wrapped
 
 
 def _canonical(value: dict) -> str:
@@ -113,10 +158,12 @@ class IdentityPersistence:
         integrity_key: bytes,
         fault_injector: Callable[[str], None] | None = None,
         successor_id_factory: Callable[[], str] | None = None,
+        continuity_keys=None,
     ) -> None:
         if not isinstance(integrity_key, bytes) or len(integrity_key) < 32:
             raise ValueError("a protected integrity key of at least 32 bytes is required")
         self._path = Path(path).resolve()
+        self._serialization=threading.local()
         lowered = self._path.as_posix().casefold()
         if any(marker in lowered for marker in ("/onedrive/", "/google drive/", "/dropbox/")):
             raise ValueError("live SQLite database cannot be placed in a synced folder")
@@ -128,6 +175,11 @@ class IdentityPersistence:
         self._resolve_evidence = evidence_resolver
         self._key = integrity_key
         self._fault = fault_injector
+        from agent_lab.identity_logical_continuity import ContinuityKeys
+        if continuity_keys is not None and not isinstance(continuity_keys,ContinuityKeys):raise ValueError("typed pinned continuity keys required")
+        self._continuity_keys=continuity_keys
+        self._protocol_context=None
+        self._protocol_transaction=False
         self._successor_id_factory = successor_id_factory or (
             lambda: "PERSON-SUCC-" + secrets.token_hex(16).upper()
         )
@@ -138,6 +190,7 @@ class IdentityPersistence:
             self._db.close()
             raise
 
+    @_serialized_identity
     def _initialize_connection(self) -> None:
         self._db.row_factory = sqlite3.Row
         self._db.execute("PRAGMA journal_mode=WAL")
@@ -161,7 +214,7 @@ class IdentityPersistence:
         if version == 2:
             self._migrate_v2_to_v3()
             version = 3
-        if version != SCHEMA_VERSION:
+        if version not in {3,SCHEMA_VERSION}:
             self._db.close()
             raise ValueError("unsupported database schema version")
         with self._db:
@@ -214,6 +267,121 @@ class IdentityPersistence:
                     self._db.execute("UPDATE schema_migration_receipt SET status=?,digest=? WHERE migration_id=?",(status,self._mac(payload),legacy["migration_id"]))
         self._verify_audit_continuity(create_empty=created_empty)
         self._verify_data_integrity()
+        if version==3:self._migrate_v3_to_v4()
+        self._verify_logical_integrity()
+
+    def _migrate_v3_to_v4(self):
+        try:
+            self._db.execute("BEGIN IMMEDIATE")
+            self._db.execute("""CREATE TABLE identity_logical_state(
+                singleton INTEGER PRIMARY KEY CHECK(singleton=1),deployment_id TEXT NOT NULL UNIQUE,
+                store_id TEXT NOT NULL UNIQUE,epoch INTEGER NOT NULL CHECK(epoch>=0),head TEXT NOT NULL,
+                payload_json TEXT NOT NULL,digest TEXT NOT NULL)""")
+            self._db.execute("""CREATE TABLE identity_protocol_result(
+                transaction_id TEXT NOT NULL,message_type TEXT NOT NULL,payload_json TEXT NOT NULL,digest TEXT NOT NULL,
+                PRIMARY KEY(transaction_id,message_type))""")
+            self._db.execute("""CREATE TABLE identity_protocol_attempt(
+                nonce TEXT PRIMARY KEY,transaction_id TEXT NOT NULL,request_digest TEXT NOT NULL UNIQUE,
+                payload_json TEXT NOT NULL,digest TEXT NOT NULL)""")
+            self._db.execute("""CREATE TABLE identity_audit_checkpoint(
+                checkpoint_id TEXT PRIMARY KEY,response_digest TEXT NOT NULL UNIQUE,
+                payload_json TEXT NOT NULL,digest TEXT NOT NULL)""")
+            count,head=self._audit_head()
+            receipt={"migration_id":"IDENTITY_SCHEMA_V3_TO_V4","from_version":3,"to_version":4,"event_count":count,"head_mac":head,"status":"CONSUMED"}
+            self._db.execute("INSERT INTO schema_migration_receipt(migration_id,from_version,to_version,event_count,head_mac,status,digest) VALUES(?,?,?,?,?,?,?)",(*receipt.values(),self._mac(receipt)))
+            self._db.execute("PRAGMA user_version=4")
+            if self._fault:self._fault("MIGRATION_V3_V4:BEFORE_COMMIT")
+            self._db.commit()
+            if self._fault:self._fault("MIGRATION_V3_V4:AFTER_COMMIT")
+        except BaseException:
+            if self._db.in_transaction:self._db.rollback()
+            raise
+
+    def _logical_row(self):
+        row=self._db.execute("SELECT * FROM identity_logical_state WHERE singleton=1").fetchone()
+        if row is None:return None
+        payload=json.loads(row["payload_json"])
+        if not hmac.compare_digest(row["digest"],self._mac(payload)) or any(payload[name]!=row[name] for name in ("deployment_id","store_id","epoch","head")):raise ValueError("logical continuity integrity failure")
+        return payload
+
+    def _verify_logical_integrity(self):
+        from agent_lab.identity_logical_continuity import H,domain_snapshot,checkpoint_identifiers,witness_commitment
+        from agent_lab.ipc_operational_read import validate_response
+        migration=self._db.execute("SELECT * FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V3_TO_V4'").fetchone()
+        if migration is None:raise ValueError("logical schema migration receipt missing")
+        payload={name:migration[name] for name in ("migration_id","from_version","to_version","event_count","head_mac","status")}
+        if not hmac.compare_digest(migration["digest"],self._mac(payload)):raise ValueError("logical migration integrity failure")
+        logical=self._logical_row()
+        for table in ("identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint"):
+            for row in self._db.execute("SELECT * FROM "+table):
+                data=json.loads(row["payload_json"])
+                if not hmac.compare_digest(row["digest"],self._mac(data)):raise ValueError("protocol row integrity failure")
+        enrollment_events=[];attempt_events=[]
+        for row in self._db.execute("SELECT event_payload FROM identity_audit"):
+            event=json.loads(row[0])
+            if event["action"]=="IDENTITY_LOGICAL_ENROLL":enrollment_events.append(event["details_digest"])
+            if event["action"]=="IDENTITY_READ_COMMIT":attempt_events.append(event["details_digest"])
+        if logical is None:
+            if enrollment_events or any(self._db.execute("SELECT 1 FROM "+table).fetchone() for table in ("identity_protocol_attempt","identity_protocol_result","identity_audit_checkpoint")):raise ValueError("logical state deletion detected")
+            return
+        if enrollment_events!=[self._mac({"deployment_id":logical["deployment_id"],"store_id":logical["store_id"],"artifact_digest":logical["artifact_digest"],"genesis_head":logical["genesis_head"]})]:raise ValueError("logical enrollment audit completeness failure")
+        if logical["domain_snapshot_digest"]!=H(domain_snapshot(self._db)):raise ValueError("domain changed outside logical continuity")
+        expected=[];checkpoints=set();results=set()
+        for row in self._db.execute("SELECT * FROM identity_protocol_attempt"):
+            data=json.loads(row["payload_json"])
+            if row["nonce"]!=data["request"]["kernel_proof"]["nonce"] or row["request_digest"]!=data["request"]["request_digest"] or row["transaction_id"]!=data["request"]["transaction_id"]:raise ValueError("attempt index substitution")
+            expected.append(self._mac(data["audit_details"]))
+            checkpoints.add(data["checkpoint_id"]);results.add((row["transaction_id"],"READ_IDENTITY_STATE"))
+            request=data["request"];response=data["response"]
+            validate_response(response,request)
+            details={"request_digest":request["request_digest"],"nonce_commitment":H({"deployment_id":request["deployment_id"],"nonce":row["nonce"]}),"result_digest":H(response["result"]),"logical_head":response["identity_head"]}
+            if data["audit_details"]!=details:raise ValueError("attempt/audit result binding failure")
+            cp=self._db.execute("SELECT * FROM identity_audit_checkpoint WHERE checkpoint_id=?",(data["checkpoint_id"],)).fetchone()
+            cache=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type='READ_IDENTITY_STATE'",(row["transaction_id"],)).fetchone()
+            if cp is None or cache is None:raise ValueError("committed read result/checkpoint missing")
+            cached=json.loads(cache["payload_json"])
+            if cached["result"]!=response["result"]:raise ValueError("cached result substitution")
+            checkpoint=json.loads(cp["payload_json"]);receipt=checkpoint["receipt"]
+            cp_id,_=checkpoint_identifiers(request["deployment_id"],request["transaction_id"],request["request_digest"],response["response_digest"])
+            if cp_id!=data["checkpoint_id"] or cp["response_digest"]!=response["response_digest"]:raise ValueError("checkpoint index substitution")
+            receipt_expected={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":cp_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":cached["stage_content_digest"],"response_outcome":"READ_OK","logical_epoch":response["identity_epoch"],"logical_head":response["identity_head"],"audit_cut_count":response["identity_audit_count"],"audit_cut_head":response["identity_audit_head"],"backup_generation":logical["backup_generation"]}
+            if receipt!=receipt_expected:raise ValueError("checkpoint receipt substitution")
+            prefix=self._db.execute("SELECT event_mac FROM identity_audit WHERE event_id=?",(int(receipt["audit_cut_count"]),)).fetchone()
+            if prefix is None or "sha256:"+prefix[0]!=receipt["audit_cut_head"]:raise ValueError("checkpoint audit prefix unavailable")
+            if checkpoint["composite"]!=witness_commitment(deployment_id=request["deployment_id"],logical_epoch=response["identity_epoch"],logical_head=response["identity_head"],audit_cut_count=response["identity_audit_count"],audit_cut_head=response["identity_audit_head"]):raise ValueError("checkpoint composite mismatch")
+        if sorted(expected)!=sorted(attempt_events):raise ValueError("proof attempt deletion detected")
+        actual_cp={row[0] for row in self._db.execute("SELECT checkpoint_id FROM identity_audit_checkpoint")}
+        actual_results={tuple(row) for row in self._db.execute("SELECT transaction_id,message_type FROM identity_protocol_result")}
+        if checkpoints!=actual_cp or results!=actual_results:raise ValueError("protocol result/checkpoint completeness failure")
+
+    @_serialized_identity
+    def enroll_logical_identity(self,artifact,*,now=None):
+        """Explicit signed enrollment; never called by constructors or UI activation."""
+        from agent_lab.identity_logical_continuity import H,verify_enrollment,genesis_preimage,domain_snapshot,case_manifest
+        keys=self._continuity_keys
+        if keys is None:raise PermissionError("pinned Owner/Kernel key custody configuration missing")
+        now=now or datetime.now(timezone.utc)
+        artifact_digest=verify_enrollment(artifact,keys.owner_public_key,keys.owner_key_id,now)
+        self._verify_audit_continuity();self._verify_data_integrity();self._verify_logical_integrity()
+        old=self._logical_row()
+        if old is not None:
+            if old["artifact_digest"]!=artifact_digest:raise PermissionError("deployment/store already enrolled")
+            return old
+        self._db.execute("BEGIN IMMEDIATE")
+        try:
+            count,head=self._audit_head()
+            if (artifact["domain_snapshot_digest"]!=H(domain_snapshot(self._db)) or artifact["case_manifest_digest"]!=H(case_manifest(self._cases.all_records())) or artifact["enrollment_audit_count"]!=str(count) or artifact["enrollment_audit_head"]!="sha256:"+head):raise PermissionError("signed enrollment snapshot/audit/registry mismatch")
+            genesis=genesis_preimage(artifact);genesis_head=H(genesis)
+            payload={"deployment_id":artifact["deployment_id"],"store_id":artifact["store_id"],"epoch":0,"head":genesis_head,"genesis_head":genesis_head,"genesis":genesis,"artifact":artifact,"artifact_digest":artifact_digest,"domain_snapshot_digest":artifact["domain_snapshot_digest"],"backup_generation":artifact["backup_generation"],"enrolled_at":now.isoformat()}
+            self._db.execute("INSERT INTO identity_logical_state VALUES(1,?,?,?,?,?,?)",(payload["deployment_id"],payload["store_id"],0,genesis_head,_canonical(payload),self._mac(payload)))
+            self._append_audit("IDENTITY_LOGICAL_ENROLL",None,"REDACTED",{"deployment_id":payload["deployment_id"],"store_id":payload["store_id"],"artifact_digest":artifact_digest,"genesis_head":genesis_head})
+            if self._fault:self._fault("LOGICAL_ENROLL:BEFORE_COMMIT")
+            self._db.commit()
+            if self._fault:self._fault("LOGICAL_ENROLL:AFTER_COMMIT")
+            self._sync_anchor();return payload
+        except BaseException:
+            if self._db.in_transaction:self._db.rollback()
+            raise
 
     def _mac(self, value: dict | str) -> str:
         raw = value if isinstance(value, str) else _canonical(value)
@@ -536,10 +704,18 @@ class IdentityPersistence:
         content = {"event_id":event_id,"event_payload":payload,"previous_mac":previous,"recorded_at":recorded}
         self._db.execute("INSERT INTO identity_audit VALUES(?,?,?,?,?)", (event_id,payload,previous,self._mac(content),recorded))
 
+    @_serialized_identity
     def _commit(self, stage: str, operation: Callable[[], None]) -> None:
+        if self._protocol_transaction:
+            operation()
+            return
         self._verify_audit_continuity()
+        from agent_lab.identity_logical_continuity import H,domain_snapshot
+        logical=self._logical_row()
         with self._db:
             operation()
+            if logical is not None and H(domain_snapshot(self._db))!=logical["domain_snapshot_digest"]:
+                raise PermissionError("enrolled domain mutation requires verified operational transaction")
             if self._fault:
                 self._fault(stage + ":BEFORE_COMMIT")
         if self._fault:
@@ -553,6 +729,11 @@ class IdentityPersistence:
 
     def _check_access(self, action: str, case_id: str, authorization_ref: str) -> None:
         case = self._cases.get(case_id)
+        if self._protocol_context is not None:
+            request=self._protocol_context
+            allowed_action={"READ_CASE_IDENTITY":{"read_party"},"LIST_PARTIES":{"read_party"},"READ_FACTS":{"read_party","read_fact"}}.get(request["domain_operation"],set())
+            if case is not None and action in allowed_action and case_id==request["case_id"] and str(case.tax_period.year)==request["tax_year"] and authorization_ref==request["authorization_references"][0]:return
+            raise PermissionError("signed read context cannot authorize this action/scope")
         if case is None or not authorization_ref or self._authorize is None:
             self._failure("SECURITY_DENIED", case_id, "case authorization unavailable", permission=True)
         try:
@@ -561,6 +742,102 @@ class IdentityPersistence:
             allowed = False
         if not allowed:
             self._failure("SECURITY_DENIED", case_id, "case authorization denied", permission=True)
+
+    @_serialized_identity
+    def read_operational_identity(self,request,*,allowed_case_ids,now=None):
+        """Execute an authenticated 1.1 read atomically; result is not Witness-final."""
+        from dataclasses import asdict
+        from enum import Enum
+        from agent_lab.ipc_operational_read import validate_request,validate_response
+        from agent_lab.identity_logical_continuity import H,C,checkpoint_identifiers,witness_commitment
+        keys=self._continuity_keys
+        if keys is None:raise PermissionError("pinned Kernel/Owner custody bindings unavailable")
+        now=now or datetime.now(timezone.utc)
+        if now.tzinfo is None:raise ValueError("aware verification time required")
+        scope_names="deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()
+        scope={name:request[name] for name in scope_names}
+        validate_request(request,keys.kernel_public_key,expected_scope=scope,now=now.astimezone(timezone.utc).replace(tzinfo=None),expected_key_id=keys.kernel_key_id,expected_contract="oi0002.kernel-identity-c09/1.1")
+        case=self._cases.get(request["case_id"])
+        if not isinstance(allowed_case_ids,frozenset) or case is None or request["case_id"] not in allowed_case_ids or str(case.tax_period.year)!=request["tax_year"] or len(request["authorization_references"])!=1:raise PermissionError("exact configured case/year/authorization scope required")
+        self._verify_audit_continuity();self._verify_data_integrity();self._verify_logical_integrity()
+        from copy import deepcopy
+        stable=deepcopy(request)
+        for name in ("request_digest","kernel_proof","expires_at"):stable.pop(name)
+        stage_digest=H(stable)
+        self._db.execute("BEGIN IMMEDIATE")
+        try:
+            logical=self._logical_row()
+            if logical is None or logical["deployment_id"]!=request["deployment_id"] or str(logical["epoch"])!=request["expected_epoch"] or logical["head"]!=request["expected_head"]:raise PermissionError("missing/stale logical continuity")
+            nonce=request["kernel_proof"]["nonce"]
+            if self._db.execute("SELECT 1 FROM identity_protocol_attempt WHERE nonce=?",(nonce,)).fetchone():raise PermissionError("proof nonce already consumed")
+            cached=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type='READ_IDENTITY_STATE'",(request["transaction_id"],)).fetchone()
+            self._protocol_transaction=True;self._protocol_context=request
+            if cached:
+                original=json.loads(cached["payload_json"])
+                if original["stage_content_digest"]!=stage_digest:raise PermissionError("read transaction content substitution")
+                result=original["result"]
+                # Revalidate current lifecycle/evidence even for stored snapshot reuse.
+                self._revalidate_read_snapshot(request,result)
+            else:
+                values=self._read_protocol_domain(request)
+                def encode(value):
+                    if value is None:return ""
+                    if isinstance(value,Enum):return value.value
+                    if isinstance(value,datetime):return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                    if isinstance(value,date):return value.isoformat()
+                    if type(value) is int:return str(value)
+                    if isinstance(value,dict):return {k:encode(v) for k,v in value.items()}
+                    if isinstance(value,(tuple,list)):return [encode(v) for v in value]
+                    return value
+                result={name:request[name] for name in ("case_id","tax_year","run_id","domain_operation")}|{"items":[encode(asdict(value)) for value in values]}
+                original={"stage_content_digest":stage_digest,"result":result}
+                self._db.execute("INSERT INTO identity_protocol_result VALUES(?,'READ_IDENTITY_STATE',?,?)",(request["transaction_id"],_canonical(original),self._mac(original)))
+            details={"request_digest":request["request_digest"],"nonce_commitment":H({"deployment_id":request["deployment_id"],"nonce":nonce}),"result_digest":H(result),"logical_head":logical["head"]}
+            self._append_audit("IDENTITY_READ_COMMIT",request["case_id"],"REDACTED",details)
+            count,head=self._audit_head()
+            response={name:request[name] for name in ("contract","message_type","transaction_id","request_digest")}
+            response.update(outcome="READ_OK",identity_epoch=str(logical["epoch"]),identity_head=logical["head"],identity_audit_count=str(count),identity_audit_head="sha256:"+head,staged_receipt_digest="",witness_preimage_digest="",signed_record_digest="",denial_code="",result=result)
+            response["response_digest"]=H(response)
+            validate_response(response,request)
+            checkpoint_id,_=checkpoint_identifiers(request["deployment_id"],request["transaction_id"],request["request_digest"],response["response_digest"])
+            receipt={"profile":"identity-audit-checkpoint/1","deployment_id":request["deployment_id"],"store_id":logical["store_id"],"checkpoint_id":checkpoint_id,"transaction_id":request["transaction_id"],"request_digest":request["request_digest"],"response_digest":response["response_digest"],"stage_content_digest":stage_digest,"response_outcome":"READ_OK","logical_epoch":str(logical["epoch"]),"logical_head":logical["head"],"audit_cut_count":str(count),"audit_cut_head":"sha256:"+head,"backup_generation":logical["backup_generation"]}
+            composite=witness_commitment(deployment_id=request["deployment_id"],logical_epoch=str(logical["epoch"]),logical_head=logical["head"],audit_cut_count=str(count),audit_cut_head="sha256:"+head)
+            checkpoint={"receipt":receipt,"composite":composite}
+            attempt={"request":request,"response":response,"checkpoint_id":checkpoint_id,"audit_details":details,"consumed_at":now.isoformat()}
+            self._db.execute("INSERT INTO identity_protocol_attempt VALUES(?,?,?,?,?)",(nonce,request["transaction_id"],request["request_digest"],_canonical(attempt),self._mac(attempt)))
+            self._db.execute("INSERT INTO identity_audit_checkpoint VALUES(?,?,?,?)",(checkpoint_id,response["response_digest"],_canonical(checkpoint),self._mac(checkpoint)))
+            if self._fault:self._fault("IDENTITY_READ:BEFORE_COMMIT")
+            self._db.commit()
+            if self._fault:self._fault("IDENTITY_READ:AFTER_COMMIT")
+            self._sync_anchor()
+            return response
+        except BaseException:
+            if self._db.in_transaction:self._db.rollback()
+            raise
+        finally:self._protocol_context=None;self._protocol_transaction=False
+
+    def _read_protocol_domain(self,request):
+        case=request["case_id"];authorization=request["authorization_references"][0];payload=request["payload"]
+        if request["domain_operation"]=="READ_CASE_IDENTITY":return (self.read_case_identity(case_id=case,subject_id=payload["subject_id"],on_date=date.fromisoformat(payload["as_of_date"]),authorization_ref=authorization),)
+        if request["domain_operation"]=="LIST_PARTIES":return self.list_parties(case,on_date=date.fromisoformat(payload["as_of_date"]),authorization_ref=authorization)
+        return self.read_facts(case_id=case,tax_year=int(request["tax_year"]),subject_id=payload["subject_id"],authorization_ref=authorization)
+
+    def _revalidate_read_snapshot(self,request,result):
+        """Validate current authority/evidence, never replace the saved result."""
+        case=request["case_id"];year=int(request["tax_year"]);authorization=request["authorization_references"][0]
+        operation=request["domain_operation"];subject=request["payload"]["subject_id"]
+        self._check_access("read_fact" if operation=="READ_FACTS" else "read_party",case,authorization)
+        if operation=="LIST_PARTIES":
+            self.list_parties(case,on_date=date.fromisoformat(request["payload"]["as_of_date"]),authorization_ref=authorization)
+            return
+        if self._load_identity(subject,require_active=True) is None:raise PermissionError("cached subject unavailable")
+        dates=[date.fromisoformat(request["payload"]["as_of_date"])] if operation=="READ_CASE_IDENTITY" else [date.fromisoformat(item["valid_from"]) for item in result["items"]]
+        for on_date in dates:
+            if not any(role.subject_id==subject for role in self.list_parties(case,on_date=on_date,authorization_ref=authorization)):raise PermissionError("cached subject association unavailable")
+        if operation=="READ_FACTS":
+            for item in result["items"]:
+                for kind,reference in (("OWNER_DECLARATION",item["declaration_artifact_ref"]),("OWNER_CONFIRMATION",item["confirmation_ref"]),("IDENTITY_AUTHORIZATION",item["authorization_ref"]),*(("IDENTITY_AUDIT",ref) for ref in item["audit_lineage"])):
+                    self._resolve_evidence(kind,reference,case,year,subject,date.fromisoformat(item["valid_from"]),date.fromisoformat(item["valid_to_exclusive"]))
 
     def record_ipc_boundary_denial(self, *, case_id: str, tax_year: int,
                                    request_digest: str, operation: str) -> None:
@@ -573,6 +850,7 @@ class IdentityPersistence:
         self._commit("IPC_BOUNDARY_DENIED",lambda:self._append_audit("IPC_BOUNDARY_DENIED",case_id,"REDACTED",
             {"request_digest":request_digest,"operation":operation,"reason":"CONTINUITY_CONTRACT_REQUIRED"}))
 
+    @_serialized_identity
     def verify_runtime_cases(self, records: tuple) -> None:
         """Validate composition metadata without exposing protected identity rows."""
         if self._authorize is None:
@@ -973,5 +1251,6 @@ class IdentityPersistence:
         target.with_suffix(target.suffix+".audit-anchor").write_text(_canonical(doc),encoding="utf-8")
         return target
 
+    @_serialized_identity
     def close(self) -> None:
         self._verify_audit_continuity(); self._db.close()
