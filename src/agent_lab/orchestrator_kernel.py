@@ -58,6 +58,10 @@ class PermissionDenied(KernelError):
     """Raised when deterministic permission evaluation denies an action."""
 
 
+class _IdentityReadBudgetDenied(PermissionDenied):
+    """Rollback proof reservation, then persist the existing budget stop."""
+
+
 class IntegrityError(KernelError):
     """Raised when durable state or audit integrity cannot be proven."""
 
@@ -1391,6 +1395,17 @@ class OrchestratorKernel:
 
     def issue_identity_read(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
                             operation,payload,authorization_references,signing_key,key_id,transaction_id=None):
+        try:
+            return self._issue_identity_read(deployment_id=deployment_id,manifest_id=manifest_id,task_id=task_id,run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation,payload=payload,authorization_references=authorization_references,signing_key=signing_key,key_id=key_id,transaction_id=transaction_id)
+        except _IdentityReadBudgetDenied as exc:
+            # atomic_execution rolled back the failed reservation, including
+            # its nested budget event. Reapply the existing enforcer outside
+            # that failed transaction so BLOCKED/audit survive restart.
+            self.consume_budget(manifest_id,tool_calls=1)
+            raise PermissionDenied("read budget exhausted") from exc
+
+    def _issue_identity_read(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
+                            operation,payload,authorization_references,signing_key,key_id,transaction_id=None):
         """Reserve in the real Kernel, reread durable authority, then sign once."""
         import secrets,uuid
         from datetime import timedelta
@@ -1418,7 +1433,7 @@ class OrchestratorKernel:
                 if len(authorization_references)!=1 or authorization_references[0] not in manifest_payload["inputs"]:raise PermissionDenied("authorization not in manifest input")
                 capability="identity_read";message="READ_IDENTITY_STATE";scope_kind="CASE_YEAR"
             if _parse_timestamp(manifest["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("manifest expired")
-            if not self.consume_budget(manifest_id,tool_calls=1).allowed:raise PermissionDenied("read budget exhausted")
+            if not self.consume_budget(manifest_id,tool_calls=1).allowed:raise _IdentityReadBudgetDenied("read budget exhausted")
             now=_utc_now();expiry=min(now+timedelta(seconds=5),_parse_timestamp(manifest["expires_at"],"expires_at"))
             if bootstrap:expiry=min(expiry,_parse_timestamp(state["artifact"]["expires_at"],"expires_at"))
             stamp=lambda value:value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")

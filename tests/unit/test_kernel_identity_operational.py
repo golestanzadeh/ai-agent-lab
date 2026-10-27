@@ -75,6 +75,21 @@ def test_kill_switch_blocks_proof_before_transport(tmp_path):
     finally:identity.close();kernel.close()
 
 
+def test_budget_stop_survives_failed_reservation_and_restart(tmp_path):
+    kernel,identity,owner,state=bootstrap(tmp_path)
+    try:
+        payload=__import__('json').loads(kernel._manifest_row(owner["bootstrap_manifest_id"])["payload_json"])
+        limit=payload["budget"]["tool_call_limit"]
+        assert kernel.consume_budget(owner["bootstrap_manifest_id"],tool_calls=limit).allowed
+        with pytest.raises(PermissionDenied,match="budget"):issue(kernel,owner)
+        assert kernel._manifest_row(owner["bootstrap_manifest_id"])["state"]=="BLOCKED"
+        assert kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]==0
+        kernel.close();kernel=OrchestratorKernel(tmp_path/"kernel.sqlite",ROOT)
+        assert kernel._manifest_row(owner["bootstrap_manifest_id"])["state"]=="BLOCKED"
+        kernel.verify_audit_chain()
+    finally:identity.close();kernel.close()
+
+
 @pytest.mark.parametrize("attack",["missing_prefix","wrong_prefix","lost_result"])
 def test_bootstrap_reconciliation_returns_audited_correlated_denial(tmp_path,attack):
     from unittest.mock import patch
