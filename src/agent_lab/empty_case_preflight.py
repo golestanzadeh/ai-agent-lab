@@ -46,8 +46,10 @@ def inspect_empty_case(persistence, drive, *, owner_id: str, case_id: str, tax_y
         data = json.loads(state['payload'])
         if any(data.get(field) for field in (
             'documents_ref', 'evidence_ref', 'facts_ref', 'calculations_ref',
-            'outputs_ref', 'approvals_ref', 'last_run_id')):
+            'outputs_ref', 'approvals_ref')):
             raise EmptyCaseBlocked('SQLite state contains document or execution references')
+        if data.get('last_run_id') and not str(data['last_run_id']).startswith('CREATE-RUN-LOCAL-'):
+            raise EmptyCaseBlocked('Unexpected last run reference')
         intent = persistence._db.execute(
             'SELECT status,storage_root_id FROM storage_provisioning WHERE case_id=? AND owner_id=? AND tax_year=?',
             (case_id, owner_id, tax_year),

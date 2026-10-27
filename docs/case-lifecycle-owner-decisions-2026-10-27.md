@@ -96,3 +96,8 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - Added src/agent_lab/empty_case_preflight.py. It checks exact authorized case/year, canonical SQLite integrity and anchor, lifecycle CREATED, durable runs, mutation requests, state references and completed storage provisioning before accessing Drive.
 - Drive inspection verifies exact case root, expected structural subfolders and that each is empty using paginated Google Drive API listing. Unexpected objects, mismatched scope, incomplete provisioning or API failures fail closed.
 - This is an implementation increment only: no destructive endpoint or user-facing delete action is enabled. The persistence layer still needs an audited deletion transaction, identity tombstone/number reuse, cross-store recovery and post-delete readback. Do not claim the feature is ready for Owner deletion testing.
+## Stage 2 live preview integration, Owner acceptance still pending
+- Wired a non-destructive SQLite-first/Drive-second readiness preview into the Cases tab and loopback host endpoint POST /cases/delete/preview. This endpoint cannot delete cases.
+- Live read-only preflight of CASE-2026-0002 returned HTTP 200 and both database_ready and drive_ready true; no data deleted. The original create-run marker in case_state is allowed only when prefixed CREATE-RUN-LOCAL- and no durable run exists.
+- Focused preflight unit tests: 3 passed. Live dashboard restarted and Cases tab exposes preview form.
+- Destructive deletion, number reuse, cross-store recovery, audit-tombstone migration and final owner acceptance are NOT complete. Do not close or pass Stage 2. Existing preexisting uncommitted source changes in host/template remain preserved.
