@@ -77,3 +77,10 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - No data mutated during verification. Direct Google Drive folder inspection and independent acceptance are separate, not yet claimed.
 - S1 owner UI test: PASS for reported scenario; deletion stages remain disabled.
 
+## Stage 1 closure and Stage 2 activation decision (2026-10-27)
+- STAGE_1 CLOSED / OWNER_ACCEPTED: Owner confirmed successful 2026 creation twice with correct confirmation. Independent read-only SQLite readback showed both case IDs authorized and both storage intents COMPLETE. Six cases visible.
+- STAGE_2 ACTIVE / IMPLEMENTATION_GATED: Owner authorized implementation of empty-case deletion, not deletion of any specific existing case. No destructive call is authorized by this instruction alone.
+- Read-only canonical database check: schema v3, six CREATED cases, zero durable runs, storage provider google_drive and provisioning COMPLETE. This does NOT prove that any case's Drive subtree has no documents.
+- Critical implementation gap: SQLiteCasePersistence exposes register/load and a chained integrity audit/anchor, but no authorized delete-case transaction. Direct SQL DELETE would bypass integrity/audit and leave provisioning references and Drive journal; prohibited. GoogleDriveStorageScopeCreator has create-only journal and no verified delete/reconciliation path.
+- Before enabling the destructive button: add a bounded, audited deletion transaction to existing persistence; verify exact case/year ownership and empty Drive subtree via Google Drive API; check backup reservations and dependencies; revalidate on confirmation; implement recovery-safe Drive/SQLite cleanup and number reuse. Test with synthetic fixtures first. Until these checks pass, no real deletion endpoint is enabled.
+- Preserve the Owner's existing six cases, local uncommitted work and default-deny external transmission.
