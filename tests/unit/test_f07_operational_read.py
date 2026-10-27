@@ -114,3 +114,42 @@ def test_dispatcher_rejects_wrong_principal_before_reading_frame():
     with patch("agent_lab.c09_identity_dispatch.authorize_connected_kernel",side_effect=PermissionError("wrong SID")):
         with pytest.raises(IdentityDispatchError):dispatch_operational_identity_read(None,lambda n:observed.append(n),None,KEY,expected_scope=SCOPE,expected_key_id="TEST-KERNEL-KEY-1",now=NOW)
     assert observed==[]
+
+
+@pytest.mark.parametrize("attack",["projection-digest","projection-scope","high-s","expiry","signed-field","actor"])
+def test_read_specific_crypto_and_scope_substitution(attack):
+    import base64
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from f07_contract_vectors import seal,P256_ORDER
+    from agent_lab.ipc_wire_primitives import canonical_sha256
+    request=deepcopy(V["vectors"][1]["request"])
+    if attack=="projection-digest":request["kernel_proof"]["pending_row_digest"]="sha256:"+"0"*64
+    if attack=="projection-scope":
+        request["kernel_proof"]["kernel_projection"]["case_id"]="TEST-OTHER"
+        request["kernel_proof"]["pending_row_digest"]=canonical_sha256(request["kernel_proof"]["kernel_projection"])
+    if attack in {"projection-digest","projection-scope"}:request=seal(request,ec.derive_private_key(1,ec.SECP256R1()))
+    if attack=="high-s":
+        raw=base64.urlsafe_b64decode(request["kernel_proof"]["signature"]+"==")
+        request["kernel_proof"]["signature"]=base64.urlsafe_b64encode(raw[:32]+(P256_ORDER-int.from_bytes(raw[32:],"big")).to_bytes(32,"big")).rstrip(b"=").decode()
+    if attack=="expiry":request["kernel_proof"]["not_after"]="2025-01-01T00:00:00.000000Z"
+    if attack=="signed-field":request["task_id"]="TEST-ALTERED"
+    if attack=="actor":request["actor_instance_id"]="TEST-OTHER"
+    with pytest.raises((ValueError,InvalidSignature)):verify(request)
+
+
+def test_dispatcher_does_not_return_response_when_audit_commit_fails(tmp_path):
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from f07_contract_vectors import sign
+    from test_identity_persistence import open_store
+    from agent_lab.c09_identity_dispatch import dispatch_operational_identity_read,IdentityDispatchError
+    def fail(stage):
+        if stage=="IPC_BOUNDARY_DENIED:BEFORE_COMMIT":raise RuntimeError("injected audit failure")
+    _,authority=open_store(tmp_path,fault=fail)
+    request=deepcopy(V["vectors"][3]["request"]);request.update(case_id="C1",tax_year="2025")
+    request=sign(request,ec.derive_private_key(1,ec.SECP256R1()))
+    try:
+        with patch("agent_lab.c09_identity_dispatch.authorize_connected_kernel"):
+            with pytest.raises(IdentityDispatchError):dispatch_operational_identity_read(None,lambda n:encode_frame(request),authority,KEY,expected_scope={name:request[name] for name in SCOPE},expected_key_id="TEST-KERNEL-KEY-1",now=NOW)
+        assert authority._audit_head()[0]==0
+        authority._verify_audit_continuity()
+    finally:authority.close()

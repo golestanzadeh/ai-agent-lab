@@ -73,7 +73,8 @@ def exchange_operational_identity_read(frame: bytes, expected_server: PinnedProc
     """Frozen operational read transport; no mutation or automatic retry after write."""
     from agent_lab.ipc_wire_primitives import decode_frame
     if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
-    request=decode_frame(frame)
+    try:request=decode_frame(frame)
+    except ValueError as exc:raise PipeSecurityError("invalid operational frame") from exc
     if request.get("contract")!="oi0002.kernel-identity-c09/1.0" or request.get("message_type")!="READ_IDENTITY_STATE":
         raise PipeSecurityError("only operational read frames are permitted")
     deadline=deadline or OperationDeadline()
