@@ -22,7 +22,7 @@
     <button type="submit">{{ 'بررسی آمادگی حذف' if lang == 'fa-IR' else 'L?schbereitschaft prüfen' }}</button>
   </form>
   <p id="empty-case-preview-result" role="status" aria-live="polite"></p>
-  <p>{{ '??? ????? ?? بررسی آمادگی حذف? ??????? ???.' if lang == 'fa-IR' else 'Die tatsächliche Löschung bleibt bis zur sicheren Transaktion deaktiviert.' }}</p>
+  <p>{{ 'حذف واقعی تا تکمیل تراکنش ایمن غیرفعال است.' if lang == 'fa-IR' else 'Die tatsächliche Löschung bleibt bis zur sicheren Transaktion deaktiviert.' }}</p>
 </section>
 <script src="{{ url_for('static', path='/empty_case_preview.js') }}" defer></script>
 {% endif %}
