@@ -218,12 +218,14 @@ class LocalCaseHost:
             if any(x.get('parents') != [docs[0]['id']] or x.get('trashed') is not False
                    for x in files):
                 raise ValueError('Document parent mismatch')
-            return {'case_id': case_id, 'tax_year': tax_year,
+            result = {'case_id': case_id, 'tax_year': tax_year,
                     'documents_folder_id': docs[0]['id'],
                     'files': sorted([{'id': x['id'], 'name': x['name'],
                                       'mime_type': x['mimeType'], 'size': x.get('size')}
                                      for x in files if x['mimeType'] != 'application/vnd.google-apps.folder'],
                                     key=lambda x: (x['name'].casefold(), x['id']))}
+            self._sync_document_index(case_id,tax_year,result)
+            return result
 
     def upload_case_document(self, case_id: str, tax_year: int, filename: str, content: bytes):
         from io import BytesIO
@@ -266,6 +268,69 @@ class LocalCaseHost:
             return {'case_id': case_id, 'tax_year': tax_year,
                     'document_id': created['id'], 'name': filename,
                     'size': len(content), 'sha256': sha256(content).hexdigest()}
+
+    def _sync_document_index(self, case_id, tax_year, snapshot):
+        # Drive is authoritative. SQLite stores only case-scoped metadata.
+        import sqlite3
+        from datetime import datetime, timezone
+        db = self.persistence._db
+        db.execute("""CREATE TABLE IF NOT EXISTS case_document_index (
+            case_id TEXT NOT NULL, tax_year INTEGER NOT NULL,
+            drive_file_id TEXT NOT NULL, name TEXT NOT NULL,
+            mime_type TEXT NOT NULL, size INTEGER,
+            indexed_at TEXT NOT NULL,
+            PRIMARY KEY(case_id, drive_file_id))""")
+        now = datetime.now(timezone.utc).isoformat()
+        for file in snapshot['files']:
+            db.execute("""INSERT INTO case_document_index
+                (case_id,tax_year,drive_file_id,name,mime_type,size,indexed_at)
+                VALUES (?,?,?,?,?,?,?)
+                ON CONFLICT(case_id,drive_file_id) DO UPDATE SET
+                name=excluded.name,mime_type=excluded.mime_type,
+                size=excluded.size,indexed_at=excluded.indexed_at""",
+                (case_id,tax_year,file['id'],file['name'],
+                 file['mime_type'],file.get('size'),now))
+        ids = [file['id'] for file in snapshot['files']]
+        if ids:
+            placeholders = ','.join('?' for _ in ids)
+            db.execute('DELETE FROM case_document_index WHERE case_id=? AND drive_file_id NOT IN ('+placeholders+')',
+                       (case_id,*ids))
+        else:
+            db.execute('DELETE FROM case_document_index WHERE case_id=?',(case_id,))
+        db.commit()
+
+    def get_case_document(self, case_id, tax_year, document_id):
+        from io import BytesIO
+        from googleapiclient.http import MediaIoBaseDownload
+        with self._lock:
+            snapshot = self.list_case_documents(case_id,tax_year)
+            entry = next((x for x in snapshot['files'] if x['id']==document_id),None)
+            if entry is None:
+                raise ValueError('Document does not belong to this case')
+            drive = build('drive','v3',credentials=get_drive_credentials(),cache_discovery=False)
+            buffer = BytesIO()
+            request = drive.files().get_media(fileId=document_id)
+            downloader = MediaIoBaseDownload(buffer,request)
+            done = False
+            while not done:
+                _,done=downloader.next_chunk()
+                if buffer.tell()>25*1024*1024:
+                    raise ValueError('Document exceeds preview limit')
+            return entry,buffer.getvalue()
+
+    def trash_case_document(self,case_id,tax_year,document_id):
+        with self._lock:
+            snapshot=self.list_case_documents(case_id,tax_year)
+            entry=next((x for x in snapshot['files'] if x['id']==document_id),None)
+            if entry is None:
+                raise ValueError('Document does not belong to this case')
+            drive=build('drive','v3',credentials=get_drive_credentials(),cache_discovery=False)
+            updated=drive.files().update(fileId=document_id,body={'trashed':True},
+                                         fields='id,trashed').execute()
+            if updated.get('id')!=document_id or updated.get('trashed') is not True:
+                raise RuntimeError('Drive trash readback mismatch')
+            self._sync_document_index(case_id,tax_year,self.list_case_documents(case_id,tax_year))
+            return {'deleted':True,'document_id':document_id}
 
     def create_case(self, year: int, assessment: str):
         with self._lock:
@@ -363,6 +428,37 @@ def create_local_case_app():
             return JSONResponse({'uploaded': False, 'reason': 'Upload failed or requires verification'},
                                 status_code=409, headers={'Cache-Control': 'no-store'})
         return JSONResponse({'uploaded': True, **result}, headers={'Cache-Control': 'no-store'})
+
+    @app.get('/cases/documents/view')
+    async def view_case_document(case_id: str,tax_year: int,document_id: str):
+        from fastapi.responses import Response
+        try:
+            entry,content=host.get_case_document(case_id,tax_year,document_id)
+        except Exception:
+            raise HTTPException(status_code=404,detail='Document unavailable')
+        mime=entry['mime_type']
+        if mime not in {'application/pdf','image/jpeg','image/png','image/webp','image/tiff'}:
+            raise HTTPException(status_code=415,detail='Preview not supported')
+        return Response(content,media_type=mime,headers={
+            'Content-Disposition':'inline',
+            'Cache-Control':'no-store',
+            'X-Content-Type-Options':'nosniff',
+            'Content-Security-Policy':"default-src 'none'; sandbox",
+        })
+
+    @app.post('/cases/documents/delete')
+    async def delete_case_document(request: __import__('fastapi').Request,
+                                   case_id: str = Form(...),tax_year: int = Form(...),
+                                   document_id: str = Form(...)):
+        if (request.headers.get('origin') != 'http://127.0.0.1:8766'
+                or request.headers.get('host') != '127.0.0.1:8766'):
+            raise HTTPException(status_code=403,detail='Origin rejected')
+        try:
+            result=host.trash_case_document(case_id,tax_year,document_id)
+        except Exception:
+            return JSONResponse({'deleted':False,'reason':'Document scope or deletion verification failed'},
+                                status_code=409,headers={'Cache-Control':'no-store'})
+        return JSONResponse(result,headers={'Cache-Control':'no-store'})
 
     app.state.local_case_host = host
     app.state.product_case_source = "canonical-sqlite"

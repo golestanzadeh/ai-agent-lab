@@ -25,6 +25,46 @@
         for (const file of data.files) {
           const item = document.createElement('li');
           item.textContent = file.name;
+          const view = document.createElement('a');
+          view.textContent = fa ? "?????" : 'Anzeigen';
+          const params = new URLSearchParams({
+            case_id: panel.dataset.caseId,
+            tax_year: panel.dataset.taxYear,
+            document_id: file.id
+          });
+          view.href = '/cases/documents/view?' + params.toString();
+          view.target = '_blank';
+          view.rel = 'noopener noreferrer';
+          view.style.marginInlineStart = '1rem';
+          item.appendChild(view);
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.textContent = fa ? "???" : 'L?schen';
+          remove.style.marginInlineStart = '0.5rem';
+          remove.addEventListener('click', async () => {
+            const question = fa ? "??? ???? ?? ??? ????? Google Drive ????? ????" :
+              'Dokument in den Google Drive-Papierkorb verschieben?';
+            if (!window.confirm(question)) return;
+            remove.disabled = true;
+            try {
+              const body = new FormData();
+              body.set('case_id', panel.dataset.caseId);
+              body.set('tax_year', panel.dataset.taxYear);
+              body.set('document_id', file.id);
+              const response = await fetch('/cases/documents/delete', {
+                method: 'POST', body, credentials: 'same-origin'
+              });
+              const data = await response.json();
+              if (!response.ok || !data.deleted || data.document_id !== file.id)
+                throw Error('delete');
+              await load();
+            } catch (_) {
+              window.alert(fa ? "??? ????? ???. ???? ?????? ???? ?? ????? ?? ??????? ????? ???." :
+                'L?schen fehlgeschlagen. Bitte Dokumentstatus pr?fen.');
+              remove.disabled = false;
+            }
+          });
+          item.appendChild(remove);
           list.appendChild(item);
         }
         panel.appendChild(list);
