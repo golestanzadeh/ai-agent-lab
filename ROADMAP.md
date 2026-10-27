@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+F07 continuous recovery (2026-10-27) preserved prior client/dispatcher/transport commits and independently accepted `77fd630ffad62e97515c69e384b51387e77262fd` for development-only read composition. Operational continuation is `BLOCKED_SPEC_GAP`: clarify the existing Identity wire/proof/result schema and freeze golden vectors before deadline/cancellation-aware transport, authenticated Kernel/Identity handler composition and real SCM/principal tests. No parallel protocol/authority or Drive Desktop architecture is authorized; no protected operational acceptance is claimed.
+
 Authorized F07 preparation files (2026-10-26): `src/agent_lab/runtime_activation.py`, `tests/unit/test_runtime_activation.py` and `docs/f07-runtime-activation-preparation-20261026.md` define closed non-secret configuration references and operation readiness within ProductionRuntime. Existing SCM composition remains unavailable; no alternate service-client, orchestrator or operational authority is authorized by this preparation package.
 
 F07 preparation is independently accepted at `de0ef2ee1bd612c173774b54902b0070c5d557be` (41 reviewer tests and adversarial probes). Operational service-client integration remains absent and unaccepted. Next code task is bounded existing-role client/dispatcher + SCM composition using existing accepted primitives, with independent review before any privileged deployment or protected activation. Do not treat readiness hashes or configuration presence as operational approval.

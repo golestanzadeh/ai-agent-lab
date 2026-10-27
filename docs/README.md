@@ -1,5 +1,13 @@
 # Documentation Index
 
+- `a11-kernel-health-development-20261026.md` — preserved Kernel health development evidence; acceptance scope follows the canonical checkpoint.
+- `a12-kernel-health-local-pipe-20261026.md` — preserved local health pipe verification evidence.
+- `a13-kernel-health-bounded-client-service-adapter-20261026.md` — preserved bounded health-client/service-adapter evidence.
+- `a14-kernel-health-hung-peer-and-identity-gate-20261026.md` — hung-peer verification and remaining Identity gate evidence.
+- `dashboard-local-execution-handoff-20261026.md` — recovered local dashboard composition handoff.
+- `local-case-launch-20261026.md` — preserved local case-launch record, not protected activation authority.
+- `drive-desktop-case-creation-reset-20261026.md` — historical unrelated Desktop-path record; not acceptance of a Desktop dependency for the F07/direct-API architecture.
+
 - `f07-runtime-activation-preparation-20261026.md` — governed runtime configuration references, operation gates, read-only readiness and the exact operational service-client prerequisite.
 
 - `oi0002-c09-witness/` - witness protocol, crash/recovery evidence, governed R1/R2 results, non-privileged R3 preparation, exact Owner Human Gates, provider/cost comparison and Owner decision report.

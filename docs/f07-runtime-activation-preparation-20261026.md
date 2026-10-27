@@ -1,5 +1,15 @@
 # F07 governed runtime activation preparation
 
+## Continuous mission recovery — 2026-10-27
+
+Overall status: `BLOCKED_SPEC_GAP`. Recovered prior commits e40eff928bb2ed96c7028c6b5a101f723d4fa1f0, 8f4069cefaba3cc017c75dd3a78b842ed3f6c709 and faf32408bfcc06c55a54e641f6639d27350e6414. The previously dirty exchange_validated_identity_read is now preserved and independently PASS at exact `77fd630ffad62e97515c69e384b51387e77262fd` strictly for development-contract composition. Worker verification: 243 client/transport/IPC/SCM tests and 88 Kernel/Identity/F06/F07 regressions. Reviewer verification: 232 focused and 366 expanded, exit 0. These injected/non-operational tests do not establish real Windows service integration.
+
+Independent architecture review identified exact ambiguities in the operational architecture document lines 80, 91, 100, 108 and 110: exact outer fields omit the separately mandatory kernel_proof; prepared_request_digest placement is unspecified; signature preimage is alternately defined as the complete outer request and unsigned-proof bytes; request/response digest exclusion sets and signing order are not frozen; domain reads have no closed result field/schema and unclear subject/date optionality. Required next artifact is clarification of the same approved contract with complete golden vectors, followed by independent review. Neither the development-only validators nor the separate Custodian protocol may silently resolve these choices.
+
+Existing SCM entrypoints remain uncomposed and current native exchange remains synchronous without deadline/cancellation. No real SCM/principal acceptance or protected operation occurred. The read-only SCM inventory returned no Kernel/Identity services and no fixed Kernel configuration file; no installation or privileged change was attempted. Active operational Kernel/Kill Switch state is not recovered. No new Owner decision about Person A/B or Drive architecture is needed; only exact contract clarification and later existing deployment Human Gates remain. The prior unrelated Desktop code was preserved but not invoked or accepted for this mission.
+
+Reproducible worker commands (PYTHONPATH=src): `python -m pytest -q tests/unit/test_c09_identity_boundary.py tests/unit/test_c09_pipe_transport.py tests/unit/test_c09_service_host.py tests/unit/test_c09_named_pipe.py tests/unit/test_ipc_envelope.py tests/unit/test_ipc_response.py tests/unit/test_ipc_wire_primitives.py` (243 passed, exit 0); `python -m pytest -q tests/unit/test_orchestrator_kernel.py tests/unit/test_identity_persistence.py tests/unit/test_runtime_activation.py tests/unit/test_production_runtime.py` (88 passed, exit 0). A large parametrized test ID initially exceeded Windows fixture path limits; explicit short IDs corrected that test setup failure. No security check was relaxed.
+
 Baseline: `f429cad56dad8a7cd1da468cac2da429316b0242`.
 Accepted F06: `5f2547a2707a785f34766361ab22148535725086`.
 

@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+2026-10-27 F07 mission status is `BLOCKED_SPEC_GAP`: exact operational Identity request/proof fields, digest/signature preimages/construction order, operation-specific read result schemas and golden vectors require clarification in the existing contract before operational implementation. Recovered client composition `77fd630ffad62e97515c69e384b51387e77262fd` has independent PASS only for development-contract validation/correlation (232 focused, 366 expanded); no live SCM or operational Identity acceptance exists. Existing host entrypoints remain unavailable by default; timeout/cancellation and real-principal deployment evidence remain required. No active row closes. See checkpoint and `docs/f07-runtime-activation-preparation-20261026.md`.
+
 2026-10-26 local dashboard discovery documented in `docs/dashboard-local-execution-handoff-20261026.md` and linked from `PROJECT_CHECKPOINT.md`: port 8766 is the no-source read-only product app in the c09-continuation worktree; existing F06 runtime and F07 readiness code must be reused. The operational service client/dispatcher and SCM composition remain missing, and protected case creation / Drive mutation remain gated. This is documentation only; no active row closes, no acceptance or stage transition occurs.
 
 
