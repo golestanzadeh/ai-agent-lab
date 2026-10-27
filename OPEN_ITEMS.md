@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+F07 contract resolution is `F07_CONTRACT_INDEPENDENT_PASS` at exact 6c6a4d7d51070637a18517d17d418d082078b85e. Separate read-only review closes bounded findings R01/R02/R03 (54 focused, 299 combined, 18 documentation; three adversarial probes rejected; exit 0). This supersedes the historical contract-specification stop and candidate FAIL below, not operational gates. No active row is removed: OI-0002/C09 operational transport/host/finality/deployment and protected OI-0003 acceptance remain. Next bounded code prerequisite is the existing operational transport/client/dispatcher composition under its security and deployment gates; no activation or subsequent package is executed here.
+
 F07 contract candidate 695fb161 was independently FAIL (R01 HIGH projection enforceability, R02 HIGH signature malleability, R03 MEDIUM retry identity). The three bounded corrections pass 54 offline contract tests and await exact-SHA independent re-review. This records a correction/review transition, not operational acceptance; all active rows remain.
 
 2026-10-27 F07 contract resolution is resumed under explicit Owner authority. The prior BLOCKED_SPEC_GAP is being addressed in the existing architecture with exact request/proof fields, noncircular preimages and embedded existing read DTOs plus offline synthetic vectors. Candidate tests/review do not close any active row or activate operations. Independent exact-SHA review remains required; services, deployment/finality and protected-data gates remain unchanged.

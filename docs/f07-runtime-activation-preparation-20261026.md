@@ -1,5 +1,47 @@
 # F07 governed runtime activation preparation
 
+## F07 contract-resolution review evidence — 2026-10-27
+
+Scope is only existing operational contract `oi0002.kernel-identity-c09/1.0`; the development contract remains separate. Baseline c763b82502893632d8cc17c05b55c7ce69236867 and development composition 77fd630ffad62e97515c69e384b51387e77262fd were verified against remote. No production source, SCM service, privilege, key custody, protected data or operation activation changed. Architecture remains in `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md`; no alternative architecture is created.
+
+Gap A resolves exact outer/proof fields, top-level prepared_request_digest semantics and message/capability combinations. Gap B freezes request/content/projection digest exclusions, complete-outer domain-separated P-256 signing, low-S encoding, verification and proof renewal. Gap C uses embedded serialization of existing PersonRecord/EntityRecord, CasePartyRole and SubjectFactEnvelope returns, exact optionality, order, privacy, size limits and response digest coverage. Result-reference persistence was rejected as unsupported new domain behavior, not an equally authorized alternative.
+
+Independent reviewer `/root/c09_architecture_independent_review` has a separate read-only context and did not author corrections. Exact initial candidate 695fb161d3a90963ed6667683206794f6c86cb3b received INDEPENDENT_FAIL:
+
+| Finding | Exact initial location | Reproduction / correction |
+| --- | --- | --- |
+| F07-R01 HIGH | Architecture line 125; proof fields line 93; offline helper line 106 | Replace opaque pending_row_digest with all-zero SHA, recompute request digest and valid test-key signature: accepted without an available projection preimage. Correction transmits a closed signed kernel_projection, recomputes its hash/content/scope, and specifies own-PREPARED-plan comparison and pinned Kernel durable-row signature authority. Frozen arbitrary-digest and projection-scope substitutions now reject. |
+| F07-R02 HIGH | Architecture lines 112, 120 | Replace s with n-s in a valid signature: second canonical request verified. Correction normalizes low-S generation and rejects s>floor(n/2), including the frozen mathematically valid high-S twin. |
+| F07-R03 MEDIUM | Architecture line 54 versus lines 118–122 and recovery lines 159/161 | Fresh five-second proof or PREPARE→COMMIT changes bytes despite blanket changed-byte reuse denial. Correction defines immutable transaction content, stable per-stage digest, separately consumed nonce attempts, original PREPARE linkage, current reauthorization and no repeated domain effects. Tests cover expiry, fresh renewal, COMMIT renewal, changed content and consumed nonce. |
+
+Corrected exact candidate 6c6a4d7d51070637a18517d17d418d082078b85e received `INDEPENDENT_PASS` from the same separate read-only reviewer after independent re-execution. R01/R02/R03 are closed; no scoped defect remains. Mission result is `F07_CONTRACT_INDEPENDENT_PASS`, never F07_OPERATIONAL_PASS. Reviewer did not author or approve its own corrections. The later concurrent reporting-only modification of this document was visible to the reviewer and is not part of the exact reviewed contract SHA; contract, helper and frozen vectors remain unchanged after that verdict. No active OPEN_ITEMS row closes.
+
+Independent corrected-SHA commands (PYTHONPATH=src;tests/unit):
+
+- `python -m pytest -q tests/unit/test_f07_contract_resolution.py`: 54 passed in 1.94s, exit 0.
+- `python -m pytest -q tests/unit/test_f07_contract_resolution.py tests/unit/test_ipc_wire_primitives.py tests/unit/test_ipc_envelope.py tests/unit/test_ipc_response.py tests/unit/test_c09_named_pipe.py tests/unit/test_c09_pipe_transport.py tests/unit/test_c09_identity_boundary.py tests/unit/test_c09_service_host.py tests/unit/test_c09_scm_factory_wiring.py`: 299 passed in 2.83s, exit 0. Same initial-candidate list yielded 293 passed.
+- `python -m pytest -q tests/unit/test_documentation_index.py`: 18 passed in 0.82s, exit 0.
+- `git diff --check HEAD^ HEAD`: exit 0.
+- Independent adversarial reproductions: replace/re-sign arbitrary projection digest; substitute/re-hash/re-sign projection case; replace s with n-s. All three now reject ValueError, probe command exit 0. Their corresponding frozen negative-vector tests reproduce the exact attacks without privileged state.
+
+An initial review invocation referenced nonexistent tests/unit/test_c09_identity_client.py and tests/unit/test_c09_identity_dispatch.py, exited 1 with no tests and receives no credit. Only the corrected commands above support acceptance.
+
+Authenticated reporting capacity, measured 2026-10-27T13:15:11Z via signed-in Codex app usage telemetry: five-hour remaining 32%, reset 2026-10-27T17:36:46Z; weekly remaining 72%, reset 2026-11-02T07:43:08Z. Reserve 15 points preserved. Start 70%/78%, observed consumption 38/6 points through this handoff; final Git/documentation readback follows without another development package.
+
+Worker environment: Python 3.14.2 and pinned cryptography 50.0.1. All commands below use PYTHONPATH=src;tests/unit. No live service or external provider is called.
+
+| Command | Actual result |
+| --- | --- |
+| `python -m pytest tests/unit/test_f07_contract_resolution.py -q` | Initial 48 passed; corrected 54 passed; exit 0. |
+| `python -m pytest tests/unit/test_f07_contract_resolution.py tests/unit/test_ipc_wire_primitives.py tests/unit/test_ipc_envelope.py tests/unit/test_ipc_response.py tests/unit/test_c09_named_pipe.py tests/unit/test_c09_service_host.py -q` | Initial candidate 275 passed, exit 0. |
+| `python -m pytest tests/unit/test_orchestrator_kernel.py tests/unit/test_identity_persistence.py tests/unit/test_production_runtime.py tests/unit/test_runtime_activation.py -q` | 88 passed, exit 0; no runtime code changed afterward. |
+| `python -m pytest tests/unit/test_documentation_index.py -q` | 18 passed before candidate and after correction, exit 0. |
+| `git diff --check` | Exit 0 before both candidate commits. |
+
+Versioned fixture `tests/fixtures/f07-operational-contract-v1.json` is reproduced by the offline helper and equality test. It includes seven positive request/read DTO examples, explicit COMMIT and renewed-PREPARE examples, exact canonical frames/preimages/digests/signatures and 38 hostile vectors. The oversize frame has an exact byte-repeat recipe to avoid a redundant oversized literal. The public scalar 1 is test material only. Stateless examples do not prove durable proof consumption, actual principal authentication, live PENDING comparison, C09 finality or operational acceptance.
+
+Remaining operational prerequisites are deadline/cancellation-aware actual transport, existing Kernel/Identity dispatcher and SCM runtime composition, real-principal authorization/fault/restart tests, independent runtime acceptance and the applicable existing deployment/custody/provider Human Gates. OI-0002/C09/OI-0003, protected case processing, Drive writes, Gemini/CSV, Approval and Submission remain gated. Next executable package after contract acceptance is bounded operational transport/client integration under these same constraints, not automatic activation.
+
 ## Continuous mission recovery — 2026-10-27
 
 Overall status: `BLOCKED_SPEC_GAP`. Recovered prior commits e40eff928bb2ed96c7028c6b5a101f723d4fa1f0, 8f4069cefaba3cc017c75dd3a78b842ed3f6c709 and faf32408bfcc06c55a54e641f6639d27350e6414. The previously dirty exchange_validated_identity_read is now preserved and independently PASS at exact `77fd630ffad62e97515c69e384b51387e77262fd` strictly for development-contract composition. Worker verification: 243 client/transport/IPC/SCM tests and 88 Kernel/Identity/F06/F07 regressions. Reviewer verification: 232 focused and 366 expanded, exit 0. These injected/non-operational tests do not establish real Windows service integration.
