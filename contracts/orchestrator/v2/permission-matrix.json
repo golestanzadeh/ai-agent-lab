@@ -45,6 +45,7 @@
     "write_derived_case_artifact": {"maximum_tier": "A4", "case_run_required": true},
     "identity_create": {"maximum_tier": "A4", "case_run_required": true},
     "identity_read": {"maximum_tier": "A3", "case_run_required": true},
+    "identity_enrollment_status": {"maximum_tier": "A6", "human_gate_required": true, "no_standing_agent_permission": true, "bootstrap_only": true},
     "identity_update": {"maximum_tier": "A4", "case_run_required": true},
     "identity_status_transition": {"maximum_tier": "A4", "case_run_required": true},
     "case_party_bind": {"maximum_tier": "A4", "case_run_required": true},

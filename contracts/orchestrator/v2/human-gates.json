@@ -19,7 +19,8 @@
     "ELSTER_or_Finanzamt_contact",
     "external_content_release",
     "external_destination_transmission",
-    "authority_ambiguity"
+    "authority_ambiguity",
+    "IDENTITY_ENROLLMENT"
   ],
   "approval_rules": {
     "explicit": true,
