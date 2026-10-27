@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+Authorized F07 contract-resolution files (2026-10-27): existing `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md`, offline helper `tests/unit/f07_contract_vectors.py`, conformance tests `tests/unit/test_f07_contract_resolution.py`, and frozen synthetic fixture `tests/fixtures/f07-operational-contract-v1.json`. They resolve the three request/proof/read-result specification gaps without adding runtime authority. Verification and independent exact-SHA review precede contract acceptance; operational transport/composition and deployment remain subsequent gated work.
+
 F07 continuous recovery (2026-10-27) preserved prior client/dispatcher/transport commits and independently accepted `77fd630ffad62e97515c69e384b51387e77262fd` for development-only read composition. Operational continuation is `BLOCKED_SPEC_GAP`: clarify the existing Identity wire/proof/result schema and freeze golden vectors before deadline/cancellation-aware transport, authenticated Kernel/Identity handler composition and real SCM/principal tests. No parallel protocol/authority or Drive Desktop architecture is authorized; no protected operational acceptance is claimed.
 
 Authorized F07 preparation files (2026-10-26): `src/agent_lab/runtime_activation.py`, `tests/unit/test_runtime_activation.py` and `docs/f07-runtime-activation-preparation-20261026.md` define closed non-secret configuration references and operation readiness within ProductionRuntime. Existing SCM composition remains unavailable; no alternate service-client, orchestrator or operational authority is authorized by this preparation package.
