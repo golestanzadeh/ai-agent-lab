@@ -141,7 +141,7 @@ def unavailable_runtime(_config: ServiceConfiguration) -> ComponentRuntime:
     raise ServiceHostError("operational component composition is not implemented")
 
 
-def run_scm_service(role: ServiceRole) -> None:
+def run_scm_service(role: ServiceRole, runtime_factory=None) -> None:
     """Run one fixed role under SCM; deliberately exposes no install/remove CLI."""
     try:
         import servicemanager
@@ -160,7 +160,7 @@ def run_scm_service(role: ServiceRole) -> None:
         def __init__(self, args):
             super().__init__(args)
             self._stop_event = win32event.CreateEvent(None, 0, 0, None)
-            self._host = ServiceHost(role, unavailable_runtime)
+            self._host = ServiceHost(role, runtime_factory or unavailable_runtime)
 
         def SvcStop(self):
             self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
