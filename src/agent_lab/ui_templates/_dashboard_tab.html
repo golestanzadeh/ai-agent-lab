@@ -12,6 +12,17 @@
 {% if selected %}<p role="status">{{ selected.case_id }} {{ 'انتخاب و فعال است.' if lang == 'fa-IR' else 'ist ausgewählt und aktiv.' }}</p>{% endif %}
 </section>
 {% endif %}
+{% if tab == "documents" and selected and not test_mode %}
+<section class="panel" aria-label="Case documents">
+<h2>{{ '????? ?????? ????' if lang == 'fa-IR' else 'Dokumente des aktiven Steuerfalls' }}</h2>
+<p><strong>{{ selected.case_id }}</strong> ? {{ selected.tax_year }}</p>
+<p>{{ '????? ??? ?? ???? ??????? ???? ?????? ?? Google Drive ?????? ???????. ???????? ???? ????? ????????.' if lang == 'fa-IR' else 'Dokumente werden ausschlie?lich aus dem zugeordneten Google-Drive-Ordner gelesen. Originale bleiben unver?ndert.' }}</p>
+<button id="case-documents-refresh" type="button">{{ '????? ?????' if lang == 'fa-IR' else 'Dokumente anzeigen' }}</button>
+<div id="case-documents-list" role="status" aria-live="polite"
+data-case-id="{{ selected.case_id }}" data-tax-year="{{ selected.tax_year }}" data-lang="{{ lang }}"></div>
+</section>
+<script src="{{ url_for('static', path='/case_documents_inventory.js') }}" defer></script>
+{% endif %}
 {% if tab == "cases" and selected and not test_mode %}
 <section class="panel" aria-label="Empty case deletion preflight">
   <h2>{{ 'بررسی حذف پرونده خالی' if lang == 'fa-IR' else 'Leeren Steuerfall zur Löschung prüfen' }}</h2>
