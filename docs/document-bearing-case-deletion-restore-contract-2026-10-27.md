@@ -48,3 +48,12 @@ This section supersedes any contrary number-release rule above and in prior desi
 
 Mandatory synthetic tests: delete one of two backups (still reserved); delete final backup while case active (still unavailable); delete empty restored case while backup survives (reserved); delete final backup while case inactive (release only after readback); Drive Trash remains recoverable (still reserved); failed backup delete (still reserved); pending restore (deny); retention hold (deny); concurrent create/delete/release (no duplicate number).
 No real backup or case deletion is authorized by this design amendment.
+
+## Owner amendment: unified manual and pre-delete backups (2026-10-28)
+- One shared snapshot engine serves MANUAL and PRE_DELETE triggers; neither creates a different storage layout.
+- Canonical provider-relative layout is Case_Backups/<immutable-case-identity>/<backup-uuid-v4>, outside Tax_Years and the deletable case tree. This is a reserved design path, NOT a claim that a Drive folder has been provisioned.
+- Every backup is a full, self-contained snapshot of the documents and required SQLite/lineage state at that moment. Later backups may have fewer documents; never replace older versions implicitly.
+- Restore must use the explicitly selected verified backup ID, not latest-by-time. Reject unknown, ambiguous, incomplete or unverified IDs. An existing active identity must not be overwritten.
+- The backup trigger is provenance metadata, not a storage partition. Multiple backups from either trigger share the same identity-based namespace.
+- Backup counts for number reservation include all independently restorable backups from both triggers and recoverable trash.
+- Implementation increment: case_backup_contract.py defines pure request/path/selection/receipt validation and tests. Real Drive snapshot writer, immutable identity migration, durable SQLite backup registry, manifest, restore, delete orchestration and UI are NOT implemented or authorized for live deletion by this increment.
