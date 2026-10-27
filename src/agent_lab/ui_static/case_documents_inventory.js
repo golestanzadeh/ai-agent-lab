@@ -26,7 +26,7 @@
           const item = document.createElement('li');
           item.textContent = file.name;
           const view = document.createElement('a');
-          view.textContent = fa ? "?????" : 'Anzeigen';
+          view.textContent = fa ? '\u0646\u0645\u0627\u06cc\u0634' : 'Anzeigen';
           const params = new URLSearchParams({
             case_id: panel.dataset.caseId,
             tax_year: panel.dataset.taxYear,
@@ -39,10 +39,10 @@
           item.appendChild(view);
           const remove = document.createElement('button');
           remove.type = 'button';
-          remove.textContent = fa ? "???" : 'L?schen';
+          remove.textContent = fa ? '\u062d\u0630\u0641' : 'L\u00f6schen';
           remove.style.marginInlineStart = '0.5rem';
           remove.addEventListener('click', async () => {
-            const question = fa ? "??? ???? ?? ??? ????? Google Drive ????? ????" :
+            const question = fa ? '\u0627\u06cc\u0646 \u0645\u062f\u0631\u06a9 \u0628\u0647 \u0633\u0637\u0644 \u0632\u0628\u0627\u0644\u0647 Google Drive \u0645\u0646\u062a\u0642\u0644 \u0634\u0648\u062f\u061f' :
               'Dokument in den Google Drive-Papierkorb verschieben?';
             if (!window.confirm(question)) return;
             remove.disabled = true;
@@ -59,8 +59,8 @@
                 throw Error('delete');
               await load();
             } catch (_) {
-              window.alert(fa ? "??? ????? ???. ???? ?????? ???? ?? ????? ?? ??????? ????? ???." :
-                'L?schen fehlgeschlagen. Bitte Dokumentstatus pr?fen.');
+              window.alert(fa ? '\u062d\u0630\u0641 \u0627\u0646\u062c\u0627\u0645 \u0646\u0634\u062f. \u0648\u0636\u0639\u06cc\u062a \u0645\u062f\u0631\u06a9 \u0631\u0627 \u0628\u0631\u0631\u0633\u06cc \u06a9\u0646\u06cc\u062f.' :
+                'L\u00f6schen fehlgeschlagen. Bitte Dokumentstatus pr\u00fcfen.');
               remove.disabled = false;
             }
           });
