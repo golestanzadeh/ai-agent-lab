@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+F07 contract candidate 695fb161 was independently FAIL (R01 HIGH projection enforceability, R02 HIGH signature malleability, R03 MEDIUM retry identity). The three bounded corrections pass 54 offline contract tests and await exact-SHA independent re-review. This records a correction/review transition, not operational acceptance; all active rows remain.
+
 2026-10-27 F07 contract resolution is resumed under explicit Owner authority. The prior BLOCKED_SPEC_GAP is being addressed in the existing architecture with exact request/proof fields, noncircular preimages and embedded existing read DTOs plus offline synthetic vectors. Candidate tests/review do not close any active row or activate operations. Independent exact-SHA review remains required; services, deployment/finality and protected-data gates remain unchanged.
 
 2026-10-27 F07 mission status is `BLOCKED_SPEC_GAP`: exact operational Identity request/proof fields, digest/signature preimages/construction order, operation-specific read result schemas and golden vectors require clarification in the existing contract before operational implementation. Recovered client composition `77fd630ffad62e97515c69e384b51387e77262fd` has independent PASS only for development-contract validation/correlation (232 focused, 366 expanded); no live SCM or operational Identity acceptance exists. Existing host entrypoints remain unavailable by default; timeout/cancellation and real-principal deployment evidence remain required. No active row closes. See checkpoint and `docs/f07-runtime-activation-preparation-20261026.md`.

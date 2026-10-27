@@ -13,7 +13,8 @@ from agent_lab.identity_persistence import PARTY_ROLES
 CONTRACT="oi0002.kernel-identity-c09/1.0"
 DOMAIN=b"AI-TAX-AGENT\x00C09-KERNEL-PROOF\x00"
 FIELDS=set("contract message_type transaction_id request_digest deployment_id scope_kind case_id tax_year run_id task_id manifest_id actor_instance_id role_id capability domain_operation expected_epoch expected_head authorization_references expires_at payload kernel_proof prepared_request_digest".split())
-PROOF=set("proof_version key_id algorithm pending_row_digest authorization_state_version nonce issued_at not_after signature".split())
+PROOF=set("proof_version key_id algorithm pending_row_digest kernel_projection authorization_state_version nonce issued_at not_after signature".split())
+P256_ORDER=0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551
 RESP=set("contract message_type transaction_id request_digest outcome response_digest identity_epoch identity_head staged_receipt_digest witness_preimage_digest signed_record_digest denial_code result".split())
 DIGEST=re.compile(r"sha256:[0-9a-f]{64}\Z")
 NUM=re.compile(r"0|[1-9][0-9]{0,19}\Z")
@@ -51,6 +52,13 @@ def unsigned(request,for_digest=False):
 
 def signing_bytes(request): return DOMAIN+canonical_json_bytes(unsigned(request))
 
+
+def stable_content_digest(request):
+    """Stable stage identity excludes only cryptographic attempt material."""
+    value=deepcopy(request)
+    for name in ("request_digest","kernel_proof","expires_at"):value.pop(name,None)
+    return canonical_sha256(value)
+
 def pending_projection(request):
     fields="contract deployment_id transaction_id task_id manifest_id actor_instance_id role_id case_id tax_year run_id domain_operation capability expected_epoch expected_head authorization_references prepared_request_digest".split()
     value={field:deepcopy(request[field]) for field in fields}
@@ -58,15 +66,22 @@ def pending_projection(request):
     value.update(authorization_state_version=request["kernel_proof"]["authorization_state_version"],
         projected_epoch=request["expected_epoch"],projected_head=request["expected_head"],
         kernel_pending_head="sha256:"+"d"*64 if request["message_type"]=="COMMIT_MUTATION" else "",
-        request_content_digest=canonical_sha256(content))
+        request_content_digest=canonical_sha256(content),stage_content_digest=stable_content_digest(request))
     return value
 
 def sign(request,key):
     value=deepcopy(request)
-    value["kernel_proof"]["pending_row_digest"]=canonical_sha256(pending_projection(value))
+    value["kernel_proof"]["kernel_projection"]=pending_projection(value)
+    value["kernel_proof"]["pending_row_digest"]=canonical_sha256(value["kernel_proof"]["kernel_projection"])
+    return seal(value,key)
+
+
+def seal(request,key):
+    value=deepcopy(request)
     value["request_digest"]=canonical_sha256(unsigned(value,True))
     signature=key.sign(signing_bytes(value),ec.ECDSA(hashes.SHA256(),deterministic_signing=True))
     r,s=utils.decode_dss_signature(signature)
+    s=min(s,P256_ORDER-s)
     value["kernel_proof"]["signature"]=base64.urlsafe_b64encode(r.to_bytes(32,"big")+s.to_bytes(32,"big")).rstrip(b"=").decode()
     return value
 
@@ -104,6 +119,14 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id="TEST
     proof=value["kernel_proof"];exact(proof,PROOF)
     if proof["proof_version"]!="1" or proof["algorithm"]!="ECDSA-P256-SHA256" or proof["key_id"]!=expected_key_id:raise ValueError("proof identity")
     digest(proof["pending_row_digest"])
+    projection=proof["kernel_projection"];expected=pending_projection(value);exact(projection,set(expected))
+    if canonical_sha256(projection)!=proof["pending_row_digest"]:raise ValueError("projection digest")
+    for name in expected:
+        if name not in {"projected_epoch","projected_head","kernel_pending_head"} and projection[name]!=expected[name]:raise ValueError("projection correlation")
+    if message=="COMMIT_MUTATION":
+        digest(projection["kernel_pending_head"]);digest(projection["projected_head"])
+        if not isinstance(projection["projected_epoch"],str) or not NUM.fullmatch(projection["projected_epoch"]):raise ValueError("projected epoch")
+    elif reads and any(projection[name]!=expected[name] for name in ("projected_epoch","projected_head","kernel_pending_head")):raise ValueError("read projection")
     if not NUM.fullmatch(proof["authorization_state_version"]):raise ValueError("authorization revision")
     if not re.fullmatch(r"[0-9a-f]{64}",proof["nonce"]):raise ValueError("nonce")
     issued=timestamp(proof["issued_at"]);expires=timestamp(proof["not_after"])
@@ -115,13 +138,22 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id="TEST
     raw=base64.urlsafe_b64decode(sig+"==")
     if base64.urlsafe_b64encode(raw).rstrip(b"=").decode()!=sig:raise ValueError("noncanonical signature")
     if not isinstance(public_key.curve,ec.SECP256R1):raise ValueError("curve")
-    public_key.verify(utils.encode_dss_signature(int.from_bytes(raw[:32],"big"),int.from_bytes(raw[32:],"big")),signing_bytes(value),ec.ECDSA(hashes.SHA256()))
+    r,s=int.from_bytes(raw[:32],"big"),int.from_bytes(raw[32:],"big")
+    if not 1<=r<P256_ORDER or not 1<=s<=P256_ORDER//2:raise ValueError("noncanonical high-S signature")
+    public_key.verify(utils.encode_dss_signature(r,s),signing_bytes(value),ec.ECDSA(hashes.SHA256()))
     decode_frame(encode_frame(value))
 
 def validate_prepare_commit(prepare,commit):
     if prepare["message_type"]!="PREPARE_MUTATION" or commit["message_type"]!="COMMIT_MUTATION" or commit["prepared_request_digest"]!=prepare["request_digest"]:raise ValueError("prepare linkage")
     for field in ("transaction_id","deployment_id","case_id","tax_year","run_id","task_id","manifest_id","actor_instance_id","role_id","domain_operation","capability","payload","expected_epoch","expected_head","authorization_references"):
         if prepare[field]!=commit[field]:raise ValueError("prepare content mismatch")
+
+
+def validate_renewed_attempt(previous,current,consumed_nonces):
+    """Offline retry relationship only; runtime uses its existing durable rows."""
+    if stable_content_digest(previous)!=stable_content_digest(current):raise ValueError("changed stage content")
+    if current["kernel_proof"]["nonce"] in consumed_nonces:raise ValueError("consumed proof")
+    if timestamp(current["kernel_proof"]["issued_at"])<=timestamp(previous["kernel_proof"]["issued_at"]):raise ValueError("not renewed")
 
 PERSON=set("person_id status preferred_display_name created_at updated_at schema_version lookup_attributes".split())
 ENTITY=(PERSON-{"person_id"})|{"entity_id"}
@@ -226,6 +258,16 @@ def negative_vectors(vectors,commit):
     ):
         r=deepcopy(vectors[0]["request"]);action(r);add(name,r,resign=resign)
     r=deepcopy(commit);r["prepared_request_digest"]="";add("empty-commit-link",r,resign=True)
+    for name,action in (
+        ("arbitrary-projection-digest",lambda r:r["kernel_proof"].update(pending_row_digest="sha256:"+"0"*64)),
+        ("substituted-projection-scope",lambda r:r["kernel_proof"]["kernel_projection"].update(case_id="TEST-OTHER")),
+        ("missing-projection",lambda r:r["kernel_proof"].pop("kernel_projection")),
+    ):
+        r=deepcopy(vectors[0]["request"]);action(r)
+        if name=="substituted-projection-scope":r["kernel_proof"]["pending_row_digest"]=canonical_sha256(r["kernel_proof"]["kernel_projection"])
+        add(name,seal(r,key))
+    r=deepcopy(vectors[0]["request"]);raw=base64.urlsafe_b64decode(r["kernel_proof"]["signature"]+"==");s=int.from_bytes(raw[32:],"big")
+    r["kernel_proof"]["signature"]=base64.urlsafe_b64encode(raw[:32]+(P256_ORDER-s).to_bytes(32,"big")).rstrip(b"=").decode();add("high-s-twin",r)
     for base,field,value,name in ((1,"subject_id","","empty-identity-subject"),(2,"subject_id","TEST-PERSON","nonempty-list-subject"),(3,"as_of_date","2024-01-01","facts-asof-forbidden"),(1,"as_of_date","2025-01-01","read-crossyear-date")):
         r=deepcopy(vectors[base]["request"]);r["payload"][field]=value;add(name,r,base=base,resign=True)
     for name,action in (
@@ -271,4 +313,6 @@ def build_vectors():
     commit=deepcopy(vectors[0]["request"]);commit["message_type"]="COMMIT_MUTATION";commit["prepared_request_digest"]=vectors[0]["request"]["request_digest"];commit["kernel_proof"]["nonce"]="f"*64;commit=sign(commit,key)
     commit_response=deepcopy(vectors[0]["response"]);commit_response.update(message_type="COMMIT_MUTATION",request_digest=commit["request_digest"],outcome="IDENTITY_COMMITTED",identity_epoch="1",identity_head="sha256:"+"1"*64,staged_receipt_digest="sha256:"+"2"*64,witness_preimage_digest="sha256:"+"3"*64)
     body=deepcopy(commit_response);body.pop("response_digest");commit_response["response_digest"]=canonical_sha256(body)
-    return {"vector_version":"F07-CONTRACT-1","test_private_scalar_hex":"0"*63+"1","public_key_pem":key.public_key().public_bytes(serialization.Encoding.PEM,serialization.PublicFormat.SubjectPublicKeyInfo).decode(),"vectors":vectors,"negative_vectors":negative_vectors(vectors,commit),"commit":commit,"commit_pending_projection":pending_projection(commit),"commit_frame_hex":encode_frame(commit).hex(),"commit_signature_preimage_hex":signing_bytes(commit).hex(),"commit_response":commit_response,"commit_response_frame_hex":encode_frame(commit_response).hex()}
+    renewed=deepcopy(vectors[0]["request"]);renewed["expires_at"]="2026-01-01T00:00:11.000000Z"
+    renewed["kernel_proof"].update(issued_at="2026-01-01T00:00:06.000000Z",not_after=renewed["expires_at"],nonce="e"*64,authorization_state_version="2");renewed=sign(renewed,key)
+    return {"vector_version":"F07-CONTRACT-1","test_private_scalar_hex":"0"*63+"1","public_key_pem":key.public_key().public_bytes(serialization.Encoding.PEM,serialization.PublicFormat.SubjectPublicKeyInfo).decode(),"vectors":vectors,"negative_vectors":negative_vectors(vectors,commit),"commit":commit,"commit_pending_projection":pending_projection(commit),"commit_frame_hex":encode_frame(commit).hex(),"commit_signature_preimage_hex":signing_bytes(commit).hex(),"commit_response":commit_response,"commit_response_frame_hex":encode_frame(commit_response).hex(),"renewed_prepare":renewed,"renewed_prepare_frame_hex":encode_frame(renewed).hex()}
