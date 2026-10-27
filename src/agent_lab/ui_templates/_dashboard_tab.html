@@ -14,12 +14,11 @@
 {% endif %}
 {% if tab == "documents" and selected and not test_mode %}
 <section class="panel" aria-label="Case documents">
-<h2>{{ '????? ?????? ????' if lang == 'fa-IR' else 'Dokumente des aktiven Steuerfalls' }}</h2>
-<p><strong>{{ selected.case_id }}</strong> ? {{ selected.tax_year }}</p>
-<p>{{ '????? ??? ?? ???? ??????? ???? ?????? ?? Google Drive ?????? ???????. ???????? ???? ????? ????????.' if lang == 'fa-IR' else 'Dokumente werden ausschlie?lich aus dem zugeordneten Google-Drive-Ordner gelesen. Originale bleiben unver?ndert.' }}</p>
-<button id="case-documents-refresh" type="button">{{ '????? ?????' if lang == 'fa-IR' else 'Dokumente anzeigen' }}</button>
-<div id="case-documents-list" role="status" aria-live="polite"
-data-case-id="{{ selected.case_id }}" data-tax-year="{{ selected.tax_year }}" data-lang="{{ lang }}"></div>
+<h2>{{ "مدارک پرونده فعال" if lang == 'fa-IR' else 'Dokumente des aktiven Steuerfalls' }}</h2>
+<p><strong>{{ selected.case_id }}</strong> | {{ selected.tax_year }}</p>
+<p>{{ "مدارک فقط از پوشه اختصاصی همین پرونده در Google Drive خوانده می‌شوند. فایل‌های اصلی بدون تغییر باقی می‌مانند." if lang == 'fa-IR' else 'Dokumente werden nur aus dem zugeordneten Google-Drive-Ordner gelesen. Originale bleiben unveraendert.' }}</p>
+<button id="case-documents-refresh" type="button">{{ "نمایش مدارک" if lang == 'fa-IR' else 'Dokumente anzeigen' }}</button>
+<div id="case-documents-list" role="status" aria-live="polite" data-case-id="{{ selected.case_id }}" data-tax-year="{{ selected.tax_year }}" data-lang="{{ lang }}"></div>
 </section>
 <script src="{{ url_for('static', path='/case_documents_inventory.js') }}" defer></script>
 {% endif %}

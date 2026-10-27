@@ -6,7 +6,7 @@ if(!panel||!button)return;
 const fa=panel.dataset.lang==='fa-IR';
 const load=async()=>{
 button.disabled=true;
-panel.textContent=fa?'?? ??? ?????? ?????...':'Dokumente werden geladen...';
+panel.textContent=fa?'در حال دریافت مدارک...':'Dokumente werden geladen...';
 try{
 const query=new URLSearchParams({case_id:panel.dataset.caseId,tax_year:panel.dataset.taxYear});
 const response=await fetch('/cases/documents/inventory?'+query.toString(),{credentials:'same-origin',headers:{Accept:'application/json'}});
