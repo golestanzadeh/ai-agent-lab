@@ -101,3 +101,12 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - Live read-only preflight of CASE-2026-0002 returned HTTP 200 and both database_ready and drive_ready true; no data deleted. The original create-run marker in case_state is allowed only when prefixed CREATE-RUN-LOCAL- and no durable run exists.
 - Focused preflight unit tests: 3 passed. Live dashboard restarted and Cases tab exposes preview form.
 - Destructive deletion, number reuse, cross-store recovery, audit-tombstone migration and final owner acceptance are NOT complete. Do not close or pass Stage 2. Existing preexisting uncommitted source changes in host/template remain preserved.
+
+
+## Stage 2 Owner acceptance and closure (2026-10-27)
+- STAGE_2: CLOSED / OWNER_ACCEPTED. Owner personally confirmed: CASE-2025-0003 recreated successfully; CASE-2026-0002 deleted successfully; CASE-2026-0002 recreated successfully.
+- Real live Drive API deletion verification previously reported database_deleted=True, drive_trashed=True for CASE-2025-0003; SQLite post-delete readback absent. Reuse selection subsequently verified CASE-2025-0003.
+- Scope accepted: EMPTY unfinished cases only, SQLite-first and Drive-second readiness, explicit Owner confirmation, Drive trash, audited SQLite deletion, case number reuse.
+- Next stage (document-bearing cases) DEFERRED until Documents tab and per-case document assignment are operational. Document-bearing case deletion remains BLOCKED. No extra implementation or synthetic deletion tests required at this time by Owner decision.
+- Owner governance directive: avoid unnecessary complexity in subsequent project work. No new services, architectures, or premature workflows.
+- This closure supersedes older Stage 2 pending statements above; retain them as historical records.
