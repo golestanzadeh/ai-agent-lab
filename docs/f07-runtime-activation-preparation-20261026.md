@@ -1,5 +1,22 @@
 # F07 governed runtime activation preparation
 
+## Operational integration implementation in progress — 2026-10-27
+
+Owner's explicit current-mission exception supersedes the attachment's 15-point reserve/5% positive-threshold stop rules. Monitor authenticated telemetry but continue while execution is technically available; no automatic resets or platform bypass. This does not change security/activation/independent-review gates or other missions' quota policy.
+
+Phase A/B candidate code extends the existing client/Named Pipe transport and adds the operational **read-only** schema profile. It validates actual canonical/digest/projection/low-S proof/result bytes against frozen synthetic evidence; no signing key, authority grant, fallback or mutation dispatcher is introduced. The client retains the authenticated server process/token through I/O, verifies SID/path/hash/PID, and uses one shared monotonic deadline for connect/write/read/authentication progress. Native overlapped I/O is cancelled and acknowledged before buffer release. If cancellation is not acknowledged, native resources are retained and transport halts instead of freeing kernel-owned buffers or retrying an ambiguous exchange. This is fail-closed diagnostic state, not another recovery authority.
+
+Actual Windows verification uses ephemeral current-user-only test pipes and the real current Python executable token/path/hash; it does not use/activate the four frozen service principals. Ten native cases cover reply, absent endpoint, silent peer, disconnect, wrong SID/path/hash, malformed/oversized response and cancellation. Initial native execution failed five cases because the existing production first-instance constant referenced win32con instead of win32pipe; corrected and rerun. A later fixture prematurely disconnected and discarded an unread queued reply (one failure); keeping the test server alive until client completion resolved it. No origin/security check was relaxed.
+
+Commands use PYTHONPATH=src;tests/unit:
+
+- `python -m pytest -q tests/unit/test_f07_operational_read.py tests/unit/test_f07_native_transport.py tests/unit/test_c09_named_pipe.py`: final 75 passed, exit 0, including injected cancellation-quarantine failure.
+- F07 contract + new read/native + existing IPC/named-pipe/client/SCM suite: 361 passed, exit 0 before the two last added cases; later affected focused tests above passed.
+- `python -m pytest -q tests/unit/test_orchestrator_kernel.py tests/unit/test_identity_persistence.py tests/unit/test_runtime_activation.py tests/unit/test_production_runtime.py`: 88 passed, exit 0.
+- `python -m pytest -q tests/unit/test_documentation_index.py`: 18 passed, exit 0 before this reporting update.
+
+This is a coherent tested candidate milestone during continuous execution, not final handoff or F07 implementation PASS. Exact-SHA independent review, durable authority/dispatcher integration and existing SCM composition remain. No new Owner architecture decision is inferred merely from missing tables/APIs: the frozen persistence contract permits reviewed versioned extensions in the existing service databases. Head/audit binding must be resolved against actual sources before implementation; synthetic adapters cannot be promoted. No service, protected operation, credential, existing ACL or taxpayer data was changed.
+
 ## F07 contract-resolution review evidence — 2026-10-27
 
 Scope is only existing operational contract `oi0002.kernel-identity-c09/1.0`; the development contract remains separate. Baseline c763b82502893632d8cc17c05b55c7ce69236867 and development composition 77fd630ffad62e97515c69e384b51387e77262fd were verified against remote. No production source, SCM service, privilege, key custody, protected data or operation activation changed. Architecture remains in `docs/oi0002-c09-witness/KERNEL_IDENTITY_OPERATIONAL_ARCHITECTURE.md`; no alternative architecture is created.

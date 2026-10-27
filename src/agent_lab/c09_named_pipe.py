@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from contextlib import contextmanager
 import hashlib
 from pathlib import Path
 from typing import Callable
@@ -79,8 +80,10 @@ def actual_named_pipe_client_sid(pipe_handle) -> str:
         win32pipe.ImpersonateNamedPipeClient(pipe_handle)
         try:
             token = win32security.OpenThreadToken(win32api.GetCurrentThread(), win32con.TOKEN_QUERY, True)
-            sid, _attributes = win32security.GetTokenInformation(token, win32security.TokenUser)
-            return win32security.ConvertSidToStringSid(sid)
+            try:
+                sid, _attributes = win32security.GetTokenInformation(token, win32security.TokenUser)
+                return win32security.ConvertSidToStringSid(sid)
+            finally:token.Close()
         finally:
             win32security.RevertToSelf()
     except Exception as exc:
@@ -92,30 +95,40 @@ def authorize_connected_kernel(pipe_handle) -> None:
         raise PipeSecurityError("connected client is not the pinned Kernel principal")
 
 
-def verify_connected_server(pipe_handle, expected: PinnedProcess) -> ProcessEvidence:
+@contextmanager
+def retain_verified_server(pipe_handle, expected: PinnedProcess, *, checkpoint=None):
     """Retain the server process handle, verify token/image/hash, then reject PID turnover."""
+    process=token=None
     try:
         import win32api
         import win32con
         import win32pipe
         import win32process
         import win32security
+        if checkpoint:checkpoint()
         pid_before = win32pipe.GetNamedPipeServerProcessId(pipe_handle)
         process = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, pid_before)
         token = win32security.OpenProcessToken(process, win32con.TOKEN_QUERY)
         sid, _attributes = win32security.GetTokenInformation(token, win32security.TokenUser)
         image_path = win32process.GetModuleFileNameEx(process, 0)
         pid_after = win32pipe.GetNamedPipeServerProcessId(pipe_handle)
-        evidence = ProcessEvidence(win32security.ConvertSidToStringSid(sid), image_path, sha256_file(image_path), pid_before, pid_after)
+        evidence = ProcessEvidence(win32security.ConvertSidToStringSid(sid), image_path, sha256_file(image_path,checkpoint=checkpoint), pid_before, pid_after)
         verify_process_evidence(evidence, expected)
-        return evidence
+        yield evidence
     except PipeSecurityError:
         raise
     except Exception as exc:
         raise PipeSecurityError("connected server identity is unavailable") from exc
+    finally:
+        if token is not None:token.Close()
+        if process is not None:process.Close()
 
 
-def create_kernel_only_server(pipe_name: str):
+def verify_connected_server(pipe_handle, expected: PinnedProcess) -> ProcessEvidence:
+    with retain_verified_server(pipe_handle,expected) as evidence:return evidence
+
+
+def create_kernel_only_server(pipe_name: str, *, overlapped: bool = False):
     if pipe_name not in {IDENTITY_PIPE, CUSTODIAN_PIPE}:
         raise PipeSecurityError("pipe name is not frozen")
     try:
@@ -126,16 +139,18 @@ def create_kernel_only_server(pipe_name: str):
         import win32security
         descriptor = win32security.ConvertStringSecurityDescriptorToSecurityDescriptor(kernel_only_sddl(), win32security.SDDL_REVISION_1)
         attributes = pywintypes.SECURITY_ATTRIBUTES(); attributes.SECURITY_DESCRIPTOR = descriptor
-        access = win32pipe.PIPE_ACCESS_DUPLEX | win32con.FILE_FLAG_FIRST_PIPE_INSTANCE
+        access = win32pipe.PIPE_ACCESS_DUPLEX | win32pipe.FILE_FLAG_FIRST_PIPE_INSTANCE
+        if overlapped:access |= win32con.FILE_FLAG_OVERLAPPED
         mode = win32pipe.PIPE_TYPE_MESSAGE | win32pipe.PIPE_READMODE_MESSAGE | win32pipe.PIPE_WAIT | win32pipe.PIPE_REJECT_REMOTE_CLIENTS
         return win32pipe.CreateNamedPipe(pipe_name, access, mode, 1, MAX_FRAME_BYTES, MAX_FRAME_BYTES, 5000, attributes)
     except Exception as exc:
         raise PipeSecurityError("secure first-instance Named Pipe creation failed") from exc
 
 
-def sha256_file(path: str) -> str:
+def sha256_file(path: str, *, checkpoint=None) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            if checkpoint:checkpoint()
             digest.update(chunk)
     return "sha256:" + digest.hexdigest()

@@ -6,6 +6,8 @@
 
 ## Authoritative current snapshot — 2026-10-20
 
+F07 operational integration resumed 2026-10-27 after contract acceptance. Owner explicitly waived positive quota thresholds/reserve for this mission only; actual platform limits/security gates remain. The operational read validator/client and bounded overlapped Windows transport are implementation candidates, not yet independently accepted. Actual isolated current-user pipe tests pass; they are not service-principal or protected-operation evidence. Durable Identity dispatcher/Kernel reservation and SCM composition remain in progress. No active row closes.
+
 F07 contract final 2026-10-27: `F07_CONTRACT_INDEPENDENT_PASS` on exact 6c6a4d7d51070637a18517d17d418d082078b85e, separate read-only review with 54 focused / 299 combined / 18 documentation tests and three rejected adversarial probes. Request/proof fields, canonical signatures/digests, safe renewal and existing read DTO schemas are frozen; no runtime code/activation changed. Earlier candidate FAIL/spec-gap entries below are historical. Actual operational transport/composition, real-principal deployment/finality, OI-0002/C09/OI-0003 and protected providers remain gated; no active open-item row closes.
 
 F07 contract resolution resumed 2026-10-27 from synchronized c763b825: the existing operational architecture and offline synthetic vectors are under verification for gaps A/B/C. This is contract-only candidate work pending independent exact-SHA acceptance; no runtime dispatch or service is activated and no active OPEN_ITEMS row closes.

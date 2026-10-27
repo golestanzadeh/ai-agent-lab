@@ -4,10 +4,105 @@ This is a transport component, not deployment authorization.
 """
 from __future__ import annotations
 
+import threading
+import time
+
 from agent_lab.c09_named_pipe import (
     IDENTITY_PIPE, MAX_FRAME_BYTES, PinnedProcess, PipeSecurityError,
-    verify_connected_server,
+    verify_connected_server, retain_verified_server,
 )
+
+
+class PipeDeadlineError(PipeSecurityError):
+    """The exchange is ambiguous; never infer that a peer did not execute."""
+
+
+_halted=threading.Event()
+_quarantined=[]  # Retain native buffers if the OS cannot acknowledge cancellation.
+
+
+class OperationDeadline:
+    def __init__(self, seconds: float = 5.0, cancellation: threading.Event | None = None):
+        if isinstance(seconds,bool) or not isinstance(seconds,(float,int)) or not 0 < seconds <= 5:
+            raise ValueError("deadline must be in (0,5] seconds")
+        self.end=time.monotonic()+seconds
+        self.cancellation=cancellation or threading.Event()
+
+    def milliseconds(self):
+        if self.cancellation.is_set():raise PipeDeadlineError("exchange cancelled; reconciliation required")
+        remaining=self.end-time.monotonic()
+        if remaining<=0:raise PipeDeadlineError("exchange expired; reconciliation required")
+        return max(1,min(50,int(remaining*1000)))
+
+
+def overlapped_io(handle, operation, deadline: OperationDeadline):
+    """Complete/cancel one real Windows overlapped operation before releasing buffers."""
+    import pywintypes
+    import win32event
+    import win32file
+    overlap=pywintypes.OVERLAPPED();overlap.hEvent=win32event.CreateEvent(None,True,False,None)
+    started=False
+    try:
+        result=operation(overlap)
+        started=True
+        while True:
+            interval=deadline.milliseconds()
+            if win32event.WaitForSingleObject(overlap.hEvent,interval)==win32event.WAIT_OBJECT_0:
+                count=win32file.GetOverlappedResult(handle,overlap,False)
+                return result,count
+    except BaseException:
+        if started:
+            try:win32file.CancelIoEx(handle,overlap)
+            except pywintypes.error as exc:
+                if exc.winerror!=1168:
+                    _halted.set();_quarantined.append((handle,overlap,result));overlap=None
+                    raise PipeDeadlineError("I/O cancellation failed; host must halt") from exc
+            # Cancellation acknowledgement is required before buffer/event release.
+            if win32event.WaitForSingleObject(overlap.hEvent,1000)!=win32event.WAIT_OBJECT_0:
+                _halted.set()
+                _quarantined.append((handle,overlap,result))
+                overlap=None  # Never release a buffer/event still owned by native I/O.
+                raise PipeDeadlineError("I/O cancellation not acknowledged; host must halt")
+        raise
+    finally:
+        if overlap is not None:win32file.CloseHandle(overlap.hEvent)
+
+
+def exchange_operational_identity_read(frame: bytes, expected_server: PinnedProcess,
+                                       *, deadline: OperationDeadline | None = None) -> bytes:
+    """Frozen operational read transport; no mutation or automatic retry after write."""
+    from agent_lab.ipc_wire_primitives import decode_frame
+    if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
+    request=decode_frame(frame)
+    if request.get("contract")!="oi0002.kernel-identity-c09/1.0" or request.get("message_type")!="READ_IDENTITY_STATE":
+        raise PipeSecurityError("only operational read frames are permitted")
+    deadline=deadline or OperationDeadline()
+    import pywintypes
+    import win32con
+    import win32file
+    import win32pipe
+    handle=None
+    try:
+        while handle is None:
+            deadline.milliseconds()
+            try:
+                handle=win32file.CreateFile(IDENTITY_PIPE,win32con.GENERIC_READ|win32con.GENERIC_WRITE,0,None,win32con.OPEN_EXISTING,win32con.FILE_FLAG_OVERLAPPED,None)
+            except pywintypes.error as exc:
+                if exc.winerror not in (2,231):raise
+                deadline.cancellation.wait(min(.01,deadline.milliseconds()/1000))
+        win32pipe.SetNamedPipeHandleState(handle,win32pipe.PIPE_READMODE_MESSAGE,None,None)
+        with retain_verified_server(handle,expected_server,checkpoint=deadline.milliseconds):
+            deadline.milliseconds()
+            _,count=overlapped_io(handle,lambda ov:win32file.WriteFile(handle,frame,ov),deadline)
+            if count!=len(frame):raise PipeSecurityError("partial request; reconciliation required")
+            result,count=overlapped_io(handle,lambda ov:win32file.ReadFile(handle,MAX_FRAME_BYTES+1,ov),deadline)
+            response=bytes(result[1][:count])
+            decode_frame(response)
+            return response
+    except PipeSecurityError:raise
+    except Exception as exc:raise PipeSecurityError("operational read exchange failed; reconciliation required") from exc
+    finally:
+        if handle is not None and not any(entry[0]==handle for entry in _quarantined):win32file.CloseHandle(handle)
 
 
 def exchange_identity_read(frame: bytes, expected_server: PinnedProcess) -> bytes:
