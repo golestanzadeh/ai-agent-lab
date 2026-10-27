@@ -35,6 +35,37 @@
       button.disabled = false;
     }
   };
+  const form = document.getElementById('case-documents-upload');
+  const result = document.getElementById('case-documents-upload-result');
+  if (form && result) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const submit = form.querySelector('button[type="submit"]');
+      const file = form.querySelector('input[type="file"]').files[0];
+      if (!file || file.size < 1 || file.size > 20 * 1024 * 1024) {
+        result.textContent = fa ? 'بارگذاری انجام نشد. نام فایل تکراری، نوع فایل نامعتبر یا خطای اتصال را بررسی کنید.' : 'Ung?ltige Datei oder Gr??e.';
+        return;
+      }
+      submit.disabled = true;
+      result.textContent = fa ? 'در حال بارگذاری...' : 'Datei wird hochgeladen...';
+      try {
+        const response = await fetch('/cases/documents/upload', {
+          method: 'POST', body: new FormData(form), credentials: 'same-origin',
+          headers: {Accept: 'application/json'}
+        });
+        const data = await response.json();
+        if (!response.ok || !data.uploaded || data.case_id !== panel.dataset.caseId ||
+            Number(data.tax_year) !== Number(panel.dataset.taxYear)) throw Error('upload');
+        result.textContent = fa ? 'مدرک با موفقیت اضافه شد.' : 'Dokument erfolgreich hochgeladen.';
+        form.reset();
+        await load();
+      } catch (_) {
+        result.textContent = fa ? 'بارگذاری انجام نشد. نام فایل تکراری، نوع فایل نامعتبر یا خطای اتصال را بررسی کنید.' : 'Upload fehlgeschlagen. Datei oder Verbindung pr?fen.';
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
   button.addEventListener('click', load);
   load();
 })();

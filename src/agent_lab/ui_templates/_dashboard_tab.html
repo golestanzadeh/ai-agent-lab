@@ -17,6 +17,14 @@
 <h2>{{ "مدارک پرونده فعال" if lang == 'fa-IR' else 'Dokumente des aktiven Steuerfalls' }}</h2>
 <p><strong>{{ selected.case_id }}</strong> | {{ selected.tax_year }}</p>
 <p>{{ "مدارک فقط از پوشه اختصاصی همین پرونده در Google Drive خوانده می‌شوند. فایل‌های اصلی بدون تغییر باقی می‌مانند." if lang == 'fa-IR' else 'Dokumente werden nur aus dem zugeordneten Google-Drive-Ordner gelesen. Originale bleiben unveraendert.' }}</p>
+<form id="case-documents-upload" enctype="multipart/form-data">
+<input type="hidden" name="case_id" value="{{ selected.case_id }}">
+<input type="hidden" name="tax_year" value="{{ selected.tax_year }}">
+<label for="case-document-file">{{ "انتخاب فایل (PDF یا تصویر، حداکثر ۲۰ مگابایت)" if lang == 'fa-IR' else 'Datei ausw?hlen (PDF oder Bild, max. 20 MB)' }}</label>
+<input id="case-document-file" name="document" type="file" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.webp" required>
+<button type="submit">{{ "بارگذاری مدرک" if lang == 'fa-IR' else 'Dokument hochladen' }}</button>
+<p id="case-documents-upload-result" role="status" aria-live="polite"></p>
+</form>
 <button id="case-documents-refresh" type="button">{{ "نمایش مدارک" if lang == 'fa-IR' else 'Dokumente anzeigen' }}</button>
 <div id="case-documents-list" role="status" aria-live="polite" data-case-id="{{ selected.case_id }}" data-tax-year="{{ selected.tax_year }}" data-lang="{{ lang }}"></div>
 </section>
