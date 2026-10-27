@@ -8,6 +8,8 @@
 
 Last reconciled: **2026-10-20**
 
+F07 bounded inactive read/runtime/budget implementation is independently PASS atba5b8b17a64c81a507ac3004e8600f8bffa09d65, not full operational acceptance. Next single milestone is accepted typed protected resolver/source binding and same-authority atomic evidence-consumption mapping before mutation PREPARE/COMMIT/FINALIZE implementation. Existing synthetic evidence authority/callback cannot be promoted. Actual three fixed services/config files are absent; role-private loader, real-principal deployment, live enrollment and operational C01–C13 evidence retain existing Human Gates. No new architecture/file/authority is approved by this status update.
+
 F07 existing SCM composition now uses `src/agent_lab/c09_operational_service_runtime.py` and focused `tests/unit/test_c09_operational_service_runtime.py`: concrete Kernel-to-Identity/Witness client, role-bound authority workers and native pipe lifecycle. It supplies no credentials/enrollment/service installation and does not replace the default fail-closed entrypoint with an unapproved loader. Existing deployment binding/custody and live Human Gates remain prerequisites.
 
 Authorized F07 Kernel/Witness integration adds `src/agent_lab/c09_custodian_operational.py`, `tests/unit/test_c09_custodian_operational.py` and `tests/unit/test_kernel_identity_operational.py` within existing authorities/stores. These implement/test exact Custodian1.1 records, real Kernel gate/manifest issuance and checkpoint release; controlled test ports do not establish live deployment acceptance. Existing SCM composition and logical mutation integration follow independent exact-SHA review.
