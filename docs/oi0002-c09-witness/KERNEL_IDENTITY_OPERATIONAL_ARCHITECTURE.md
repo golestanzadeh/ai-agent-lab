@@ -1,7 +1,7 @@
 # C09 Kernel–Identity operational boundary and witness finality architecture
 
 Date: 2026-10-22  
-Contract: operational evolution `oi0002.kernel-identity-c09/1.1`; frozen 1.0 evidence retained below  
+Contract: operational evolution `oi0002.kernel-identity-c09/1.1`; frozen 1.0 evidence retained below
 Status: `REMEDIATED_F01_F06 / INDEPENDENT_ARCHITECTURE_REREVIEW_REQUIRED / NOT IMPLEMENTED`
 
 ## Decision and authority boundary
