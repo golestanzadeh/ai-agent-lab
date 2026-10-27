@@ -307,3 +307,8 @@ Obtain the Owner/independent-authority decision to provide or establish the cano
 - Never store credentials, private Drive IDs, private tax documents, or protected material in GitHub.
 - Never treat tests as Human acceptance or a displayed approval state as authority.
 - Never submit, sign, transmit, release, merge protected `main`, or expand permissions without the applicable explicit Human Gate.
+
+## Owner-approved case lifecycle design, 2026-10-27 (documentation only)
+Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
+Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
+New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.

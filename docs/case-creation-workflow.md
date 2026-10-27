@@ -366,3 +366,6 @@ Documents / Evidence / Calculations / Reports / Audit
 ```
 
 This workflow operationalizes the existing Case Registry and Person/Entity Registry foundations. It does not replace either contract.
+
+## 2026-10-27 owner lifecycle decisions (documentation only)
+See [case-lifecycle-owner-decisions-2026-10-27.md](case-lifecycle-owner-decisions-2026-10-27.md) for owner-confirmed creation confirmation, active case selection, document/case deletion, backup, final-completion protection, case-number reuse and year cleanup. No deletion or implementation is authorized by this reference.

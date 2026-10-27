@@ -129,3 +129,8 @@ Reviewer returned INDEPENDENT_FAIL for F01 VERIFY_WITNESS semantics, F02 Kernel 
 ## HG01 F01-F04 containment - 2026-10-24
 
 F01/F02 unsafe accept path now denies both Custodian operations, but frozen functional contract remains NOT IMPLEMENTED. F03 historical evidence preserved and separate current baseline snapshots added. F04 markers synchronized; focused 30 passed. Full regression pending. No OI-0002 closure, no independent PASS; see docs/oi0002-c09-witness/HG01_F01_F04_REMEDIATION_PROGRESS_2026-10-24.md.
+
+## Owner-approved case lifecycle design, 2026-10-27 (documentation only)
+Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
+Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
+New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.

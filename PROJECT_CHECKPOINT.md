@@ -1786,3 +1786,8 @@ User-delivered separate Codex review found F01/F02 HIGH, F03/F04 MEDIUM. 309 foc
 
 # HG01 F01-F04 containment progress - 2026-10-24
 Unsafe synthetic Custodian VERIFIED/HMAC minting path denied pending pinned Kernel signature and authenticated record verification; this is FAIL-CLOSED containment, NOT functional F01/F02 remediation acceptance. F04 canonical markers aligned, focused 30 passed. F03 new immutable f1af82f evidence and separate service readiness snapshot; historical failures preserved. Full regression running, status not yet known. See docs/oi0002-c09-witness/HG01_F01_F04_REMEDIATION_PROGRESS_2026-10-24.md. OI-0002 OPEN.
+
+## Owner-approved case lifecycle design, 2026-10-27 (documentation only)
+Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
+Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
+New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.

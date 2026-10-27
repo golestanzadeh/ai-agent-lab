@@ -1616,3 +1616,8 @@ The Owner permanently removed OI-0009 Supervisor-loop G2 MCP event delivery proo
 # Owner deferral of OI-0011 — 2026-10-20
 
 The Owner removed OI-0011 outbound operational exception notification provider activation from the active project inventory. Its disposition is `OWNER_DEFERRED / OPTIONAL / NONBLOCKING`, not `TECHNICAL_PASS`. No development, acceptance or release stage may depend on it. Existing fail-closed code, the security contract and historical evidence remain unchanged. Reactivation requires a new explicit Owner directive; this decision authorizes no provider, code or infrastructure action.
+
+## Owner-approved case lifecycle design, 2026-10-27 (documentation only)
+Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
+Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
+New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.

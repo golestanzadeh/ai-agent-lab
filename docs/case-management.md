@@ -165,3 +165,6 @@ Future requirements include:
 ## Security boundary
 
 The system must fail closed when a case cannot be resolved or when a requested document/evidence object is outside the validated case scope. Ambiguous identity or scope must result in an explicit unresolved state rather than best-effort guessing.
+
+## 2026-10-27 owner lifecycle decisions (documentation only)
+See [case-lifecycle-owner-decisions-2026-10-27.md](case-lifecycle-owner-decisions-2026-10-27.md) for owner-confirmed creation confirmation, active case selection, document/case deletion, backup, final-completion protection, case-number reuse and year cleanup. No deletion or implementation is authorized by this reference.
