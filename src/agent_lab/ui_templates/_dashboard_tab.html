@@ -8,7 +8,7 @@
 <select id="case-year-select">
 {% for year in cases|map(attribute='tax_year')|unique %}<option value="{{ year }}" {% if selected and selected.tax_year == year %}selected{% endif %}>{{ year }}</option>{% endfor %}
 </select>
-<div class="case-list">{% for item in cases %}<a data-case-year="{{ item.tax_year }}" {% if selected and selected.tax_year != item.tax_year %}hidden{% endif %} href="/?tab=cases&amp;case_id={{ item.case_id|urlencode }}&amp;lang={{ lang }}" class="case-row {{ 'selected' if selected and selected.case_id == item.case_id else '' }}">{{ item.case_id }}</a>{% endfor %}</div>
+<label for="case-id-select">{{ t.case }}</label><select id="case-id-select"><option value="">{{ t.no_case }}</option>{% for item in cases %}<option data-case-year="{{ item.tax_year }}" value="{{ item.case_id }}" {% if selected and selected.case_id == item.case_id %}selected{% endif %}>{{ item.case_id }}</option>{% endfor %}</select>
 {% if selected %}<p role="status">{{ selected.case_id }} {{ 'انتخاب و فعال است.' if lang == 'fa-IR' else 'ist ausgewählt und aktiv.' }}</p>{% endif %}
 </section>
 {% endif %}
