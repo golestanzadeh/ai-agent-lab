@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded", () => { const picker = document.getElementById("case-year-select"); if (!picker) return; const filter = () => document.querySelectorAll("[data-case-year]").forEach(row => { row.hidden = row.dataset.caseYear !== picker.value; row.style.display = row.hidden ? "none" : ""; }); picker.addEventListener("change", filter); filter(); });

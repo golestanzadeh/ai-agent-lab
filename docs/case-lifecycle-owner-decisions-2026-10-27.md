@@ -54,3 +54,10 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - Last case of year: extra warning; protected references checked; year folder removal only when safe.
 - Failure injection: Drive failure, SQLite failure, backup failure, stale selection, concurrent writes, restart/recovery; no false success.
 - No tests may mutate real user cases or live Drive data; use isolated mocks/synthetic fixtures. Independent acceptance required.
+
+## Implementation increment S1 (2026-10-27)
+- Authorized staged implementation begins with year/case selection only. Added read-only year picker and case links to the existing Cases tab; selecting a case uses existing validated case_id route and tab links. External JS is used because CSP forbids inline handlers.
+- No delete, backup, restore or document mutation endpoints are enabled in S1.
+- Focused baseline tests: tests/unit/test_ui_dashboard.py and tests/unit/test_ui_app.py: 33 passed, 1 warning. Owner visual test and independent acceptance PENDING.
+- Existing uncommitted source changes for case creation and Drive provisioning were preserved and excluded from this commit.
+- S1 currently retains the existing default first-case selection when no case_id is supplied; changing that behavior requires a separate tested scope decision before deletion is enabled.
