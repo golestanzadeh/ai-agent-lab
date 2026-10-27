@@ -69,3 +69,11 @@ Scope: local Windows dashboard, canonical SQLite, direct Google Drive API, deter
 - Focused synthetic first-year confirmation regression: PASS (no live case created). Real Owner-confirmed creation remains pending Owner retest; no actual 2026 case created during this investigation.
 - Backend source ui_dashboard.py contains other preexisting uncommitted edits; do not bundle them blindly. This log records operational correction, not full independent acceptance.
 
+
+## Owner acceptance of S1 year/case creation (2026-10-27)
+- Owner reports that first-year 2026 confirmation and creation succeeded, followed by a second case for 2026; both confirmation messages correct.
+- Live dashboard readback HTTP 200 shows CASE-2025-0001..0004 and CASE-2026-0001..0002 (six total).
+- Read-only canonical SQLite verification: both CASE-2026-0001 and CASE-2026-0002 present in ui_case_authorization; storage_provisioning status COMPLETE for both.
+- No data mutated during verification. Direct Google Drive folder inspection and independent acceptance are separate, not yet claimed.
+- S1 owner UI test: PASS for reported scenario; deletion stages remain disabled.
+
