@@ -338,6 +338,11 @@ class LocalCaseHost:
             # Only resume a failed intent for the next unregistered case ID.
             # Completed earlier cases must not block a second case in the year.
             next_case_id = self.workflow._generate_case_id(year)
+            from agent_lab.case_backup_registry import number_is_reserved
+            if number_is_reserved(
+                self.persistence, owner_id=self.owner_id, case_id=next_case_id
+            ):
+                raise ValueError("Case number reserved by verified backup")
             with self.persistence._lock:
                 pending = self.persistence._db.execute(
                     "SELECT request_id,status FROM storage_provisioning "
