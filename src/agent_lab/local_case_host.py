@@ -332,13 +332,22 @@ class LocalCaseHost:
             self._sync_document_index(case_id,tax_year,self.list_case_documents(case_id,tax_year))
             return {'deleted':True,'document_id':document_id}
 
+    def preview_next_case_id(self, year: int):
+        from agent_lab.case_backup_registry import number_is_reserved
+        with self._lock:
+            self._reload()
+            self.workflow._case_number_reserved = lambda candidate: number_is_reserved(
+                self.persistence, owner_id=self.owner_id, case_id=candidate)
+            return self.workflow._generate_case_id(year)
+
     def create_case(self, year: int, assessment: str):
         with self._lock:
             self._reload()
             # Only resume a failed intent for the next unregistered case ID.
             # Completed earlier cases must not block a second case in the year.
-            next_case_id = self.workflow._generate_case_id(year)
             from agent_lab.case_backup_registry import number_is_reserved
+            self.workflow._case_number_reserved = lambda candidate: number_is_reserved(self.persistence, owner_id=self.owner_id, case_id=candidate)
+            next_case_id = self.workflow._generate_case_id(year)
             if number_is_reserved(
                 self.persistence, owner_id=self.owner_id, case_id=next_case_id
             ):
@@ -368,7 +377,7 @@ class LocalCaseHost:
 
 def create_local_case_app():
     host = LocalCaseHost()
-    app = create_dashboard_app(read_cases=host.read_cases, create_real_case=host.create_case)
+    app = create_dashboard_app(read_cases=host.read_cases, create_real_case=host.create_case, preview_next_case_id=host.preview_next_case_id)
     from fastapi import Form, HTTPException, Request
     from fastapi.responses import JSONResponse
 

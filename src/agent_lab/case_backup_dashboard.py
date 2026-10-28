@@ -13,7 +13,7 @@ from agent_lab.case_backup_contract import BackupRequest, BackupTrigger, create_
 from agent_lab.case_backup_drive_writer import write_document_snapshot
 from agent_lab.case_backup_registry import register_verified_backup, list_reserved_backups
 from agent_lab.case_backup_preflight import verify_case_backup_source
-from agent_lab.case_backup_restore import load_selected_snapshot, import_snapshot, restore_selected_snapshot
+from agent_lab.case_backup_restore import load_selected_snapshot, import_snapshot, restore_selected_snapshot, delete_selected_backup
 
 def attach_case_backup_routes(app, host):
     pending = {}
@@ -146,3 +146,20 @@ def attach_case_backup_routes(app, host):
                 return result({'restored':True,'case_id':case_id,'document_count':len(remapped)})
         except Exception as exc:
             return result({'restored':False,'reason':str(exc),'requires_reconciliation':True},409)
+
+    @app.post('/cases/backup/delete')
+    async def backup_delete(request:Request,case_id:str=Form(...),tax_year:int=Form(...),
+                            backup_id:str=Form(...),confirmation:str=Form(...)):
+        origin(request)
+        if confirmation != f'DELETE {case_id} {backup_id}':
+            raise HTTPException(400,'Exact backup deletion confirmation required')
+        try:
+            with host._lock:
+                bundle=load_selected_snapshot(host,drive(),case_id=case_id,tax_year=tax_year,backup_id=backup_id)
+                release=delete_selected_backup(host,drive(),bundle)
+                remaining=list_reserved_backups(host.persistence,owner_id=host.owner_id,case_id=case_id)
+                return result({'deleted':True,'case_id':case_id,'backup_id':backup_id,
+                               'number_released':not bool(remaining),
+                               'release_policy':str(release)})
+        except Exception as exc:
+            return result({'deleted':False,'reason':str(exc),'requires_reconciliation':True},409)
