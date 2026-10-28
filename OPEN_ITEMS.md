@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+Bounded Owner-authorized CASE-2025-0002 final lifecycle mission2026-10-28 is in progress with prerequisite actual backup/rollback readiness verified. Single results file: docs/case-2025-0002-final-lifecycle-test.md. All unrelated active rows/security gates remain; none closes through this case-specific test and CASE-2025-0001/UI changes must be preserved.
+
 Final quota handoff2026-10-27T16:24:20Z is authenticated17% five-hour/87% weekly (resets20:19:55Z today/2026-11-03T15:19:55Z). Controlled stop/reserve remains; no new development or active-row closure. Explicit Owner authorization and fresh admission are required before resume.
 
 Current execution status: OWNER_CONTROLLED_STOP / QUOTA_15_PERCENT, with underlying CAPACITY_DEFERRED / PROJECTED_HARD_THRESHOLD_CROSSING (not an assertion that measured quota reached15). Accepted protected-resolution contract7859d1b independently PASS; existing inactive codeba5b8b1 unchanged, docs18 passed. No active OI row closes. Next bounded implementation15/5 projected19/87 to4/82 and was rejected before implementation; later actual18/87 is recorded in checkpoint. After explicit Owner resume plus fresh admission, implement the same-Identity-DB typed evidence unit-of-work and focused independent verification. All live binding/enrollment/deployment/real-data gates remain; no automatic resume or Wake.

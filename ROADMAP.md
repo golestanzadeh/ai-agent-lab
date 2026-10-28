@@ -1,5 +1,7 @@
 # Roadmap
 
+Owner-authorized CASE-2025-0002 final lifecycle task (2026-10-28) uses `src/agent_lab/case_backup_restore.py` to complete selected-version restore within existing SQLite/Drive components. The single evidence file is `docs/case-2025-0002-final-lifecycle-test.md`. This grants no unrelated operation, architecture or UI change.
+
 ## Authoritative remaining path — 2026-10-20
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->

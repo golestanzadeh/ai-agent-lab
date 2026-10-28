@@ -1,5 +1,10 @@
 # Documentation Index
 
+- `case-2025-0002-final-lifecycle-test.md` — case-specific Owner-authorized actual backup/delete/restore/reservation/recreation evidence.
+- `case-lifecycle-owner-decisions-2026-10-27.md` — existing Owner lifecycle decisions used by the bounded case002 mission.
+- `case-lifecycle-owner-resolutions-2026-10-27.md` — existing number, document ownership and restore decisions.
+- `document-bearing-case-deletion-restore-contract-2026-10-27.md` — existing backup, restoration and reservation-release contract.
+
 - `a11-kernel-health-development-20261026.md` — preserved Kernel health development evidence; acceptance scope follows the canonical checkpoint.
 - `a12-kernel-health-local-pipe-20261026.md` — preserved local health pipe verification evidence.
 - `a13-kernel-health-bounded-client-service-adapter-20261026.md` — preserved bounded health-client/service-adapter evidence.

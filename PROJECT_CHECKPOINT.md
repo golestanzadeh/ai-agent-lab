@@ -1,5 +1,9 @@
 # Authoritative current project truth — 2026-10-20
 
+## Current bounded CASE-2025-0002 lifecycle mission — 2026-10-28
+
+The latest explicit Owner order authorizes only the final lifecycle of CASE-2025-0002 with selected backup4edef0fa-50ae-42b6-be86-9ab76e47848d. It supersedes older documentation-only/no-live-case authorization for this exact task, not unrelated security gates or tax operations. Baselinea434bc597cddb526fd3f817770be7c1a4ef26595 is remote-aligned; existing dirty UI files are preserved. Initial actual backup/SQLite rollback readiness passed without deletion. Results are recorded only in docs/case-2025-0002-final-lifecycle-test.md; no END_TO_END_PASS is claimed before all stages. CASE-2025-0001 must remain unchanged. No active OI row closes; no C09/identity/tax-analysis/submission acceptance is extended.
+
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: C09_R3_HG01_F01_F04_REMEDIATION_AND_INDEPENDENT_REREVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
