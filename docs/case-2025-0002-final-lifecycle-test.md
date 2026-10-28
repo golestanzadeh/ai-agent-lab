@@ -4,7 +4,8 @@ Updated UTC: 2026-10-28T13:13:13.255971+00:00
 Backup ID: 4edef0fa-50ae-42b6-be86-9ab76e47848d
 Baseline: a434bc597cddb526fd3f817770be7c1a4ef26595
 Final implementation commit SHA: 691663ec01242a1547da0cdc51ec9762aedd2182
-Final publication commit SHA: resolve with `git log -1 --format=%H -- docs/case-2025-0002-final-lifecycle-test.md`; exact publication SHA is supplied in final delivery.
+Final successful lifecycle evidence commit SHA: 11acda0d0611489f370f1772372cec3bbe1fc9d1.
+This immutable execution-evidence commit contains all final PASS results. The subsequent metadata-only report publication revision is identified by this file's Git history and the exact SHA in final delivery; no self-referential Git commit hash is invented.
 
 Authority: explicit Owner seven-stage lifecycle order. SQLite is canonical; Google Drive API only. No ELSTER, extraction, new database/service, or UI edits.
 
