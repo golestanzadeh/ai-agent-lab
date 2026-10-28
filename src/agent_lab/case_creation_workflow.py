@@ -264,7 +264,7 @@ class CaseCreationWorkflow:
             for record in self._case_registry.all_records()
             if record.case_id.startswith(prefix) and record.case_id.rsplit("-", 1)[1].isdigit()
         ]
-        return f"{prefix}{next(n for n in range(1, max(numbers, default=0) + 2) if n not in set(numbers)):04d}"
+        return f"{prefix}{max(numbers, default=0) + 1:04d}"
 
 
 def utc_now() -> datetime:

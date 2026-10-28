@@ -13,7 +13,7 @@ from agent_lab.case_backup_contract import BackupRequest, BackupTrigger, create_
 from agent_lab.case_backup_drive_writer import write_document_snapshot
 from agent_lab.case_backup_registry import register_verified_backup, list_reserved_backups
 from agent_lab.case_backup_preflight import verify_case_backup_source
-from agent_lab.case_backup_restore import load_selected_snapshot, import_snapshot
+from agent_lab.case_backup_restore import load_selected_snapshot, import_snapshot, restore_selected_snapshot
 
 def attach_case_backup_routes(app, host):
     pending = {}
@@ -102,3 +102,47 @@ def attach_case_backup_routes(app, host):
                 return result({'deleted':True,**deletion})
         except Exception as exc:
             return result({'deleted':False,'reason':str(exc),'verify_both_sources':True},409)
+
+    @app.get('/cases/backup/available')
+    async def backup_available(request:Request,tax_year:int=2025):
+        if request.headers.get('host') != '127.0.0.1:8766':
+            raise HTTPException(403,'Host rejected')
+        try:
+            with host._lock,host.persistence._lock:
+                host.persistence._verify_all()
+                host.persistence._verify_anchor()
+                rows=host.persistence._db.execute(
+                    "SELECT DISTINCT case_id FROM case_backup_registry WHERE owner_id=? AND tax_year=? AND state='VERIFIED' ORDER BY case_id",
+                    (host.owner_id,tax_year)).fetchall()
+                available=[]
+                for row in rows:
+                    case_id=row['case_id']
+                    if host.persistence._db.execute('SELECT 1 FROM case_record WHERE case_id=?',(case_id,)).fetchone():
+                        continue
+                    for entry in list_reserved_backups(host.persistence,owner_id=host.owner_id,case_id=case_id):
+                        if entry['tax_year']==tax_year:
+                            available.append({'case_id':case_id,'tax_year':tax_year,'backup_id':entry['backup_id']})
+                return result({'backups':available})
+        except Exception:
+            return result({'backups':[],'reason':'Backup inventory unavailable'},409)
+
+    @app.post('/cases/backup/restore')
+    async def backup_restore(request:Request,case_id:str=Form(...),tax_year:int=Form(...),
+                             backup_id:str=Form(...),confirmation:str=Form(...)):
+        origin(request)
+        if confirmation!=case_id:raise HTTPException(400,'Confirmation mismatch')
+        try:
+            with host._lock:
+                with host.persistence._lock:
+                    host.persistence._verify_all()
+                    host.persistence._verify_anchor()
+                    if host.persistence._db.execute('SELECT 1 FROM case_record WHERE case_id=?',(case_id,)).fetchone():
+                        raise ValueError('Active case blocks restore')
+                service=drive()
+                bundle=load_selected_snapshot(host,service,case_id=case_id,tax_year=tax_year,backup_id=backup_id)
+                import_snapshot(host,bundle,storage_root_id=bundle['manifest']['source_root_id'],
+                                document_ids={x['id']:x['id'] for x in bundle['manifest']['documents']},dry_run=True)
+                remapped=restore_selected_snapshot(host,service,bundle)
+                return result({'restored':True,'case_id':case_id,'document_count':len(remapped)})
+        except Exception as exc:
+            return result({'restored':False,'reason':str(exc),'requires_reconciliation':True},409)

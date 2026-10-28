@@ -50,6 +50,18 @@
 </section>
 <script src="{{ url_for('static', path='/case_backup_controls.js') }}" defer></script>
 {% endif %}
+{% if tab == "cases" and not test_mode %}
+<section class="panel" aria-label="Restore case backup">
+  <h2>{{ 'بازگرداندن پشتیبان پرونده حذف‌شده' if lang == 'fa-IR' else 'Gelöschten Fall aus Backup wiederherstellen' }}</h2>
+  <p>{{ 'فقط نسخه‌های تأییدشده مربوط به پرونده‌های حذف‌شده نمایش داده می‌شوند. بازگردانی نیازمند تأیید صریح شما است.' if lang == 'fa-IR' else 'Nur verifizierte Backups gelöschter Fälle werden angezeigt. Wiederherstellung erfordert Ihre Bestätigung.' }}</p>
+  <label for="case-restore-year">{{ 'سال مالیاتی' if lang == 'fa-IR' else 'Steuerjahr' }}</label>
+  <input id="case-restore-year" type="number" min="1900" max="9999" value="{{ selected.tax_year if selected else 2025 }}">
+  <button type="button" id="case-restore-refresh">{{ 'نمایش پشتیبان‌های قابل بازگردانی' if lang == 'fa-IR' else 'Wiederherstellbare Backups anzeigen' }}</button>
+  <div id="case-restore-list"></div>
+  <p id="case-restore-result" role="status" aria-live="polite"></p>
+</section>
+<script src="{{ url_for('static', path='/case_backup_restore.js') }}" defer></script>
+{% endif %}
 <section class="panel tab-panel">
   <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>
   <div class="tab-body">
