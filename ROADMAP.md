@@ -1,5 +1,10 @@
 # Roadmap
 
+## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
+
+**OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active security/identity/tax or submission gate closes. Future mandatory test: finalized tax cases must be nondeletable even with backup; deferred until actual final tax-case acceptance.
+
+
 Owner-authorized CASE-2025-0002 final lifecycle task (2026-10-28) uses `src/agent_lab/case_backup_restore.py` to complete selected-version restore within existing SQLite/Drive components. The single evidence file is `docs/case-2025-0002-final-lifecycle-test.md`. This grants no unrelated operation, architecture or UI change.
 
 ## Authoritative remaining path — 2026-10-20

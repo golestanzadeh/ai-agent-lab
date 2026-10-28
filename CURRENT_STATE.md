@@ -1,5 +1,10 @@
 # Current State
 
+## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
+
+**OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active security/identity/tax or submission gate closes. Future mandatory test: finalized tax cases must be nondeletable even with backup; deferred until actual final tax-case acceptance.
+
+
 Bounded Owner case002 lifecycle2026-10-28: END_TO_END_PASS, actual SQLite/Google Drive API operations and selected real Dashboard readback. Single report: docs/case-2025-0002-final-lifecycle-test.md. New empty CASE-2025-0002 persists; CASE-2025-0001 and uncommitted UI bytes unchanged. This is not tax workflow, C09, identity, submission or release acceptance. No next mission is started.
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->

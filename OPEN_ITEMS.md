@@ -1,5 +1,10 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
+## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
+
+**OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active OI row closes; existing independent security, identity, tax-workflow and release gates remain unchanged. The future finalized-tax-case nondeletion requirement is deferred to the actual tax finalization acceptance, not marked PASS.
+
+
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
 <!-- CURRENT_NEXT_ACTION: C09_R3_HG01_F01_F04_REMEDIATION_AND_INDEPENDENT_REREVIEW -->
 <!-- CURRENT_ACTIVE_OPEN_ITEMS: OI-0002..OI-0008,OI-0010,OI-0012 -->
