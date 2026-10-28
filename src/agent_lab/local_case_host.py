@@ -465,6 +465,8 @@ def create_local_case_app():
                                 status_code=409,headers={'Cache-Control':'no-store'})
         return JSONResponse(result,headers={'Cache-Control':'no-store'})
 
+    from agent_lab.case_backup_dashboard import attach_case_backup_routes
+    attach_case_backup_routes(app, host)
     app.state.local_case_host = host
     app.state.product_case_source = "canonical-sqlite"
     return app
