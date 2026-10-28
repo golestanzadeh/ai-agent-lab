@@ -12,6 +12,8 @@ At every governed recovery and package boundary, reconcile active gates with the
 
 ## Verified active items
 
+Owner-specific CASE-2025-0002 final lifecycle completed END_TO_END_PASS; single actual evidence report docs/case-2025-0002-final-lifecycle-test.md. This resolves only that bounded execution, not an active OI security/identity/tax gate. All existing active rows are preserved; no unrelated acceptance or continuation is authorized. CASE-2025-0001 and existing dirty UI remain unchanged.
+
 Bounded Owner-authorized CASE-2025-0002 final lifecycle mission2026-10-28 is in progress with prerequisite actual backup/rollback readiness verified. Single results file: docs/case-2025-0002-final-lifecycle-test.md. All unrelated active rows/security gates remain; none closes through this case-specific test and CASE-2025-0001/UI changes must be preserved.
 
 Final quota handoff2026-10-27T16:24:20Z is authenticated17% five-hour/87% weekly (resets20:19:55Z today/2026-11-03T15:19:55Z). Controlled stop/reserve remains; no new development or active-row closure. Explicit Owner authorization and fresh admission are required before resume.

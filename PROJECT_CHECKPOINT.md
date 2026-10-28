@@ -2,6 +2,8 @@
 
 ## Current bounded CASE-2025-0002 lifecycle mission — 2026-10-28
 
+The exact Owner-authorized lifecycle finished END_TO_END_PASS. All actual stage evidence, selected backup disposition, reservation/release, SQLite/Drive/document readbacks, final case001/case002 integrity and diagnostic history are in docs/case-2025-0002-final-lifecycle-test.md. Accepted source for this execution is691663ec01242a1547da0cdc51ec9762aedd2182; no independent product/security acceptance is invented. CASE-2025-0002 is a newly created empty persisted case visible in the real Dashboard; CASE-2025-0001 and uncommitted UI bytes are unchanged. No active OI row closes, no unrelated gate changes, and no further task is authorized or started by completion.
+
 The latest explicit Owner order authorizes only the final lifecycle of CASE-2025-0002 with selected backup4edef0fa-50ae-42b6-be86-9ab76e47848d. It supersedes older documentation-only/no-live-case authorization for this exact task, not unrelated security gates or tax operations. Baselinea434bc597cddb526fd3f817770be7c1a4ef26595 is remote-aligned; existing dirty UI files are preserved. Initial actual backup/SQLite rollback readiness passed without deletion. Results are recorded only in docs/case-2025-0002-final-lifecycle-test.md; no END_TO_END_PASS is claimed before all stages. CASE-2025-0001 must remain unchanged. No active OI row closes; no C09/identity/tax-analysis/submission acceptance is extended.
 
 <!-- CURRENT_PROJECT_STAGE: SYNTHETIC_UI_ACCEPTED_REAL_PRODUCT_GATED -->
