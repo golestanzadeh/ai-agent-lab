@@ -78,6 +78,13 @@ def write_document_snapshot(host, request, path):
         if _children(drive, identity_folder, path[2]):
             raise RuntimeError("Backup version already exists; no overwrite")
         version = _folder(drive, identity_folder, path[2])
+        from agent_lab.case_backup_sqlite import export_case_state
+        sqlite_blob, sqlite_digest = export_case_state(
+            host.persistence, host.owner_id, request.case_id, request.tax_year
+        )
+        sqlite_id = _upload_verified(
+            drive, version, "case-state.json", sqlite_blob, "application/json"
+        )
         manifest_files = []
         for entry in preflight["documents"]:
             _, content = host.get_case_document(request.case_id, request.tax_year, entry["id"])
@@ -94,7 +101,11 @@ def write_document_snapshot(host, request, path):
             "trigger": request.trigger.value,
             "source_root_id": preflight["storage_root_id"],
             "documents": manifest_files,
-            "scope": "DOCUMENTS_ONLY_NOT_RESTORABLE_CASE",
+            "sqlite_snapshot": {
+                "drive_id": sqlite_id, "sha256": sqlite_digest,
+                "size": len(sqlite_blob), "schema": "case-sqlite-snapshot/1"
+            },
+            "scope": "FULL_SNAPSHOT_RESTORE_NOT_YET_IMPLEMENTED",
         }
         blob = json.dumps(manifest, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         manifest_id = _upload_verified(drive, version, "manifest.json", blob, "application/json")
@@ -102,7 +113,7 @@ def write_document_snapshot(host, request, path):
             "backup_id": request.backup_id,
             "path": path,
             "verified": True,
-            "scope": "DOCUMENTS_ONLY_NOT_RESTORABLE_CASE",
+            "scope": "FULL_SNAPSHOT_RESTORE_NOT_YET_IMPLEMENTED",
             "folder_id": version,
             "manifest_id": manifest_id,
             "document_count": len(manifest_files),
