@@ -529,6 +529,8 @@ def create_local_case_app():
 
     from agent_lab.case_backup_dashboard import attach_case_backup_routes
     attach_case_backup_routes(app, host)
+    from agent_lab.gemini_preview_route import router as gemini_preview_router
+    app.include_router(gemini_preview_router)
     app.state.local_case_host = host
     app.state.product_case_source = "canonical-sqlite"
     return app
