@@ -1,5 +1,10 @@
 # Documentation Index
 
+- `a02-ui03-document-registry-increment1-20261029.md` — bounded backend document-registry implementation, migration and synthetic T1–T7 evidence.
+- `a02-ui03-incremental-analysis-document-lifecycle-plan-20261029.md` — Owner-approved staged requirements governing this registry increment.
+- `a02-ui02-analysis-readiness-acceptance-20261029.md` — existing accepted Analysis readiness predecessor; not modified by this increment.
+- `case-document-bearing-deletion-owner-acceptance-2026-10-28.md` — existing bounded lifecycle acceptance preserved by compatibility checks.
+
 - `case-2025-0002-final-lifecycle-test.md` — case-specific Owner-authorized actual backup/delete/restore/reservation/recreation evidence.
 - `case-lifecycle-owner-decisions-2026-10-27.md` — existing Owner lifecycle decisions used by the bounded case002 mission.
 - `case-lifecycle-owner-resolutions-2026-10-27.md` — existing number, document ownership and restore decisions.

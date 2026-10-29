@@ -36,6 +36,9 @@ def inspect_empty_case(persistence, drive, *, owner_id: str, case_id: str, tax_y
             raise EmptyCaseBlocked('Case lifecycle is not eligible for empty-case deletion')
         if row['storage_provider'] != 'google_drive':
             raise EmptyCaseBlocked('Unverified storage provider')
+        indexed=persistence._db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='case_document_index'",()).fetchone()
+        if indexed and persistence._db.execute('SELECT 1 FROM case_document_index WHERE case_id=? LIMIT 1',(case_id,)).fetchone():
+            raise EmptyCaseBlocked('SQLite contains registered or unresolved documents')
         for table in ('durable_run', 'mutation_request'):
             if persistence._db.execute(f'SELECT 1 FROM {table} WHERE case_id=? LIMIT 1', (case_id,)).fetchone():
                 raise EmptyCaseBlocked('SQLite contains case dependencies')

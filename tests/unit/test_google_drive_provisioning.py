@@ -80,6 +80,13 @@ def test_uncertain_creation_never_retries(env):
 
 def test_unrecorded_existing_folder_fails_closed(env):
     creator, drive, _ = env
+    # Tax_Years alone is an accepted existing ancestor. Exercise an
+    # unrecorded year/case folder, not a fake missing ancestor metadata error.
+    drive.objects['tax-years']={'id':'tax-years','name':'Tax_Years','parents':['root'],
+                                'mimeType':Creator.MIME,'trashed':False,
+                                'capabilities':{'canAddChildren':True}}
+    creator.path.write_text(json.dumps({'version':1,'root':'root','folders':{'Tax_Years':'tax-years'},
+                                       'cases':{},'events':[],'pending':None}))
     drive.conflict = True
     with pytest.raises(ProvisioningError, match="unrecorded"):
         creator.create_case_scope(TaxPeriod("CALENDAR_YEAR", 2024), "CASE-001")

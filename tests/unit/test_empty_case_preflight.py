@@ -15,6 +15,8 @@ class FakePersistence:
     def _authorize(self, owner, case, year):
         assert (owner, case, year) == ('owner', 'CASE-2026-0001', 2026)
     def execute(self, sql, args):
+        if 'FROM sqlite_master' in sql:
+            return SimpleNamespace(fetchone=lambda: None)
         if 'FROM case_record' in sql:
             return SimpleNamespace(fetchone=lambda: dict(lifecycle_status='CREATED', storage_provider='google_drive', storage_root_id='root'))
         if 'FROM durable_run' in sql or 'FROM mutation_request' in sql:

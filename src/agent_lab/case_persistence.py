@@ -779,6 +779,9 @@ class SQLiteCasePersistence:
             if (record is None or record['lifecycle_status'] != 'CREATED'
                     or record['storage_root_id'] != storage_root_id):
                 raise CasePersistenceError('case identity or lifecycle changed')
+            indexed = self._db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='case_document_index'").fetchone()
+            if indexed and self._db.execute('SELECT 1 FROM case_document_index WHERE case_id=? LIMIT 1',(case_id,)).fetchone():
+                raise CasePersistenceError('registered or unresolved documents block empty-case deletion')
             for table in ('durable_run', 'mutation_request'):
                 if self._db.execute(f'SELECT 1 FROM {table} WHERE case_id=?', (case_id,)).fetchone():
                     raise CasePersistenceError('case dependencies block deletion')

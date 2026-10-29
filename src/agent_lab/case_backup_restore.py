@@ -92,7 +92,8 @@ def import_snapshot(host,bundle,*,storage_root_id,document_ids,dry_run=False):
     p=host.persistence;s=bundle['state'];case=s['case_id'];tables=deepcopy(s['tables'])
     if s['owner_id']!=host.owner_id:raise PermissionError('Owner mismatch')
     if set(document_ids)!={d['id'] for d in bundle['manifest']['documents']} or len(set(document_ids.values()))!=len(document_ids):raise ValueError('Invalid document remapping')
-    for row in tables['case_document_index']:row['drive_file_id']=document_ids[row['drive_file_id']]
+    from agent_lab.case_document_registry import remap_backup_row,ensure_schema,LEGACY_COLUMNS,EXTENSIONS,seal_collection
+    tables['case_document_index']=[remap_backup_row(p,row,document_ids[row['drive_file_id']]) for row in tables['case_document_index']]
     original_root=tables['case_record'][0]['storage_root_id']
     if storage_root_id!=original_root:
         row=tables['case_record'][0];row['storage_root_id']=storage_root_id
@@ -105,15 +106,19 @@ def import_snapshot(host,bundle,*,storage_root_id,document_ids,dry_run=False):
         if exists and not dry_run:raise ValueError('Restore never overwrites active case')
         p._db.execute('BEGIN IMMEDIATE')
         try:
+            ensure_schema(p)
             if exists:
                 for table in reversed(TABLES):p._db.execute(f'DELETE FROM {table} WHERE case_id=?',(case,))
             for table in TABLES:
                 columns={v['name'] for v in p._db.execute(f'PRAGMA table_info({table})')}
                 for row in tables[table]:
-                    if set(row)!=columns:raise ValueError('Snapshot schema mismatch')
+                    if table=='case_document_index':
+                        if not LEGACY_COLUMNS<=set(row)<=columns or columns-set(row)-set(EXTENSIONS):raise ValueError('Snapshot document schema mismatch')
+                    elif set(row)!=columns:raise ValueError('Snapshot schema mismatch')
                     names=list(row)
                     p._db.execute(f'INSERT INTO {table} ({",".join(names)}) VALUES ({",".join("?" for _ in names)})',[row[k] for k in names])
             if not exists:p._audit('CASE_REGISTERED',case,p._mac({'restore_backup_id':bundle['record']['backup_id'],'manifest_digest':bundle['record']['manifest_digest']}))
+            seal_collection(p,case)
             p._verify_all()
             if dry_run:
                 p._db.rollback();p._verify_all();p._verify_anchor()

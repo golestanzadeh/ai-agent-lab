@@ -178,7 +178,20 @@ class LocalCaseHost:
             return {'database_deleted': True, 'drive_trashed': True, 'case_id': case_id}
 
     def list_case_documents(self, case_id: str, tax_year: int):
-        # Metadata-only inventory. Never infer scope from a filename or Drive-wide search.
+        """Backward-compatible pending inventory, separate from the full registry."""
+        registry=self.list_case_document_registry(case_id,tax_year)
+        return {'case_id':case_id,'tax_year':tax_year,
+                'documents_folder_id':registry['documents_folder_id'],
+                'registry_complete':registry['registry_complete'],
+                'files':sorted([{'id':r['drive_file_id'],'name':r['name'],
+                                 'mime_type':r['mime_type'],'size':r['size']}
+                                for r in registry['documents']
+                                if r['registry_state']=='PENDING' and r['source_status']=='ACTIVE'],
+                               key=lambda r:(r['name'].casefold(),r['id']))}
+
+    def list_case_document_registry(self, case_id: str, tax_year: int):
+        """Observe all three case-owned locations without moving/creating anything."""
+        from agent_lab.case_document_registry import FOLDERS,read_registry
         with self._lock:
             self._reload()
             with self.persistence._lock:
@@ -198,7 +211,7 @@ class LocalCaseHost:
                     or root.get('trashed') is not False):
                 raise ValueError('case root mismatch')
             def children(folder_id):
-                items, token = [], None
+                items, token, seen = [], None, set()
                 while True:
                     response = drive.files().list(
                         q=f"'{folder_id}' in parents and trashed = false",
@@ -208,24 +221,45 @@ class LocalCaseHost:
                     token = response.get('nextPageToken')
                     if not token:
                         return items
+                    if token in seen:raise ValueError('Repeated Drive inventory page')
+                    seen.add(token)
             folders = children(root_id)
-            docs = [x for x in folders if x.get('name') == 'Documents'
-                    and x.get('mimeType') == 'application/vnd.google-apps.folder'
-                    and x.get('parents') == [root_id] and x.get('trashed') is False]
-            if len(docs) != 1:
-                raise ValueError('Documents folder scope mismatch')
-            files = children(docs[0]['id'])
-            if any(x.get('parents') != [docs[0]['id']] or x.get('trashed') is not False
-                   for x in files):
-                raise ValueError('Document parent mismatch')
-            result = {'case_id': case_id, 'tax_year': tax_year,
-                    'documents_folder_id': docs[0]['id'],
-                    'files': sorted([{'id': x['id'], 'name': x['name'],
-                                      'mime_type': x['mimeType'], 'size': x.get('size')}
-                                     for x in files if x['mimeType'] != 'application/vnd.google-apps.folder'],
-                                    key=lambda x: (x['name'].casefold(), x['id']))}
-            self._sync_document_index(case_id,tax_year,result)
-            return result
+            located={};observed=[];visited={root_id};file_ids=set()
+            for name,state in FOLDERS.items():
+                matches=[x for x in folders if x.get('name')==name]
+                if len(matches)>1 or (not matches and name!='Deleted_Documents'):
+                    raise ValueError('Case document folder missing or ambiguous')
+                if not matches:continue  # Optional holding folder is never provisioned here.
+                folder=matches[0]
+                if (folder.get('mimeType')!='application/vnd.google-apps.folder' or
+                    folder.get('parents')!=[root_id] or folder.get('trashed') is not False):
+                    raise ValueError('Document folder scope mismatch')
+                located[name]=folder['id'];stack=[folder['id']]
+                while stack:
+                    parent=stack.pop()
+                    if parent in visited:raise ValueError('Duplicate or cyclic document folder')
+                    visited.add(parent)
+                    for item in children(parent):
+                        if item.get('parents')!=[parent] or item.get('trashed') is not False:
+                            raise ValueError('Document parent mismatch')
+                        if item.get('mimeType')=='application/vnd.google-apps.folder':
+                            if name=='Documents':raise ValueError('Nested pending folder requires reconciliation')
+                            stack.append(item['id']);continue
+                        if item['id'] in file_ids:raise ValueError('Ambiguous document location')
+                        file_ids.add(item['id'])
+                        size=item.get('size')
+                        if size is not None and (type(size) not in {str,int} or not str(size).isascii() or not str(size).isdigit()):
+                            raise ValueError('Malformed document size')
+                        observed.append({'id':item['id'],'name':item['name'],'mime_type':item['mimeType'],
+                                         'size':int(size) if size is not None else None,
+                                         'parent_id':parent,'registry_state':state,'case_id':case_id,'tax_year':tax_year})
+            self._sync_document_index(case_id,tax_year,{'case_id':case_id,'tax_year':tax_year,'registry_files':observed})
+            rows=read_registry(self.persistence,owner_id=self.owner_id,case_id=case_id,tax_year=tax_year)
+            return {'case_id':case_id,'tax_year':tax_year,'documents_folder_id':located['Documents'],
+                    'documents':rows,
+                    'active_documents':tuple(r for r in rows if r['source_status']=='ACTIVE' and r['registry_state'] in {'PENDING','ACTIVE_ANALYZED'}),
+                    'inactive_documents':tuple(r for r in rows if r['source_status']=='ACTIVE' and r['registry_state']=='DELETED_ANALYZED'),
+                    'registry_complete':all(r['source_status']=='ACTIVE' and r['registry_state']!='UNRESOLVED' for r in rows)}
 
     def upload_case_document(self, case_id: str, tax_year: int, filename: str, content: bytes):
         from io import BytesIO
@@ -274,34 +308,8 @@ class LocalCaseHost:
                     'size': len(content), 'sha256': sha256(content).hexdigest()}
 
     def _sync_document_index(self, case_id, tax_year, snapshot):
-        # Drive is authoritative. SQLite stores only case-scoped metadata.
-        import sqlite3
-        from datetime import datetime, timezone
-        db = self.persistence._db
-        db.execute("""CREATE TABLE IF NOT EXISTS case_document_index (
-            case_id TEXT NOT NULL, tax_year INTEGER NOT NULL,
-            drive_file_id TEXT NOT NULL, name TEXT NOT NULL,
-            mime_type TEXT NOT NULL, size INTEGER,
-            indexed_at TEXT NOT NULL,
-            PRIMARY KEY(case_id, drive_file_id))""")
-        now = datetime.now(timezone.utc).isoformat()
-        for file in snapshot['files']:
-            db.execute("""INSERT INTO case_document_index
-                (case_id,tax_year,drive_file_id,name,mime_type,size,indexed_at)
-                VALUES (?,?,?,?,?,?,?)
-                ON CONFLICT(case_id,drive_file_id) DO UPDATE SET
-                name=excluded.name,mime_type=excluded.mime_type,
-                size=excluded.size,indexed_at=excluded.indexed_at""",
-                (case_id,tax_year,file['id'],file['name'],
-                 file['mime_type'],file.get('size'),now))
-        ids = [file['id'] for file in snapshot['files']]
-        if ids:
-            placeholders = ','.join('?' for _ in ids)
-            db.execute('DELETE FROM case_document_index WHERE case_id=? AND drive_file_id NOT IN ('+placeholders+')',
-                       (case_id,*ids))
-        else:
-            db.execute('DELETE FROM case_document_index WHERE case_id=?',(case_id,))
-        db.commit()
+        from agent_lab.case_document_registry import reconcile
+        reconcile(self.persistence,owner_id=self.owner_id,case_id=case_id,tax_year=tax_year,snapshot=snapshot)
 
     def get_case_document(self, case_id, tax_year, document_id):
         from io import BytesIO
@@ -323,17 +331,24 @@ class LocalCaseHost:
             return entry,buffer.getvalue()
 
     def trash_case_document(self,case_id,tax_year,document_id):
+        from agent_lab.case_document_registry import read_registry,assert_pending,record_pending_trash
         with self._lock:
             snapshot=self.list_case_documents(case_id,tax_year)
             entry=next((x for x in snapshot['files'] if x['id']==document_id),None)
             if entry is None:
                 raise ValueError('Document does not belong to this case')
+            row=next(r for r in read_registry(self.persistence,owner_id=self.owner_id,case_id=case_id,tax_year=tax_year) if r['drive_file_id']==document_id)
+            assert_pending(row)
             drive=build('drive','v3',credentials=get_drive_credentials(),cache_discovery=False)
             updated=drive.files().update(fileId=document_id,body={'trashed':True},
                                          fields='id,trashed').execute()
             if updated.get('id')!=document_id or updated.get('trashed') is not True:
                 raise RuntimeError('Drive trash readback mismatch')
-            self._sync_document_index(case_id,tax_year,self.list_case_documents(case_id,tax_year))
+            verified=drive.files().get(fileId=document_id,fields='id,trashed').execute()
+            if verified.get('id')!=document_id or verified.get('trashed') is not True:
+                raise RuntimeError('Drive trash independent readback mismatch')
+            record_pending_trash(self.persistence,owner_id=self.owner_id,case_id=case_id,tax_year=tax_year,file_id=document_id)
+            self.list_case_documents(case_id,tax_year)
             return {'deleted':True,'document_id':document_id}
 
     def preview_next_case_id(self, year: int):

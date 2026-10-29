@@ -1,5 +1,7 @@
 # Roadmap
 
+A-02:UI-03 Increment1 (Owner scope2026-10-29) registers `src/agent_lab/case_document_registry.py`, `tests/unit/test_case_document_registry.py` and `docs/a02-ui03-document-registry-increment1-20261029.md`. They extend the existing SQLite document index and LocalCaseHost metadata projections only. Subsequent movement/classification/analysis/financial/restore/UI increments require their own authorization; no automatic continuation is permitted.
+
 ## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
 
 **OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active security/identity/tax or submission gate closes. Future mandatory test: finalized tax cases must be nondeletable even with backup; deferred until actual final tax-case acceptance.

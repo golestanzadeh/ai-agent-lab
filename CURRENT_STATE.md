@@ -1,5 +1,7 @@
 # Current State
 
+2026-10-29: A-02:UI-03 Increment1 DOCUMENT_REGISTRY_IMPLEMENTED / TESTED, limited to same-SQLite document lifecycle metadata/history and pending projection correctness. Final131 focused/related/docs tests pass using temporary SQLite and fake Drive; no live migration/data mutation or Analysis UI change. See docs/a02-ui03-document-registry-increment1-20261029.md. Full UI-03 and remaining gates stay open; no automatic continuation.
+
 ## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
 
 **OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active security/identity/tax or submission gate closes. Future mandatory test: finalized tax cases must be nondeletable even with backup; deferred until actual final tax-case acceptance.

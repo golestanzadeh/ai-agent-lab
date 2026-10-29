@@ -11,6 +11,11 @@ def verify_case_backup_source(host, case_id: str, tax_year: int) -> dict:
             host.persistence._verify_all()
             host.persistence._verify_anchor()
             host.persistence._authorize(host.owner_id, case_id, tax_year)
+            columns={r['name'] for r in host.persistence._db.execute('PRAGMA table_info(case_document_index)')}
+            if 'registry_state' in columns and host.persistence._db.execute(
+                "SELECT 1 FROM case_document_index WHERE case_id=? AND (registry_state<>'PENDING' OR source_status<>'ACTIVE') LIMIT 1",(case_id,)
+            ).fetchone():
+                raise ValueError('Lifecycle or unresolved documents require extended backup support')
             row = host.persistence._db.execute(
                 "SELECT lifecycle_status,storage_root_id FROM case_record WHERE case_id=? AND owner_id=? AND tax_year=?",
                 (case_id, host.owner_id, tax_year),

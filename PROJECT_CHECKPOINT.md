@@ -1,5 +1,11 @@
 # Authoritative current project truth — 2026-10-20
 
+## A-02:UI-03 Increment1 — Document Registry, 2026-10-29
+
+Final authenticated capacity handoff2026-10-29T12:17:11Z (signed-in Codex app): five-hour80% remaining/reset2026-10-29T16:47:24Z, weekly93%/reset2026-11-04T12:52:37Z. This ending observation is not an automatic next-task dispatch or fresh future admission. No parallel Bridge state is created; explicit Increment1 stop remains effective.
+
+`A-02:UI-03 / DOCUMENT_REGISTRY_IMPLEMENTED / TESTED`, bounded backend scope only. Existing case_document_index now preserves scoped identity/history across Documents/Tax_Categories/optional Deleted_Documents; pending inventory is separate, absence becomes UNRESOLVED rather than deletion, and metadata/audit integrity and explicit pending-trash guards fail closed. Additive five-column component migration leaves core SQLite schema-v3 unchanged. Old/new pending whole-case snapshot compatibility and incomplete-backup/empty-case guards preserve existing boundaries. Final focused/related/docs command131 passed, exit0; no real DB, Drive, tax records, movement, Gemini, analyzed restore or Analysis UI was operated on. Evidence: docs/a02-ui03-document-registry-increment1-20261029.md. Existing dirty UI is excluded from commits. OPEN_ITEMS assessed/synchronized: no active row closes; full UI-03/Owner live/independent/security/financial/submission gates remain. Stop after this increment; a later move/classification package needs separate authorization.
+
 ## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
 
 **OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active security/identity/tax or submission gate closes. Future mandatory test: finalized tax cases must be nondeletable even with backup; deferred until actual final tax-case acceptance.
