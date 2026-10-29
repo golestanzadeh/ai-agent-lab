@@ -391,11 +391,25 @@ def create_local_case_app():
         try:
             inventory = host.list_case_documents(case_id, tax_year)
             files = inventory['files']
-            pdf_count = sum(f['mime_type'] == 'application/pdf' for f in files)
-            csv_count = sum(f['mime_type'] in ('text/csv', 'application/csv', 'application/vnd.ms-excel') or f['name'].lower().endswith('.csv') for f in files)
+            from collections import Counter
+            from pathlib import PurePosixPath
+            type_counts = Counter()
+            for f in files:
+                suffix = PurePosixPath(f['name']).suffix.lower().lstrip('.')
+                mime = f['mime_type'].lower()
+                label = {
+                    'jpeg': 'JPEG', 'jpg': 'JPEG', 'png': 'PNG',
+                    'tif': 'TIFF', 'tiff': 'TIFF', 'webp': 'WebP',
+                    'pdf': 'PDF', 'csv': 'CSV',
+                }.get(suffix)
+                if label is None:
+                    label = {'application/pdf': 'PDF', 'text/csv': 'CSV',
+                             'image/jpeg': 'JPEG', 'image/png': 'PNG',
+                             'image/tiff': 'TIFF', 'image/webp': 'WebP'}.get(mime, 'OTHER')
+                type_counts[label] += 1
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
                 'inventory_verified': True, 'documents_count': len(files),
-                'pdf_count': pdf_count, 'csv_count': csv_count,
+                'document_types': dict(sorted(type_counts.items())),
                 'kernel_ready': False, 'gemini_ready': False,
                 'analysis_launch_available': False, 'reason': 'UI03_RUNTIME_NOT_CONNECTED'},
                 headers={'Cache-Control': 'no-store'})

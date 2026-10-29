@@ -11,9 +11,22 @@
     .then(data => {
       if (!data.inventory_verified || data.case_id !== panel.dataset.caseId || String(data.tax_year) !== panel.dataset.taxYear) throw new Error('SCOPE_MISMATCH');
       state.textContent = fa ? 'موجودی مدارک تأیید شد؛ اجرای تحلیل هنوز آماده نیست.' : 'Dokumentenbestand bestätigt; Analysestart noch nicht bereit.';
-      const lines = fa
-        ? [`مدارک: ${data.documents_count}`, `PDF: ${data.pdf_count}`, `CSV: ${data.csv_count}`, 'Kernel: اتصال اجرای واقعی برقرار نیست', 'Gemini: آمادگی اجرایی تأیید نشده']
-        : [`Dokumente: ${data.documents_count}`, `PDF: ${data.pdf_count}`, `CSV: ${data.csv_count}`, 'Kernel: Laufzeit nicht angebunden', 'Gemini: Bereitschaft nicht bestätigt'];
+      const types = data.document_types;
+      if (!types || typeof types !== 'object' || Array.isArray(types) ||
+          Object.values(types).some(count => !Number.isInteger(count) || count < 1) ||
+          Object.values(types).reduce((total, count) => total + count, 0) !== data.documents_count) {
+        throw new Error('INVALID_INVENTORY_COUNTS');
+      }
+      const lines = [fa ? `مدارک: ${data.documents_count}` : `Dokumente: ${data.documents_count}`];
+      if (data.documents_count === 0) {
+        lines.push(fa ? 'هنوز مدرکی برای این پرونده بارگذاری نشده است.' : 'Für diesen Fall wurden noch keine Dokumente hochgeladen.');
+      } else {
+        for (const [type, count] of Object.entries(types).sort(([a], [b]) => a.localeCompare(b))) {
+          lines.push(`${type}: ${count}`);
+        }
+      }
+      lines.push(fa ? 'Kernel: اتصال اجرای واقعی برقرار نیست' : 'Kernel: Laufzeit nicht angebunden');
+      lines.push(fa ? 'Gemini: آمادگی اجرایی تأیید نشده' : 'Gemini: Bereitschaft nicht bestätigt');
       details.replaceChildren(...lines.map(line => { const p = document.createElement('p'); p.textContent = line; return p; }));
     })
     .catch(() => {
