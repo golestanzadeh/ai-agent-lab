@@ -2,6 +2,8 @@
 
 ## UI-03 final Owner directive — 2026-10-29
 
+2026-10-30: actual4/5PDF candidates persisted (one corrected-parser-failure remains preserved pending exact successor authorization);1CSV unsupported/not transmitted. Independent f1d4656 FAIL F01-F03 is retained; corrections and111 regression plus1 route tests pass, corrected-SHA re-review remains pending. No full UI-03 acceptance or active OI closure. This is a specific retry/acceptance boundary, not renewed generic Gemini/privacy consent or a global C09 stop.
+
 Owner accepts the exact existing Gemini privacy configuration for development document-analysis tests; credential route CLOSED at3bc1e54. The prior unrecovered-configuration stop is superseded for this bounded mission; generic consent must not be requested again. Kernel/manifest/per-document/UI implementation, real verification and separate independent acceptance are in progress, not PASS yet. No active OI row closes, no C09/final tax/submission approval changes. See PROJECT_CHECKPOINT and existing ui03-kernel-gemini-execution-gate-20261029.md continuation.
 
 ## UI-03 provider boundary — 2026-10-29 (historical, superseded for new scope)

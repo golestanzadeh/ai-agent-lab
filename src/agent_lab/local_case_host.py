@@ -116,10 +116,18 @@ class LocalCaseHost:
             allow_multiple_cases_per_period=True)
 
     def read_cases(self):
-        with self._lock:
-            self._reload()
+        # Navigation reads the canonical database, not the network-held document
+        # lock or an OAuth/provisioning reconstruction. No alternate registry.
+        with self.persistence._lock:
+            self.persistence._verify_all()
+            self.persistence._verify_anchor()
+            ids = frozenset(row['case_id'] for row in self.persistence._db.execute(
+                'SELECT case_id FROM ui_case_authorization WHERE owner_id=?', (self.owner_id,)))
+            if not ids:
+                return ()
+            runtime = self.persistence.load_runtime(owner_id=self.owner_id, allowed_case_ids=ids)
             return tuple(DashboardCase(r.case_id, r.tax_period.year, r.lifecycle_status.value)
-                         for r in self.registry.all_records())
+                         for r in runtime.registry.all_records())
 
     def preview_empty_case_deletion(self, case_id: str, tax_year: int):
         from agent_lab.empty_case_preflight import inspect_empty_case
@@ -439,8 +447,11 @@ def create_local_case_app(*, kernel_dispatch=None):
         return JSONResponse(receipt, headers={'Cache-Control': 'no-store'})
 
     @app.get('/cases/analysis/progress')
-    async def case_analysis_progress(case_id: str, tax_year: int):
+    async def case_analysis_progress(request: __import__('fastapi').Request, case_id: str, tax_year: int):
         from starlette.concurrency import run_in_threadpool
+        if (request.headers.get('host') != '127.0.0.1:8766'
+                or request.headers.get('origin') not in (None, 'http://127.0.0.1:8766')):
+            raise HTTPException(status_code=403, detail='Origin rejected')
         try:
             if not verify_analysis_case(case_id, tax_year, host.owner_id):
                 raise PermissionError('Case unavailable')

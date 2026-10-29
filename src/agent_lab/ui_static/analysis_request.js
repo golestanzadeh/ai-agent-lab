@@ -5,6 +5,7 @@
   const state=document.getElementById('analysis-readiness-state');
   if(!panel||!button||!state)return;
   const fa=panel.dataset.lang==='fa-IR';
+  const labels=fa?{QUEUED:'در صف',RUNNING:'در حال استخراج',HUMAN_REVIEW_REQUIRED:'استخراج‌شده؛ نیازمند بازبینی',FAILED:'ناموفق',RECONCILIATION_REQUIRED:'نیازمند بازیابی بررسی‌شده'}:{QUEUED:'Eingereiht',RUNNING:'Extraktion läuft',HUMAN_REVIEW_REQUIRED:'Extrahiert; Prüfung erforderlich',FAILED:'Fehlgeschlagen',RECONCILIATION_REQUIRED:'Abgestimmte Wiederherstellung erforderlich'};
   const params=new URLSearchParams({case_id:panel.dataset.caseId,tax_year:panel.dataset.taxYear});
   const results=document.createElement('section');results.setAttribute('aria-live','polite');panel.append(results);
   const text=(node,value)=>{node.textContent=value;return node;};
@@ -18,7 +19,7 @@
       for(const d of p.documents){
         const section=document.createElement('article');
         section.append(text(document.createElement('h3'),d.filename));
-        section.append(text(document.createElement('p'),d.processing_status+' | '+d.run_id));
+        section.append(text(document.createElement('p'),(labels[d.processing_status]||d.processing_status)+' | '+d.run_id));
         section.append(text(document.createElement('p'),fa?'خروجی پیشنهادی؛ تأیید مالیاتی نشده':'Kandidat; steuerlich nicht akzeptiert'));
         if(d.error_details)section.append(text(document.createElement('p'),d.error_details));
         if(d.extraction_payload){

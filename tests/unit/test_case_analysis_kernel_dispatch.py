@@ -75,3 +75,40 @@ def test_interrupted_external_intent_is_not_replayed(tmp_path):
         t=d._task(REQ,'RUN-INTERRUPTED');k.register_task(t,gate_triggers=())
     with pytest.raises(AnalysisExecutionBlocked,match='RECONCILIATION'):d(REQ)
     assert e.calls==[]
+
+def test_multiple_dispatchers_claim_atomically(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+    e=Extractor();e.block=True;d,_=make(tmp_path,e);other,_=make(tmp_path,e);barrier=Barrier(2)
+    def submit(value):
+        barrier.wait()
+        try:return value(REQ)
+        except AnalysisExecutionBlocked:return None
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures=[pool.submit(submit,x) for x in (d,other)]
+        outcomes=[f.result(timeout=10) for f in futures]
+    assert sum(x is not None for x in outcomes)==1
+    e.release.set();wait(d);wait(other)
+    assert len(e.calls)==2  # two DIFFERENT documents, exactly one run
+
+def test_elapsed_task_deadline_is_denied(tmp_path):
+    from datetime import datetime,timedelta,timezone
+    d,e=make(tmp_path)
+    with d._kernel() as k:
+        task=d._task(REQ,'RUN-EXPIRED')
+        task['created_at']=(datetime.now(timezone.utc)-timedelta(seconds=10)).isoformat();task['timeout_seconds']=1
+        d._register(k,task)
+        k.set_kill_switch('RUNNING',actor_id='HUMAN_PROJECT_OWNER',authority_reference='synthetic')
+        with pytest.raises(PermissionDenied,match='deadline'):d._activate(k,task)
+    assert e.calls==[]
+
+@pytest.mark.parametrize('mutation',[
+    "UPDATE responses SET task_id=(SELECT task_id FROM tasks WHERE json_extract(payload_json,'$.objective')='UI03_BATCH_V1' LIMIT 1) WHERE task_id IN (SELECT task_id FROM tasks WHERE json_extract(payload_json,'$.objective')='UI03_DOCUMENT_V1')",
+    "DELETE FROM responses WHERE task_id IN (SELECT task_id FROM tasks WHERE json_extract(payload_json,'$.objective')='UI03_DOCUMENT_V1')",
+    "UPDATE responses SET manifest_id=(SELECT manifest_id FROM manifests LIMIT 1)",
+])
+def test_response_row_substitution_deletion_or_manifest_rejected(tmp_path,mutation):
+    d,e=make(tmp_path);d(REQ);assert wait(d)['completed']==2
+    with d._kernel() as k:
+        with k._connection:k._connection.execute(mutation)
+    with pytest.raises(PermissionDenied):d.progress(REQ)

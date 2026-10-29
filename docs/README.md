@@ -1,5 +1,7 @@
 # Documentation Index
 
+- `ui03-gemini-credential-dependency-audit-20261029.md` — existing accepted explicit-key credential and store=False route closure; not full document-execution acceptance.
+
 - `ui03-kernel-gemini-execution-gate-20261029.md` — verified provider-evidence stop boundary, preserved candidate gaps and synthetic authorization negatives; no real execution acceptance.
 - `ui03-gemini-project-worker-owner-directive-20261029.md` — preserved Owner authorization for the registered Gemini extraction scope; not provider configuration or end-to-end acceptance.
 
