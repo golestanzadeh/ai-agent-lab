@@ -35,7 +35,7 @@
       }
       results.replaceChildren(...nodes);
       if(p.active){state.textContent=fa?'استخراج در حال اجرا؛ نتایج هر سند جدا ذخیره می‌شود':'Extraktion läuft; Ergebnisse werden einzeln gespeichert';button.disabled=true;}
-      else if(panel.dataset.executionStarted){state.textContent=fa?'وضعیت پایدار بازیابی شد؛ نتایج نیازمند بازبینی هستند':'Dauerhafter Status geladen; Ergebnisse benötigen Prüfung';}
+      else if(panel.dataset.executionStarted||p.runs.length){panel.dataset.executionStarted='true';state.textContent=fa?'وضعیت پایدار بازیابی شد؛ نتایج نیازمند بازبینی هستند':'Dauerhafter Status geladen; Ergebnisse benötigen Prüfung';}
     }catch(_){state.textContent=fa?'بازیابی وضعیت تأییدشده ممکن نیست':'Verifizierter Status nicht verfügbar';}
   }
   fetch('/cases/analysis/readiness?'+params,{credentials:'same-origin',cache:'no-store'}).then(r=>r.json()).then(d=>{
