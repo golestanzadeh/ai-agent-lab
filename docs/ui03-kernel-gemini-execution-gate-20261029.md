@@ -1,5 +1,52 @@
 # UI-03 Kernel-authorized Gemini execution and acceptance evidence
 
+## Final one-successor result — 2026-10-30
+
+COMPLETE / BOUNDED_SUCCESSOR_EXECUTION / REAL_5PDF_CANDIDATE_PASS.
+This supersedes earlier pending/partial statuses for this one authorized action.
+
+- Successor TASK-UI03-6E033E6608BF4EB1ACF435E4CFE4F218,
+  MAN-UI03-C349366F233E47DA874FABC5F03F77C2,
+  RUN-UI03-94580DABF76447D2A84F8D0D96CB0C42 completed through the existing
+  HTTP/CaseAnalysisExecutor/Kernel path after exact Owner gate approval and
+  atomic one-use claim. Source identity/digest rechecked before transmission.
+-6 new candidate fields;5 current PDF outcomes total49 fields/zero current
+  failures. Original failed attempt remains in history. New manifest max_retries0,
+  durable tool_calls_used1, one authorization claim. SDK retry count0 verified
+  independently; explicit GEMINI_API_KEY, gemini-3.8-flash and store=False.
+- Protected execution proof .runtime/ui03/successor-owner-execution.json records
+  unchanged fingerprints of the original entire run/task/manifest/response rows,
+  the four earlier successful results, and the original audit event-ID/hash
+  prefix. Kernel audit verifies. No old record modified, no other PDF or CSV
+  resent. Private source identifiers/digests/values are not committed here.
+- Actual application restart preserved all current result/history objects
+  exactly. Chrome DOM showed5 documents/49 field rows in Persian rtl and German
+  ltr, candidate warnings and a terminal/review state after refresh. The in-app
+  browser connection was unavailable; existing Chrome dashboard was used.
+- Separate read-only reviewer rejected04b825a F04 before live execution, then
+  accepted3f61beb267bb71ae570690eb400ef3196322cfcf with18 passed/0 failed/0 skipped,
+  exit0,28.76s and original-corruption probe rejected before claim/zero calls.
+  No real document/provider access by reviewer. Final one-line terminal UI
+  refresh correction a4b5e7721dd923cee2afb07d9a1c010e102a62dc independently PASS
+  by diff inspection only, inheriting bounded implementation acceptance.
+- Worker testing97 relevant/docs PASS plus18 final successor/route/installed-SDK
+  checks PASS (overlap); final documentation18 passed, exit0,1.76s. Previous
+  test-class mismatch and F04 rejection remain documented, not erased.
+
+The specific successor action is complete. All results remain unaccepted tax
+candidates. No automatic tax acceptance, ELSTER, unrestricted transfer, broader
+UI-03 lifecycle closure, C09/OI closure or next-stage execution is authorized.
+PROJECT_CHECKPOINT/OPEN_ITEMS assessed together; no active OI row closes.
+
+Capacity disclosure: signed-in authenticated Codex observation2026-10-29T23:45:32Z
+is9% five-hour remaining/reset2026-10-30T01:39:46Z;78% weekly/reset2026-11-04T12:52:37Z.
+Mandatory10 reserve was NOT preserved. The finish estimate from14% was inadequate;
+do not report reserve compliance. Only controlled evidence publication follows
+this observation; no more development/API/testing or automatic continuation.
+Explicit Owner resume with sufficient capacity is required. This final section
+overrides older capacity/unfinished notes; code SHA remains independently reviewed,
+and the following publication commit changes documentation only.
+
 ## One exact successor: Owner-authorized continuation — 2026-10-30
 
 Independent review rejected preparatory04b825a8f59e3dde973edf90eaea417c9508e982
