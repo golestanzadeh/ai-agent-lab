@@ -1,4 +1,84 @@
-# UI-03 Kernel-authorized Gemini execution: verified stop boundary
+# UI-03 Kernel-authorized Gemini execution and acceptance evidence
+
+## Current verified outcome — 2026-10-30
+
+PARTIAL_REAL_EXECUTION / INDEPENDENT_IMPLEMENTATION_PASS / SUCCESSOR_AUTHORITY_PENDING.
+This current section supersedes the historical stop/candidate statuses below for
+the bounded final directive only. Full UI-03 is not COMPLETE.
+
+Separate reviewer /root/ui03_independent_security_review returned
+INDEPENDENT_PASS / BOUNDED_IMPLEMENTATION_ONLY on exact corrected implementation
+7cfa3fafea5ce93c1e7cdeb7f5af03a8f2c6ec2b. Review took place in an isolated exact
+commit export at a temporary directory; no implementation edits, real-data/API,
+service or credential access by that reviewer. F01/F02/F03 are independently
+CLOSED. Exact focused command (existing venv, PYTHONPATH=src):
+
+    python -m pytest tests/unit/test_case_analysis_kernel_dispatch.py tests/unit/test_case_analysis_executor.py tests/unit/test_document_extraction.py tests/unit/test_gemini_extraction_validation.py tests/unit/test_orchestrator_kernel.py tests/unit/test_runtime_activation.py tests/unit/test_ui03_gemini_authority_boundary.py -q --tb=short
+
+Independent result73 passed,0 failed,0 skipped, exit0,39.88s. Separate command
+python -m pytest tests/unit/test_case_analysis_routes.py -q --tb=short passed1,
+exit0,9.33s. Independent adversarial outcomes: original cross-case response
+substitution rejected; two-instance race5/5 secure; active one-second task after
+1.2s denied; Kill Switch during a blocked fake provider call published no result,
+dispatched no next document and retained uncertain intent/audit without replay.
+The existing Starlette/httpx warning is non-failing. These tests are synthetic
+implementation evidence, not independent observation of the real campaign.
+
+Real Owner-runtime verification by the implementing worker:
+
+- Actual scoped inventory5 PDF/1 CSV.4 PDFs produced43 candidate fields
+  (14/10/10/9), each with document digest, filename/model, task/manifest/run,
+  timestamps, structured extraction, evidence/page references and review status
+  committed to existing Kernel SQLite responses/audit.1 PDF has the preserved
+  parser-dependency failure; no successful extraction is claimed for it. CSV
+  remains unsupported by this PDF tool and was not transmitted.
+- Actual browser button initiated the successful bounded run, not a direct SDK
+  shortcut. Browser DOM showed43 result rows/five document statuses, review
+  warnings and Persian rtl/German ltr, retained across refresh/language switch.
+- After actual application-process restart, all document result objects were
+  byte-equivalent to the protected pre-restart readback:4 complete candidates,
+  one failure. No running external call was killed during this operational test.
+  Interrupted uncertain-call behavior is independently fault-tested, not claimed
+  as a real destructive provider test.
+- Corrected Dashboard metadata navigation HTTP200 in0.063s; during earlier real
+  expansion it returned200 in3.706s while the provider batch continued. Gemini
+  executes in a bounded worker thread, not on the HTTP event loop.
+- Real hostile Origin POST and hostile Host progress GET both rejected403.
+  Duplicate run RUN-UI03-C24A58DBD5074A2585D09093F5094291 registered zero document
+  child tasks and made no new provider calls; completed/failed records persisted.
+- Fresh scoped Drive API download of each original document matched all5 stored
+  SHA-256 values. Kernel audit verified. No source document mutation, category
+  move, tax acceptance, ELSTER or submission occurred.
+
+| Final directive gate | Result and exact limit |
+| --- | --- |
+| OWNER_PRIVACY_CONFIGURATION | ACCEPTED, bounded Owner decision |
+| GEMINI_CREDENTIAL_ROUTE | CLOSED, existing explicit-key route |
+| KERNEL_AUTHORIZATION | PASS for executed bounded requests and tested denials |
+| GEMINI_REAL_DOCUMENT_EXECUTION | FAIL for complete requested batch:4 successful/1 preserved failure |
+| PER_DOCUMENT_PERSISTENCE | PASS,4 candidates plus1 failure durably retained |
+| DASHBOARD_PROGRESS | PASS, actual per-document states; not registration-as-result |
+| DASHBOARD_RESULT_VISIBILITY | PASS,43 candidate fields and page evidence |
+| DASHBOARD_RESPONSIVENESS | PASS within observed local tests; no universal latency claim |
+| RESTART_RECOVERY | PASS for actual committed readback; uncertain call recovery fault-tested separately |
+| SECURITY_REGRESSION | PASS within111 worker related tests and73+1 independent checks (overlap) |
+| INDEPENDENT_ACCEPTANCE | PASS for exact7cfa3fa bounded implementation only; full campaign not accepted |
+
+The original failed task/manifest max_retries0 is immutable. Its raw provider
+response was not retained before the local parser error, so local revalidation
+cannot reconstruct it. Exact one-successor authorization was requested through
+the Owner question with the protected document/digest and previous task; no
+answer has been received at this checkpoint. This is not renewed generic Gemini
+or privacy consent. Do not disguise a retry as a fresh task, overwrite that
+manifest or transmit that failed document again without the scoped authority.
+
+Next executable step: after the Owner's exact successor decision, bind it to
+the failed source identity/digest, corrected implementation and one new bounded
+Kernel task/manifest; preserve the old failure, execute once, verify result/audit,
+restart/UI readback and obtain the required acceptance. If rejected, retain
+the failure and partial result without claiming COMPLETE. No other project stage
+is activated. No active OPEN_ITEMS row closes. Existing unrelated Owner UI work
+remains uncommitted and preserved.
 
 ## Final Owner directive continuation — 2026-10-29
 
@@ -20,7 +100,7 @@ The final Owner directive8b4c7499 expressly accepts the existing privacy configu
 
 Current implementation candidate reuses the existing Kernel SQLite tasks/manifests/responses/audit. A single bounded thread transports registered work off HTTP; it is not a scheduler or separate state authority. Every document intent precedes its API call; the full structured candidate result is committed in its own Kernel response/audit event. Kernel response-digest projection verifies readback. Unchanged completed candidates are not resent; uncertain interrupted intents block replay and preserve earlier results. New API requests explicitly use store=False, no automatic continuation, one SDK attempt and a bounded deadline. Both per-document and batch budgets reserve conservative ceilings, not claims of actual metered provider billing. Output never becomes accepted tax evidence automatically. Focused integration6 and combined53 tests pass before final candidate verification. Real execution and separate exact-SHA independent review remain pending at this candidate checkpoint.
 
-Date: 2026-10-29. Status: HUMAN_REQUIRED / REAL_EXECUTION_NOT_STARTED.
+Historical stop record,2026-10-29: HUMAN_REQUIRED / REAL_EXECUTION_NOT_STARTED.
 Owner execution attachment: 35c94966-f16a-4416-bba6-c33eba766e3e.
 Recovered branch: c09-witness-hardening.
 Recovered HEAD and fetched origin: f473111ac4ce02fa00387613fe686fab4645b684.
@@ -124,7 +204,7 @@ Both test commands produced the existing Starlette/httpx deprecation warning.
 Suites overlap; do not add their counts as unique coverage. These are development
 tests, not independent acceptance or real end-to-end evidence.
 
-## Required gate matrix
+## Historical required gate matrix before final Owner directive
 
 | Required gate | Actual outcome |
 | --- | --- |
@@ -171,3 +251,17 @@ reset2026-11-04T12:52:37Z. Ordinary usage is allowed. These are actual remaining
 percentages (100 minus usedPercent), not the Owner's initial100/92 report.
 The10-point mission reserve was not approached; this is an evidence/security
 stop, not a capacity stop. No parallel Bridge state or new authority is created.
+
+## Final continuation capacity and publication handoff — 2026-10-30
+
+Latest authenticated observation2026-10-29T23:15:28Z (2026-10-30 local Berlin):
+signed-in Codex app get_usage_limits,47% five-hour remaining, reset
+2026-10-30T01:39:46Z;83% weekly remaining, reset2026-11-04T12:52:37Z. Ordinary
+usage allowed. Mission10-point reserve respected. Owner's starting90/90 was
+supplied, not independently measured; account-wide changes must not be called
+precise isolated mission consumption. No initial quota query, system quota
+bypass or parallel state store was used. Final documentation suite18 passed,
+exit0,0.92s. Implementation review attaches to exact7cfa3fa; publication-only
+commit records the evidence and remote readback without self-referential hashes.
+Pending scoped successor authority remains unanswered at this checkpoint;
+full requested campaign remains incomplete and no automatic resend is scheduled.
