@@ -19,3 +19,10 @@
 ## Outstanding scope
 - Complete review of other local clones, remote branches, ignored/untracked configurations, and unrelated programs consuming `GOOGLE_API_KEY`.
 - Kernel-authorized case worker, persistence, dashboard, and restart verification remain pending.
+
+## Closure update — credential route (2026-10-29)
+- A second real text-only Gemini SDK smoke test passed using `genai.Client(api_key=os.environ["GEMINI_API_KEY"])`, `gemini-3.8-flash`, and `store=False`; response contained `KEY_ROUTE_OK`.
+- Focused tests rerun: 7 PASS.
+- The SDK's environment-precedence warning remains when both key variables exist, but explicit `api_key` injection worked. Do not change unrelated User environment variables without ownership evidence.
+- **Credential-route status: CLOSED for current explicit-key Gemini integration.** Broader machine-wide key inventory is a separate nonblocking hygiene item, not a UI-03 gate.
+- **Kernel → authorized worker → persistence → dashboard remains OPEN**, requiring separate operational acceptance. No real tax documents were transmitted in this verification.
