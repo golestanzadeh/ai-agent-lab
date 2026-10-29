@@ -62,6 +62,16 @@
 </section>
 <script src="{{ url_for('static', path='/case_backup_restore.js') }}" defer></script>
 {% endif %}
+{% if tab == 'analysis' and selected and not test_mode %}
+<section class="panel" aria-label="Analysis readiness" id="analysis-readiness" data-case-id="{{ selected.case_id }}" data-tax-year="{{ selected.tax_year }}" data-lang="{{ lang }}">
+  <h2>{{ 'آمادگی تحلیل واقعی' if lang == 'fa-IR' else 'Bereitschaft der echten Analyse' }}</h2>
+  <p id="analysis-readiness-state" role="status" aria-live="polite">{{ 'در حال بررسی موجودی مدارک...' if lang == 'fa-IR' else 'Dokumentenbestand wird geprüft...' }}</p>
+  <div id="analysis-readiness-details"></div>
+  <button id="analysis-start-real" type="button" disabled aria-disabled="true">{{ 'شروع تحلیل واقعی' if lang == 'fa-IR' else 'Echte Analyse starten' }}</button>
+  <p>{{ 'اجرای واقعی تا اتصال تأییدشده Kernel و Gemini در UI-03 مسدود است.' if lang == 'fa-IR' else 'Der echte Start bleibt bis zur verifizierten Kernel- und Gemini-Anbindung in UI-03 gesperrt.' }}</p>
+</section>
+<script src="{{ url_for('static', path='/analysis_readiness.js') }}" defer></script>
+{% endif %}
 <section class="panel tab-panel">
   <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>
   <div class="tab-body">

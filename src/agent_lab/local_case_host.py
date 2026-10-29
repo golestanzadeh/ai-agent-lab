@@ -385,6 +385,26 @@ def create_local_case_app():
     from fastapi import Form, HTTPException, Request
     from fastapi.responses import JSONResponse
 
+    @app.get('/cases/analysis/readiness')
+    async def analysis_readiness(case_id: str, tax_year: int):
+        # Read-only preflight. UI-02 does not authorize or launch an analysis run.
+        try:
+            inventory = host.list_case_documents(case_id, tax_year)
+            files = inventory['files']
+            pdf_count = sum(f['mime_type'] == 'application/pdf' for f in files)
+            csv_count = sum(f['mime_type'] in ('text/csv', 'application/csv', 'application/vnd.ms-excel') or f['name'].lower().endswith('.csv') for f in files)
+            return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
+                'inventory_verified': True, 'documents_count': len(files),
+                'pdf_count': pdf_count, 'csv_count': csv_count,
+                'kernel_ready': False, 'gemini_ready': False,
+                'analysis_launch_available': False, 'reason': 'UI03_RUNTIME_NOT_CONNECTED'},
+                headers={'Cache-Control': 'no-store'})
+        except Exception:
+            return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
+                'inventory_verified': False, 'analysis_launch_available': False,
+                'reason': 'PREFLIGHT_FAILED'}, status_code=503,
+                headers={'Cache-Control': 'no-store'})
+
     @app.post("/cases/delete/preview")
     async def preview_empty_case(request: __import__("fastapi").Request, case_id: str = Form(...), tax_year: int = Form(...)):
         if request.headers.get("origin") != "http://127.0.0.1:8766" or request.headers.get("host") != "127.0.0.1:8766":
