@@ -1,5 +1,31 @@
 # UI-03 Kernel-authorized Gemini execution and acceptance evidence
 
+## One exact successor: Owner-authorized continuation — 2026-10-30
+
+Owner decision OWNER_APPROVED / ONE_BOUNDED_SUCCESSOR_EXECUTION supersedes the
+prior pending-specific-authority state for the single failed PDF only. Original
+TASK-UI03-0C9D8791F5F3456C941B69DA2783C77C and
+MAN-UI03-F5467AEB18D842B1A4D89FAFC75C13C4, run, response and audit remain immutable.
+No general retry, second attempt, other PDF or CSV is authorized by this decision.
+
+Minimal implementation reuses the existing Kernel task Human Gate: the trusted
+local Owner broker prepares a new exact source-bound task and records the actual
+Owner decision through record_human_gate_decision. This is not an HTTP grant API
+or a newly invented authorization system. Dispatcher accepts only an already
+APPROVED exact gate, verifies the original failed task/manifest/source/scope and
+consumes one immutable audit claim inside existing atomic_execution before
+dispatch. Repeated requests, expired/mismatched grants and uncertain attempts
+fail closed. The reviewed bounded tool is factored into process_one, shared by
+ordinary and successor tasks; digest is checked again before the fixed Gemini
+endpoint with explicit key/model/store=False, one SDK attempt and max_retries0.
+
+Projection retains the original failure in history and shows the explicit
+successor as the current outcome only through its validated supersession link;
+no row is deleted or relabeled as originally successful. Current candidate tests,
+exact-SHA independent review and real successor execution are not yet complete
+at this preparation checkpoint. Source digests/Drive IDs and private extraction
+payloads remain in protected existing runtime state, not public Git.
+
 ## Current verified outcome — 2026-10-30
 
 PARTIAL_REAL_EXECUTION / INDEPENDENT_IMPLEMENTATION_PASS / SUCCESSOR_AUTHORITY_PENDING.

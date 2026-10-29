@@ -1,5 +1,9 @@
 # Authoritative current project truth — 2026-10-20
 
+## UI-03 exact one-successor Owner authorization — 2026-10-30
+
+OWNER_APPROVED / ONE_BOUNDED_SUCCESSOR_EXECUTION now resolves the prior specific retry-authority wait. Scope: only the failed PDF bound to TASK-UI03-0C9D8791F5F3456C941B69DA2783C77C / MAN-UI03-F5467AEB18D842B1A4D89FAFC75C13C4, CASE-2025-0001/2025, existing verified digest. Preserve original task/manifest/run/responses/audit; create exactly one linked successor through the existing Kernel, max_retries0, no resend of the four completed PDFs or CSV. Existing provider configuration/model/store=False and all gates remain. Recovery exact2f8c857 matches origin; unrelated UI remains dirty/preserved. Existing47/83 authenticated handoff used for bounded20/6 estimate (including review/publication), leaving27/77 and preserving10 reserve; no repeated initial telemetry. Small candidate reuses existing Kernel Human Gate and atomic audit consumption plus the reviewed bounded extraction tool. Owner decision is granted, but candidate tests, independent exact-SHA review and real successor outcome remain PENDING; no active OI row closes. OPEN_ITEMS assessed in the same governed change.
+
 ## UI-03 final directive resumed — 2026-10-29
 
 Final continuation authenticated handoff2026-10-29T23:15:28Z (2026-10-30 local Berlin), signed-in Codex app get_usage_limits: five-hour47% remaining/reset2026-10-30T01:39:46Z, weekly83%/reset2026-11-04T12:52:37Z. Mission10-point reserve respected; this is a specific successor-authority wait, not a quota stop. Final documentation checks18 passed, exit0. Ending source remains independently reviewed7cfa3fa; subsequent publication changes evidence/state only. No parallel Bridge/checkpoint created.

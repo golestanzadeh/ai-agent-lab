@@ -21,8 +21,8 @@ class CaseAnalysisKernelDispatcher:
         self.worker=worker;self._lock=RLock();self._active={}
         self._pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='kernel-ui03')
     def _kernel(self):return OrchestratorKernel(self.database_path,self.contract_root)
-    def _register(self,k,task):
-        k.register_task(task,gate_triggers=())
+    def _register(self,k,task,*,gate_triggers=()):
+        k.register_task(task,gate_triggers=gate_triggers)
         with k._write_scope():
             k._append_event('UI03_INTENT_BOUND','TASK',task['task_id'],task['actor_instance_id'],{'task_digest':_digest(task)})
     def _task(self,request,run_id,*,parent=None,document=None):
@@ -71,6 +71,90 @@ class CaseAnalysisKernelDispatcher:
             raise PermissionDenied('Provider binding mismatch')
         for cap in CAPS:
             if not kernel.permission_decision(manifest_id,cap,**task['case_context']).allowed:raise PermissionDenied('Kernel execution denied')
+        if any(s.startswith('successor-json:') for s in task['inputs']):
+            CaseAnalysisKernelDispatcher._successor_binding(kernel,task,execution=True)
+
+    @staticmethod
+    def _successor_binding(k,task,*,execution=False,claimed=True):
+        values=[s[len('successor-json:'):] for s in task['inputs'] if s.startswith('successor-json:')]
+        if len(values)!=1:raise PermissionDenied('Exact successor binding required')
+        grant=json.loads(values[0])
+        fields={'original_task_id','original_manifest_id','document_id','sha256','case_id','tax_year','owner_hash','authority_reference','expires_at','implementation_ref'}
+        if set(grant)!=fields or any(not isinstance(v,str) or not v for key,v in grant.items() if key!='tax_year'):
+            raise PermissionDenied('Closed successor binding required')
+        if (task['parent_task_id']!=grant['original_task_id'] or task['case_context']['case_id']!=grant['case_id']
+                or task['case_context']['tax_year']!=grant['tax_year'] or type(grant['tax_year']) is not int
+                or 'owner-sha256:'+grant['owner_hash'] not in task['inputs']
+                or grant['authority_reference'] not in task['inputs']):raise PermissionDenied('Successor scope mismatch')
+        expiry=datetime.fromisoformat(grant['expires_at'])
+        if expiry.tzinfo is None or expiry>datetime.fromisoformat(task['expires_at']) or (execution and datetime.now(timezone.utc)>=expiry):
+            raise PermissionDenied('Successor authority expired')
+        gate=k._connection.execute("SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='authority_ambiguity'",(task['task_id'],)).fetchone()
+        if gate is None or tuple(gate)!=('APPROVED',_digest(grant)):raise PermissionDenied('Exact Owner gate approval required')
+        old=k._connection.execute('SELECT status,payload_json FROM tasks WHERE task_id=?',(grant['original_task_id'],)).fetchone()
+        if old is None or old['status']!='FAILED':raise PermissionDenied('Original failed task required')
+        original=json.loads(old['payload_json'])
+        receipts=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_INTENT_BOUND' AND entity_id=?",(grant['original_task_id'],)).fetchall()
+        if len(receipts)!=1 or json.loads(receipts[0][0]).get('task_digest')!=_digest(original):raise PermissionDenied('Original intent integrity mismatch')
+        if (original['case_context']['case_id']!=grant['case_id'] or original['case_context']['tax_year']!=grant['tax_year']
+                or 'owner-sha256:'+grant['owner_hash'] not in original['inputs']):raise PermissionDenied('Original case/Owner mismatch')
+        source=json.loads(next(s[len('document-json:'):] for s in original['inputs'] if s.startswith('document-json:')))
+        target=json.loads(next(s[len('document-json:'):] for s in task['inputs'] if s.startswith('document-json:')))
+        if (source['document_id']!=grant['document_id'] or source['sha256']!=grant['sha256']
+                or {key:target.get(key) for key in source}!=source
+                or target.get('supersedes_task_id')!=grant['original_task_id']):raise PermissionDenied('Original source identity/digest mismatch')
+        old_manifest=k._manifest_row(grant['original_manifest_id'])
+        if (old_manifest['task_id']!=grant['original_task_id'] or old_manifest['state']!='FAILED'
+                or json.loads(old_manifest['payload_json'])['max_retries']!=0):raise PermissionDenied('Original failed manifest binding mismatch')
+        claims=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_SUCCESSOR_AUTHORIZED' AND entity_id=?",(grant['original_task_id'],)).fetchall()
+        expected={'successor_task_id':task['task_id'],'authorization_digest':_digest(grant)}
+        if claimed and (len(claims)!=1 or json.loads(claims[0][0])!=expected):raise PermissionDenied('Successor claim missing or substituted')
+        if not claimed and claims:raise PermissionDenied('One successor authority already consumed')
+        return grant
+
+    def owner_successor(self,request,task_id):
+        """Trusted local Owner broker only; does not mint approval or expose an HTTP grant API.
+
+        Requires an already registered exact successor and existing Kernel Human
+        Gate decision. The immutable audit claim is consumed before dispatch.
+        """
+        if self.worker is None:raise AnalysisExecutionBlocked('Authorized worker unavailable')
+        key=(request.owner_id,request.case_id,request.tax_year)
+        with self._lock,self._kernel() as k,k.atomic_execution():
+            k.verify_audit_chain()
+            if key in self._active or k.kill_switch_state()!='RUNNING':raise PermissionDenied('Dispatch unavailable')
+            row=k._connection.execute('SELECT status,payload_json FROM tasks WHERE task_id=?',(task_id,)).fetchone()
+            if row is None or row['status']!='REGISTERED':raise PermissionDenied('Unconsumed registered successor required')
+            task=json.loads(row['payload_json'])
+            expected={'case_id':request.case_id,'tax_year':request.tax_year,'run_id':task['case_context']['run_id']}
+            if (task['case_context']!=expected or 'owner-sha256:'+hashlib.sha256(request.owner_id.encode()).hexdigest() not in task['inputs']
+                    or task['max_retries']!=0 or task['objective']!='UI03_DOCUMENT_V1'):
+                raise PermissionDenied('Owner successor request scope mismatch')
+            grant=self._successor_binding(k,task,execution=True,claimed=False)
+            if any(t['task_id']!=task_id and t['status'] in ('REGISTERED','ACTIVE') for t in self._tasks(k,request)):
+                raise PermissionDenied('Other case execution requires reconciliation')
+            k._append_event('UI03_SUCCESSOR_AUTHORIZED','TASK',grant['original_task_id'],'HUMAN_PROJECT_OWNER',
+                {'successor_task_id':task_id,'authorization_digest':_digest(grant)})
+        with self._lock:
+            receipt={**expected,'status':'REGISTERED'}
+            self._active[key]=receipt
+            self._pool.submit(self._run_successor,request,task)
+            return receipt
+
+    def _run_successor(self,request,task):
+        try:
+            with self._kernel() as k:
+                manifest=self._activate(k,task)
+                self.worker.process_one(request,task,manifest,k,self)
+        except Exception as exc:
+            try:
+                with self._kernel() as k:
+                    row=k._connection.execute('SELECT manifest_id FROM manifests WHERE task_id=?',(task['task_id'],)).fetchone()
+                    if row:self._finish(k,task,row[0],{'processing_status':'FAILED','error_details':type(exc).__name__},failed=True)
+            except Exception:
+                pass
+        finally:
+            with self._lock:self._active.pop((request.owner_id,request.case_id,request.tax_year),None)
     def __call__(self,request):
         if self.worker is None:raise AnalysisExecutionBlocked('Authorized worker unavailable')
         key=(request.owner_id,request.case_id,request.tax_year)
@@ -95,7 +179,7 @@ class CaseAnalysisKernelDispatcher:
             'task_id':task['task_id'],'parent_task_id':task['parent_task_id'],'role_id':task['role_id'],'actor_instance_id':task['actor_instance_id'],
             'status':'FAILED' if failed else 'HUMAN_REQUIRED','result_summary':json.dumps(payload,ensure_ascii=False,sort_keys=True),
             'artifact_references':task['expected_outputs'],'changed_paths_or_state':[],'tests':[],'evidence':[PROVIDER_REF],
-            'authority_used':[AUTHORITY],'costs':usage,'unresolved_risks':['Candidate not accepted; budget charge is conservative reservation, not metered billing'],
+            'authority_used':[s for s in task['inputs'] if s.startswith('owner://')],'costs':usage,'unresolved_risks':['Candidate not accepted; budget charge is conservative reservation, not metered billing'],
             'recommended_next_action':'Independent review; no automatic external retry','human_required':not failed,'created_at':now()})
     def _run(self,request,task):
         try:
@@ -127,6 +211,8 @@ class CaseAnalysisKernelDispatcher:
             # The frozen UI25 projection is intentionally TEST-only. Reuse its
             # response-digest invariant here, behind this real case/Owner resolver.
             for t in tasks:
+                if any(s.startswith('successor-json:') for s in t['inputs']):
+                    self._successor_binding(k,t,claimed=bool(k._connection.execute("SELECT 1 FROM audit_events WHERE event_type='UI03_SUCCESSOR_AUTHORIZED' AND entity_id=?",(t['parent_task_id'],)).fetchone()))
                 if t['objective']=='UI03_DOCUMENT_V1':
                     bindings=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_INTENT_BOUND' AND entity_id=?",(t['task_id'],)).fetchall()
                     original={**t,'status':'REGISTERED'}
@@ -160,8 +246,11 @@ class CaseAnalysisKernelDispatcher:
                 if row:d.update(json.loads(json.loads(row[0])['result_summary']))
                 elif t['status']=='ACTIVE':d['processing_status']='RUNNING' if (request.owner_id,request.case_id,request.tax_year) in self._active else 'RECONCILIATION_REQUIRED'
                 documents.append(d)
-            return {'case_id':request.case_id,'tax_year':request.tax_year,'documents':documents,
+            superseded={d['supersedes_task_id'] for d in documents if 'supersedes_task_id' in d}
+            history=[d for d in documents if d['task_id'] in superseded]
+            documents=[d for d in documents if d['task_id'] not in superseded]
+            return {'case_id':request.case_id,'tax_year':request.tax_year,'documents':documents,'history':history,
                 'completed':sum(d['processing_status']=='HUMAN_REVIEW_REQUIRED' for d in documents),
                 'failed':sum(d['processing_status']=='FAILED' for d in documents),
                 'active':(request.owner_id,request.case_id,request.tax_year) in self._active,
-                'runs':[{'run_id':t['case_context']['run_id'],'status':t['status']} for t in tasks if t['objective']=='UI03_BATCH_V1']}
+                'runs':[{'run_id':t['case_context']['run_id'],'status':t['status']} for t in tasks if t['objective']=='UI03_BATCH_V1' or any(s.startswith('successor-json:') for s in t['inputs'])]}

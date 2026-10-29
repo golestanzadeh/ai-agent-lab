@@ -1,5 +1,9 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
+## UI-03 one-successor continuation — 2026-10-30
+
+Owner explicitly approves one linked successor for the exact failed task/manifest/source, preserving its immutable max_retries0 history. The prior successor-authority wait is resolved for this single action only. Scoped candidate/review/real result verification remain pending; no full UI-03 or OI/tax/submission acceptance is granted. Canonical checkpoint and existing UI03 execution report govern this continuation; no parallel checkpoint or broader authority.
+
 ## UI-03 final Owner directive — 2026-10-29
 
 Latest2026-10-30: corrected exact7cfa3fa independently PASS (73+1 tests, original three HIGH findings closed), bounded implementation only. Real4/5PDF candidates43 fields,1 failure/1CSV unsupported; actual restart/UI languages/source-hash/audit and zero-provider duplicate verification PASS. Full UI-03 remains open. Only failed source awaits the exact one-successor Owner decision because original immutable manifest max_retries0; no generic Gemini/privacy reconfirmation and no automatic resend. Checkpoint/report synchronized; no active OI row closes.
