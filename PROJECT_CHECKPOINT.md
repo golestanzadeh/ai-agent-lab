@@ -1,5 +1,9 @@
 # Authoritative current project truth — 2026-10-20
 
+## UI-03 final directive resumed — 2026-10-29
+
+OWNER_PRIVACY_CONFIGURATION_ACCEPTED / GEMINI_CREDENTIAL_ROUTE_CLOSED for the Owner-approved development/document-analysis test scope. Explicit Owner final directive8b4c7499 accepts project ai-tax-agent-507813, enabled/billed Gemini API, explicit GEMINI_API_KEY, model gemini-3.8-flash, AI Studio logging disabled and Interactions store=False. It does not guarantee zero provider retention, authorize general external transfer or ELSTER, or accept extracted facts. This supersedes only the prior unrecovered-provider-configuration stop below; no repeated credential/privacy investigation is authorized absent a concrete failure. Credential/storage commits7b928d260cc1e5b64b71b077ba3990d126b0fc46 and3bc1e54f1a518e346c41105ffc28bd899ae64590 recovered. Initial90/90 is Owner supplied, no initial telemetry queried; mandatory mission reserve10. Bounded full implementation/test/review/publication estimate35/10 fits90/90, leaving55/80 before reserve. Implementation candidate uses existing Kernel tasks/manifests/responses for per-document intent/results and bounded HTTP offload; no new database/scheduler. Initial6 integration and combined53 tests pass; real execution/independent acceptance still PENDING, no active OI closes. OPEN_ITEMS assessed in the same change.
+
 ## UI-03 Kernel-authorized Gemini execution — 2026-10-29
 
 Authenticated ending observation2026-10-29T20:47:06Z, signed-in Codex app get_usage_limits: five-hour92% remaining/reset2026-10-30T01:39:46Z; weekly91%/reset2026-11-04T12:52:37Z. Reserve10 respected; stop is provider-evidence/Human Gate, not quota. Documentation18 passed and scoped diff check passed. Preexisting source whitespace and all source/UI candidate edits are preserved/excluded; no parallel Bridge state is introduced.

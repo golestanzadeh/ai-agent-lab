@@ -68,9 +68,10 @@
   <p id="analysis-readiness-state" role="status" aria-live="polite">{{ 'در حال بررسی موجودی مدارک...' if lang == 'fa-IR' else 'Dokumentenbestand wird geprüft...' }}</p>
   <div id="analysis-readiness-details"></div>
   <button id="analysis-start-real" type="button" disabled aria-disabled="true">{{ 'شروع تحلیل واقعی' if lang == 'fa-IR' else 'Echte Analyse starten' }}</button>
-  <p>{{ 'اجرای واقعی تا اتصال تأییدشده Kernel و Gemini در UI-03 مسدود است.' if lang == 'fa-IR' else 'Der echte Start bleibt bis zur verifizierten Kernel- und Gemini-Anbindung in UI-03 gesperrt.' }}</p>
+
 </section>
 <script src="{{ url_for('static', path='/analysis_readiness.js') }}" defer></script>
+<script src="{{ url_for('static', path='/analysis_request.js') }}" defer></script>
 {% endif %}
 <section class="panel tab-panel">
   <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>

@@ -1,5 +1,11 @@
 # UI-03 Kernel-authorized Gemini execution: verified stop boundary
 
+## Final Owner directive continuation — 2026-10-29
+
+The final Owner directive8b4c7499 expressly accepts the existing privacy configuration for development/document-analysis testing: project ai-tax-agent-507813, billed/enabled API, explicit GEMINI_API_KEY, model gemini-3.8-flash, AI Studio logging off and Interactions store=False. Credential route is CLOSED at3bc1e54. The historical stop below is superseded for this scope, not erased. No zero-retention guarantee or general external-transfer authority is inferred. Frozen roles/capabilities are unchanged: EVIDENCE_AGENT A3/A4 reads one exact case/run and writes candidate evidence; its tool binding is limited to the registered Owner-approved Gemini destination and Drive reads, not A6 external_transfer.
+
+Current implementation candidate reuses the existing Kernel SQLite tasks/manifests/responses/audit. A single bounded thread transports registered work off HTTP; it is not a scheduler or separate state authority. Every document intent precedes its API call; the full structured candidate result is committed in its own Kernel response/audit event. Kernel response-digest projection verifies readback. Unchanged completed candidates are not resent; uncertain interrupted intents block replay and preserve earlier results. New API requests explicitly use store=False, no automatic continuation, one SDK attempt and a bounded deadline. Both per-document and batch budgets reserve conservative ceilings, not claims of actual metered provider billing. Output never becomes accepted tax evidence automatically. Focused integration6 and combined53 tests pass before final candidate verification. Real execution and separate exact-SHA independent review remain pending at this candidate checkpoint.
+
 Date: 2026-10-29. Status: HUMAN_REQUIRED / REAL_EXECUTION_NOT_STARTED.
 Owner execution attachment: 35c94966-f16a-4416-bba6-c33eba766e3e.
 Recovered branch: c09-witness-hardening.

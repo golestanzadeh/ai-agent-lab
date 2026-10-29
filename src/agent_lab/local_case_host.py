@@ -394,17 +394,68 @@ class LocalCaseHost:
             return result.case_id
 
 
-def create_local_case_app():
+def create_local_case_app(*, kernel_dispatch=None):
     host = LocalCaseHost()
+    if kernel_dispatch is None:
+        from agent_lab.case_analysis_kernel_dispatch import CaseAnalysisKernelDispatcher
+        from agent_lab.case_analysis_gemini_worker import GeminiCaseDocumentWorker
+        kernel_dispatch = CaseAnalysisKernelDispatcher(
+            host.root / 'orchestrator-kernel.sqlite',
+            Path(__file__).resolve().parents[2] / 'contracts' / 'orchestrator' / 'v1',
+            worker=GeminiCaseDocumentWorker(host, max_documents=int(os.environ.get('AI_TAX_AGENT_ANALYSIS_MAX_DOCUMENTS', '20'))))
     app = create_dashboard_app(read_cases=host.read_cases, create_real_case=host.create_case, preview_next_case_id=host.preview_next_case_id)
     from fastapi import Form, HTTPException, Request
     from fastapi.responses import JSONResponse
+
+    from agent_lab.case_analysis_executor import (AnalysisRequest, CaseAnalysisExecutor,
+                                                  AnalysisExecutionBlocked)
+
+    def verify_analysis_case(case_id, tax_year, owner_id):
+        if owner_id != host.owner_id:
+            return False
+        with host.persistence._lock:
+            host.persistence._verify_all()
+            host.persistence._verify_anchor()
+            host.persistence._authorize(owner_id, case_id, tax_year)
+        return True
+
+    analysis_executor = (CaseAnalysisExecutor(verify_case=verify_analysis_case,
+                                             kernel_dispatch=kernel_dispatch)
+                         if kernel_dispatch is not None else None)
+
+    @app.post('/cases/analysis/execute')
+    async def execute_case_analysis(request: __import__('fastapi').Request, case_id: str = Form(...),
+                                    tax_year: int = Form(...)):
+        if (request.headers.get('origin') != 'http://127.0.0.1:8766'
+                or request.headers.get('host') != '127.0.0.1:8766'):
+            raise HTTPException(status_code=403, detail='Origin rejected')
+        if analysis_executor is None:
+            raise HTTPException(status_code=503, detail='Authorized Kernel dispatcher unavailable')
+        try:
+            from starlette.concurrency import run_in_threadpool
+            receipt = await run_in_threadpool(analysis_executor.execute, AnalysisRequest(case_id, tax_year, host.owner_id))
+        except (AnalysisExecutionBlocked, PermissionError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail='Kernel execution rejected') from exc
+        return JSONResponse(receipt, headers={'Cache-Control': 'no-store'})
+
+    @app.get('/cases/analysis/progress')
+    async def case_analysis_progress(case_id: str, tax_year: int):
+        from starlette.concurrency import run_in_threadpool
+        try:
+            if not verify_analysis_case(case_id, tax_year, host.owner_id):
+                raise PermissionError('Case unavailable')
+            result = await run_in_threadpool(kernel_dispatch.progress,
+                AnalysisRequest(case_id, tax_year, host.owner_id))
+            return JSONResponse(result, headers={'Cache-Control': 'no-store'})
+        except Exception as exc:
+            raise HTTPException(status_code=409, detail='Verified execution progress unavailable') from exc
 
     @app.get('/cases/analysis/readiness')
     async def analysis_readiness(case_id: str, tax_year: int):
         # Read-only preflight. UI-02 does not authorize or launch an analysis run.
         try:
-            inventory = host.list_case_documents(case_id, tax_year)
+            from starlette.concurrency import run_in_threadpool
+            inventory = await run_in_threadpool(host.list_case_documents, case_id, tax_year)
             files = inventory['files']
             from collections import Counter
             from pathlib import PurePosixPath
@@ -425,8 +476,15 @@ def create_local_case_app():
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
                 'inventory_verified': True, 'documents_count': len(files),
                 'document_types': dict(sorted(type_counts.items())),
-                'kernel_ready': False, 'gemini_ready': False,
-                'analysis_launch_available': False, 'reason': 'UI03_RUNTIME_NOT_CONNECTED'},
+                'kernel_ready': analysis_executor is not None,
+                'gemini_ready': bool(os.environ.get('GEMINI_API_KEY')),
+                'analysis_launch_available': bool(analysis_executor is not None
+                    and os.environ.get('GEMINI_API_KEY') and files
+                    and any(f['mime_type'] == 'application/pdf' for f in files)),
+                'reason': ('READY' if analysis_executor is not None
+                    and os.environ.get('GEMINI_API_KEY') and files
+                    and any(f['mime_type'] == 'application/pdf' for f in files)
+                    else 'GEMINI_KEY_OR_UNSUPPORTED_DOCUMENT_TYPE')}, 
                 headers={'Cache-Control': 'no-store'})
         except Exception:
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,

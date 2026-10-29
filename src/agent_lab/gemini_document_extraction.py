@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 from typing import Any
 
 from agent_lab.document_extraction import DocumentExtractionResult, ExtractedTaxField
@@ -61,6 +62,9 @@ class GeminiDocumentExtractor:
         interaction = self._client.interactions.create(
             model=self._model,
             store=False,
+            timeout=90,
+            automatic_continuation=False,
+            generation_config={'max_output_tokens': 12800},
             input=[
                 {"type": "text", "text": f"Filename: {filename}\n{PROMPT}"},
                 {"type": "document", "data": base64.b64encode(pdf_bytes).decode("ascii"), "mime_type": "application/pdf"},
@@ -71,7 +75,42 @@ class GeminiDocumentExtractor:
 
 
 def _parse_result(raw: str) -> DocumentExtractionResult:
-    payload = json.loads(raw)
+    if not isinstance(raw, str) or len(raw.encode('utf-8')) > 512 * 1024:
+        raise ValueError('Invalid or oversized provider response')
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('Duplicate provider field')
+            result[key] = value
+        return result
+    payload = json.loads(raw, object_pairs_hook=unique,
+                         parse_constant=lambda value: (_ for _ in ()).throw(ValueError('Nonfinite provider number')))
+    if not isinstance(payload, dict) or set(payload) != set(RESULT_SCHEMA['required']):
+        raise ValueError('Closed provider response schema required')
+    for key in ('document_type', 'tax_category'):
+        if not isinstance(payload[key], str) or not payload[key].strip():
+            raise ValueError('Invalid document classification')
+    for key in ('issuer', 'document_date'):
+        if payload[key] is not None and not isinstance(payload[key], str):
+            raise ValueError('Invalid optional text field')
+    if payload['tax_year'] is not None and (type(payload['tax_year']) is not int or not 1900 <= payload['tax_year'] <= 2200):
+        raise ValueError('Invalid document year')
+    if type(payload['needs_human_review']) is not bool or not isinstance(payload['notes'], list) or any(not isinstance(n, str) for n in payload['notes']):
+        raise ValueError('Invalid review metadata')
+    def confidence(value):
+        return type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 1
+    if not confidence(payload['confidence']) or not isinstance(payload['fields'], list):
+        raise ValueError('Invalid extraction confidence or fields')
+    if not payload['fields'] or len(payload['fields']) > 500:
+        raise ValueError('Missing or excessive extraction fields')
+    for item in payload['fields']:
+        if (not isinstance(item, dict) or set(item) != set(FIELD_SCHEMA['required'])
+                or any(not isinstance(item[k], str) for k in ('name', 'value', 'evidence'))
+                or not item['name'].strip() or not item['evidence'].strip()
+                or type(item['page']) is not int or not 1 <= item['page'] <= 1000
+                or not confidence(item['confidence'])):
+            raise ValueError('Missing page/evidence or malformed field')
     fields = tuple(
         ExtractedTaxField(
             name=str(item["name"]),

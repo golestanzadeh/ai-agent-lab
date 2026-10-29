@@ -1,6 +1,10 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
-## UI-03 provider boundary — 2026-10-29
+## UI-03 final Owner directive — 2026-10-29
+
+Owner accepts the exact existing Gemini privacy configuration for development document-analysis tests; credential route CLOSED at3bc1e54. The prior unrecovered-configuration stop is superseded for this bounded mission; generic consent must not be requested again. Kernel/manifest/per-document/UI implementation, real verification and separate independent acceptance are in progress, not PASS yet. No active OI row closes, no C09/final tax/submission approval changes. See PROJECT_CHECKPOINT and existing ui03-kernel-gemini-execution-gate-20261029.md continuation.
+
+## UI-03 provider boundary — 2026-10-29 (historical, superseded for new scope)
 
 HUMAN_REQUIRED / REAL_EXECUTION_NOT_STARTED, exact recovery f473111ac4ce02fa00387613fe686fab4645b684. Existing Gemini permission is recognized; only accepted API-product/privacy/retention/runtime-binding evidence is unrecovered for this path. Registration is not authorization/execution. No active row closes, no protected processing or UI-03 acceptance is granted, and C09 is not a global development stop. Evidence and exact continuation: docs/ui03-kernel-gemini-execution-gate-20261029.md; synchronized with PROJECT_CHECKPOINT.md. Recover/verify the specific provider evidence, then resume the existing authorized integration without repeated generic consent.
 

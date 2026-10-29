@@ -222,6 +222,7 @@ def create_dashboard_app(
     execute_kernel_task: ExecuteKernelTask | None = None,
     read_runtime_case: Callable[[str,int],object] | None = None,
     create_real_case: Callable[[int,str],str] | None = None,
+    preview_next_case_id: Callable[[int],str] | None = None,
 ) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 

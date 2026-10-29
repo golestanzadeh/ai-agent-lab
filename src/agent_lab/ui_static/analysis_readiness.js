@@ -2,35 +2,26 @@
   'use strict';
   const panel = document.getElementById('analysis-readiness');
   if (!panel) return;
-  const state = document.getElementById('analysis-readiness-state');
   const details = document.getElementById('analysis-readiness-details');
+  const status = document.getElementById('analysis-readiness-state');
   const fa = panel.dataset.lang === 'fa-IR';
   const params = new URLSearchParams({case_id: panel.dataset.caseId, tax_year: panel.dataset.taxYear});
-  fetch('/cases/analysis/readiness?' + params, {credentials: 'same-origin', cache: 'no-store'})
-    .then(async response => { if (!response.ok) throw new Error('PREFLIGHT_FAILED'); return response.json(); })
+  fetch('/cases/analysis/readiness?' + params, {credentials:'same-origin',cache:'no-store'})
+    .then(async response => {if (!response.ok) throw Error('PREFLIGHT_FAILED'); return response.json();})
     .then(data => {
-      if (!data.inventory_verified || data.case_id !== panel.dataset.caseId || String(data.tax_year) !== panel.dataset.taxYear) throw new Error('SCOPE_MISMATCH');
-      state.textContent = fa ? 'موجودی مدارک تأیید شد؛ اجرای تحلیل هنوز آماده نیست.' : 'Dokumentenbestand bestätigt; Analysestart noch nicht bereit.';
+      if (!data.inventory_verified || data.case_id !== panel.dataset.caseId || String(data.tax_year) !== panel.dataset.taxYear) throw Error('SCOPE_MISMATCH');
       const types = data.document_types;
       if (!types || typeof types !== 'object' || Array.isArray(types) ||
-          Object.values(types).some(count => !Number.isInteger(count) || count < 1) ||
-          Object.values(types).reduce((total, count) => total + count, 0) !== data.documents_count) {
-        throw new Error('INVALID_INVENTORY_COUNTS');
-      }
+          Object.values(types).some(n => !Number.isInteger(n) || n < 1) ||
+          Object.values(types).reduce((sum,n) => sum+n,0) !== data.documents_count) throw Error('INVALID_COUNTS');
       const lines = [fa ? `مدارک: ${data.documents_count}` : `Dokumente: ${data.documents_count}`];
-      if (data.documents_count === 0) {
-        lines.push(fa ? 'هنوز مدرکی برای این پرونده بارگذاری نشده است.' : 'Für diesen Fall wurden noch keine Dokumente hochgeladen.');
-      } else {
-        for (const [type, count] of Object.entries(types).sort(([a], [b]) => a.localeCompare(b))) {
-          lines.push(`${type}: ${count}`);
-        }
-      }
-      lines.push(fa ? 'Kernel: اتصال اجرای واقعی برقرار نیست' : 'Kernel: Laufzeit nicht angebunden');
-      lines.push(fa ? 'Gemini: آمادگی اجرایی تأیید نشده' : 'Gemini: Bereitschaft nicht bestätigt');
-      details.replaceChildren(...lines.map(line => { const p = document.createElement('p'); p.textContent = line; return p; }));
+      for (const [kind,n] of Object.entries(types).sort(([a],[b]) => a.localeCompare(b))) lines.push(`${kind}: ${n}`);
+      lines.push(fa ? `Kernel: ${data.kernel_ready ? 'متصل' : 'آماده نیست'}` : `Kernel: ${data.kernel_ready ? 'verbunden' : 'nicht bereit'}`);
+      lines.push(fa ? `Gemini: ${data.gemini_ready ? 'کلید در دسترس است' : 'کلید در دسترس نیست'}` : `Gemini: ${data.gemini_ready ? 'Schlüssel verfügbar' : 'Schlüssel fehlt'}`);
+      details.replaceChildren(...lines.map(line => {const p=document.createElement('p');p.textContent=line;return p;}));
+      if (!panel.dataset.executionStarted) status.textContent = data.analysis_launch_available
+        ? (fa ? 'آماده شروع استخراج اسناد PDF' : 'Bereit zur PDF-Extraktion')
+        : (fa ? 'شروع تحلیل در حال حاضر ممکن نیست' : 'Analysestart derzeit nicht verfügbar');
     })
-    .catch(() => {
-      state.textContent = fa ? 'بررسی آمادگی ناموفق بود؛ اجرای تحلیل مسدود است.' : 'Bereitschaftsprüfung fehlgeschlagen; Analysestart gesperrt.';
-      details.replaceChildren();
-    });
+    .catch(() => {if (!panel.dataset.executionStarted) status.textContent = fa ? 'بررسی آمادگی ناموفق بود' : 'Bereitschaftsprüfung fehlgeschlagen';});
 })();
