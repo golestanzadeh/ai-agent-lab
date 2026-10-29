@@ -241,8 +241,12 @@ class LocalCaseHost:
             raise ValueError('Invalid filename')
         import mimetypes
         mime = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        if filename.lower().endswith('.csv'):
+            if b'\x00' in content:
+                raise ValueError('Invalid CSV: binary NUL byte')
+            mime = 'text/csv'
         if mime not in {'application/pdf', 'image/jpeg', 'image/png',
-                        'image/tiff', 'image/webp'}:
+                        'image/tiff', 'image/webp', 'text/csv'}:
             raise ValueError('Unsupported document type')
         with self._lock:
             # Resolve case and exact Documents folder through existing authenticated
