@@ -2,6 +2,34 @@
 
 ## One exact successor: Owner-authorized continuation — 2026-10-30
 
+Independent review rejected preparatory04b825a8f59e3dde973edf90eaea417c9508e982
+with F04 HIGH: original failed response/audit integrity was checked only at
+projection time, so a corrupted original failure could permit a successor API
+call before display rejection. Reviewer reproduced this with synthetic data;
+no real successor was attempted. Correction reuses one shared response verifier
+for projection and successor authorization before claim and immediately before
+the provider call, including unique response, task/manifest/actor/parent/status
+and audit digest. Added corrupted/deleted/substituted original-failure tests,
+tampering after claim, and forged approval-row/no-Owner-audit denial.
+
+The existing analysis POST/CaseAnalysisExecutor accepts only a prepared successor
+task reference; it cannot mint a grant or approve a Human Gate. This keeps actual
+execution/progress inside the same application runtime rather than a separate
+worker script. Source records, authority digest and linked run are bound through
+the existing Kernel. Local SDK inspection also found that the installed
+Interactions bridge interprets HttpRetryOptions.attempts as a retry count:
+the old value1 could allow a retry. It is corrected to0, verified against the
+actual installed retry translation and retry loop with one synthetic failed
+provider call. This corrects the earlier one-attempt configuration claim; it is
+not evidence that a retry actually occurred in the previous successful campaign.
+
+Correction testing:97 focused/related/documentation tests passed, exit0,46.45s;
+subsequent exact successor/route/installed-SDK verification18 passed, exit0,34.25s
+(overlap). Earlier failures were one negative-test exception-class mismatch
+(Kernel correctly rejected an unknown original manifest with ContractError)
+and are preserved as diagnostics, not product acceptance. Corrected-SHA review
+and real execution remain pending at this candidate commit.
+
 Owner decision OWNER_APPROVED / ONE_BOUNDED_SUCCESSOR_EXECUTION supersedes the
 prior pending-specific-authority state for the single failed PDF only. Original
 TASK-UI03-0C9D8791F5F3456C941B69DA2783C77C and

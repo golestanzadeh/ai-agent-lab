@@ -26,10 +26,16 @@ class GeminiCaseDocumentWorker:
                 from google import genai
                 from google.genai import types
                 from agent_lab.gemini_document_extraction import GeminiDocumentExtractor
-                client=genai.Client(api_key=os.environ['GEMINI_API_KEY'],http_options=types.HttpOptions(base_url='https://generativelanguage.googleapis.com',timeout=90000,retry_options=types.HttpRetryOptions(attempts=1)))
-                try:result=GeminiDocumentExtractor(client).extract(content,filename=entry['name'])
+                # Installed Interactions bridge maps attempts to RETRY COUNT.
+                # Zero, not one, enforces this task's single provider attempt.
+                client=genai.Client(api_key=os.environ['GEMINI_API_KEY'],http_options=types.HttpOptions(base_url='https://generativelanguage.googleapis.com',timeout=90000,retry_options=types.HttpRetryOptions(attempts=0)))
+                try:
+                    dispatcher.authorize(kernel,task,manifest)
+                    result=GeminiDocumentExtractor(client).extract(content,filename=entry['name'])
                 finally:client.close()
-            else:result=self._extractor.extract(content,filename=entry['name'])
+            else:
+                dispatcher.authorize(kernel,task,manifest)
+                result=self._extractor.extract(content,filename=entry['name'])
             if time.monotonic()-started>task['timeout_seconds']:raise TimeoutError('Deadline exceeded')
             dispatcher.authorize(kernel,task,manifest)
             dispatcher._finish(kernel,task,manifest,{'processing_status':'HUMAN_REVIEW_REQUIRED','finished_at':now(),

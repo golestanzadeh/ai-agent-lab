@@ -91,6 +91,12 @@ class CaseAnalysisKernelDispatcher:
             raise PermissionDenied('Successor authority expired')
         gate=k._connection.execute("SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='authority_ambiguity'",(task['task_id'],)).fetchone()
         if gate is None or tuple(gate)!=('APPROVED',_digest(grant)):raise PermissionDenied('Exact Owner gate approval required')
+        approvals=[]
+        for event in k._connection.execute("SELECT actor_id,payload_json FROM audit_events WHERE event_type='HUMAN_GATE_DECIDED' AND entity_type='TASK' AND entity_id=?",(task['task_id'],)):
+            payload=json.loads(event['payload_json'])
+            if payload.get('trigger')=='authority_ambiguity':approvals.append((event['actor_id'],payload))
+        expected_approval={'trigger':'authority_ambiguity','decision':'APPROVED','authority_reference':_digest(grant)}
+        if approvals!=[('HUMAN_PROJECT_OWNER',expected_approval)]:raise PermissionDenied('Owner approval audit binding missing')
         old=k._connection.execute('SELECT status,payload_json FROM tasks WHERE task_id=?',(grant['original_task_id'],)).fetchone()
         if old is None or old['status']!='FAILED':raise PermissionDenied('Original failed task required')
         original=json.loads(old['payload_json'])
@@ -103,6 +109,7 @@ class CaseAnalysisKernelDispatcher:
         if (source['document_id']!=grant['document_id'] or source['sha256']!=grant['sha256']
                 or {key:target.get(key) for key in source}!=source
                 or target.get('supersedes_task_id')!=grant['original_task_id']):raise PermissionDenied('Original source identity/digest mismatch')
+        CaseAnalysisKernelDispatcher._verified_responses(k,{**original,'status':old['status']})
         old_manifest=k._manifest_row(grant['original_manifest_id'])
         if (old_manifest['task_id']!=grant['original_task_id'] or old_manifest['state']!='FAILED'
                 or json.loads(old_manifest['payload_json'])['max_retries']!=0):raise PermissionDenied('Original failed manifest binding mismatch')
@@ -156,6 +163,8 @@ class CaseAnalysisKernelDispatcher:
         finally:
             with self._lock:self._active.pop((request.owner_id,request.case_id,request.tax_year),None)
     def __call__(self,request):
+        if request.successor_task_id is not None:
+            return self.owner_successor(request,request.successor_task_id)
         if self.worker is None:raise AnalysisExecutionBlocked('Authorized worker unavailable')
         key=(request.owner_id,request.case_id,request.tax_year)
         with self._lock:
@@ -205,6 +214,27 @@ class CaseAnalysisKernelDispatcher:
             if p['objective'] in ('UI03_BATCH_V1','UI03_DOCUMENT_V1') and s and s['case_id']==request.case_id and s['tax_year']==request.tax_year and owner in p['inputs']:
                 result.append({**p,'status':row['status']})
         return result
+    @staticmethod
+    def _verified_responses(k,t):
+        responses=k._connection.execute('SELECT * FROM responses WHERE task_id=?',(t['task_id'],)).fetchall()
+        if len(responses)>1 or (not responses and t['status'] in ('HUMAN_REQUIRED','FAILED')):
+            raise PermissionDenied('Missing or ambiguous terminal response')
+        for r in responses:
+            payload=json.loads(r['payload_json'])
+            if t['status'] in ('HUMAN_REQUIRED','FAILED') and r['status']!=t['status']:
+                raise PermissionDenied('Terminal response status mismatch')
+            if (set(payload)!=OrchestratorKernel.RESPONSE_FIELDS
+                    or payload['task_id']!=t['task_id'] or r['task_id']!=t['task_id']
+                    or payload['response_id']!=r['response_id'] or payload['status']!=r['status']
+                    or payload['role_id']!=t['role_id'] or payload['actor_instance_id']!=t['actor_instance_id']
+                    or payload['parent_task_id']!=t['parent_task_id']):
+                raise PermissionDenied('Response task lineage mismatch')
+            manifest=k._manifest_row(r['manifest_id'])
+            if (manifest['task_id']!=t['task_id'] or manifest['actor_instance_id']!=t['actor_instance_id']
+                    or manifest['role_id']!=t['role_id']):raise PermissionDenied('Response manifest lineage mismatch')
+            audit=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='RESPONSE_RECORDED' AND entity_id=?",(r['response_id'],)).fetchall()
+            expected={'task_id':t['task_id'],'manifest_id':r['manifest_id'],'status':r['status'],'response_digest':_digest(payload)}
+            if len(audit)!=1 or json.loads(audit[0][0])!=expected:raise PermissionDenied('Response integrity mismatch')
     def progress(self,request):
         with self._lock,self._kernel() as k:
             k.verify_audit_chain();tasks=self._tasks(k,request);documents=[]
@@ -217,23 +247,7 @@ class CaseAnalysisKernelDispatcher:
                     bindings=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_INTENT_BOUND' AND entity_id=?",(t['task_id'],)).fetchall()
                     original={**t,'status':'REGISTERED'}
                     if len(bindings)!=1 or json.loads(bindings[0][0]).get('task_digest')!=_digest(original):raise PermissionDenied('Document intent mismatch')
-                responses=k._connection.execute('SELECT * FROM responses WHERE task_id=?',(t['task_id'],)).fetchall()
-                if len(responses)>1 or (not responses and t['status'] in ('HUMAN_REQUIRED','FAILED')):
-                    raise PermissionDenied('Missing or ambiguous terminal response')
-                for r in responses:
-                    payload=json.loads(r['payload_json'])
-                    if (set(payload)!=OrchestratorKernel.RESPONSE_FIELDS
-                            or payload['task_id']!=t['task_id'] or r['task_id']!=t['task_id']
-                            or payload['response_id']!=r['response_id'] or payload['status']!=r['status']
-                            or payload['role_id']!=t['role_id'] or payload['actor_instance_id']!=t['actor_instance_id']
-                            or payload['parent_task_id']!=t['parent_task_id']):
-                        raise PermissionDenied('Response task lineage mismatch')
-                    manifest=k._manifest_row(r['manifest_id'])
-                    if (manifest['task_id']!=t['task_id'] or manifest['actor_instance_id']!=t['actor_instance_id']
-                            or manifest['role_id']!=t['role_id']):raise PermissionDenied('Response manifest lineage mismatch')
-                    audit=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='RESPONSE_RECORDED' AND entity_id=?",(r['response_id'],)).fetchall()
-                    expected={'task_id':t['task_id'],'manifest_id':r['manifest_id'],'status':r['status'],'response_digest':_digest(payload)}
-                    if len(audit)!=1 or json.loads(audit[0][0])!=expected:raise PermissionDenied('Response integrity mismatch')
+                self._verified_responses(k,t)
             for t in tasks:
                 if t['objective']!='UI03_DOCUMENT_V1':continue
                 row=k._connection.execute('SELECT payload_json FROM responses WHERE task_id=?',(t['task_id'],)).fetchone()

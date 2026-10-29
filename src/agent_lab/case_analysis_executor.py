@@ -18,6 +18,7 @@ class AnalysisRequest:
     case_id: str
     tax_year: int
     owner_id: str
+    successor_task_id: str | None = None
 
 
 class CaseAnalysisExecutor:
@@ -33,6 +34,9 @@ class CaseAnalysisExecutor:
             raise AnalysisExecutionBlocked('Invalid case-scoped request')
         if type(request.tax_year) is not int or not 1900 <= request.tax_year <= 9999:
             raise AnalysisExecutionBlocked('Invalid tax year')
+        if request.successor_task_id is not None and (not isinstance(request.successor_task_id,str)
+                or not request.successor_task_id.startswith('TASK-') or len(request.successor_task_id)>128):
+            raise AnalysisExecutionBlocked('Invalid successor task reference')
         verified = self._verify_case(request.case_id, request.tax_year, request.owner_id)
         if verified is not True:
             raise AnalysisExecutionBlocked('Case authority unavailable')

@@ -18,6 +18,7 @@ def test_actual_routes_owner_scope_origin_restart_and_languages(setup,host_modul
     data={'case_id':CASE,'tax_year':2025};headers={'Origin':'http://127.0.0.1:8766'}
     assert client.post('/cases/analysis/execute',data=data,headers={'Origin':'https://evil.invalid'}).status_code==403
     assert client.post('/cases/analysis/execute',data={'case_id':CASE,'tax_year':2024},headers=headers).status_code==409
+    assert client.post('/cases/analysis/execute',data={**data,'successor_task_id':'TASK-NOT-APPROVED'},headers=headers).status_code==409
     assert client.get('/cases/analysis/progress',params=data,headers={'Host':'evil.invalid'}).status_code==403
     assert client.get('/cases/analysis/progress',params={'case_id':'UNKNOWN','tax_year':2025}).status_code==409
     response=client.post('/cases/analysis/execute',data=data,headers=headers)
@@ -37,3 +38,28 @@ def test_actual_routes_owner_scope_origin_restart_and_languages(setup,host_modul
         assert 'analysis_request.js' in page.text
     restarted=CaseAnalysisKernelDispatcher(tmp_path/'kernel.sqlite',ROOT/'contracts/orchestrator/v1')
     assert restarted.progress(AnalysisRequest(CASE,2025,OWNER))['completed']==1
+
+def test_existing_http_executor_runs_only_already_approved_successor(setup,host_module,monkeypatch,tmp_path):
+    import test_case_analysis_successor as owner_fixture
+    h,drive,p=setup;drive.document(content=b'%PDF-synthetic')
+    class Download:
+        def __init__(self,buffer,request):self.buffer,self.request=buffer,request
+        def next_chunk(self):self.buffer.write(self.request.content);return None,True
+    monkeypatch.setattr('googleapiclient.http.MediaIoBaseDownload',Download)
+    e=Extractor();e.fail='f1.pdf'
+    d=CaseAnalysisKernelDispatcher(tmp_path/'kernel.sqlite',ROOT/'contracts/orchestrator/v1',worker=GeminiCaseDocumentWorker(h,extractor=e))
+    monkeypatch.setattr(host_module,'LocalCaseHost',lambda:h)
+    client=TestClient(host_module.create_local_case_app(kernel_dispatch=d),base_url='http://127.0.0.1:8766')
+    req=AnalysisRequest(CASE,2025,OWNER);data={'case_id':CASE,'tax_year':2025};headers={'Origin':'http://127.0.0.1:8766'}
+    assert client.post('/cases/analysis/execute',data=data,headers=headers).status_code==200
+    d._pool.submit(lambda:None).result(timeout=10)
+    assert d.progress(req)['failed']==1
+    monkeypatch.setattr(owner_fixture,'REQ',req)
+    task,old=owner_fixture.prepare(d);e.fail=None
+    response=client.post('/cases/analysis/execute',data={**data,'successor_task_id':task['task_id']},headers=headers)
+    assert response.status_code==200
+    d._pool.submit(lambda:None).result(timeout=10)
+    current=client.get('/cases/analysis/progress',params=data).json()
+    assert current['completed']==1 and current['failed']==0 and len(current['history'])==1
+    assert client.post('/cases/analysis/execute',data={**data,'successor_task_id':task['task_id']},headers=headers).status_code==409
+    assert e.calls==['f1.pdf','f1.pdf']

@@ -90,3 +90,60 @@ def test_changed_original_bytes_never_reach_provider(tmp_path):
     d.owner_successor(REQ,task['task_id']);p=wait(d)
     assert p['failed']==1 and p['completed']==1 and e.calls==before
     with pytest.raises(PermissionDenied):d.owner_successor(REQ,task['task_id'])
+
+@pytest.mark.parametrize('mutation',[
+    "UPDATE responses SET payload_json=replace(payload_json,'ValueError','CORRUPTED_FAILURE') WHERE task_id=?",
+    "DELETE FROM responses WHERE task_id=?",
+    "UPDATE responses SET manifest_id=(SELECT manifest_id FROM manifests WHERE task_id!=? LIMIT 1) WHERE task_id=?",
+])
+def test_corrupt_original_failure_denied_before_provider_or_claim(tmp_path,mutation):
+    d,e=failed(tmp_path);task,old=prepare(d);before=list(e.calls)
+    with d._kernel() as k:
+        args=(old['task_id'],)*mutation.count('?')
+        with k._connection:k._connection.execute(mutation,args)
+    with pytest.raises((PermissionDenied,ContractError)):d.owner_successor(REQ,task['task_id'])
+    assert e.calls==before
+    with d._kernel() as k:
+        assert k._connection.execute("SELECT count(*) FROM audit_events WHERE event_type='UI03_SUCCESSOR_AUTHORIZED'").fetchone()[0]==0
+
+def test_forged_approval_rows_without_owner_audit_do_not_grant_authority(tmp_path):
+    d,e=failed(tmp_path);task,_=prepare(d,approved=False)
+    grant=json.loads(next(s[len('successor-json:'):] for s in task['inputs'] if s.startswith('successor-json:')))
+    with d._kernel() as k:
+        with k._connection:
+            k._connection.execute("UPDATE task_human_gates SET status='APPROVED',authority_reference=? WHERE task_id=?",(_digest(grant),task['task_id']))
+            k._connection.execute("UPDATE tasks SET status='REGISTERED' WHERE task_id=?",(task['task_id'],))
+    with pytest.raises(PermissionDenied,match='approval audit'):d.owner_successor(REQ,task['task_id'])
+    assert len(e.calls)==2
+
+def test_original_failure_corrupted_after_claim_still_cannot_transmit(tmp_path):
+    d,e=failed(tmp_path);task,old=prepare(d);before=list(e.calls)
+    original_get=d.worker.host.get_case_document
+    def changed(c,y,doc):
+        with d._kernel() as k:
+            with k._connection:k._connection.execute("UPDATE responses SET payload_json=replace(payload_json,'ValueError','CORRUPTED_FAILURE') WHERE task_id=?",(old['task_id'],))
+        return original_get(c,y,doc)
+    d.worker.host.get_case_document=changed
+    d.owner_successor(REQ,task['task_id']);d._pool.submit(lambda:None).result(timeout=10)
+    assert e.calls==before
+
+def test_installed_interactions_transport_has_zero_retries(tmp_path,monkeypatch):
+    from types import SimpleNamespace
+    from google.genai._gaos.google_genai import _translate_retry_config
+    from google.genai._gaos.utils.retries import retry_with_attempt_count_backoff
+    d,e=failed(tmp_path);task,_=prepare(d);calls=[];observed=[]
+    monkeypatch.setenv('GEMINI_API_KEY','synthetic-not-a-key')
+    def factory(*,api_key,http_options):
+        assert api_key=='synthetic-not-a-key'
+        assert http_options.base_url=='https://generativelanguage.googleapis.com'
+        config=_translate_retry_config(http_options);observed.append(config.max_retries)
+        def create(**kwargs):
+            assert kwargs['store'] is False and kwargs['model']=='gemini-3.8-flash'
+            assert kwargs['automatic_continuation'] is False
+            def denied(attempt):calls.append(attempt);raise RuntimeError('synthetic provider failure')
+            return retry_with_attempt_count_backoff(denied,max_retries=config.max_retries)
+        return SimpleNamespace(interactions=SimpleNamespace(create=create),close=lambda:None)
+    monkeypatch.setattr('google.genai.Client',factory)
+    d.worker._extractor=None
+    d.owner_successor(REQ,task['task_id']);result=wait(d)
+    assert result['failed']==1 and observed==[0] and calls==[0]

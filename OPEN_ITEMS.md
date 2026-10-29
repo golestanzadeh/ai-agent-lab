@@ -2,6 +2,8 @@
 
 ## UI-03 one-successor continuation — 2026-10-30
 
+Preparation04b825a independently rejected F04; original response/audit and Owner approval-audit verification now precede dispatch, SDK retry count corrected to0.97 relevant/docs plus18 successor/route/SDK checks pass, corrected-SHA review pending before real action. No original record or provider request was changed/issued by this correction; no active OI closes.
+
 Owner explicitly approves one linked successor for the exact failed task/manifest/source, preserving its immutable max_retries0 history. The prior successor-authority wait is resolved for this single action only. Scoped candidate/review/real result verification remain pending; no full UI-03 or OI/tax/submission acceptance is granted. Canonical checkpoint and existing UI03 execution report govern this continuation; no parallel checkpoint or broader authority.
 
 ## UI-03 final Owner directive — 2026-10-29

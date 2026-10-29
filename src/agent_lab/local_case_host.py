@@ -417,6 +417,7 @@ def create_local_case_app(*, kernel_dispatch=None):
 
     from agent_lab.case_analysis_executor import (AnalysisRequest, CaseAnalysisExecutor,
                                                   AnalysisExecutionBlocked)
+    from agent_lab.orchestrator_kernel import KernelError
 
     def verify_analysis_case(case_id, tax_year, owner_id):
         if owner_id != host.owner_id:
@@ -433,7 +434,7 @@ def create_local_case_app(*, kernel_dispatch=None):
 
     @app.post('/cases/analysis/execute')
     async def execute_case_analysis(request: __import__('fastapi').Request, case_id: str = Form(...),
-                                    tax_year: int = Form(...)):
+                                    tax_year: int = Form(...), successor_task_id: str | None = Form(None)):
         if (request.headers.get('origin') != 'http://127.0.0.1:8766'
                 or request.headers.get('host') != '127.0.0.1:8766'):
             raise HTTPException(status_code=403, detail='Origin rejected')
@@ -441,8 +442,8 @@ def create_local_case_app(*, kernel_dispatch=None):
             raise HTTPException(status_code=503, detail='Authorized Kernel dispatcher unavailable')
         try:
             from starlette.concurrency import run_in_threadpool
-            receipt = await run_in_threadpool(analysis_executor.execute, AnalysisRequest(case_id, tax_year, host.owner_id))
-        except (AnalysisExecutionBlocked, PermissionError, ValueError) as exc:
+            receipt = await run_in_threadpool(analysis_executor.execute, AnalysisRequest(case_id, tax_year, host.owner_id, successor_task_id))
+        except (AnalysisExecutionBlocked, PermissionError, ValueError, KernelError) as exc:
             raise HTTPException(status_code=409, detail='Kernel execution rejected') from exc
         return JSONResponse(receipt, headers={'Cache-Control': 'no-store'})
 
