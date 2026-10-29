@@ -1,5 +1,7 @@
 # Roadmap
 
+UI-03 provider-boundary evidence2026-10-29 is recorded in docs/ui03-kernel-gemini-execution-gate-20261029.md and tests/unit/test_ui03_gemini_authority_boundary.py. No operational implementation is accepted. Next prerequisite is verified acceptance evidence for the existing registered provider's actual privacy/retention/runtime binding, followed by the already authorized existing-Kernel document execution integration. Generic Gemini consent need not be repeated; no new architecture or C09 global stop is introduced.
+
 A-02:UI-03 Increment1 (Owner scope2026-10-29) registers `src/agent_lab/case_document_registry.py`, `tests/unit/test_case_document_registry.py` and `docs/a02-ui03-document-registry-increment1-20261029.md`. They extend the existing SQLite document index and LocalCaseHost metadata projections only. Subsequent movement/classification/analysis/financial/restore/UI increments require their own authorization; no automatic continuation is permitted.
 
 ## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle

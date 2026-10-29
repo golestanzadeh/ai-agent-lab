@@ -1,5 +1,9 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
+## UI-03 provider boundary — 2026-10-29
+
+HUMAN_REQUIRED / REAL_EXECUTION_NOT_STARTED, exact recovery f473111ac4ce02fa00387613fe686fab4645b684. Existing Gemini permission is recognized; only accepted API-product/privacy/retention/runtime-binding evidence is unrecovered for this path. Registration is not authorization/execution. No active row closes, no protected processing or UI-03 acceptance is granted, and C09 is not a global development stop. Evidence and exact continuation: docs/ui03-kernel-gemini-execution-gate-20261029.md; synchronized with PROJECT_CHECKPOINT.md. Recover/verify the specific provider evidence, then resume the existing authorized integration without repeated generic consent.
+
 ## 2026-10-28 — Owner-accepted document-bearing case deletion lifecycle
 
 **OWNER_ACCEPTED / CLOSED (bounded feature).** Owner personally verified the complete 2025 case deletion, verified-backup, restoration, document deletion, empty-case deletion, permanent backup deletion, number-reservation release and reuse sequence. New CASE-2025-0001 was created and its Google Drive structure checked (PASS). Source of truth: `docs/case-document-bearing-deletion-owner-acceptance-2026-10-28.md`. No active OI row closes; existing independent security, identity, tax-workflow and release gates remain unchanged. The future finalized-tax-case nondeletion requirement is deferred to the actual tax finalization acceptance, not marked PASS.

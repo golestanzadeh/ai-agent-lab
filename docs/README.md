@@ -1,5 +1,8 @@
 # Documentation Index
 
+- `ui03-kernel-gemini-execution-gate-20261029.md` — verified provider-evidence stop boundary, preserved candidate gaps and synthetic authorization negatives; no real execution acceptance.
+- `ui03-gemini-project-worker-owner-directive-20261029.md` — preserved Owner authorization for the registered Gemini extraction scope; not provider configuration or end-to-end acceptance.
+
 - `a02-ui03-document-registry-increment1-20261029.md` — bounded backend document-registry implementation, migration and synthetic T1–T7 evidence.
 - `a02-ui03-incremental-analysis-document-lifecycle-plan-20261029.md` — Owner-approved staged requirements governing this registry increment.
 - `a02-ui02-analysis-readiness-acceptance-20261029.md` — existing accepted Analysis readiness predecessor; not modified by this increment.
