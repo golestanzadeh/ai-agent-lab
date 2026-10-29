@@ -60,6 +60,7 @@ class GeminiDocumentExtractor:
             raise ValueError("pdf_bytes must not be empty")
         interaction = self._client.interactions.create(
             model=self._model,
+            store=False,
             input=[
                 {"type": "text", "text": f"Filename: {filename}\n{PROMPT}"},
                 {"type": "document", "data": base64.b64encode(pdf_bytes).decode("ascii"), "mime_type": "application/pdf"},

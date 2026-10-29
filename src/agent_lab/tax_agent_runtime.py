@@ -221,6 +221,7 @@ class GeminiTaxAgentBackend:
         )
         interaction = self._client.interactions.create(
             model=self._model,
+            store=False,
             input=[{"type": "text", "text": prompt}],
             response_format={"type": "text", "mime_type": "application/json", "schema": _REPORT_SCHEMA},
         )
