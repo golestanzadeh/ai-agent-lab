@@ -1,6 +1,6 @@
 """Registered PDF tool, only callable through a currently authorized Kernel manifest."""
 from dataclasses import asdict
-import hashlib,os,time
+import hashlib,logging,os,time
 from agent_lab.case_analysis_kernel_dispatch import PROVIDER,now
 from agent_lab.orchestrator_kernel import PermissionDenied
 
@@ -42,6 +42,7 @@ class GeminiCaseDocumentWorker:
                 'extraction_payload':asdict(result),'evidence_references':[{'page':f.page,'quote':f.evidence} for f in result.fields],
                 'acceptance_status':'NOT_ACCEPTED_CANDIDATE_ONLY','needs_human_review':True,'error_details':None})
         except Exception as exc:
+            logging.getLogger(__name__).exception('UI03 document extraction failed; task_id=%s', task['task_id'])
             dispatcher._finish(kernel,task,manifest,{'processing_status':'FAILED','finished_at':now(),
                 'error_details':type(exc).__name__,'needs_human_review':True,'retry':'EXPLICIT_RECONCILIATION_REQUIRED'},failed=True)
     def process(self,request,batch,batch_manifest,kernel,dispatcher):
