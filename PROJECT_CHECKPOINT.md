@@ -1,5 +1,18 @@
 # Authoritative current project truth — 2026-10-20
 
+## Phase 2 historical financial knowledge reuse — 2026-11-07
+
+CONDITIONAL / BOUNDED_TECHNICAL_INDEPENDENT_PASS. Owner authorized read-only inspection of Personal-Finance-Analyzer and an isolated local rule-reuse field test, not production integration. Exact same protected 2025 source and all 1082 rows matched the accepted frozen source-project F03-v4 historical context. Four pure functions and a scoped evidence snapshot were frozen locally with Decimal comparisons; operational source modules/rebuild tests were never executed. Runtime has no source-project/database dependency, and no new database, service or orchestration authority exists.
+
+Two final runs were identical. Separate independent reviewer verified actual raw-row correspondence, applicability, integer-cent reconciliation, source preservation and negative cases, not only pytest. Worker18 and independent18 focused tests passed; five additional independent changed-purpose probes rejected future generalization. One MEDIUM processor-category leakage finding was corrected and independently closed on exact harness0df94b375a353734b32a05b56e6b0223523a58ebc696155658985d037029666b. Source-project inspected files and operational database hashes remain unchanged. All private mappings, financial outputs and eight required deliverables remain only in ignored artifacts/case2025-0001/phase2-rule-reuse-20261107.
+
+Measured improvement is an added economic-context layer and payee-label normalization, not authoritative identity creation or tax acceptance. Four economic credits and processor underlying-merchant/category attributes remain unresolved/quarantined. No original tax-review flag was eliminated, no new authoritative person/counterparty ID was invented, and no blanket Owner reconfirmation is requested. Tax-rule-unmatched is not unknown-counterparty. Exact same-row historical decisions do not generalize to future payments or years; no transfer/refund automatically becomes taxable income or deductible expense.
+
+OPEN_ITEMS assessed in the same governed change: no active OI row closes, no existing Human Gate relaxes. Owner must review the private CONDITIONAL evidence package before selecting any next phase. No production-code/configuration/SQLite/Dashboard change or integration occurred; existing uncommitted Owner UI remains preserved. Stop after Phase 2.
+
+Authenticated capacity69%/95% admitted EXPENSIVE35/15 preserving15reserve; before repeat/review65%/95% admitted. Final58% five-hour/93%weekly at2026-11-07T17:40:46.626699Z, resets2026-11-07T20:50:49Z and2026-11-14T15:50:49Z. Observed account-wide delta11/2points; no quota interruption or reserve violation.
+
+
 ## 2025 bank CSV independent field test completed — 2026-11-07
 
 PASS / BOUNDED_TECHNICAL_ANALYSIS_VALIDATION, not tax deduction or Owner acceptance. Following the separately completed existing OAuth recovery, the exact Owner-authorized source was verified through case-scoped Google Drive API reads, immutable SHA/metadata and existing read-only SQLite integrity/anchor authorization. Existing structured-financial parser and exact historical candidate predicates were reused unchanged; no production source, Dashboard, configuration, financial data or external provider mutation occurred. All transaction-level artifacts remain only in existing ignored protected artifacts/case2025-0001/bank-independent-20261107-resumed; no raw financial data or credentials published.
