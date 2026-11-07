@@ -1,5 +1,14 @@
 # Authoritative current project truth — 2026-10-20
 
+## Google Drive OAuth recovery — 2026-11-07
+
+PASS / EXACT_FILE_READ_VERIFIED. Owner completed the existing desktop OAuth flow; fresh refresh succeeded, with existing client, scope, paths and architecture unchanged. Previous invalid_grant establishes rejected refresh authority; exact underlying server-side reason is not disclosed, so expiry/revocation/testing status is not claimed proven. No new infrastructure or product source change.
+
+Exact Owner-specified bank CSV metadata, case/year/owner registry containment and full read verified through Google Drive API; metadata unchanged before/after, size/MD5/SHA256 checks passed. Read-only SQLite integrity/anchor verified; no source/financial database/Dashboard mutation, no financial analysis resumed. Private evidence resides in existing ignored artifacts/case2025-0001/oauth-recovery-20261107. Existing auth-scope test1passed, exit0. Prior bank-analysis BLOCKED result remains historically correct; its source-authentication prerequisite is now resolved, but no analytical PASS is granted. OPEN_ITEMS assessed: no active row closes, and unrelated operational/tax/submission gates remain unchanged.
+
+Authenticated existing codex app-server admission88% five-hour/98%weekly, BOUNDED15/5 estimate fits preserving15reserve. Ending85%/98% at2026-11-07T16:51:47.371639Z; resets2026-11-07T20:50:49Z and2026-11-14T15:50:49Z. Next executable action is the previously authorized isolated CSV field-test continuation after fresh admission; not executed in this authentication session. No Dashboard integration or next-stage acceptance authorized.
+
+
 ## 2025 bank CSV independent field test — 2026-11-07
 
 Owner authorized an isolated, production-read-only field test, not Dashboard integration. Fresh authenticated capacity via existing codex app-server admitted the full EXPENSIVE estimate (35/15 points) at 95% five-hour / 99% weekly, preserving the existing 15-point reserve. Exact fetched baseline 8edf1355ca5b54e0beda165a5e8fd8346c57199b matched origin/c09-witness-hardening; four unrelated Owner UI changes remain preserved.
