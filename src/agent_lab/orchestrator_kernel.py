@@ -894,6 +894,46 @@ class OrchestratorKernel:
             )
         return payload["task_id"]
 
+    def close_unstarted_task(
+        self, task_id: str, *, actor_id: str, authority_reference: str,
+        reason: str, outcome: str = "EXPIRED",
+    ) -> None:
+        """Audit a never-activated task's terminal disposition, without a manifest."""
+        _require_string(task_id, "task_id")
+        _require_string(authority_reference, "authority_reference")
+        _require_string(reason, "reason")
+        if outcome not in ("EXPIRED", "CANCELLED"):
+            raise ContractError("unsupported unstarted task disposition")
+        if actor_id != "HUMAN_PROJECT_OWNER":
+            raise PermissionDenied("only Owner may close unstarted task")
+        with self._write_scope():
+            row = self._connection.execute(
+                "SELECT status,expires_at FROM tasks WHERE task_id=?", (task_id,)
+            ).fetchone()
+            if row is None:
+                raise ContractError("task is not registered")
+            if row["status"] != "REGISTERED":
+                raise StateTransitionError("task is not registered and unstarted")
+            if self._connection.execute(
+                "SELECT 1 FROM manifests WHERE task_id=?", (task_id,)
+            ).fetchone():
+                raise StateTransitionError("task already has a manifest")
+            if self._connection.execute(
+                "SELECT 1 FROM responses WHERE task_id=?", (task_id,)
+            ).fetchone():
+                raise StateTransitionError("task already has a response")
+            if outcome == "EXPIRED" and _utc_now() < _parse_timestamp(row["expires_at"], "task.expires_at"):
+                raise StateTransitionError("task has not expired")
+            self._connection.execute(
+                "UPDATE tasks SET status=? WHERE task_id=? AND status='REGISTERED'",
+                (outcome, task_id),
+            )
+            self._append_event(
+                "UNSTARTED_TASK_CLOSED", "TASK", task_id, actor_id,
+                {"outcome": outcome, "reason": reason,
+                 "authority_reference": authority_reference},
+            )
+
     def registered_case_context(self, task_id: str) -> dict[str, Any]:
         """Return the validated immutable case scope for a registered Kernel task."""
         _require_string(task_id, "task_id")
