@@ -63,7 +63,6 @@ class GeminiDocumentExtractor:
             model=self._model,
             store=False,
             timeout=90,
-            automatic_continuation=False,
             generation_config={'max_output_tokens': 12800},
             input=[
                 {"type": "text", "text": f"Filename: {filename}\n{PROMPT}"},
