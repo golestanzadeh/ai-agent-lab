@@ -1,5 +1,16 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
+## Phase 3 tax-relevance evidence triage — 2026-11-07
+
+CONDITIONAL / BOUNDED_TECHNICAL_INDEPENDENT_PASS. Owner authorized an isolated read-only evidence triage, not new tax rules or production integration. Exact source SHA, all1082transaction references and Phase2 independent package hashes were verified. Existing evidence-first tax-agent contracts and prior evidence requirements were used without carrying2024eligibility/effects into2025. Identity labels, economic meaning and tax relevance remain separate; no financial/legal claim was accepted from historical classification alone.
+
+Results are proposed decision support, not measured tax savings:47context rows, including4existing candidates with repayment-risk context;9grouped evidence requests cover110preexistingcandidate gaps plus4credit-origin priorities.89processor attribute gaps remain deferred without declaring irrelevance or requesting blanketOwnerdecisions.929tax-relevance cases remain unresolved;43NO_CURRENT_ACTION outcomes are narrow current-scope triage, not legal exclusions.0newOwnerjudgments demanded and0existingproductionreviewflags removed. Existing case documents must be checked before collecting absent evidence. Full private metrics/row lineage/evidence requests and all8required deliverables reside only in ignored artifacts/case2025-0001/phase3-tax-triage-20261107.
+
+Two final runs have four byte-identical analytical artifacts. Separate independent reviewer verified raw-row/cents/queue applicability and conservative negative outcomes on exactharness3b0037387999222e8cc1d4316a56214087b38f2505572312b368b7d1bc67d67c:14focusedtests plus6adversarialprobes, no scopeddefect; worker14tests passed. Source files/database hashes and priorPhase2comparison remain unchanged. No production-code/configuration/SQLite/Dashboard/sourceproject mutation or externaldata transfer occurred. OPEN_ITEMS assessed in this governed change: no active OIrow closes, no HumanGate relaxes and no statutory tax acceptance is granted. Stop afterPhase3; Ownerreviews this proposed evidence queue before anylaterphase. Do not integrate enrichment or proceedautomatically.
+
+Authenticated existing app-server admission55%five-hour/93%weekly, EXPENSIVE35/15estimate fits with mandatory15reserve. Before verification51%/92% was readmitted. Final44%/91% at2026-11-07T18:16:01.180294Z, resets2026-11-07T20:50:49Z and2026-11-14T15:50:49Z. Observed account-wide delta11/2points; no capacityinterruption. Existing Owner UI edits remain preserved/excluded.
+
+
 ## Phase 2 historical financial knowledge reuse — 2026-11-07
 
 CONDITIONAL / BOUNDED_TECHNICAL_INDEPENDENT_PASS. Owner authorized read-only inspection of Personal-Finance-Analyzer and an isolated local rule-reuse field test, not production integration. Exact same protected 2025 source and all 1082 rows matched the accepted frozen source-project F03-v4 historical context. Four pure functions and a scoped evidence snapshot were frozen locally with Decimal comparisons; operational source modules/rebuild tests were never executed. Runtime has no source-project/database dependency, and no new database, service or orchestration authority exists.
