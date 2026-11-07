@@ -1,5 +1,16 @@
 # OPEN_ITEMS â€” Active Unaccepted Gates
 
+## Phase 4 real 2025 tax analysis — capacity admission deferred, 2026-11-07
+
+BLOCKED_CAPACITY before case discovery or implementation. Latest Owner order authorizes actual case-scoped evidence matching and 2025 tax analysis within existing controls; it does not waive the 15-point reserve. Fresh authenticated existing codex app-server observation2026-11-07T18:22:30.278752Z is41% five-hour/91%weekly, resets2026-11-07T20:50:49Z and2026-11-14T15:50:49Z. The closed EXPENSIVE35/15-point estimate covers evidence recovery, official2025law, existing calculations, focused tests, independent challenge and reporting. Existing deterministic LimitGuard rejects admission: projected6%five-hour/76%weekly, PROJECTED_HARD_THRESHOLD_CROSSING. No partial case processing, Drive call, new tax conclusion or product change started; no allegation that current41% itself reached the stop threshold.
+
+Exact continuation after fresh sufficient authenticated admission: resume THIS Phase4 order, resolve CASE-2025-0001/2025 through existing CaseRegistry and Google Drive API, inspect existing documents and accepted facts rather than treating Phase3 gaps as document absence, match priority insurance/medical/employment/contribution/credit evidence, verify relevant2025law, calculate only supported values with existing deterministic components, independently challenge consequential results, and expose via an accepted existing interface only if its specific gates permit. Do not repeat Phase1–3 analyses or invent a new research phase; no second checkpoint, orchestrator or scheduler. Do not infer gross income from banknet, legal taxability from movements or deductions from names. No ELSTER/external tax-data transmission.
+
+Final authenticated handoff2026-11-07T18:23:25.786190+00:00: 40.0%five-hour/91.0%weekly; resets2026-11-07T20:50:49+00:00 and2026-11-14T15:50:49+00:00. Documentation18testsPASS1.23s,exit0; scope diffcheckPASS. No taxanalysis executed.
+
+Private admission evidence:existing ignored artifacts/case2025-0001/phase4-tax-analysis-20261107/CAPACITY_ADMISSION.json. OPEN_ITEMS assessed in the same governed change: no active row closes, no previous approval changes, and only capacity prevents the next bounded mission from starting. Existing Owner UI edits, operational data and all Phase1–3 evidence remain preserved. No automatic resume or quota-reset action created. No new Owner confirmation of valid historical facts is required.
+
+
 ## Phase 3 tax-relevance evidence triage — 2026-11-07
 
 CONDITIONAL / BOUNDED_TECHNICAL_INDEPENDENT_PASS. Owner authorized an isolated read-only evidence triage, not new tax rules or production integration. Exact source SHA, all1082transaction references and Phase2 independent package hashes were verified. Existing evidence-first tax-agent contracts and prior evidence requirements were used without carrying2024eligibility/effects into2025. Identity labels, economic meaning and tax relevance remain separate; no financial/legal claim was accepted from historical classification alone.
