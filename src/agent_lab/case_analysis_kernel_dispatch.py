@@ -107,7 +107,9 @@ class CaseAnalysisKernelDispatcher:
         source=json.loads(next(s[len('document-json:'):] for s in original['inputs'] if s.startswith('document-json:')))
         target=json.loads(next(s[len('document-json:'):] for s in task['inputs'] if s.startswith('document-json:')))
         if (source['document_id']!=grant['document_id'] or source['sha256']!=grant['sha256']
-                or {key:target.get(key) for key in source}!=source
+                or {key:target.get(key) for key in source if key!='supersedes_task_id'}
+                   !={key:value for key,value in source.items() if key!='supersedes_task_id'}
+                or set(target)!=(set(source)|{'supersedes_task_id'})
                 or target.get('supersedes_task_id')!=grant['original_task_id']):raise PermissionDenied('Original source identity/digest mismatch')
         CaseAnalysisKernelDispatcher._verified_responses(k,{**original,'status':old['status']})
         old_manifest=k._manifest_row(grant['original_manifest_id'])
