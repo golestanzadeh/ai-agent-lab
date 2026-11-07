@@ -139,7 +139,7 @@ def test_installed_interactions_transport_has_zero_retries(tmp_path,monkeypatch)
         config=_translate_retry_config(http_options);observed.append(config.max_retries)
         def create(**kwargs):
             assert kwargs['store'] is False and kwargs['model']=='gemini-3.8-flash'
-            assert kwargs['automatic_continuation'] is False
+            assert 'automatic_continuation' not in kwargs
             def denied(attempt):calls.append(attempt);raise RuntimeError('synthetic provider failure')
             return retry_with_attempt_count_backoff(denied,max_retries=config.max_retries)
         return SimpleNamespace(interactions=SimpleNamespace(create=create),close=lambda:None)

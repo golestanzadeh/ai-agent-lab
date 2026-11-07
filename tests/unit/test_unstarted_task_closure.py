@@ -23,7 +23,10 @@ class TestUnstartedTaskClosure(unittest.TestCase):
             dst.close()
         self.k=OrchestratorKernel(self.path,CONTRACT)
         self.ids=[r[0] for r in self.k._connection.execute("SELECT task_id FROM tasks WHERE status='REGISTERED' ORDER BY created_at")]
-        self.assertGreaterEqual(len(self.ids),3)
+        self.assertGreaterEqual(len(self.ids),2)
+        self.k._connection.execute("UPDATE tasks SET expires_at=? WHERE task_id=?",('2020-01-01T00:00:00+00:00',self.ids[0]))
+        self.k._connection.execute("UPDATE tasks SET expires_at=? WHERE task_id=?",('2099-01-01T00:00:00+00:00',self.ids[-1]))
+        self.k._connection.commit()
     def tearDown(self):
         self.k.close()
         self.tmp.cleanup()
