@@ -1,7 +1,7 @@
 """Bounded existing-Kernel adapter; tasks/manifests/responses are the only execution state."""
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime,timedelta,timezone
-import hashlib,json
+import hashlib,json,logging
 from pathlib import Path
 from threading import RLock
 from uuid import uuid4
@@ -156,6 +156,7 @@ class CaseAnalysisKernelDispatcher:
                 manifest=self._activate(k,task)
                 self.worker.process_one(request,task,manifest,k,self)
         except Exception as exc:
+            logging.getLogger(__name__).exception('UI03 successor dispatch failed; task_id=%s',task['task_id'])
             try:
                 with self._kernel() as k:
                     row=k._connection.execute('SELECT manifest_id FROM manifests WHERE task_id=?',(task['task_id'],)).fetchone()
