@@ -1,3 +1,6 @@
+
+Authenticated publication handoff 2026-11-09T18:01:30.296233+00:00: existing codex app-server 41.0% five-hour / 79.0% weekly; reset 2026-11-09T22:24:31+00:00 / 2026-11-14T15:50:50+00:00. Mandatory15reserve preserved. Published implementation47048ea and evidence bce0bcf verified against remote; final publication commit is discoverable by this entry. Stop reason is the specific Owner-authentication/automatic-restart-approval boundary, not capacity.
+
 ## Recovery, diagnostics and reviewed projection — verified handoff 2026-11-09
 
 PARTIAL_DELIVERY / INDEPENDENT_IMPLEMENTATION_PASS / OWNER_AUTHENTICATION_REQUIRED. Exact implementation47048ea9c85f698dd726d1aa62f7fc6c88046821 passed separate review after F01 interrupted approval recovery and F02 unauthenticated HTTP approval were corrected. HTTP approval fails closed; headers/constant acknowledgement cannot approve an Owner Human Gate. Existing trusted local Owner broker remains the authorized boundary. Preparation is not approval, dispatch or a provider attempt. No failed PDF was resent in this mission.
