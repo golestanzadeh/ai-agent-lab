@@ -54,3 +54,24 @@ def test_sanitized_diagnostic_has_no_exception_message_or_payload(tmp_path):
         payloads=[r[0] for r in k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_DIAGNOSTIC_RECORDED'")]
         assert len(payloads)==2 and 'SECRET_TOKEN' not in json.dumps(payloads)
     assert all(x['diagnostic']['stage']=='PROVIDER_ATTEMPT' and x['diagnostic']['provider_outcome_uncertain'] for x in p['documents'])
+
+
+def test_approved_unclaimed_plan_resumes_after_interruption_and_restart(tmp_path, monkeypatch):
+    d,e=failed(tmp_path)
+    old=next(x for x in d.progress(REQ)['documents'] if x['processing_status']=='FAILED')
+    plan=d.prepare_retry(REQ,old['task_id']);tid=plan['successor_task_id'];calls=list(e.calls)
+    def interrupted(*args):raise PermissionDenied('Dispatch unavailable')
+    monkeypatch.setattr(d,'owner_successor',interrupted)
+    with pytest.raises(PermissionDenied):d.approve_retry(REQ,tid,ACK)
+    assert e.calls==calls
+    reopened,_=make(tmp_path);reopened.worker=d.worker
+    with reopened._kernel() as k:
+        assert k._connection.execute('SELECT status FROM tasks WHERE task_id=?',(tid,)).fetchone()[0]=='REGISTERED'
+        assert k._connection.execute("SELECT count(*) FROM audit_events WHERE event_type='UI03_SUCCESSOR_AUTHORIZED' AND entity_id=?",(old['task_id'],)).fetchone()[0]==0
+    assert reopened.prepare_retry(REQ,old['task_id'])==plan
+    e.fail=None;reopened.approve_retry(REQ,tid,ACK)
+    assert wait(reopened)['completed']==2 and e.calls==calls+['a.pdf']
+    with pytest.raises(PermissionDenied):reopened.approve_retry(REQ,tid,ACK)
+    with reopened._kernel() as k:
+        k.verify_audit_chain()
+        assert k._connection.execute("SELECT count(*) FROM audit_events WHERE event_type='HUMAN_GATE_DECIDED' AND entity_id=?",(tid,)).fetchone()[0]==1

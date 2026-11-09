@@ -34,13 +34,8 @@
             const plan=await post('/cases/analysis/retry/prepare',{failed_task_id:d.task_id});
             if(plan.document_id!==d.document_id||plan.sha256!==d.sha256||plan.case_id!==scope.case_id||String(plan.tax_year)!==scope.tax_year)throw Error('Scope mismatch');
             planOpen=true;
-            card.append(node('p',fa?'این مرحله هنوز فراخوانی Gemini نیست. تأیید زیر فقط یک تلاش جدید با تاریخچهٔ مستقل را مجاز می‌کند.':'Noch kein Gemini-Aufruf. Die folgende Zustimmung erlaubt genau einen neuen, separat protokollierten Versuch.'));
+            card.append(node('p',fa?'طرح آماده شد؛ هیچ درخواست Gemini ارسال نشده است. تأیید مرورگری تا پذیرش احراز هویت مالک غیرفعال است. تأیید فقط از مسیر محلیِ مورد اعتمادِ موجود انجام می‌شود.':'Plan vorbereitet; kein Gemini-Aufruf. Browser-Genehmigung bleibt bis zur akzeptierten Eigentümer-Authentifizierung gesperrt. Nur der bestehende vertrauenswürdige lokale Genehmigungsweg ist zulässig.'));
             card.append(node('p',`SHA-256: ${plan.sha256} | ${plan.run_id} | ${plan.model} | max_retries=0 | store=false`));
-            const label=document.createElement('label'),ack=document.createElement('input');ack.type='checkbox';
-            label.append(ack,document.createTextNode(fa?' نتیجهٔ قبلی ممکن است نامطمئن باشد؛ یک ارسال جدید همین PDF به Gemini را مجاز می‌کنم.':' Der vorherige Ausgang kann ungewiss sein. Ich genehmige eine neue Übermittlung genau dieses PDFs an Gemini.'));
-            const approve=node('button',fa?'تأیید مالک و اجرای یک تلاش':'Als Eigentümer einen Versuch genehmigen');approve.type='button';approve.disabled=true;ack.onchange=()=>approve.disabled=!ack.checked;
-            approve.onclick=async()=>{approve.disabled=true;try{const result=await post('/cases/analysis/retry/approve',{successor_task_id:plan.successor_task_id,acknowledgement:'APPROVE_ONE_ATTEMPT_INCLUDING_UNCERTAIN_OUTCOME'});card.append(node('p',(fa?'ثبت شد؛ نتیجه هنوز تأیید نشده: ':'Registriert; Ergebnis noch nicht bestätigt: ')+result.run_id));planOpen=false;}catch(e){card.append(node('p',e.message));}};
-            card.append(label,approve);
           }catch(e){card.append(node('p',e.message));b.disabled=false;}
         };
         card.append(b);
@@ -62,12 +57,14 @@
     const labels={employment_gross_from_this_certificate:fa?'ناخالص گواهی حقوق':'Brutto laut Bescheinigung',employee_expense_allowance_2025:fa?'کسر مقطوع شغلی':'Arbeitnehmer-Pauschbetrag',employment_income_component_using_allowance:fa?'مؤلفهٔ درآمد شغلی؛ نه درآمد مشمول مالیات کل':'Einkünfteanteil aus Arbeit; nicht gesamtes z.v.E.',employee_social_contributions_document_total:fa?'جمع پرداخت‌های بیمه؛ نه کسر قطعی':'Bescheinigte Sozialbeiträge; kein bestätigter Abzug',wage_tax_withheld:fa?'مالیات حقوق کسرشده':'Einbehaltene Lohnsteuer'};
     for(const [k,v] of Object.entries(p.subtotals))if(typeof v==='string')verified.append(node('p',`${labels[k]||k}: ${v} EUR`));
     const conditional=document.createElement('details');conditional.append(node('summary',fa?'ارقام مشروط؛ هنوز پذیرفته نشده':'Bedingte Beträge; noch nicht akzeptiert'));
-    for(const [k,v] of Object.entries(p.conditional))conditional.append(node('p',`${k}: ${String(v)}`));verified.append(conditional);
+    const conditionalLabels={school_deduction_if_2025eligibility_and_child_attribution_proved:fa?'شهریه؛ مشروط به شرایط مدرسه و فرزند':'Schulgeld; Schul- und Kindvoraussetzungen offen',section35a_potential_credit_if_year_payment_and_eligibility_proved:fa?'اعتبار خدمات خانه؛ سال و شرایط هنوز باز':'Haushaltsnahe Steuerermäßigung; Jahr und Voraussetzungen offen',total_pension_basic_health_care_if_conditions_hold:fa?'بازنشستگی/درمان/مراقبت؛ برآورد مشروط':'Altersvorsorge/Kranken-/Pflegeversicherung; bedingte Berechnung'};
+    for(const [k,v] of Object.entries(p.conditional))conditional.append(node('p',`${conditionalLabels[k]||k}: ${String(v)}`));verified.append(conditional);
     const links=document.createElement('details');links.append(node('summary',(fa?'پیوندهای سند و بانک: ':'Dokument-Bank-Verknüpfungen: ')+p.links.length));
     for(const l of p.links)links.append(node('p',`${l.document_id} | ${l.page} | ${l.row_id} | ${l.amount} EUR`));verified.append(links);
-    if(p.spouse_payroll){verified.append(node('h4',fa?'شواهد فیش همسر؛ بدون برون‌یابی':'Gehaltsbelege der Eheperson; ohne Hochrechnung'));for(const [k,v] of Object.entries(p.spouse_payroll))verified.append(node('p',`${k}: ${String(v)}`));}
+    const spouseLabels={source_months:fa?'ماه‌های سند':'Belegmonate',gross_year_to_date:fa?'ناخالص سالانهٔ درج‌شده در فیش دسامبر':'Jahresbrutto laut Dezemberbeleg',bank_credits_2025:fa?'جمع واریزهای واقعی بانک':'Summe tatsächlicher Bankgutschriften',bank_payment_count:fa?'تعداد واریزهای واقعی':'Anzahl tatsächlicher Zahlungen',tax_status:fa?'وضعیت مالیاتی؛ هنوز نهایی نیست':'Steuerstatus; noch nicht abschließend'};
+    if(p.spouse_payroll){verified.append(node('h4',fa?'شواهد فیش همسر؛ بدون برون‌یابی، نه پذیرش مالیات نهایی':'Gehaltsbelege der Eheperson; ohne Hochrechnung, keine abschließende Steuerakzeptanz'));for(const [k,v] of Object.entries(p.spouse_payroll))verified.append(node('p',`${spouseLabels[k]||k}: ${String(v)}`));}
     verified.append(node('h4',fa?'سؤالات و شواهد باقی‌مانده':'Offene Fragen und Nachweise'));
-    for(const q of p.questions)verified.append(node('p',q));
+    for(const q of p.questions)verified.append(node('p',typeof q==='string'?q:q[panel.dataset.lang]));
     verified.append(node('p',value.result.run_id));
   }).catch(()=>verified.append(node('p',fa?'خواندن نتیجهٔ تجمیعیِ تأییدشده ممکن نیست؛ دادهٔ جایگزین نمایش داده نمی‌شود.':'Verifiziertes Gesamtergebnis nicht verfügbar; keine Ersatzdaten.')));
 })();

@@ -32,7 +32,10 @@ def validate(request, payload):
     if Decimal(c['credits'])-Decimal(c['debits'])!=Decimal(c['net']):raise ValueError('CSV reconciliation mismatch')
     if not isinstance(payload['subtotals'],dict) or not isinstance(payload['conditional'],dict):raise ValueError('Invalid subtotals')
     if not isinstance(payload['links'],list) or len(payload['links'])>10000:raise ValueError('Invalid evidence links')
-    if not isinstance(payload['questions'],list) or any(not isinstance(x,str) or len(x)>2000 for x in payload['questions']):raise ValueError('Invalid questions')
+    def question(x):
+        return ((isinstance(x,str) and len(x)<=2000) or
+                (isinstance(x,dict) and set(x)=={'fa-IR','de-DE'} and all(isinstance(v,str) and len(v)<=2000 for v in x.values())))
+    if not isinstance(payload['questions'],list) or any(not question(x) for x in payload['questions']):raise ValueError('Invalid questions')
 
 
 def import_reviewed(d, request, payload, *, source_bindings, authority_reference, verify_case):

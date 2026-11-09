@@ -1,3 +1,8 @@
+
+## Recovery candidate review corrections — 2026-11-09
+
+Exact candidate 3fbad0963de76bdbae9c5b7faf1bd8f35cccfa9a received independent FAIL: F01 approved/unclaimed interruption could not resume; F02 HTTP headers cannot establish actual Owner Human Gate authority under the accepted UI03 contract. Corrections preserve one-use claims and original approval on resume; HTTP approval now unconditionally rejects OWNER_AUTHENTICATION_REQUIRED. UI preparation/diagnostics/read-only reviewed-result projection remain available, but browser execution approval is blocked pending an accepted authenticated Owner boundary; existing trusted local Owner broker remains separate. No provider call or canonical financial mutation performed for these tests. Focused correction suite8passed; exact corrected commit review pending. No active open-item row closes, and all original protected-operation/tax-acceptance gates remain effective.
+
 # Authoritative current project truth — 2026-10-20
 
 ## Recovery, diagnostics and verified case projection — candidate 2026-11-09

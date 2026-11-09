@@ -478,13 +478,10 @@ def create_local_case_app(*, kernel_dispatch=None):
                                      tax_year: int = Form(...), successor_task_id: str = Form(...), acknowledgement: str = Form(...)):
         if request.headers.get('origin')!='http://127.0.0.1:8766' or request.headers.get('host')!='127.0.0.1:8766':
             raise HTTPException(status_code=403,detail='Origin rejected')
-        try:
-            if not verify_analysis_case(case_id,tax_year,host.owner_id):raise PermissionError()
-            from starlette.concurrency import run_in_threadpool
-            receipt=await run_in_threadpool(kernel_dispatch.approve_retry,AnalysisRequest(case_id,tax_year,host.owner_id),successor_task_id,acknowledgement)
-            return JSONResponse(receipt,headers={'Cache-Control':'no-store'})
-        except (PermissionError,ValueError,KernelError) as exc:
-            raise HTTPException(status_code=409,detail='Owner recovery approval rejected') from exc
+        # The existing contract forbids an HTTP caller from minting Owner Human
+        # Gate authority. Host/Origin authenticate neither a person nor a token.
+        # Keep this closed until an accepted Owner authentication boundary exists.
+        raise HTTPException(status_code=409, detail='OWNER_AUTHENTICATION_REQUIRED')
 
     @app.get('/cases/analysis/progress')
     async def case_analysis_progress(request: __import__('fastapi').Request, case_id: str, tax_year: int):

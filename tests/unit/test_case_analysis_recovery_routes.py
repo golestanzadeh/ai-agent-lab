@@ -30,7 +30,13 @@ def test_actual_self_service_routes_gate_single_document_and_restart(setup,host_
     form={**data,'successor_task_id':plan['successor_task_id'],'acknowledgement':'NO'}
     assert client.post('/cases/analysis/retry/approve',data=form,headers=headers).status_code==409
     e.fail=None;form['acknowledgement']='APPROVE_ONE_ATTEMPT_INCLUDING_UNCERTAIN_OUTCOME'
-    assert client.post('/cases/analysis/retry/approve',data=form,headers=headers).status_code==200
+    response=client.post('/cases/analysis/retry/approve',data=form,headers=headers)
+    assert response.status_code==409 and response.json()['detail']=='OWNER_AUTHENTICATION_REQUIRED'
+    assert e.calls==['f1.pdf']
+    with d._kernel() as k:
+        assert k._connection.execute("SELECT status FROM task_human_gates WHERE task_id=?",(plan['successor_task_id'],)).fetchone()[0]=='PENDING'
+    # Synthetic trusted-local broker exercises the separate approved boundary.
+    d.approve_retry(AnalysisRequest(CASE,2025,OWNER),plan['successor_task_id'],form['acknowledgement'])
     d._pool.submit(lambda:None).result(timeout=10)
     result=client.get('/cases/analysis/progress',params=data).json()
     assert result['completed']==1 and len(result['history'])==1 and e.calls==['f1.pdf','f1.pdf']

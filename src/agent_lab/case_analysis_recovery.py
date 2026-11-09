@@ -85,16 +85,23 @@ def approve(d, request, task_id, acknowledgement):
     with d._lock, d._kernel() as k, k.atomic_execution():
         tasks = {t['task_id']: t for t in d._tasks(k, request)}
         task = tasks.get(task_id)
-        if task is None or task['status'] != 'HUMAN_REQUIRED':
+        if task is None or task['status'] not in ('HUMAN_REQUIRED', 'REGISTERED'):
             raise PermissionDenied('Unconsumed recovery plan required')
         grant = json.loads(next(v[len('successor-json:'):] for v in task['inputs'] if v.startswith('successor-json:')))
         if datetime.now(timezone.utc) >= datetime.fromisoformat(grant['expires_at']):
             raise PermissionDenied('Recovery approval expired')
         gate = k._connection.execute("SELECT status FROM task_human_gates WHERE task_id=? AND trigger='authority_ambiguity'", (task_id,)).fetchone()
-        if gate is None or gate[0] != 'PENDING':
+        if gate is None:
+            raise PermissionDenied('Approval unavailable')
+        if task['status'] == 'HUMAN_REQUIRED' and gate[0] == 'PENDING':
+            k.record_human_gate_decision(task_id, 'authority_ambiguity', 'APPROVED',
+                                        actor_id='HUMAN_PROJECT_OWNER', authority_reference=_digest(grant))
+        elif task['status'] != 'REGISTERED' or gate[0] != 'APPROVED':
             raise PermissionDenied('Approval already used or unavailable')
-        k.record_human_gate_decision(task_id, 'authority_ambiguity', 'APPROVED',
-                                    actor_id='HUMAN_PROJECT_OWNER', authority_reference=_digest(grant))
+        # An interrupted approved-but-unclaimed admission may resume. Verify the
+        # original durable approval and all source/scope bindings; never mint a
+        # second approval or permit a consumed claim to dispatch again.
+        d._successor_binding(k, {**task, 'status': 'REGISTERED'}, execution=True, claimed=False)
     return d.owner_successor(request, task_id)
 
 
