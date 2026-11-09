@@ -1,3 +1,4 @@
+- `REAL_DASHBOARD_STARTUP_RUNBOOK_2026-11-07.md` — existing local Dashboard startup and recovery evidence; not protected-operation acceptance.
 # Documentation Index
 
 - `ui03-gemini-credential-dependency-audit-20261029.md` — existing accepted explicit-key credential and store=False route closure; not full document-execution acceptance.

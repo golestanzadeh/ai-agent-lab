@@ -1,27 +1,24 @@
-"""Unstarted task disposition regression tests on isolated database copies."""
-import os
-import sqlite3
+"""Unstarted task disposition regression tests using synthetic Kernel intents."""
 import tempfile
 import unittest
 from pathlib import Path
 from agent_lab.orchestrator_kernel import OrchestratorKernel, PermissionDenied, StateTransitionError
 
 ROOT=Path(__file__).resolve().parents[2]
-DB=Path(os.environ["LOCALAPPDATA"])/"AI-Tax-Agent"/"Cases"/"orchestrator-kernel.sqlite"
 CONTRACT=ROOT/"contracts"/"orchestrator"/"v1"
 
 class TestUnstartedTaskClosure(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.path=Path(self.tmp.name)/"test.sqlite"
-        src=sqlite3.connect(DB)
-        dst=sqlite3.connect(self.path)
-        try:
-            src.backup(dst)
-        finally:
-            src.close()
-            dst.close()
         self.k=OrchestratorKernel(self.path,CONTRACT)
+        self.addCleanup(self.tmp.cleanup)
+        self.addCleanup(self.k.close)
+        from agent_lab.case_analysis_kernel_dispatch import CaseAnalysisKernelDispatcher
+        from agent_lab.case_analysis_executor import AnalysisRequest
+        dispatcher=CaseAnalysisKernelDispatcher(self.path,CONTRACT)
+        for run in ('RUN-TEST-ONE','RUN-TEST-TWO'):
+            self.k.register_task(dispatcher._task(AnalysisRequest('TEST-CLOSURE',2025,'OWNER-TEST'),run),gate_triggers=())
         self.ids=[r[0] for r in self.k._connection.execute("SELECT task_id FROM tasks WHERE status='REGISTERED' ORDER BY created_at")]
         self.assertGreaterEqual(len(self.ids),2)
         self.k._connection.execute("UPDATE tasks SET expires_at=? WHERE task_id=?",('2020-01-01T00:00:00+00:00',self.ids[0]))

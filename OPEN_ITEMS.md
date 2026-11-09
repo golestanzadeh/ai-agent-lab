@@ -1,3 +1,17 @@
+## Recovery, diagnostics and reviewed projection — verified handoff 2026-11-09
+
+PARTIAL_DELIVERY / INDEPENDENT_IMPLEMENTATION_PASS / OWNER_AUTHENTICATION_REQUIRED. Exact implementation47048ea9c85f698dd726d1aa62f7fc6c88046821 passed separate review after F01 interrupted approval recovery and F02 unauthenticated HTTP approval were corrected. HTTP approval fails closed; headers/constant acknowledgement cannot approve an Owner Human Gate. Existing trusted local Owner broker remains the authorized boundary. Preparation is not approval, dispatch or a provider attempt. No failed PDF was resent in this mission.
+
+Historical sixth-PDF lineage is recovered, but its original traceback/key was not retained: exact KeyError root cause remains UNKNOWN. A reproduced missing-explicit-key path is now a pre-provider configuration diagnostic, not proof of historical attribution. Sanitized stage/code/task/run/document diagnostics reuse existing audit records. Closed/unstarted plans no longer hide the actual failed document.
+
+Reviewed CSV/subtotal/link evidence was imported once through normal Kernel permission/budget/audit records; repeated import returned the same run. Fresh-process canonical readback verifies six current PDFs, five successful candidates and one failure; CSV1082records and19links are durably projected. All19 original task/manifest/response histories and153 prior audit events remain unchanged. Two original payroll pages and December cumulative ZV-Brutto were independently inspected; no annual taxable gross was inferred and no monthly extrapolation performed. Partial employment income is not final taxable income; conditional deductions remain conditional. Financial artifacts remain protected/ignored, not in Git.
+
+Actual running-server restart was rejected by automatic approval review (policy supplied no more specific reason). No workaround attempted. New-code browser rendering, Persian/German live verification and real server restart remain PENDING; fresh-process persistence readback is not a substitute. Existing unrelated Owner UI changes remain untouched/uncommitted. Approval/Submission and all existing security/tax gates remain unchanged.
+
+Worker verification: focused8PASS; relevant non-documentation39PASS; documentation18PASS after indexing a pre-existing runbook; unstarted-task4PASS after replacing its production-dependent fixture with synthetic intents. Initial documentation1FAIL and closure4FAIL were diagnosed and corrected; no production code altered for those fixture/index failures. Independent correction37PASS; overlapping final8PASS plus JavaScript syntaxPASS. Exact review evidence remains private under existing artifacts/case2025-0001/recovery-20261109. No final tax, operational deployment or Owner browser acceptance granted.
+
+OPEN_ITEMS assessed in this same change: no active row closes. Next executable action: Owner restarts the existing local launcher, then verify the current case Analysis page in both languages and restart readback. Browser grant minting stays disabled until a specifically accepted authenticated Owner approval boundary exists; do not impersonate the Owner or automatically resend the PDF. Existing trusted-local approval requires the actual bounded decision and unchanged source digest.
+
 
 ## Recovery candidate review corrections — 2026-11-09
 
