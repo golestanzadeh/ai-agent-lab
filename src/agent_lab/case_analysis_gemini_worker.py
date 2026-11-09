@@ -14,37 +14,50 @@ class GeminiCaseDocumentWorker:
         dispatcher.authorize(kernel,task,manifest)
         import json
         meta=json.loads(next(s[len('document-json:'):] for s in task['inputs'] if s.startswith('document-json:')))
-        entry,content=self.host.get_case_document(request.case_id,request.tax_year,meta['document_id'])
-        if (entry['id']!=meta['document_id'] or hashlib.sha256(content).hexdigest()!=meta['sha256']
-                or not content.startswith(b'%PDF-') or len(content)>20*1024*1024):
-            raise PermissionDenied('Exact document source binding mismatch')
         started=time.monotonic()
+        stage='SOURCE_VERIFICATION'
         try:
+            entry,content=self.host.get_case_document(request.case_id,request.tax_year,meta['document_id'])
+            if (entry['id']!=meta['document_id'] or hashlib.sha256(content).hexdigest()!=meta['sha256']
+                    or not content.startswith(b'%PDF-') or len(content)>20*1024*1024):
+                raise PermissionDenied('Exact document source binding mismatch')
+            stage='KERNEL_AUTHORIZATION'
             dispatcher.authorize(kernel,task,manifest)
             if not kernel.consume_budget(manifest,tokens=100000,tool_calls=1,cost_usd=5.0).allowed:raise PermissionDenied('Budget denied')
             if self._extractor is None:
+                stage='PROVIDER_CONFIGURATION'
+                from agent_lab.case_analysis_diagnostics import ProviderConfigurationMissing
+                api_key=os.environ.get('GEMINI_API_KEY')
+                if not api_key or not api_key.strip():
+                    raise ProviderConfigurationMissing()
                 from google import genai
                 from google.genai import types
                 from agent_lab.gemini_document_extraction import GeminiDocumentExtractor
                 # Installed Interactions bridge maps attempts to RETRY COUNT.
                 # Zero, not one, enforces this task's single provider attempt.
-                client=genai.Client(api_key=os.environ['GEMINI_API_KEY'],http_options=types.HttpOptions(base_url='https://generativelanguage.googleapis.com',timeout=90000,retry_options=types.HttpRetryOptions(attempts=0)))
+                client=genai.Client(api_key=api_key,http_options=types.HttpOptions(base_url='https://generativelanguage.googleapis.com',timeout=90000,retry_options=types.HttpRetryOptions(attempts=0)))
                 try:
                     dispatcher.authorize(kernel,task,manifest)
+                    stage='PROVIDER_ATTEMPT'
                     result=GeminiDocumentExtractor(client).extract(content,filename=entry['name'])
                 finally:client.close()
             else:
                 dispatcher.authorize(kernel,task,manifest)
+                stage='PROVIDER_ATTEMPT'
                 result=self._extractor.extract(content,filename=entry['name'])
+            stage='RESULT_PERSISTENCE'
             if time.monotonic()-started>task['timeout_seconds']:raise TimeoutError('Deadline exceeded')
             dispatcher.authorize(kernel,task,manifest)
             dispatcher._finish(kernel,task,manifest,{'processing_status':'HUMAN_REVIEW_REQUIRED','finished_at':now(),
                 'extraction_payload':asdict(result),'evidence_references':[{'page':f.page,'quote':f.evidence} for f in result.fields],
                 'acceptance_status':'NOT_ACCEPTED_CANDIDATE_ONLY','needs_human_review':True,'error_details':None})
         except Exception as exc:
-            logging.getLogger(__name__).exception('UI03 document extraction failed; task_id=%s', task['task_id'])
+            from agent_lab.case_analysis_diagnostics import diagnostic,record
+            detail=diagnostic(exc,stage,task,meta)
+            record(kernel,task,manifest,detail)
+            logging.getLogger(__name__).error('UI03 failure task=%s code=%s',task['task_id'],detail['error_code'])
             dispatcher._finish(kernel,task,manifest,{'processing_status':'FAILED','finished_at':now(),
-                'error_details':type(exc).__name__,'needs_human_review':True,'retry':'EXPLICIT_RECONCILIATION_REQUIRED'},failed=True)
+                'error_details':type(exc).__name__,'diagnostic':detail,'needs_human_review':True,'retry':'EXPLICIT_RECONCILIATION_REQUIRED'},failed=True)
     def process(self,request,batch,batch_manifest,kernel,dispatcher):
         dispatcher.authorize(kernel,batch,batch_manifest)
         snapshot=self.host.list_case_documents(request.case_id,request.tax_year)

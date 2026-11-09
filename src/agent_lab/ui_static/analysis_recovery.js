@@ -1,0 +1,73 @@
+(() => {
+  'use strict';
+  const panel=document.getElementById('analysis-readiness');
+  if(!panel)return;
+  const fa=panel.dataset.lang==='fa-IR';
+  const scope={case_id:panel.dataset.caseId,tax_year:panel.dataset.taxYear};
+  const area=document.createElement('section');area.id='document-recovery';panel.append(area);
+  const node=(tag,value)=>{const n=document.createElement(tag);n.textContent=value;return n;};
+  const codes={
+    PROVIDER_CONFIGURATION_MISSING:fa?'کلید Gemini در فرایند اجرا تنظیم نشده است؛ پس از اصلاح، یک تلاش جدید را تأیید کنید.':'Der explizite Gemini-Schlüssel fehlt im Prozess. Nach der Konfiguration einen neuen Versuch genehmigen.',
+    LEGACY_ERROR_CONTEXT_UNAVAILABLE:fa?'مرحله و traceback خطای قدیمی ذخیره نشده؛ علت قطعی بازیابی نشده است.':'Stufe und Traceback des alten Fehlers wurden nicht gespeichert; Ursache nicht belegt.',
+    PROVIDER_OUTCOME_UNCERTAIN:fa?'نتیجهٔ فراخوانی سرویس نامطمئن است؛ تلاش خودکار ممنوع است.':'Der Provider-Ausgang ist ungewiss. Kein automatischer Wiederholungsversuch.',
+    AUTHORIZATION_DENIED:fa?'مجوز Kernel رد شد؛ محدوده و Human Gate بررسی شود.':'Kernel-Autorisierung verweigert. Umfang und Human Gate prüfen.',
+    DOCUMENT_REJECTED:fa?'هویت یا قالب سند تأیید نشد.':'Dokumentidentität oder Format nicht bestätigt.',
+    APPLICATION_ERROR:fa?'خطای برنامه؛ اطلاعات فنی پاک‌سازی‌شده ثبت شده است.':'Anwendungsfehler; bereinigter technischer Kontext gespeichert.'
+  };
+  async function post(url,extra){
+    const r=await fetch(url,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({...scope,...extra})});
+    if(!r.ok)throw Error(fa?'عملیات امن رد شد؛ وضعیت را بازخوانی کنید.':'Sicherer Vorgang abgelehnt. Status neu laden.');
+    return r.json();
+  }
+  let planOpen=false;
+  function render(p){
+    if(planOpen||p.case_id!==scope.case_id||String(p.tax_year)!==scope.tax_year)return;
+    area.replaceChildren();
+    for(const d of p.documents.filter(x=>x.diagnostic)){
+      const card=document.createElement('article'),diag=d.diagnostic;
+      card.append(node('h3',d.filename),node('p',codes[diag.error_code]||codes.APPLICATION_ERROR));
+      card.append(node('p',`${diag.error_code} | ${diag.stage} | ${diag.timestamp} | ${diag.run_id}`));
+      if(d.processing_status==='FAILED'){
+        const b=node('button',fa?'بررسی تلاش جدید فقط برای این سند':'Neuen Versuch nur für dieses Dokument prüfen');b.type='button';
+        b.onclick=async()=>{b.disabled=true;
+          try{
+            const plan=await post('/cases/analysis/retry/prepare',{failed_task_id:d.task_id});
+            if(plan.document_id!==d.document_id||plan.sha256!==d.sha256||plan.case_id!==scope.case_id||String(plan.tax_year)!==scope.tax_year)throw Error('Scope mismatch');
+            planOpen=true;
+            card.append(node('p',fa?'این مرحله هنوز فراخوانی Gemini نیست. تأیید زیر فقط یک تلاش جدید با تاریخچهٔ مستقل را مجاز می‌کند.':'Noch kein Gemini-Aufruf. Die folgende Zustimmung erlaubt genau einen neuen, separat protokollierten Versuch.'));
+            card.append(node('p',`SHA-256: ${plan.sha256} | ${plan.run_id} | ${plan.model} | max_retries=0 | store=false`));
+            const label=document.createElement('label'),ack=document.createElement('input');ack.type='checkbox';
+            label.append(ack,document.createTextNode(fa?' نتیجهٔ قبلی ممکن است نامطمئن باشد؛ یک ارسال جدید همین PDF به Gemini را مجاز می‌کنم.':' Der vorherige Ausgang kann ungewiss sein. Ich genehmige eine neue Übermittlung genau dieses PDFs an Gemini.'));
+            const approve=node('button',fa?'تأیید مالک و اجرای یک تلاش':'Als Eigentümer einen Versuch genehmigen');approve.type='button';approve.disabled=true;ack.onchange=()=>approve.disabled=!ack.checked;
+            approve.onclick=async()=>{approve.disabled=true;try{const result=await post('/cases/analysis/retry/approve',{successor_task_id:plan.successor_task_id,acknowledgement:'APPROVE_ONE_ATTEMPT_INCLUDING_UNCERTAIN_OUTCOME'});card.append(node('p',(fa?'ثبت شد؛ نتیجه هنوز تأیید نشده: ':'Registriert; Ergebnis noch nicht bestätigt: ')+result.run_id));planOpen=false;}catch(e){card.append(node('p',e.message));}};
+            card.append(label,approve);
+          }catch(e){card.append(node('p',e.message));b.disabled=false;}
+        };
+        card.append(b);
+      }
+      area.append(card);
+    }
+    if(p.history.length){const h=document.createElement('details');h.append(node('summary',fa?'تاریخچهٔ تلاش‌های قبلی':'Historie früherer Versuche'));for(const d of p.history)h.append(node('p',`${d.filename} | ${d.processing_status} | ${d.run_id}`));area.append(h);}
+  }
+  document.addEventListener('case-analysis-progress',e=>render(e.detail));
+  fetch('/cases/analysis/progress?'+new URLSearchParams(scope),{cache:'no-store',credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(p=>p&&render(p)).catch(()=>{});
+  const verified=document.createElement('section');verified.id='verified-case-results';panel.append(verified);
+  fetch('/cases/analysis/verified-results?'+new URLSearchParams(scope),{cache:'no-store',credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(value=>{
+    if(value.case_id!==scope.case_id||String(value.tax_year)!==scope.tax_year)throw Error();
+    if(!value.result){verified.append(node('p',fa?'نتیجهٔ تجمیعی تأییدشده هنوز وارد نشده است.':'Noch kein verifiziertes Gesamtergebnis importiert.'));return;}
+    const p=value.result.payload;
+    verified.append(node('h3',fa?'نتایج مستند CSV و محاسبات جزئی':'Belegte CSV-Ergebnisse und Teilberechnungen'));
+    verified.append(node('p',fa?'ارقام مستند و راستی‌آزمایی‌شده؛ درآمد مشمول مالیات یا استرداد نهایی نیست.':'Belegte, verifizierte Teilbeträge; kein endgültiges zu versteuerndes Einkommen oder Erstattungsbetrag.'));
+    verified.append(node('p',`CSV: ${p.csv.status} | ${p.csv.row_count} | +${p.csv.credits} / -${p.csv.debits} EUR | ${p.csv.net} EUR`));
+    const labels={employment_gross_from_this_certificate:fa?'ناخالص گواهی حقوق':'Brutto laut Bescheinigung',employee_expense_allowance_2025:fa?'کسر مقطوع شغلی':'Arbeitnehmer-Pauschbetrag',employment_income_component_using_allowance:fa?'مؤلفهٔ درآمد شغلی؛ نه درآمد مشمول مالیات کل':'Einkünfteanteil aus Arbeit; nicht gesamtes z.v.E.',employee_social_contributions_document_total:fa?'جمع پرداخت‌های بیمه؛ نه کسر قطعی':'Bescheinigte Sozialbeiträge; kein bestätigter Abzug',wage_tax_withheld:fa?'مالیات حقوق کسرشده':'Einbehaltene Lohnsteuer'};
+    for(const [k,v] of Object.entries(p.subtotals))if(typeof v==='string')verified.append(node('p',`${labels[k]||k}: ${v} EUR`));
+    const conditional=document.createElement('details');conditional.append(node('summary',fa?'ارقام مشروط؛ هنوز پذیرفته نشده':'Bedingte Beträge; noch nicht akzeptiert'));
+    for(const [k,v] of Object.entries(p.conditional))conditional.append(node('p',`${k}: ${String(v)}`));verified.append(conditional);
+    const links=document.createElement('details');links.append(node('summary',(fa?'پیوندهای سند و بانک: ':'Dokument-Bank-Verknüpfungen: ')+p.links.length));
+    for(const l of p.links)links.append(node('p',`${l.document_id} | ${l.page} | ${l.row_id} | ${l.amount} EUR`));verified.append(links);
+    if(p.spouse_payroll){verified.append(node('h4',fa?'شواهد فیش همسر؛ بدون برون‌یابی':'Gehaltsbelege der Eheperson; ohne Hochrechnung'));for(const [k,v] of Object.entries(p.spouse_payroll))verified.append(node('p',`${k}: ${String(v)}`));}
+    verified.append(node('h4',fa?'سؤالات و شواهد باقی‌مانده':'Offene Fragen und Nachweise'));
+    for(const q of p.questions)verified.append(node('p',q));
+    verified.append(node('p',value.result.run_id));
+  }).catch(()=>verified.append(node('p',fa?'خواندن نتیجهٔ تجمیعیِ تأییدشده ممکن نیست؛ دادهٔ جایگزین نمایش داده نمی‌شود.':'Verifiziertes Gesamtergebnis nicht verfügbar; keine Ersatzdaten.')));
+})();

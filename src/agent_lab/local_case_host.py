@@ -447,6 +447,45 @@ def create_local_case_app(*, kernel_dispatch=None):
             raise HTTPException(status_code=409, detail='Kernel execution rejected') from exc
         return JSONResponse(receipt, headers={'Cache-Control': 'no-store'})
 
+    @app.get('/cases/analysis/verified-results')
+    async def verified_case_results(request: __import__('fastapi').Request,case_id: str,tax_year: int):
+        if request.headers.get('host')!='127.0.0.1:8766' or request.headers.get('origin') not in (None,'http://127.0.0.1:8766'):
+            raise HTTPException(status_code=403,detail='Origin rejected')
+        try:
+            if not verify_analysis_case(case_id,tax_year,host.owner_id):raise PermissionError()
+            from agent_lab.case_analysis_projection import read
+            from starlette.concurrency import run_in_threadpool
+            value=await run_in_threadpool(read,kernel_dispatch,AnalysisRequest(case_id,tax_year,host.owner_id))
+            return JSONResponse({'case_id':case_id,'tax_year':tax_year,'result':value},headers={'Cache-Control':'no-store'})
+        except Exception as exc:
+            raise HTTPException(status_code=409,detail='Verified case result unavailable') from exc
+
+    @app.post('/cases/analysis/retry/prepare')
+    async def prepare_document_retry(request: __import__('fastapi').Request, case_id: str = Form(...),
+                                     tax_year: int = Form(...), failed_task_id: str = Form(...)):
+        if request.headers.get('origin')!='http://127.0.0.1:8766' or request.headers.get('host')!='127.0.0.1:8766':
+            raise HTTPException(status_code=403,detail='Origin rejected')
+        try:
+            if not verify_analysis_case(case_id,tax_year,host.owner_id):raise PermissionError()
+            from starlette.concurrency import run_in_threadpool
+            plan=await run_in_threadpool(kernel_dispatch.prepare_retry,AnalysisRequest(case_id,tax_year,host.owner_id),failed_task_id)
+            return JSONResponse(plan,headers={'Cache-Control':'no-store'})
+        except (PermissionError,ValueError,KernelError) as exc:
+            raise HTTPException(status_code=409,detail='Verified recovery plan unavailable') from exc
+
+    @app.post('/cases/analysis/retry/approve')
+    async def approve_document_retry(request: __import__('fastapi').Request, case_id: str = Form(...),
+                                     tax_year: int = Form(...), successor_task_id: str = Form(...), acknowledgement: str = Form(...)):
+        if request.headers.get('origin')!='http://127.0.0.1:8766' or request.headers.get('host')!='127.0.0.1:8766':
+            raise HTTPException(status_code=403,detail='Origin rejected')
+        try:
+            if not verify_analysis_case(case_id,tax_year,host.owner_id):raise PermissionError()
+            from starlette.concurrency import run_in_threadpool
+            receipt=await run_in_threadpool(kernel_dispatch.approve_retry,AnalysisRequest(case_id,tax_year,host.owner_id),successor_task_id,acknowledgement)
+            return JSONResponse(receipt,headers={'Cache-Control':'no-store'})
+        except (PermissionError,ValueError,KernelError) as exc:
+            raise HTTPException(status_code=409,detail='Owner recovery approval rejected') from exc
+
     @app.get('/cases/analysis/progress')
     async def case_analysis_progress(request: __import__('fastapi').Request, case_id: str, tax_year: int):
         from starlette.concurrency import run_in_threadpool

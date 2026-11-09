@@ -1,5 +1,6 @@
 """Bounded existing-Kernel adapter; tasks/manifests/responses are the only execution state."""
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 from datetime import datetime,timedelta,timezone
 import hashlib,json,logging
 from pathlib import Path
@@ -16,14 +17,22 @@ CAPS=['read_case_packet','write_derived_case_artifact']
 def now():return datetime.now(timezone.utc).isoformat()
 
 class CaseAnalysisKernelDispatcher:
+    def prepare_retry(self, request, failed_task_id):
+        from agent_lab.case_analysis_recovery import prepare
+        return prepare(self, request, failed_task_id)
+
+    def approve_retry(self, request, task_id, acknowledgement):
+        from agent_lab.case_analysis_recovery import approve
+        return approve(self, request, task_id, acknowledgement)
+
     def __init__(self,database_path,contract_root,*,worker=None):
         self.database_path,self.contract_root=Path(database_path),Path(contract_root)
         self.worker=worker;self._lock=RLock();self._active={}
         self._pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='kernel-ui03')
     def _kernel(self):return OrchestratorKernel(self.database_path,self.contract_root)
     def _register(self,k,task,*,gate_triggers=()):
-        k.register_task(task,gate_triggers=gate_triggers)
-        with k._write_scope():
+        with (nullcontext() if k._atomic_execution_active else k.atomic_execution()):
+            k.register_task(task,gate_triggers=gate_triggers)
             k._append_event('UI03_INTENT_BOUND','TASK',task['task_id'],task['actor_instance_id'],{'task_digest':_digest(task)})
     def _task(self,request,run_id,*,parent=None,document=None):
         uid=uuid4().hex.upper()
@@ -156,7 +165,7 @@ class CaseAnalysisKernelDispatcher:
                 manifest=self._activate(k,task)
                 self.worker.process_one(request,task,manifest,k,self)
         except Exception as exc:
-            logging.getLogger(__name__).exception('UI03 successor dispatch failed; task_id=%s',task['task_id'])
+            logging.getLogger(__name__).error('UI03 successor dispatch failed; task_id=%s type=%s',task['task_id'],type(exc).__name__)
             try:
                 with self._kernel() as k:
                     row=k._connection.execute('SELECT manifest_id FROM manifests WHERE task_id=?',(task['task_id'],)).fetchone()
@@ -220,6 +229,9 @@ class CaseAnalysisKernelDispatcher:
     @staticmethod
     def _verified_responses(k,t):
         responses=k._connection.execute('SELECT * FROM responses WHERE task_id=?',(t['task_id'],)).fetchall()
+        if not responses and t['status']=='HUMAN_REQUIRED' and not k._connection.execute('SELECT 1 FROM manifests WHERE task_id=?',(t['task_id'],)).fetchone():
+            gate=k._connection.execute("SELECT status FROM task_human_gates WHERE task_id=? AND trigger='authority_ambiguity'",(t['task_id'],)).fetchone()
+            if gate and gate[0]=='PENDING':return
         if len(responses)>1 or (not responses and t['status'] in ('HUMAN_REQUIRED','FAILED')):
             raise PermissionDenied('Missing or ambiguous terminal response')
         for r in responses:
@@ -245,7 +257,8 @@ class CaseAnalysisKernelDispatcher:
             # response-digest invariant here, behind this real case/Owner resolver.
             for t in tasks:
                 if any(s.startswith('successor-json:') for s in t['inputs']):
-                    self._successor_binding(k,t,claimed=bool(k._connection.execute("SELECT 1 FROM audit_events WHERE event_type='UI03_SUCCESSOR_AUTHORIZED' AND entity_id=?",(t['parent_task_id'],)).fetchone()))
+                    if k._connection.execute('SELECT 1 FROM manifests WHERE task_id=?',(t['task_id'],)).fetchone():
+                        self._successor_binding(k,t,claimed=True)
                 if t['objective']=='UI03_DOCUMENT_V1':
                     bindings=k._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_INTENT_BOUND' AND entity_id=?",(t['task_id'],)).fetchall()
                     original={**t,'status':'REGISTERED'}
@@ -254,18 +267,22 @@ class CaseAnalysisKernelDispatcher:
             for t in tasks:
                 if t['objective']!='UI03_DOCUMENT_V1':continue
                 row=k._connection.execute('SELECT payload_json FROM responses WHERE task_id=?',(t['task_id'],)).fetchone()
-                if row is None and t['status'] in ('HUMAN_REQUIRED','FAILED'):
-                    raise PermissionDenied('Terminal document response missing')
+                # Terminal response completeness was checked above; a pending
+                # unstarted Owner gate legitimately has no response/manifest.
                 meta=json.loads(next(s[len('document-json:'):] for s in t['inputs'] if s.startswith('document-json:')))
                 m=k._connection.execute('SELECT manifest_id,state FROM manifests WHERE task_id=?',(t['task_id'],)).fetchone()
                 d={**meta,**t['case_context'],'task_id':t['task_id'],'manifest_id':m['manifest_id'] if m else None,
                     'processing_status':'QUEUED','created_at':t['created_at'],'acceptance_status':'NOT_ACCEPTED_CANDIDATE_ONLY'}
                 if row:d.update(json.loads(json.loads(row[0])['result_summary']))
                 elif t['status']=='ACTIVE':d['processing_status']='RUNNING' if (request.owner_id,request.case_id,request.tax_year) in self._active else 'RECONCILIATION_REQUIRED'
+                elif t['status'] in ('EXPIRED', 'CANCELLED'):d['processing_status']=t['status']
                 documents.append(d)
-            superseded={d['supersedes_task_id'] for d in documents if 'supersedes_task_id' in d}
-            history=[d for d in documents if d['task_id'] in superseded]
-            documents=[d for d in documents if d['task_id'] not in superseded]
+            from agent_lab.case_analysis_recovery import decorate
+            decorate(k,documents)
+            superseded={d['supersedes_task_id'] for d in documents if 'supersedes_task_id' in d and not d.get('_unstarted_plan')}
+            history=[d for d in documents if d['task_id'] in superseded or d.get('_unstarted_plan') or d['processing_status'] in ('EXPIRED','CANCELLED')]
+            documents=[d for d in documents if d not in history]
+            for d in documents+history:d.pop('_unstarted_plan',None)
             return {'case_id':request.case_id,'tax_year':request.tax_year,'documents':documents,'history':history,
                 'completed':sum(d['processing_status']=='HUMAN_REVIEW_REQUIRED' for d in documents),
                 'failed':sum(d['processing_status']=='FAILED' for d in documents),

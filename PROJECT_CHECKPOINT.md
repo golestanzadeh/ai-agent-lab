@@ -1,5 +1,14 @@
 # Authoritative current project truth — 2026-10-20
 
+## Recovery, diagnostics and verified case projection — candidate 2026-11-09
+
+Owner-authorized bounded implementation is in progress; no operational/tax acceptance is claimed. Canonical failure lineage for the sixth PDF was recovered, including the original TypeError, failed KeyError successor and unstarted closed plans. The original exception traceback was not retained in recovered logs or Kernel responses; do not invent its exact KeyError key or blame the provider. A reproduced missing-explicit-key path now has a deterministic pre-provider configuration error; historical root attribution remains unknown pending original evidence or a separately Owner-approved observed attempt. Existing five successful outcomes remain immutable.
+
+Candidate changes reuse Kernel tasks/Human Gates for a two-step document-scoped Owner successor, closed sanitized diagnostics in existing audit/response records, and a read-only Dashboard projection of locally imported reviewed artifacts through normal least-privilege Kernel manifests/responses. No new queue/database/service/Orchestrator. CSV/subtotals remain distinguished from final taxable income and tax acceptance. Exact-source local read also recovered two spouse payroll pages; annual totals will be reported from December year-to-date columns, never extrapolated. Independent exact-commit review and live/restart verification remain pending before acceptance.
+
+OPEN_ITEMS assessed: no active row closes, no gate relaxes. Existing unrelated UI edits remain excluded/preserved; no provider attempt authorized by task registration or code changes alone.
+
+
 ## Phase 4 resumed as separately admitted tasks — 2026-11-07
 
 PARTIAL_REAL_CASE_PROGRESS / CAPACITY_DEFERRED. Latest Owner directive supersedes the previous whole-Phase4 estimate for dispatch: each minimal task is admitted separately. TaskA CHEAP5/1 admitted at39%five-hour/91%weekly; caseRegistry/DriveAPI readback verified5originalPDFSHAs and6files in inspected Documents/Tax_Categories/Evidence/Reports branches. TaskB BOUNDED15/5 admitted at37%/90%; originalPDF visual verification,19school/union payment links and supported wage/subtotal calculations completed. Existing TaxDataset/evidence-validation primitives reused; no replacement taxengine or production change.

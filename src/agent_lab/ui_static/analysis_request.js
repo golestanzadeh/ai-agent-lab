@@ -4,6 +4,7 @@
   const button=document.getElementById('analysis-start-real');
   const state=document.getElementById('analysis-readiness-state');
   if(!panel||!button||!state)return;
+  const recoveryScript=document.createElement('script');recoveryScript.src='/static/analysis_recovery.js';document.head.append(recoveryScript);
   const fa=panel.dataset.lang==='fa-IR';
   const labels=fa?{QUEUED:'در صف',RUNNING:'در حال استخراج',HUMAN_REVIEW_REQUIRED:'استخراج‌شده؛ نیازمند بازبینی',FAILED:'ناموفق',RECONCILIATION_REQUIRED:'نیازمند بازیابی بررسی‌شده'}:{QUEUED:'Eingereiht',RUNNING:'Extraktion läuft',HUMAN_REVIEW_REQUIRED:'Extrahiert; Prüfung erforderlich',FAILED:'Fehlgeschlagen',RECONCILIATION_REQUIRED:'Abgestimmte Wiederherstellung erforderlich'};
   const params=new URLSearchParams({case_id:panel.dataset.caseId,tax_year:panel.dataset.taxYear});
@@ -34,6 +35,7 @@
         nodes.push(section);
       }
       results.replaceChildren(...nodes);
+      document.dispatchEvent(new CustomEvent('case-analysis-progress',{detail:p}));
       if(p.active){state.textContent=fa?'استخراج در حال اجرا؛ نتایج هر سند جدا ذخیره می‌شود':'Extraktion läuft; Ergebnisse werden einzeln gespeichert';button.disabled=true;}
       else if(panel.dataset.executionStarted||p.runs.length){panel.dataset.executionStarted='true';state.textContent=fa?'وضعیت پایدار بازیابی شد؛ نتایج نیازمند بازبینی هستند':'Dauerhafter Status geladen; Ergebnisse benötigen Prüfung';}
     }catch(_){state.textContent=fa?'بازیابی وضعیت تأییدشده ممکن نیست':'Verifizierter Status nicht verfügbar';}
