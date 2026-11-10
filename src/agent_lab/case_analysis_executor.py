@@ -40,15 +40,7 @@ class CaseAnalysisExecutor:
         if type(request.tax_year) is not int or not 1900 <= request.tax_year <= 9999:
             raise AnalysisExecutionBlocked('Invalid tax year')
         if request.request_id is not None:
-            import re
-            if (request.scope not in ('CASE','DOCUMENT') or request.execution_intent not in ('NORMAL','EXPLICIT_RERUN')
-                    or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}',request.request_id)
-                    or (request.scope=='DOCUMENT' and (not isinstance(request.document_id,str) or not 1<=len(request.document_id)<=256))
-                    or (request.scope=='CASE' and (request.document_id is not None or request.execution_intent!='NORMAL'))
-                    or request.successor_task_id is not None
-                    or (request.execution_intent=='EXPLICIT_RERUN' and (request.scope!='DOCUMENT' or not isinstance(request.expected_sha256,str)
-                        or not re.fullmatch(r'[0-9a-f]{64}',request.expected_sha256)))):
-                raise AnalysisExecutionBlocked('Invalid unified analysis command')
+            validate_analysis_command(request)
         if request.successor_task_id is not None and (not isinstance(request.successor_task_id,str)
                 or not request.successor_task_id.startswith('TASK-') or len(request.successor_task_id)>128):
             raise AnalysisExecutionBlocked('Invalid successor task reference')
@@ -67,3 +59,16 @@ class CaseAnalysisExecutor:
             raise AnalysisExecutionBlocked('Kernel run identity missing')
         return {'case_id': request.case_id, 'tax_year': request.tax_year,
                 'run_id': run_id, 'status': result['status']}
+
+
+def validate_analysis_command(request):
+    import re
+    if (request.scope not in ('CASE','DOCUMENT') or request.execution_intent not in ('NORMAL','EXPLICIT_RERUN')
+            or not isinstance(request.request_id,str) or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}',request.request_id)
+            or (request.scope=='DOCUMENT' and (not isinstance(request.document_id,str) or not 1<=len(request.document_id)<=256))
+            or (request.scope=='CASE' and (request.document_id is not None or request.execution_intent!='NORMAL'))
+            or request.successor_task_id is not None
+            or (request.expected_sha256 is not None and (not isinstance(request.expected_sha256,str) or not re.fullmatch(r'[0-9a-f]{64}',request.expected_sha256)))
+            or (request.execution_intent=='EXPLICIT_RERUN' and (request.scope!='DOCUMENT' or not isinstance(request.expected_sha256,str)
+                or not re.fullmatch(r'[0-9a-f]{64}',request.expected_sha256)))):
+        raise AnalysisExecutionBlocked('Invalid unified analysis command')

@@ -16,6 +16,7 @@ class GeminiCaseDocumentWorker:
         meta=json.loads(next(s[len('document-json:'):] for s in task['inputs'] if s.startswith('document-json:')))
         started=time.monotonic()
         stage='SOURCE_VERIFICATION'
+        provider_attempted=False
         try:
             if meta.get('initiated_via')=='DASHBOARD':
                 from agent_lab.case_analysis_command import read_document
@@ -43,11 +44,13 @@ class GeminiCaseDocumentWorker:
                 try:
                     dispatcher.authorize(kernel,task,manifest)
                     stage='PROVIDER_ATTEMPT'
+                    provider_attempted=True
                     result=GeminiDocumentExtractor(client).extract(content,filename=entry['name'])
                 finally:client.close()
             else:
                 dispatcher.authorize(kernel,task,manifest)
                 stage='PROVIDER_ATTEMPT'
+                provider_attempted=True
                 result=self._extractor.extract(content,filename=entry['name'])
             stage='RESULT_PERSISTENCE'
             if time.monotonic()-started>task['timeout_seconds']:raise TimeoutError('Deadline exceeded')
@@ -58,6 +61,9 @@ class GeminiCaseDocumentWorker:
         except Exception as exc:
             from agent_lab.case_analysis_diagnostics import diagnostic,record
             detail=diagnostic(exc,stage,task,meta)
+            # A failed commit/deadline after a provider call must not make that
+            # already-spent attempt eligible for implicit NORMAL replay.
+            detail['provider_outcome_uncertain'] |= provider_attempted
             record(kernel,task,manifest,detail)
             logging.getLogger(__name__).error('UI03 failure task=%s code=%s',task['task_id'],detail['error_code'])
             dispatcher._finish(kernel,task,manifest,{'processing_status':'FAILED','finished_at':now(),

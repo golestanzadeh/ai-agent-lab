@@ -20,6 +20,8 @@ def command(request):
 
 def admit(d, request):
     """Existing atomic Kernel intent is the durable idempotency reservation."""
+    from agent_lab.case_analysis_executor import validate_analysis_command
+    validate_analysis_command(request)
     if d.worker is None:raise PermissionDenied('Worker unavailable')
     value=command(request);key=(request.owner_id,request.case_id,request.tax_year)
     with d._lock,d._kernel() as k,k.atomic_execution():

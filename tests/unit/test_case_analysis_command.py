@@ -106,3 +106,22 @@ def test_csv_row_limit_rejected_before_quadratic_parser(tmp_path,monkeypatch):
     monkeypatch.setattr('agent_lab.structured_financial.ingest_sparkasse_csv',forbidden)
     start(d);p=wait(d);assert p['failed']==1 and not e.calls
     assert p['documents'][0]['diagnostic']['exception_type']=='ValueError'
+
+@pytest.mark.parametrize('failure',['persistence','deadline'])
+def test_post_provider_failure_never_normal_replays(tmp_path,monkeypatch,failure):
+    d,e=setup(tmp_path)
+    if failure=='persistence':
+        finish=d._finish
+        def interrupted(k,t,m,p,**kw):
+            if t['objective']=='UI03_DOCUMENT_V1' and not kw.get('failed'):
+                raise RuntimeError('Injected result persistence interruption')
+            return finish(k,t,m,p,**kw)
+        monkeypatch.setattr(d,'_finish',interrupted)
+    else:
+        from types import SimpleNamespace
+        ticks=iter([0,121,0,121])
+        monkeypatch.setattr('agent_lab.case_analysis_gemini_worker.time',SimpleNamespace(monotonic=lambda:next(ticks)))
+    start(d);p=wait(d)
+    assert len(e.calls)==2 and p['failed']==2
+    assert all(x['diagnostic']['provider_outcome_uncertain'] for x in p['documents'])
+    start(d,key='REQUEST-00000000000002');wait(d);assert len(e.calls)==2
