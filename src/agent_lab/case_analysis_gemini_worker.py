@@ -17,7 +17,11 @@ class GeminiCaseDocumentWorker:
         started=time.monotonic()
         stage='SOURCE_VERIFICATION'
         try:
-            entry,content=self.host.get_case_document(request.case_id,request.tax_year,meta['document_id'])
+            if meta.get('initiated_via')=='DASHBOARD':
+                from agent_lab.case_analysis_command import read_document
+                entry,content=read_document(self.host,request,meta['document_id'])
+            else:
+                entry,content=self.host.get_case_document(request.case_id,request.tax_year,meta['document_id'])
             if (entry['id']!=meta['document_id'] or hashlib.sha256(content).hexdigest()!=meta['sha256']
                     or not content.startswith(b'%PDF-') or len(content)>20*1024*1024):
                 raise PermissionDenied('Exact document source binding mismatch')

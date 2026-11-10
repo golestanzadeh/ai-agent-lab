@@ -20,7 +20,7 @@
       lines.push(fa ? `Gemini: ${data.gemini_ready ? 'کلید در دسترس است' : 'کلید در دسترس نیست'}` : `Gemini: ${data.gemini_ready ? 'Schlüssel verfügbar' : 'Schlüssel fehlt'}`);
       details.replaceChildren(...lines.map(line => {const p=document.createElement('p');p.textContent=line;return p;}));
       if (!panel.dataset.executionStarted) status.textContent = data.analysis_launch_available
-        ? (fa ? 'آماده شروع استخراج اسناد PDF' : 'Bereit zur PDF-Extraktion')
+        ? (fa ? 'آمادهٔ آنالیز پرونده' : 'Bereit zur Fallanalyse')
         : (fa ? 'شروع تحلیل در حال حاضر ممکن نیست' : 'Analysestart derzeit nicht verfügbar');
     })
     .catch(() => {if (!panel.dataset.executionStarted) status.textContent = fa ? 'بررسی آمادگی ناموفق بود' : 'Bereitschaftsprüfung fehlgeschlagen';});

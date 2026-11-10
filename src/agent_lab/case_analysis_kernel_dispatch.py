@@ -54,6 +54,8 @@ class CaseAnalysisKernelDispatcher:
         else:
             task['budget']={'token_limit':1000000,'tool_call_limit':20,'cost_limit_usd':100.0}
             task['timeout_seconds']=1200
+        if document and document.get('worker')=='CSV':
+            task['allowed_tools']=['case_drive_document_read','deterministic_bank_csv_analyze']
         return task
     def _activate(self,kernel,task):
         m={'schema_version':1,'manifest_id':'MAN-UI03-'+uuid4().hex.upper(),
@@ -76,7 +78,9 @@ class CaseAnalysisKernelDispatcher:
         receipts=kernel._connection.execute("SELECT payload_json FROM audit_events WHERE event_type='UI03_INTENT_BOUND' AND entity_id=?",(task['task_id'],)).fetchall()
         if len(receipts)!=1 or json.loads(receipts[0][0]).get('task_digest')!=_digest(task):raise PermissionDenied('Intent integrity mismatch')
         row=kernel._manifest_row(manifest_id);m=json.loads(row['payload_json'])
-        if row['task_id']!=task['task_id'] or row['actor_instance_id']!=task['actor_instance_id'] or row['role_id']!='EVIDENCE_AGENT' or m['scope']['case_context']!=task['case_context'] or m['allowed_tools']!=TOOLS or PROVIDER_REF not in task['inputs'] or AUTHORITY not in task['inputs']:
+        meta=next((json.loads(s[len('document-json:'):]) for s in task['inputs'] if s.startswith('document-json:')), {})
+        expected_tools=['case_drive_document_read','deterministic_bank_csv_analyze'] if meta.get('worker')=='CSV' else TOOLS
+        if row['task_id']!=task['task_id'] or row['actor_instance_id']!=task['actor_instance_id'] or row['role_id']!='EVIDENCE_AGENT' or m['scope']['case_context']!=task['case_context'] or m['allowed_tools']!=expected_tools or task['allowed_tools']!=expected_tools or PROVIDER_REF not in task['inputs'] or AUTHORITY not in task['inputs']:
             raise PermissionDenied('Provider binding mismatch')
         for cap in CAPS:
             if not kernel.permission_decision(manifest_id,cap,**task['case_context']).allowed:raise PermissionDenied('Kernel execution denied')
@@ -175,6 +179,9 @@ class CaseAnalysisKernelDispatcher:
         finally:
             with self._lock:self._active.pop((request.owner_id,request.case_id,request.tax_year),None)
     def __call__(self,request):
+        if request.request_id is not None:
+            from agent_lab.case_analysis_command import admit
+            return admit(self,request)
         if request.successor_task_id is not None:
             return self.owner_successor(request,request.successor_task_id)
         if self.worker is None:raise AnalysisExecutionBlocked('Authorized worker unavailable')
@@ -196,17 +203,23 @@ class CaseAnalysisKernelDispatcher:
         self.authorize(k,task,manifest)
         if not failed:k.transition_manifest(manifest,'BLOCKED',actor_id=task['actor_instance_id'],reason='Candidate awaits independent review')
         usage=dict(k._connection.execute('SELECT tokens_used,tool_calls_used,cost_usd FROM budget_usage WHERE manifest_id=?',(manifest,)).fetchone())
+        meta=next((json.loads(s[len('document-json:'):]) for s in task['inputs'] if s.startswith('document-json:')), {})
+        evidence=['source-sha256:'+meta['sha256']] if meta.get('worker')=='CSV' else [PROVIDER_REF]
         k.record_response(manifest,{'schema_version':1,'response_id':'RESP-UI03-'+uuid4().hex.upper(),
             'task_id':task['task_id'],'parent_task_id':task['parent_task_id'],'role_id':task['role_id'],'actor_instance_id':task['actor_instance_id'],
             'status':'FAILED' if failed else 'HUMAN_REQUIRED','result_summary':json.dumps(payload,ensure_ascii=False,sort_keys=True),
-            'artifact_references':task['expected_outputs'],'changed_paths_or_state':[],'tests':[],'evidence':[PROVIDER_REF],
+            'artifact_references':task['expected_outputs'],'changed_paths_or_state':[],'tests':[],'evidence':evidence,
             'authority_used':[s for s in task['inputs'] if s.startswith('owner://')],'costs':usage,'unresolved_risks':['Candidate not accepted; budget charge is conservative reservation, not metered billing'],
             'recommended_next_action':'Independent review; no automatic external retry','human_required':not failed,'created_at':now()})
     def _run(self,request,task):
         try:
             with self._kernel() as k:
                 manifest=self._activate(k,task)
-                summary=self.worker.process(request,task,manifest,k,self)
+                if any(s.startswith('analysis-command:') for s in task['inputs']):
+                    from agent_lab.case_analysis_command import process
+                    summary=process(self.worker,request,task,manifest,k,self)
+                else:
+                    summary=self.worker.process(request,task,manifest,k,self)
                 self._finish(k,task,manifest,summary)
         except Exception as exc:
             # Failures are durable without private exception text. If authority
@@ -282,8 +295,20 @@ class CaseAnalysisKernelDispatcher:
             superseded={d['supersedes_task_id'] for d in documents if 'supersedes_task_id' in d and not d.get('_unstarted_plan')}
             history=[d for d in documents if d['task_id'] in superseded or d.get('_unstarted_plan') or d['processing_status'] in ('EXPIRED','CANCELLED')]
             documents=[d for d in documents if d not in history]
-            for d in documents+history:d.pop('_unstarted_plan',None)
+            if any('request_id' in d for d in documents+history):
+                from agent_lab.case_analysis_command import project
+                documents,history=project(documents,history)
+            outcomes=[]
+            for t in tasks:
+                if t['objective']=='UI03_BATCH_V1' and any(s.startswith('analysis-command:') for s in t['inputs']):
+                    row=k._connection.execute('SELECT payload_json FROM responses WHERE task_id=?',(t['task_id'],)).fetchone()
+                    if row:outcomes.append({'run_id':t['case_context']['run_id'],**json.loads(json.loads(row[0])['result_summary'])})
+            for d in documents+history:
+                d.pop('_unstarted_plan',None)
+                if d.get('csv_payload'):
+                    d['csv_payload']={k:v for k,v in d['csv_payload'].items() if k!='ledger'}
             return {'case_id':request.case_id,'tax_year':request.tax_year,'documents':documents,'history':history,
+                'batch_outcomes':outcomes,
                 'completed':sum(d['processing_status']=='HUMAN_REVIEW_REQUIRED' for d in documents),
                 'failed':sum(d['processing_status']=='FAILED' for d in documents),
                 'active':(request.owner_id,request.case_id,request.tax_year) in self._active,

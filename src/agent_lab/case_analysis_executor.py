@@ -19,6 +19,11 @@ class AnalysisRequest:
     tax_year: int
     owner_id: str
     successor_task_id: str | None = None
+    scope: str = 'CASE'
+    document_id: str | None = None
+    execution_intent: str = 'NORMAL'
+    request_id: str | None = None
+    expected_sha256: str | None = None
 
 
 class CaseAnalysisExecutor:
@@ -34,6 +39,16 @@ class CaseAnalysisExecutor:
             raise AnalysisExecutionBlocked('Invalid case-scoped request')
         if type(request.tax_year) is not int or not 1900 <= request.tax_year <= 9999:
             raise AnalysisExecutionBlocked('Invalid tax year')
+        if request.request_id is not None:
+            import re
+            if (request.scope not in ('CASE','DOCUMENT') or request.execution_intent not in ('NORMAL','EXPLICIT_RERUN')
+                    or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}',request.request_id)
+                    or (request.scope=='DOCUMENT' and (not isinstance(request.document_id,str) or not 1<=len(request.document_id)<=256))
+                    or (request.scope=='CASE' and (request.document_id is not None or request.execution_intent!='NORMAL'))
+                    or request.successor_task_id is not None
+                    or (request.execution_intent=='EXPLICIT_RERUN' and (request.scope!='DOCUMENT' or not isinstance(request.expected_sha256,str)
+                        or not re.fullmatch(r'[0-9a-f]{64}',request.expected_sha256)))):
+                raise AnalysisExecutionBlocked('Invalid unified analysis command')
         if request.successor_task_id is not None and (not isinstance(request.successor_task_id,str)
                 or not request.successor_task_id.startswith('TASK-') or len(request.successor_task_id)>128):
             raise AnalysisExecutionBlocked('Invalid successor task reference')

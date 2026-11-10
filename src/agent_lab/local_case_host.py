@@ -197,6 +197,12 @@ class LocalCaseHost:
                                 if r['registry_state']=='PENDING' and r['source_status']=='ACTIVE'],
                                key=lambda r:(r['name'].casefold(),r['id']))}
 
+    def list_analysis_documents(self, case_id: str, tax_year: int):
+        registry=self.list_case_document_registry(case_id,tax_year)
+        return {'case_id':case_id,'tax_year':tax_year,'registry_complete':registry['registry_complete'],
+                'files':[{'id':r['drive_file_id'],'name':r['name'],'mime_type':r['mime_type'],'size':r['size']}
+                         for r in registry['active_documents']]}
+
     def list_case_document_registry(self, case_id: str, tax_year: int):
         """Observe all three case-owned locations without moving/creating anything."""
         from agent_lab.case_document_registry import FOLDERS,read_registry
@@ -319,11 +325,14 @@ class LocalCaseHost:
         from agent_lab.case_document_registry import reconcile
         reconcile(self.persistence,owner_id=self.owner_id,case_id=case_id,tax_year=tax_year,snapshot=snapshot)
 
-    def get_case_document(self, case_id, tax_year, document_id):
+    def get_analysis_document(self, case_id, tax_year, document_id):
+        return self.get_case_document(case_id,tax_year,document_id,_analysis=True)
+
+    def get_case_document(self, case_id, tax_year, document_id, *, _analysis=False):
         from io import BytesIO
         from googleapiclient.http import MediaIoBaseDownload
         with self._lock:
-            snapshot = self.list_case_documents(case_id,tax_year)
+            snapshot = (self.list_analysis_documents if _analysis else self.list_case_documents)(case_id,tax_year)
             entry = next((x for x in snapshot['files'] if x['id']==document_id),None)
             if entry is None:
                 raise ValueError('Document does not belong to this case')
@@ -434,7 +443,10 @@ def create_local_case_app(*, kernel_dispatch=None):
 
     @app.post('/cases/analysis/execute')
     async def execute_case_analysis(request: __import__('fastapi').Request, case_id: str = Form(...),
-                                    tax_year: int = Form(...), successor_task_id: str | None = Form(None)):
+                                    tax_year: int = Form(...), successor_task_id: str | None = Form(None),
+                                    scope: str = Form('CASE'), document_id: str | None = Form(None),
+                                    execution_intent: str = Form('NORMAL'), request_id: str | None = Form(None),
+                                    expected_sha256: str | None = Form(None)):
         if (request.headers.get('origin') != 'http://127.0.0.1:8766'
                 or request.headers.get('host') != '127.0.0.1:8766'):
             raise HTTPException(status_code=403, detail='Origin rejected')
@@ -442,7 +454,8 @@ def create_local_case_app(*, kernel_dispatch=None):
             raise HTTPException(status_code=503, detail='Authorized Kernel dispatcher unavailable')
         try:
             from starlette.concurrency import run_in_threadpool
-            receipt = await run_in_threadpool(analysis_executor.execute, AnalysisRequest(case_id, tax_year, host.owner_id, successor_task_id))
+            receipt = await run_in_threadpool(analysis_executor.execute, AnalysisRequest(case_id, tax_year, host.owner_id, successor_task_id,
+                scope,document_id,execution_intent,request_id,expected_sha256))
         except (AnalysisExecutionBlocked, PermissionError, ValueError, KernelError) as exc:
             raise HTTPException(status_code=409, detail='Kernel execution rejected') from exc
         return JSONResponse(receipt, headers={'Cache-Control': 'no-store'})
@@ -503,7 +516,7 @@ def create_local_case_app(*, kernel_dispatch=None):
         # Read-only preflight. UI-02 does not authorize or launch an analysis run.
         try:
             from starlette.concurrency import run_in_threadpool
-            inventory = await run_in_threadpool(host.list_case_documents, case_id, tax_year)
+            inventory = await run_in_threadpool(getattr(host,'list_analysis_documents',host.list_case_documents), case_id, tax_year)
             files = inventory['files']
             from collections import Counter
             from pathlib import PurePosixPath
@@ -524,15 +537,14 @@ def create_local_case_app(*, kernel_dispatch=None):
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
                 'inventory_verified': True, 'documents_count': len(files),
                 'document_types': dict(sorted(type_counts.items())),
+                'document_targets':[{'id':f['id'],'name':f['name'],'mime_type':f['mime_type']} for f in files],
                 'kernel_ready': analysis_executor is not None,
                 'gemini_ready': bool(os.environ.get('GEMINI_API_KEY')),
                 'analysis_launch_available': bool(analysis_executor is not None
-                    and os.environ.get('GEMINI_API_KEY') and files
-                    and any(f['mime_type'] == 'application/pdf' for f in files)),
+                    and files and any(f['mime_type'] in ('application/pdf','text/csv') for f in files)),
                 'reason': ('READY' if analysis_executor is not None
-                    and os.environ.get('GEMINI_API_KEY') and files
-                    and any(f['mime_type'] == 'application/pdf' for f in files)
-                    else 'GEMINI_KEY_OR_UNSUPPORTED_DOCUMENT_TYPE')}, 
+                    and files and any(f['mime_type'] in ('application/pdf','text/csv') for f in files)
+                    else 'UNSUPPORTED_DOCUMENT_TYPE_OR_KERNEL_UNAVAILABLE')},
                 headers={'Cache-Control': 'no-store'})
         except Exception:
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,

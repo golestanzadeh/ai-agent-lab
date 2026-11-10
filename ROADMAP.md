@@ -1,3 +1,7 @@
+## Unified analysis command — authorized 2026-11-10
+
+Register src/agent_lab/case_analysis_command.py and focused tests/unit/test_case_analysis_command.py: helpers within existing Kernel dispatcher, PDF tool and deterministic structured-financial ingestion; no second execution authority. Scope amendment and exact acceptance evidence remain pending implementation review.
+
 ## Recovery projection continuation — 2026-11-09
 
 Implementation47048ea independently accepted for bounded diagnostics, safe prepared plans and reviewed-result projection only. Live launcher restart and bilingual browser verification pending automatic-approval blocker. Authenticated Owner browser approval is NOT implemented/accepted; existing trusted local broker remains separate. No final tax acceptance or provider replay. Canonical checkpoint and OPEN_ITEMS synchronized; no active item closed.

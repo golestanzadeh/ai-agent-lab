@@ -14,32 +14,13 @@
     DOCUMENT_REJECTED:fa?'هویت یا قالب سند تأیید نشد.':'Dokumentidentität oder Format nicht bestätigt.',
     APPLICATION_ERROR:fa?'خطای برنامه؛ اطلاعات فنی پاک‌سازی‌شده ثبت شده است.':'Anwendungsfehler; bereinigter technischer Kontext gespeichert.'
   };
-  async function post(url,extra){
-    const r=await fetch(url,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({...scope,...extra})});
-    if(!r.ok)throw Error(fa?'عملیات امن رد شد؛ وضعیت را بازخوانی کنید.':'Sicherer Vorgang abgelehnt. Status neu laden.');
-    return r.json();
-  }
-  let planOpen=false;
   function render(p){
-    if(planOpen||p.case_id!==scope.case_id||String(p.tax_year)!==scope.tax_year)return;
+    if(p.case_id!==scope.case_id||String(p.tax_year)!==scope.tax_year)return;
     area.replaceChildren();
     for(const d of p.documents.filter(x=>x.diagnostic)){
       const card=document.createElement('article'),diag=d.diagnostic;
       card.append(node('h3',d.filename),node('p',codes[diag.error_code]||codes.APPLICATION_ERROR));
       card.append(node('p',`${diag.error_code} | ${diag.stage} | ${diag.timestamp} | ${diag.run_id}`));
-      if(d.processing_status==='FAILED'){
-        const b=node('button',fa?'بررسی تلاش جدید فقط برای این سند':'Neuen Versuch nur für dieses Dokument prüfen');b.type='button';
-        b.onclick=async()=>{b.disabled=true;
-          try{
-            const plan=await post('/cases/analysis/retry/prepare',{failed_task_id:d.task_id});
-            if(plan.document_id!==d.document_id||plan.sha256!==d.sha256||plan.case_id!==scope.case_id||String(plan.tax_year)!==scope.tax_year)throw Error('Scope mismatch');
-            planOpen=true;
-            card.append(node('p',fa?'طرح آماده شد؛ هیچ درخواست Gemini ارسال نشده است. تأیید مرورگری تا پذیرش احراز هویت مالک غیرفعال است. تأیید فقط از مسیر محلیِ مورد اعتمادِ موجود انجام می‌شود.':'Plan vorbereitet; kein Gemini-Aufruf. Browser-Genehmigung bleibt bis zur akzeptierten Eigentümer-Authentifizierung gesperrt. Nur der bestehende vertrauenswürdige lokale Genehmigungsweg ist zulässig.'));
-            card.append(node('p',`SHA-256: ${plan.sha256} | ${plan.run_id} | ${plan.model} | max_retries=0 | store=false`));
-          }catch(e){card.append(node('p',e.message));b.disabled=false;}
-        };
-        card.append(b);
-      }
       area.append(card);
     }
     if(p.history.length){const h=document.createElement('details');h.append(node('summary',fa?'تاریخچهٔ تلاش‌های قبلی':'Historie früherer Versuche'));for(const d of p.history)h.append(node('p',`${d.filename} | ${d.processing_status} | ${d.run_id}`));area.append(h);}

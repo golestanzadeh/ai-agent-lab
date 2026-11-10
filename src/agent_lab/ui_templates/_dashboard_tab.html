@@ -67,7 +67,7 @@
   <h2>{{ 'آمادگی تحلیل واقعی' if lang == 'fa-IR' else 'Bereitschaft der echten Analyse' }}</h2>
   <p id="analysis-readiness-state" role="status" aria-live="polite">{{ 'در حال بررسی موجودی مدارک...' if lang == 'fa-IR' else 'Dokumentenbestand wird geprüft...' }}</p>
   <div id="analysis-readiness-details"></div>
-  <button id="analysis-start-real" type="button" disabled aria-disabled="true">{{ 'شروع تحلیل واقعی' if lang == 'fa-IR' else 'Echte Analyse starten' }}</button>
+  <button id="analysis-start-real" type="button" disabled aria-disabled="true">{{ 'آنالیز پرونده' if lang == 'fa-IR' else 'Fall analysieren' }}</button>
 
 </section>
 <script src="{{ url_for('static', path='/analysis_readiness.js') }}" defer></script>
