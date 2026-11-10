@@ -60,6 +60,8 @@ def test_same_request_id_cannot_change_scope(tmp_path):
     with pytest.raises(PermissionDenied):start(d,scope='DOCUMENT',document_id='a')
     with pytest.raises(AnalysisExecutionBlocked):start(d,scope='ALL')
     with pytest.raises(AnalysisExecutionBlocked):start(d,intent='EXPLICIT_RERUN')
+    with pytest.raises(AnalysisExecutionBlocked):
+        CaseAnalysisExecutor(verify_case=lambda *a:True,kernel_dispatch=d).execute(replace(REQ,scope='DOCUMENT',document_id='a'))
 
 def test_csv_uses_canonical_parser_without_gemini_and_binds_exact_source(tmp_path):
     d,e=setup(tmp_path);payload=_csv(_row(booking='02.04.25',value='02.04.25'))

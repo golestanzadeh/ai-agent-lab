@@ -39,6 +39,9 @@ class CaseAnalysisExecutor:
             raise AnalysisExecutionBlocked('Invalid case-scoped request')
         if type(request.tax_year) is not int or not 1900 <= request.tax_year <= 9999:
             raise AnalysisExecutionBlocked('Invalid tax year')
+        if request.request_id is None and (request.scope!='CASE' or request.document_id is not None
+                or request.execution_intent!='NORMAL' or request.expected_sha256 is not None):
+            raise AnalysisExecutionBlocked('Scoped analysis command identity required')
         if request.request_id is not None:
             validate_analysis_command(request)
         if request.successor_task_id is not None and (not isinstance(request.successor_task_id,str)
