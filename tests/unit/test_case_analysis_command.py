@@ -97,3 +97,12 @@ def test_changed_version_normal_processing_preserves_previous_source_history(tmp
     start(d,key='REQUEST-00000000000002');p=wait(d)
     assert p['completed']==2 and len(e.calls)==4
     assert any(x['task_id']==old['task_id'] and x['sha256']==old['sha256'] for x in p['history'])
+
+def test_csv_row_limit_rejected_before_quadratic_parser(tmp_path,monkeypatch):
+    d,e=setup(tmp_path);payload=_csv(*[_row(booking='02.04.25',value='02.04.25')]*5001)
+    d.worker.host.list_case_documents=lambda c,y:{'registry_complete':True,'files':[{'id':'csv','name':'bank.csv','mime_type':'text/csv'}]}
+    d.worker.host.get_case_document=lambda c,y,i:({'id':i,'name':'bank.csv'},payload)
+    def forbidden(*a,**k):raise AssertionError('Unbounded parser must not run')
+    monkeypatch.setattr('agent_lab.structured_financial.ingest_sparkasse_csv',forbidden)
+    start(d);p=wait(d);assert p['failed']==1 and not e.calls
+    assert p['documents'][0]['diagnostic']['exception_type']=='ValueError'

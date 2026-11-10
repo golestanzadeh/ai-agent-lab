@@ -2,7 +2,7 @@
 from dataclasses import asdict
 from datetime import datetime, timezone
 from decimal import Decimal
-import hashlib, json
+import csv, hashlib, io, json, re
 from uuid import uuid4
 
 from agent_lab.orchestrator_kernel import PermissionDenied
@@ -104,6 +104,17 @@ def process_csv(worker,request,task,manifest,kernel,dispatcher,meta):
         if not kernel.consume_budget(manifest,tokens=0,tool_calls=1,cost_usd=0).allowed:raise PermissionDenied('CSV budget denied')
         stage='CSV_PARSE'
         from agent_lab.structured_financial import ingest_sparkasse_csv
+        # Same exact-cents/currency preflight as the accepted field test. Bound
+        # rows before the existing pair detector, whose cost is quadratic.
+        if len(content)>4*1024*1024:raise ValueError('CSV analysis size limit')
+        reader=csv.DictReader(io.StringIO(content.decode('cp1252'),newline=''),delimiter=';')
+        count=0
+        for raw in reader:
+            count+=1
+            if (count>5000 or None in raw or any(v is None for v in raw.values())
+                    or not re.fullmatch(r'-?(?:\d+|\d{1,3}(?:\.\d{3})+),\d{2}',raw.get('Betrag','').strip())
+                    or raw.get('Waehrung','').strip()!='EUR'):
+                raise ValueError('Unsupported CSV shape/precision/currency or row limit')
         parsed=ingest_sparkasse_csv(content,case_id=request.case_id,tax_year=request.tax_year,source_id=meta['document_id'])
         if not parsed.transactions or len(parsed.transactions)>100000 or parsed.invalid_rows:raise ValueError('Incomplete CSV requires review')
         credits=Decimal(0);debits=Decimal(0);categories={}
