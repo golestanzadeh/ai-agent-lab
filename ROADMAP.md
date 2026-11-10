@@ -1,3 +1,7 @@
+## Unified analysis implementation handoff — 2026-11-10
+
+Exact27d44c1 independent implementationPASS; existing Kernel/runtime only. Deploy existinglauncher and Owner UI acceptance pending. CSV uses canonical ingestion/reconciliation and source labels; no new generalized tax classifier. No real provider attempt or OI gate release. See canonical checkpoint and synchronizedOPEN_ITEMS.
+
 ## Unified analysis command — authorized 2026-11-10
 
 Register src/agent_lab/case_analysis_command.py and focused tests/unit/test_case_analysis_command.py: helpers within existing Kernel dispatcher, PDF tool and deterministic structured-financial ingestion; no second execution authority. Scope amendment and exact acceptance evidence remain pending implementation review.
