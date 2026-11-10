@@ -330,3 +330,7 @@ F01/F02 unsafe accept path now denies both Custodian operations, but frozen func
 Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
 Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
 New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.
+
+## Unified analysis Owner acceptance - 2026-11-10
+
+PDF per-document Re-analyze for CASE-2025-0001 sixth document: OWNER_REPORTED_OPERATIONAL_PASS after explicit dashboard confirmation and Gemini result display. Live restarted dashboard readiness verified (analysis_command_version=1; available=true; seven documents). Scope is limited to PDF retry UX/provider/result visibility; extraction correctness, persistence audit, CSV dashboard execution and case-wide Analyze are not independently operationally accepted. These remaining checks are NONBLOCKING for the accepted PDF retry. Existing active OI rows are unchanged. See PROJECT_CHECKPOINT.md, 2026-11-10 entry.
