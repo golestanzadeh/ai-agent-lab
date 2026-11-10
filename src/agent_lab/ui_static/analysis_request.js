@@ -10,7 +10,7 @@
   const params=new URLSearchParams({case_id:panel.dataset.caseId,tax_year:panel.dataset.taxYear});
   const results=document.createElement('section');results.setAttribute('aria-live','polite');panel.append(results);
   const text=(node,value)=>{node.textContent=value;return node;};
-  let inventoryTargets=[];
+  let inventoryTargets=[],commandReady=false;
   async function progress(){
     try{
       const r=await fetch('/cases/analysis/progress?'+params,{credentials:'same-origin',cache:'no-store'});
@@ -37,7 +37,7 @@
         if(d.previous_valid_result){const previous=document.createElement('details');previous.append(text(document.createElement('summary'),fa?'نتیجهٔ معتبر قبلی محفوظ است':'Vorheriges gültiges Ergebnis bleibt erhalten'));previous.append(text(document.createElement('pre'),JSON.stringify(d.previous_valid_result.extraction_payload||d.previous_valid_result.csv_payload?.summary,null,2)));section.append(previous);}
         if(d.csv_payload)section.append(text(document.createElement('pre'),JSON.stringify({summary:d.csv_payload.summary,credits:d.csv_payload.credits,debits:d.csv_payload.debits,net:d.csv_payload.net,classification_status:d.csv_payload.classification_status,source_category_totals:d.csv_payload.source_category_totals},null,2)));
         section.append(text(document.createElement('p'),d.initiated_via==='DASHBOARD'?(fa?'آغازشده از داشبورد؛ یافته‌ها پذیرفته نشده‌اند':'Im Dashboard gestartet; Befunde nicht akzeptiert'):(fa?'نتیجهٔ تاریخی؛ نحوهٔ آغاز به‌طور مستقل تأیید نشده':'Historisches Ergebnis; Startursprung nicht unabhängig belegt')));
-        const action=text(document.createElement('button'),fa?'آنالیز مجدد':'Erneut analysieren');action.type='button';action.disabled=p.active||['QUEUED','RUNNING','RECONCILIATION_REQUIRED'].includes(d.processing_status);
+        const action=text(document.createElement('button'),fa?'آنالیز مجدد':'Erneut analysieren');action.type='button';action.disabled=!commandReady||p.active||['QUEUED','RUNNING','RECONCILIATION_REQUIRED'].includes(d.processing_status);
         action.onclick=()=>{if(window.confirm(fa?'یک تلاش جدید فقط برای این سند آغاز شود؟ نتیجهٔ قبلی ممکن است نامطمئن باشد؛ تاریخچه حفظ می‌شود.':'Genau einen neuen Versuch für dieses Dokument starten? Der vorherige Ausgang kann ungewiss sein; die Historie bleibt erhalten.'))send({scope:'DOCUMENT',document_id:d.document_id,execution_intent:'EXPLICIT_RERUN',expected_sha256:d.sha256},action);};section.append(action);
         nodes.push(section);
       }
@@ -46,7 +46,7 @@
       for(const f of inventoryTargets)if(!seen.has(f.id)){
         const line=document.createElement('article');line.append(text(document.createElement('h3'),f.name));
         const action=text(document.createElement('button'),fa?'آنالیز':'Analysieren');action.type='button';
-        action.disabled=p.active||!['application/pdf','text/csv'].includes(f.mime_type);
+        action.disabled=!commandReady||p.active||!['application/pdf','text/csv'].includes(f.mime_type);
         action.onclick=()=>send({scope:'DOCUMENT',document_id:f.id,execution_intent:'NORMAL'},action);
         line.append(action);if(action.disabled&&!p.active)line.append(text(document.createElement('p'),fa?'قالب پشتیبانی نمی‌شود':'Format nicht unterstützt'));nodes.push(line);
       }
@@ -54,17 +54,18 @@
       document.dispatchEvent(new CustomEvent('case-analysis-progress',{detail:p}));
       if(p.active){state.textContent=fa?'استخراج در حال اجرا؛ نتایج هر سند جدا ذخیره می‌شود':'Extraktion läuft; Ergebnisse werden einzeln gespeichert';button.disabled=true;}
       else if(panel.dataset.executionStarted||p.runs.length){panel.dataset.executionStarted='true';state.textContent=fa?'وضعیت پایدار بازیابی شد؛ نتایج نیازمند بازبینی هستند':'Dauerhafter Status geladen; Ergebnisse benötigen Prüfung';}
-      button.disabled=p.active;
+      button.disabled=!commandReady||p.active;
     }catch(_){button.disabled=true;state.textContent=fa?'بازیابی وضعیت تأییدشده ممکن نیست':'Verifizierter Status nicht verfügbar';}
   }
   fetch('/cases/analysis/readiness?'+params,{credentials:'same-origin',cache:'no-store'}).then(r=>r.json()).then(d=>{
-    if(d.inventory_verified===true&&d.analysis_launch_available===true&&d.case_id===panel.dataset.caseId&&String(d.tax_year)===panel.dataset.taxYear){
-      inventoryTargets=d.document_targets||[];
+    if(d.analysis_command_version===1&&d.inventory_verified===true&&d.analysis_launch_available===true&&d.case_id===panel.dataset.caseId&&String(d.tax_year)===panel.dataset.taxYear){
+      commandReady=true;inventoryTargets=d.document_targets||[];
       button.disabled=false;button.setAttribute('aria-disabled','false');button.textContent=fa?'آنالیز پرونده':'Fall analysieren';
     }
   }).catch(()=>{});
   const pending=new Map();
   async function send(extra,control){
+    if(!commandReady||control.disabled)return;
     const key=JSON.stringify(extra);const requestId=pending.get(key)||crypto.randomUUID();pending.set(key,requestId);
     control.disabled=true;panel.dataset.executionStarted='true';
     try{

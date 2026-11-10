@@ -535,6 +535,7 @@ def create_local_case_app(*, kernel_dispatch=None):
                              'image/tiff': 'TIFF', 'image/webp': 'WebP'}.get(mime, 'OTHER')
                 type_counts[label] += 1
             return JSONResponse({'case_id': case_id, 'tax_year': tax_year,
+                'analysis_command_version':1,
                 'inventory_verified': True, 'documents_count': len(files),
                 'document_types': dict(sorted(type_counts.items())),
                 'document_targets':[{'id':f['id'],'name':f['name'],'mime_type':f['mime_type']} for f in files],
