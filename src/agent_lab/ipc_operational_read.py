@@ -198,7 +198,62 @@ def validate_result(result,request):
             if operation=="READ_FACTS" and (end is None or not date(int(request["tax_year"]),1,1)<=start<end<=date(int(request["tax_year"])+1,1,1)):raise ValueError("fact year interval")
         if keys!=sorted(set(keys)):raise ValueError("result order")
 
-def validate_response(value,request):
+CONTROL_OUTCOMES = {
+    "FINALIZE_MUTATION": {"COMMITTED_FINAL", "NOT_FINALIZABLE"},
+    "GET_TRANSACTION": {"PREPARED", "IDENTITY_COMMITTED", "COMMITTED_FINAL", "ABORTED", "NOT_FINALIZABLE"},
+    "ABORT_PREPARED": {"ABORTED", "NOT_FINALIZABLE"},
+}
+RECEIPT_FIELDS = ("staged_receipt_digest", "witness_preimage_digest", "signed_record_digest")
+CONTROL_SCOPE = set("deployment_id transaction_id scope_kind case_id tax_year run_id task_id manifest_id actor_instance_id role_id capability domain_operation".split())
+SNAPSHOT_FIELDS = {"outcome", "identity_epoch", "identity_head", "identity_audit_count", "identity_audit_head", *RECEIPT_FIELDS}
+FINALIZE_FIELDS = set("staged_receipt_digest witness_object_key witness_generation witness_preimage_digest signed_record_digest custodian_verification_digest custodian_nonce".split())
+
+
+def _validate_control_success(value, request, checkpoint):
+    """Bind a positive response to independently verified durable stage evidence."""
+    exact(checkpoint, {"scope", "prepare_digest", "snapshot", "finalize_payload"})
+    exact(checkpoint["scope"], CONTROL_SCOPE)
+    if checkpoint["scope"] != {name: request[name] for name in CONTROL_SCOPE}:
+        raise ValueError("transaction checkpoint scope")
+    digest(checkpoint["prepare_digest"])
+    snapshot = checkpoint["snapshot"]
+    exact(snapshot, SNAPSHOT_FIELDS)
+    if snapshot != {name: value[name] for name in SNAPSHOT_FIELDS}:
+        raise ValueError("transaction checkpoint response mismatch")
+
+    message = request["message_type"]
+    if message != "FINALIZE_MUTATION":
+        exact(request["payload"], {"original_request_digest"})
+        if request["payload"]["original_request_digest"] != checkpoint["prepare_digest"]:
+            raise ValueError("original PREPARE correlation")
+
+    finalization = checkpoint["finalize_payload"]
+    if value["outcome"] != "COMMITTED_FINAL":
+        if finalization is not None:
+            raise ValueError("unexpected finality evidence")
+        return
+    exact(finalization, FINALIZE_FIELDS)
+    for name in (*RECEIPT_FIELDS, "custodian_verification_digest"):
+        digest(finalization[name])
+    text(finalization["witness_object_key"])
+    generation = finalization["witness_generation"]
+    if not isinstance(generation, str) or not re.fullmatch(r"[1-9][0-9]{0,19}", generation):
+        raise ValueError("invalid Witness generation")
+    if not isinstance(finalization["custodian_nonce"], str) or not re.fullmatch(r"[0-9a-f]{64}", finalization["custodian_nonce"]):
+        raise ValueError("invalid Custodian nonce")
+    if any(value[name] != finalization[name] for name in RECEIPT_FIELDS):
+        raise ValueError("Witness and Commit receipt correlation")
+    if message == "FINALIZE_MUTATION" and request["payload"] != finalization:
+        raise ValueError("FINALIZE evidence substitution")
+
+
+def validate_response(value,request,*,transaction_checkpoint=None):
+    """Validate bytes and correlation, never grant authority or prove finality.
+
+    For IPC 1.1 control successes, transaction_checkpoint must come from
+    authenticated durable state and verified receipts, never from the peer's
+    proposed response. Existing request admission remains read-only.
+    """
     version11=request["contract"]=="oi0002.kernel-identity-c09/1.1"
     if request["message_type"]=="GET_ENROLLMENT_STATUS" and not version11:raise ValueError("bootstrap requires 1.1")
     exact(value,RESP|{"identity_audit_count","identity_audit_head"} if version11 else RESP)
@@ -207,8 +262,17 @@ def validate_response(value,request):
     body=deepcopy(value);body.pop("response_digest");digest(value["response_digest"])
     if canonical_sha256(body)!=value["response_digest"]:raise ValueError("response digest")
     outcomes={"PREPARE_MUTATION":{"PREPARED","DENIED","CONFLICT"},"COMMIT_MUTATION":{"IDENTITY_COMMITTED","DENIED","CONFLICT","NOT_FINALIZABLE"},"READ_IDENTITY_STATE":{"READ_OK","DENIED","CONFLICT"},"GET_ENROLLMENT_STATUS":{"ENROLLMENT_READY","DENIED","CONFLICT"}}
+    control = version11 and request["message_type"] in CONTROL_OUTCOMES
+    if control:
+        operation = request["domain_operation"]
+        if operation not in MUTATION_OPERATIONS or request["capability"] != OPERATION_CAPABILITIES[operation]:
+            raise ValueError("control operation capability")
+        outcomes[request["message_type"]] = CONTROL_OUTCOMES[request["message_type"]] | {"DENIED", "CONFLICT"}
     if value["outcome"] not in outcomes.get(request["message_type"],set()):raise ValueError("response outcome")
-    if value["outcome"] in {"DENIED","CONFLICT"}:
+    withheld = version11 and value["outcome"] == "NOT_FINALIZABLE"
+    if withheld and value["denial_code"] not in {"RECONCILIATION_REQUIRED", "TEMPORARY_FAILURE"}:
+        raise ValueError("indeterminate outcome requires a recovery denial")
+    if withheld or value["outcome"] in {"DENIED","CONFLICT"}:
         if value["denial_code"] not in (DENIALS|{"RECONCILIATION_REQUIRED"} if version11 else DENIALS) or any(value[k]!="" for k in ("identity_epoch","identity_head","staged_receipt_digest","witness_preimage_digest","signed_record_digest","result")):raise ValueError("denial disclosure")
         if version11 and (value["identity_audit_count"]!="" or value["identity_audit_head"]!=""):raise ValueError("denial audit disclosure")
     else:
@@ -225,6 +289,10 @@ def validate_response(value,request):
         elif value["outcome"]=="READ_OK":validate_result(value["result"],request)
         elif value["result"]!="":raise ValueError("nonread result")
         if value["outcome"] in {"READ_OK","PREPARED","ENROLLMENT_READY"} and any(value[k]!="" for k in ("staged_receipt_digest","witness_preimage_digest","signed_record_digest")):raise ValueError("unexpected receipt")
+        if control:
+            _validate_control_success(value, request, transaction_checkpoint)
+            if value["outcome"] == "ABORTED" and any(value[name] != "" for name in RECEIPT_FIELDS):
+                raise ValueError("abort cannot carry a Commit receipt")
         if value["outcome"]=="IDENTITY_COMMITTED":
             digest(value["staged_receipt_digest"]);digest(value["witness_preimage_digest"])
             if value["signed_record_digest"]!="":raise ValueError("premature final receipt")

@@ -294,3 +294,19 @@ After independent architecture PASS only:
 7. freeze exact SHA/evidence and obtain a different independent final acceptance authority.
 
 Passing architecture review authorizes implementation within these bounds only. It does not accept C09, OI-0002, protected persistence or production operation.
+
+### IPC 1.1 transaction control responses — Owner-approved completion, 2026-11-18
+
+The existing framed response and its canonical digest cover the complete closed field set, including the Identity audit count and head. The outer contract, message, transaction ID and request digest must equal the current request. Positive control responses carry an empty result and denial code. Identity returns commitments only. The request verifier and deployed operation admission retain their existing read-only policy.
+
+| Request | Successful outcome | Other allowed outcomes |
+|---|---|---|
+| FINALIZE_MUTATION | COMMITTED_FINAL | DENIED, CONFLICT, NOT_FINALIZABLE |
+| GET_TRANSACTION | PREPARED, IDENTITY_COMMITTED, COMMITTED_FINAL, ABORTED | DENIED, CONFLICT, NOT_FINALIZABLE |
+| ABORT_PREPARED | ABORTED | DENIED, CONFLICT, NOT_FINALIZABLE |
+
+The durable lifecycle is NEW → PREPARED → IDENTITY_COMMITTED → COMMITTED_FINAL, with PREPARED → ABORTED as the only alternative transition. An exact completed-stage retry observes the existing commitment. GET observes the authenticated durable state without transitioning it. A missing or contradictory record, unavailable verified evidence or interrupted exchange leaves the caller in reconciliation. NOT_FINALIZABLE is an observation, never a stored lifecycle state. It uses RECONCILIATION_REQUIRED or TEMPORARY_FAILURE. For IPC 1.1 it has the same empty outcome fields as DENIED and CONFLICT, including audit fields. A verified denial or missing response grants no authority to replay domain work.
+
+Positive replies require the transaction scope, original PREPARE digest and exact state-specific logical and audit commitments from independently verified local checkpoint evidence. GET and ABORT must echo the original PREPARE linkage through the authenticated request payload. PREPARED and ABORTED carry empty receipt fields. ABORT records the local audit cut at the abort and leaves the logical head unchanged. IDENTITY_COMMITTED carries the Commit receipt and Witness preimage, with an empty signed-record digest. COMMITTED_FINAL carries all three and repeats the witnessed Commit cut rather than advancing the logical chain or recursively witnessing finalization audit. FINALIZE must match the verified evidence in its entirety, including object key, generation, Custodian verification digest and nonce. These values come from existing verified Commit/Witness/Custodian records. They cannot be reconstructed from peer assertions or response digests. The validator's transaction_checkpoint input is internal, assembled by the trusted caller after integrity and state-transition checks. It does not serve as a new store or a verifier of external proof.
+
+After an interrupted PREPARE, resolve the original task and reservation before another stage. After an interrupted COMMIT, reconcile the original stored receipt, audit cut and payload under the same transaction, even if the Kernel missed the response. A positive GET carrying a recovered Commit cut requires independent verification of that cut before acceptance. After an interrupted FINALIZE, query the same transaction and check the stored Witness evidence. After an interrupted abort, verify the durable RELEASED tombstone. A fresh authorized attempt carries a fresh request digest and proof while all durable stage bindings remain fixed. No result may be released to the user until the Kernel verifies finality and durably commits acknowledgement. IPC 1.0 behavior and existing framing, signature and authorization rules are retained.
