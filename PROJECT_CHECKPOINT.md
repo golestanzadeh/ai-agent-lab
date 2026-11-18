@@ -1,3 +1,7 @@
+## Owner-approved Toyota execution strategy — 2026-11-18
+
+Decision record: `docs/F07_TOYOTA_EXECUTION_DECISION_20261118.md`. Three strictly sequential packages: (1) accepted F07 atomic Identity write/recovery implementation and independent exact-SHA review; (2) separately Owner-gated operational service/source/enrollment activation; (3) real Family dashboard persistence and restart proof. No bypass, parallel storage, new orchestrator, implicit activation or duplicated checkpoint. Next action is Package 1 after fresh authenticated Limit Guard admission. Existing uncommitted UI/auth changes remain untouched.
+
 ## F07 mutation Witness contract and implementation continuation — 2026-11-18
 
 INDEPENDENT_CONTRACT_PASS at 8d0ebd3143fba7a7b28f2e25253f4bd90ebbdfdf. The versioned signed COMMIT slot, pre-response operation identity, and canonical staged receipt and Witness material remove the digest cycle. Independent finding against 8559438 (lost response left Kernel without receipt bytes) was corrected by bounded internal COMMIT/GET material and exact reconstruction against retained signed context. Worker 168 passed; independent 287 passed, exit 0. Existing read admission and legacy response behavior remain intact.
