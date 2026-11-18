@@ -256,7 +256,7 @@ def _validate_control_success(value, request, checkpoint):
         raise ValueError("FINALIZE evidence substitution")
 
 
-def validate_response(value,request,*,transaction_checkpoint=None):
+def validate_response(value,request,*,transaction_checkpoint=None,mutation_material_context=None):
     """Validate bytes and correlation, never grant authority or prove finality.
 
     For IPC 1.1 control successes, transaction_checkpoint must come from
@@ -296,6 +296,23 @@ def validate_response(value,request,*,transaction_checkpoint=None):
             if value["result"]["enrollment_id"]!=request["payload"]["enrollment_id"] or value["result"]["owner_authorization_digest"]!=request["payload"]["owner_authorization_digest"] or value["result"]["genesis_head"]!=value["identity_head"]:raise ValueError("bootstrap result binding")
             text(value["result"]["store_id"]);digest(value["result"]["domain_snapshot_digest"])
         elif value["outcome"]=="READ_OK":validate_result(value["result"],request)
+        elif mutation_material_context is not None and value["outcome"]=="IDENTITY_COMMITTED" and version11:
+            from agent_lab.f07_commit_witness import validate_commit_material
+            exact(mutation_material_context, {"original_commit", "store_id", "backup_generation"})
+            original = mutation_material_context["original_commit"]
+            if (request["message_type"] not in {"COMMIT_MUTATION", "GET_TRANSACTION"}
+                    or any(request[name] != original[name] for name in CONTROL_SCOPE)):
+                raise ValueError("Commit material request scope")
+            if request["message_type"] == "COMMIT_MUTATION":
+                old = original["kernel_proof"]["kernel_projection"]
+                current = request["kernel_proof"]["kernel_projection"]
+                if (request["prepared_request_digest"] != original["prepared_request_digest"]
+                        or any(current[k] != old[k] for k in ("mutation_witness_slot", "stage_content_digest",
+                            "kernel_pending_head", "projected_head", "projected_epoch"))):
+                    raise ValueError("Commit material request substitution")
+            elif request["payload"]["original_request_digest"] != original["prepared_request_digest"]:
+                raise ValueError("Commit material PREPARE mismatch")
+            validate_commit_material(value["result"], response=value, **mutation_material_context)
         elif value["result"]!="":raise ValueError("nonread result")
         if value["outcome"] in {"READ_OK","PREPARED","ENROLLMENT_READY"} and any(value[k]!="" for k in ("staged_receipt_digest","witness_preimage_digest","signed_record_digest")):raise ValueError("unexpected receipt")
         if control:

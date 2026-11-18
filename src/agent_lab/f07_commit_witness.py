@@ -85,3 +85,38 @@ def commit_witness_material(request, *, store_id, backup_generation, audit_count
                    kernel_pending_head=proof["kernel_pending_head"], witness_slot=slot.copy(),
                    witness_preimage_digest=witness_digest(unsigned))
     return receipt, unsigned
+
+def validate_commit_material(value, *, original_commit, response, store_id, backup_generation):
+    """Check canonical material returned across the authenticated Kernel/Identity boundary."""
+    from agent_lab.c09_custodian_operational import pack
+    from agent_lab.ipc_wire_primitives import canonical_json_bytes
+    from agent_lab.identity_logical_continuity import successor_preimage
+
+    exact(value, {"profile", "receipt", "unsigned_record_bytes"})
+    if value["profile"] != "identity-mutation-commit-material/1":
+        raise ValueError("unknown mutation material profile")
+    receipt = value["receipt"]
+    if not isinstance(receipt, dict) or len(canonical_json_bytes(receipt)) > 4096:
+        raise ValueError("invalid staged receipt size")
+    result_digest = receipt.get("domain_result_digest")
+    digest(result_digest)
+    stable_mutation = {key: item for key, item in original_commit.items() if key not in {
+        "message_type", "request_digest", "kernel_proof", "expires_at", "prepared_request_digest"}}
+    successor = successor_preimage(
+        deployment_id=original_commit["deployment_id"], prior_epoch=original_commit["expected_epoch"],
+        prior_head=original_commit["expected_head"], case_id=original_commit["case_id"],
+        tax_year=original_commit["tax_year"], transaction_id=original_commit["transaction_id"],
+        domain_operation=original_commit["domain_operation"], mutation_content_digest=H(stable_mutation),
+        domain_result_digest=result_digest)
+    expected, unsigned = commit_witness_material(
+        original_commit, store_id=store_id, backup_generation=backup_generation,
+        audit_count=response["identity_audit_count"], audit_head=response["identity_audit_head"],
+        result_digest=result_digest)
+    if (receipt != expected or len(unsigned) > 4096 or value["unsigned_record_bytes"] != pack(unsigned)
+            or H(receipt) != response["staged_receipt_digest"]
+            or expected["witness_preimage_digest"] != response["witness_preimage_digest"]
+            or (expected["logical_epoch"], expected["logical_head"]) !=
+            (response["identity_epoch"], response["identity_head"])
+            or H(successor) != response["identity_head"]
+            or original_commit["transaction_id"] != response["transaction_id"]):
+        raise ValueError("mutation Commit material binding mismatch")

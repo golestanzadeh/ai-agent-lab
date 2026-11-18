@@ -111,3 +111,74 @@ def test_commit_must_bind_local_generation_and_advancing_audit_cut():
         with pytest.raises(ValueError):
             commit_witness_material(request, store_id="STORE", backup_generation=generation,
                                     audit_count=count, audit_head=sha("e"), result_digest=sha("f"))
+
+
+def recovery_exchange():
+    from agent_lab.c09_custodian_operational import pack
+    from agent_lab.identity_logical_continuity import successor_preimage
+    from agent_lab.ipc_operational_read import CONTROL_SCOPE, SNAPSHOT_FIELDS
+    commit = candidate()
+    stable = {key: item for key, item in commit.items() if key not in {
+        "message_type", "request_digest", "kernel_proof", "expires_at", "prepared_request_digest"}}
+    successor = successor_preimage(
+        deployment_id=commit["deployment_id"], prior_epoch=commit["expected_epoch"], prior_head=commit["expected_head"],
+        case_id=commit["case_id"], tax_year=commit["tax_year"], transaction_id=commit["transaction_id"],
+        domain_operation=commit["domain_operation"], mutation_content_digest=H(stable), domain_result_digest=sha("f"))
+    commit["kernel_proof"]["kernel_projection"]["projected_head"] = H(successor)
+    commit = resign(commit)
+    verify(commit)
+    receipt, unsigned = material(commit)
+    request = dict(commit, message_type="GET_TRANSACTION", request_digest=sha("9"),
+                   payload={"original_request_digest": commit["prepared_request_digest"]})
+    response = {field: request[field] for field in ("contract", "message_type", "transaction_id", "request_digest")}
+    response.update(outcome="IDENTITY_COMMITTED", identity_epoch=receipt["logical_epoch"],
+                    identity_head=receipt["logical_head"], identity_audit_count=receipt["audit_cut_count"],
+                    identity_audit_head=receipt["audit_cut_head"], staged_receipt_digest=H(receipt),
+                    witness_preimage_digest=receipt["witness_preimage_digest"], signed_record_digest="", denial_code="",
+                    result=dict(profile="identity-mutation-commit-material/1", receipt=receipt, unsigned_record_bytes=pack(unsigned)))
+    checkpoint = dict(scope={key: commit[key] for key in CONTROL_SCOPE}, prepare_digest=commit["prepared_request_digest"],
+                      snapshot={key: response[key] for key in SNAPSHOT_FIELDS}, finalize_payload=None)
+    context = dict(original_commit=commit, store_id="TEST-STORE", backup_generation="4")
+    return request, response, checkpoint, context, unsigned
+
+
+def test_lost_commit_response_recovers_exact_custodian_input():
+    from agent_lab.c09_custodian_operational import unpack
+    from agent_lab.ipc_operational_read import validate_response
+    from agent_lab.ipc_wire_primitives import canonical_json_bytes, decode_frame, encode_frame
+
+    request, response, checkpoint, context, unsigned = recovery_exchange()
+    framed = decode_frame(encode_frame(dict(response, response_digest=H(response))))
+    validate_response(framed, request, transaction_checkpoint=checkpoint, mutation_material_context=context)
+    assert unpack(framed["result"]["unsigned_record_bytes"], 4096) == unsigned
+    assert H(framed["result"]["receipt"]) == framed["staged_receipt_digest"]
+    assert canonical_json_bytes(framed["result"]["receipt"]) == canonical_json_bytes(material(context["original_commit"])[0])
+    with pytest.raises(ValueError, match="nonread result"):
+        validate_response(framed, request, transaction_checkpoint=checkpoint)
+    commit = context["original_commit"]
+    response.update(message_type=commit["message_type"], request_digest=commit["request_digest"])
+    validate_response(dict(response, response_digest=H(response)), commit, mutation_material_context=context)
+
+
+@pytest.mark.parametrize("field,value", [
+    ("store_id", "OTHER-STORE"), ("domain_result_digest", sha("0")),
+    ("request_digest", sha("1")), ("witness_slot", {}), ("audit_cut_count", "5"),
+])
+def test_receipt_substitution_rejected_even_with_rehashed_envelope(field, value):
+    from agent_lab.ipc_operational_read import validate_response
+    request, response, checkpoint, context, _ = recovery_exchange()
+    response["result"]["receipt"][field] = value
+    response["staged_receipt_digest"] = H(response["result"]["receipt"])
+    checkpoint["snapshot"]["staged_receipt_digest"] = response["staged_receipt_digest"]
+    with pytest.raises(ValueError, match="material binding"):
+        validate_response(dict(response, response_digest=H(response)), request, transaction_checkpoint=checkpoint,
+                          mutation_material_context=context)
+
+
+def test_noncanonical_unsigned_material_rejected():
+    from agent_lab.ipc_operational_read import validate_response
+    request, response, checkpoint, context, _ = recovery_exchange()
+    response["result"]["unsigned_record_bytes"] += "="
+    with pytest.raises(ValueError, match="material binding"):
+        validate_response(dict(response, response_digest=H(response)), request, transaction_checkpoint=checkpoint,
+                          mutation_material_context=context)
