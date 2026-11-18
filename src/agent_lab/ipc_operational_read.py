@@ -69,7 +69,7 @@ def unsigned(request,for_digest=False):
 
 def signing_bytes(request): return DOMAIN+canonical_json_bytes(unsigned(request))
 
-def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT,bootstrap_artifact=None):
+def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT,bootstrap_artifact=None, mutation_commit_contract=False):
     exact(value,FIELDS)
     bootstrap=bootstrap_artifact is not None
     if bootstrap:
@@ -79,6 +79,10 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
         for field,target in (("task_id","bootstrap_task_id"),("manifest_id","bootstrap_manifest_id"),("run_id","bootstrap_run_id"),("actor_instance_id","bootstrap_actor_instance_id"),("role_id","bootstrap_role_id")):
             if value[field]!=owner[target]:raise ValueError("bootstrap Owner scope mismatch")
         if value["deployment_id"]!=owner["deployment_id"] or value["authorization_references"]!=[H(owner)] or value["expected_epoch"]!="0" or value["expected_head"]!=H(genesis_preimage(owner)):raise ValueError("bootstrap authority/head mismatch")
+    elif mutation_commit_contract:
+        if (expected_contract!="oi0002.kernel-identity-c09/1.1" or value["message_type"]!="COMMIT_MUTATION"
+                or value["domain_operation"] not in MUTATION_OPERATIONS):
+            raise ValueError("versioned mutation COMMIT required")
     elif value["message_type"]!="READ_IDENTITY_STATE" or value["domain_operation"] not in READ_OPERATIONS:raise ValueError("protected or unknown operation disabled")
     exact(expected_scope,set("deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()))
     for scoped in expected_scope.values():text(scoped)
@@ -120,7 +124,12 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     proof=value["kernel_proof"];exact(proof,PROOF)
     if proof["proof_version"]!="1" or proof["algorithm"]!="ECDSA-P256-SHA256" or proof["key_id"]!=expected_key_id:raise ValueError("proof identity")
     digest(proof["pending_row_digest"])
-    projection=proof["kernel_projection"];expected=read_projection(value);exact(projection,set(expected))
+    projection=proof["kernel_projection"];expected=read_projection(value)
+    if mutation_commit_contract:
+        from agent_lab.f07_commit_witness import validate_slot
+        validate_slot(value, projection.get("mutation_witness_slot"))
+        expected["mutation_witness_slot"]=projection["mutation_witness_slot"]
+    exact(projection,set(expected))
     if bootstrap and (projection["witnessed_audit_count"],projection["witnessed_audit_head"])!=(owner["enrollment_audit_count"],owner["enrollment_audit_head"]):raise ValueError("bootstrap witnessed prefix substitution")
     if canonical_sha256(projection)!=proof["pending_row_digest"]:raise ValueError("projection digest")
     for name in expected:
