@@ -1,5 +1,13 @@
 # F07 governed runtime activation preparation
 
+## F07 atomic Identity mutation — contract blocker, 2026-11-18
+
+HUMAN_REQUIRED / COMMIT_WITNESS_PREIMAGE_CONTRACT_GAP. Both accepted baselines (7859d1b and 815016190656fa75b8ab746d45eb6be41acf4508) are ancestors of the inspected HEAD 52f3110a36f1f0a3297474634373a505129c3840. Bounded preflight admitted via authenticated app-server at 78% five-hour and 97% weekly under the existing 15-point reserve. Independent read-only architecture review confirmed the blocker on that exact HEAD.
+
+The Identity COMMIT transaction must persist the exact unsigned Witness preimage digest before returning its response. The signed COMMIT projection does not carry the Kernel's reserved Witness epoch, sequence, previous signed-record commitment, backup generation or mutation operation identity. The Kernel's existing read-checkpoint builder allocates the Witness slot after the response. Reusing its response-digest-based operation identifier creates a cycle because the mutation response includes the Witness preimage digest and the Witness preimage includes the operation identifier. Neither an opaque pending-head hash nor a local audit head determines the missing fields.
+
+Smallest Owner decision: authorize a versioned, mutation-only COMMIT projection with a Kernel-reserved and durably reread Witness slot and noncircular operation identity, plus exact staged-receipt/preimage golden vectors. Keep read checkpoint derivation and existing control responses intact. After independent contract review, implement the accepted 7859d1b typed resolution and single-transaction reservation, mutation and consumption with the new authenticated COMMIT inputs, then verify crashes, concurrency and all five IPC stages. No implementation or runtime activation attempted. No active OPEN_ITEMS row closes. Role-private live source/custody binding, enrollment, services and operational finality remain separate Human Gates.
+
 ## F07 IPC 1.1 control-response acceptance — 2026-11-18
 
 INDEPENDENT_PASS / BOUNDED_IPC_1_1_CONTROL_RESPONSES_ONLY at 815016190656fa75b8ab746d45eb6be41acf4508. Owner approved FINALIZE_MUTATION, GET_TRANSACTION and ABORT_PREPARED response completion. The existing response validator checks closed outcomes, current attempt correlation, verified durable snapshot bindings, Commit receipt and complete Witness evidence. NOT_FINALIZABLE withholds state and requires reconciliation or a temporary-failure disposition. IPC 1.0 and read-only request admission remain unchanged.
