@@ -1,5 +1,13 @@
 # F07 governed runtime activation preparation
 
+## F07 mutation Witness contract and implementation continuation — 2026-11-18
+
+INDEPENDENT_CONTRACT_PASS at 8d0ebd3143fba7a7b28f2e25253f4bd90ebbdfdf. The versioned signed COMMIT slot, pre-response operation identity, and canonical staged receipt and Witness material remove the digest cycle. Independent finding against 8559438 (lost response left Kernel without receipt bytes) was corrected by bounded internal COMMIT/GET material and exact reconstruction against retained signed context. Worker 168 passed; independent 287 passed, exit 0. Existing read admission and legacy response behavior remain intact.
+
+Atomic implementation resumed with typed revision, scope, expiry/revocation and content checks at eacbd5ed43a081c4e79e4784b963248f6b603dcc. BOUNDED_PRIMITIVE_PASS, 24 worker and 24 overlapping independent tests passed, exit 0. This verifier does not bind a real adapter or resolve trust. No active OPEN_ITEMS row closes.
+
+CAPACITY_DEFERRED for the integrated atomic runtime, crash tests and independent review. Existing Limit Guard at authenticated 2026-11-18T10:01:32Z measured 50% five-hour and 92% weekly. EXPENSIVE 35/15 projects 15%/77%, crossing the admission threshold. Resets 2026-11-18T14:13:38Z and 2026-11-25T09:13:38Z. On fresh admission, continue durable Kernel slot arbitration shared with read/restore, same-Identity-SQLite reservation/consumption and mutation, authenticated recovery checkpoint assembly, and Custodian mutation receipt wiring. Verify all five stages, crash/retry/concurrency and obtain exact-SHA independent review. Live resolver trust-root/custody binding, deployment, protected enrollment and operational acceptance retain their gates.
+
 ## F07 atomic Identity mutation — contract blocker, 2026-11-18
 
 HUMAN_REQUIRED / COMMIT_WITNESS_PREIMAGE_CONTRACT_GAP. Both accepted baselines (7859d1b and 815016190656fa75b8ab746d45eb6be41acf4508) are ancestors of the inspected HEAD 52f3110a36f1f0a3297474634373a505129c3840. Bounded preflight admitted via authenticated app-server at 78% five-hour and 97% weekly under the existing 15-point reserve. Independent read-only architecture review confirmed the blocker on that exact HEAD.
