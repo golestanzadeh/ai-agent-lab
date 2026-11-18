@@ -1,5 +1,11 @@
 # F07 governed runtime activation preparation
 
+## F07 IPC 1.1 control-response acceptance — 2026-11-18
+
+INDEPENDENT_PASS / BOUNDED_IPC_1_1_CONTROL_RESPONSES_ONLY at 815016190656fa75b8ab746d45eb6be41acf4508. Owner approved FINALIZE_MUTATION, GET_TRANSACTION and ABORT_PREPARED response completion. The existing response validator checks closed outcomes, current attempt correlation, verified durable snapshot bindings, Commit receipt and complete Witness evidence. NOT_FINALIZABLE withholds state and requires reconciliation or a temporary-failure disposition. IPC 1.0 and read-only request admission remain unchanged.
+
+Worker targeted and compatibility suite: 230 passed, exit 0. Separate read-only reviewer: 269 passed, exit 0, on the exact contract commit. No active OPEN_ITEMS row closes. Next development step: implement the accepted 7859d1b mapping in the existing Identity-owned SQLite, with role-private typed evidence resolution, atomic reservation/consumption and domain mutation, and authenticated durable checkpoint assembly for these responses. Verify rollback, crash recovery, concurrency and FINALIZE against independently verified Witness evidence before activation. Live source/custody binding, enrollment, deployment and operational acceptance remain separate gates.
+
 ## Owner-controlled quota-safe continuation checkpoint — 2026-10-27
 
 Owner reinstated the15% stop/reserve, superseding the mission's prior positive-threshold waiver. Fresh recovery verified clean remote091758024387346a15562b4ae75639dd8bcbf0af. Owner-reported81% differed from authenticated25%/88%; actual telemetry governed. The bounded safe continuation produced the protected-resolution/same-Identity-DB transaction mapping in existing architecture, exact7859d1bec84b5a5c772d2d106e72fa284adeb238. Separate read-only architecture reviewer returned CONTRACT_PASS, no findings, clean diff; this is contract-only acceptance, not a live source/adapter/custody/enrollment/operational grant. Documentation verification `python -m pytest tests/unit/test_documentation_index.py -q`:18 passed, exit0. Source/test/runtime data are unchanged; accepted inactive implementation remainsba5b8b1.
