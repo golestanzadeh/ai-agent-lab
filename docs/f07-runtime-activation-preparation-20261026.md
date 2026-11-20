@@ -266,3 +266,19 @@ Exact focused command with `PYTHONPATH=src` from repository root:
 Coverage includes all five domain operations, PREPARE/COMMIT/FINALIZE response loss, ambiguous Witness upload, atomic crash boundaries, restart, authorization concurrency, tombstones, metadata deletion, migration faults and read/control/revision compatibility. Actual IPC/cloud transport is controlled by fixtures. No taxpayer data or external providers are accessed. An initial regression exposed legacy migration column-order dependence; explicit named migration columns corrected it before the successful rerun.
 
 Early independent read-only feedback found four defects. Corrections preserve budget BLOCKED/audit across failed reservation, limit role correction to the same binding and exact history projection, select a unique typed role-evidence reference, and reject duplicate/noncanonical protected DTOs. Final exact-SHA independent review remains required. No operational acceptance or Package 2/3 execution is inferred.
+
+### Independent rejection and correction
+
+Reviewer `/root/c09_architecture_independent_review` independently inspected exact 765a2f4f4b27f792924061167f4bfea38fa7689d in a git archive, ran `python -m pytest -q tests/unit/test_f07_atomic_mutation.py tests/unit/test_c09_custodian_operational.py` with `PYTHONPATH=src`, and obtained 51 passed in 31.82s, exit 0. `git diff --check 765a2f4^ 765a2f4` passed. The verdict was INDEPENDENT_FAIL.
+
+| Finding | Severity | Reproduction | Correction and evidence |
+|---|---|---|---|
+| F01 | HIGH | Issue READ, delay staging its committed response, then reserve a mutation slot. The old-head result becomes unrecoverable after mutation finality. | Existing Kernel shared slot check now blocks every unresolved DISPATCHED read until a RELEASED exact checkpoint covers the first dispatch. A real Kernel/Identity/Custodian fixture proves denial, read reconciliation/release and successful subsequent mutation. |
+| F02 | HIGH | Reserve existing continuity first, then request mutation COMMIT. Both reservations previously coexisted. | Mutation slot check rejects matching pending_json. Reverse legacy guards run inside the Kernel atomic write transaction. Focused fixture proves no request/reservation side effects on denial, then existing reconciliation permits retry. |
+| F03 | MEDIUM | Prior tests armed crash injection only after PREPARE. | Dedicated PREPARE before-commit, after-commit and after-anchor tests verify TX/AUTH/AUTHREF/NONCE presence or absence, unchanged domain/head, integrity and cached-plan retry without reexecution. |
+
+A separate worker probe also reproduced F01 before correction. Its temporary-directory cleanup returned WinError 32 after the reproduction output because the fixture's SQLite file handle was still open. The subsequent persisted pytest regression is the clean pass evidence. Initial independent archive collection without PYTHONPATH failed because the archive was not installed; the corrected independent command above passed. These setup/cleanup failures are distinct from the reported candidate security defects.
+
+Corrected focused worker suite has 37 passed, 0 failed, exit 0. Full relevant rerun adds `tests/unit/test_identity_continuity_authority.py` to the earlier nine-file command. Exact corrected-SHA independent review is still required. No live or operational gate is accepted.
+
+Corrected ten-file relevant suite completed with 250 passed, 0 failed, 0 skipped in 53.63s, exit 0. The earlier 37 focused tests overlap this total.

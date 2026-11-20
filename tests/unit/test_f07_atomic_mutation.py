@@ -140,7 +140,7 @@ def test_fail_closed_evidence_and_scope(tmp_path,attack):
     store.close()
 
 
-@pytest.mark.parametrize("lost",[None,"PREPARE_RESPONSE","COMMIT_RESPONSE","FINALIZE_RESPONSE","WITNESS_UPLOAD","BUDGET"])
+@pytest.mark.parametrize("lost",[None,"PREPARE_RESPONSE","COMMIT_RESPONSE","FINALIZE_RESPONSE","WITNESS_UPLOAD","BUDGET","READ_IN_FLIGHT","RESTORE_IN_FLIGHT"])
 def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
     from unittest.mock import patch
     from test_c09_custodian_operational import fixture,rpc
@@ -153,7 +153,7 @@ def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
     try:
         with patch("agent_lab.c09_pipe_transport.exchange_custodian_control",side_effect=rpc(host)):
             kernel.witness_identity_checkpoint(pending["receipt"]["checkpoint_id"],custodian=client,provider=provider,signing_key=KERNEL,kernel_key_id="TEST-KERNEL-KEY-1")
-            work = task(task_id="TASK-MUTATION-1",role_id="IDENTITY_ADMINISTRATION_AGENT",permissions=["identity_create"],case_context=dict(case_id="C1",tax_year=2025,run_id="RUN-MUTATION-1"))
+            work = task(task_id="TASK-MUTATION-1",role_id="IDENTITY_ADMINISTRATION_AGENT",permissions=["identity_create","identity_read"],case_context=dict(case_id="C1",tax_year=2025,run_id="RUN-MUTATION-1"))
             work["inputs"]=[A1,"sha256:"+"8"*64]
             kernel.register_task(work,gate_triggers=[])
             grant=manifest(work,manifest_id="MAN-MUTATION-1",tiers=["A4"])
@@ -183,6 +183,25 @@ def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
                 kernel.record_identity_mutation_response(prepare_retry,prepared)
             else:
                 kernel.record_identity_mutation_response(prepare,prepared)
+            if lost=="READ_IN_FLIGHT":
+                from agent_lab.orchestrator_kernel import StateTransitionError
+                read_kwargs={key:value for key,value in kwargs.items() if key not in {"operation","transaction_id"}}
+                read=kernel.issue_identity_read(**read_kwargs,operation="LIST_PARTIES",payload=dict(subject_id="",as_of_date="2025-06-01"))
+                with pytest.raises(StateTransitionError,match="dispatched read"):
+                    kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
+                read_response=identity.read_operational_identity(read,allowed_case_ids=frozenset({"C1"}))
+                read_pending=kernel.stage_identity_audit_checkpoint(read,read_response)
+                kernel.witness_identity_checkpoint(read_pending["receipt"]["checkpoint_id"],custodian=client,provider=provider,signing_key=KERNEL,kernel_key_id="TEST-KERNEL-KEY-1")
+            if lost=="RESTORE_IN_FLIGHT":
+                legacy={key:value for key,value in kwargs.items() if key in {"deployment_id","case_id","tax_year","manifest_id","task_id","run_id","operation"}}
+                kernel.initialize_identity_continuity(**legacy,head="sha256:"+"a"*64)
+                kernel.reserve_identity_continuity(**legacy,expected_epoch=0,expected_head="sha256:"+"a"*64,next_head="sha256:"+"b"*64)
+                before=kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]
+                with pytest.raises(StateTransitionError,match="legacy continuity"):
+                    kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
+                assert kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]==before
+                assert kernel._identity_payload("identity_kernel_state","deployment_id",owner["deployment_id"]).get("active_mutation") is None
+                kernel.finalize_identity_continuity(**legacy,committed_epoch=1,committed_head="sha256:"+"b"*64)
             commit=kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
             committed=identity.mutate_operational_identity(commit,allowed_case_ids=frozenset({"C1"}))
             if lost=="COMMIT_RESPONSE":
@@ -215,7 +234,7 @@ def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
                 kernel.record_identity_mutation_response(finalize,result)
             state=kernel._identity_payload("identity_kernel_state","deployment_id",owner["deployment_id"])
             assert state["active_mutation"] is None and state["logical_head"]==result["identity_head"]
-            assert len(session.objects)==2
+            assert len(session.objects)==(3 if lost=="READ_IN_FLIGHT" else 2)
             kernel._verify_identity_protocol_state()
             identity._verify_logical_integrity()
     finally:
@@ -377,3 +396,36 @@ def test_mutation_metadata_deletion_fails_closed(tmp_path,target):
     with sqlite3.connect(path) as db:
         db.execute("DELETE FROM identity_mutation_record WHERE key LIKE ?",(target+":%",))
     with pytest.raises(ValueError):store_at(path)
+
+
+@pytest.mark.parametrize("boundary",["BEFORE_COMMIT","AFTER_COMMIT","AFTER_ANCHOR"])
+def test_prepare_crash_atomic_reservation_and_recovery(tmp_path,boundary):
+    from unittest.mock import patch
+    from agent_lab.identity_atomic_mutation import load
+    path=tmp_path/"identity.sqlite"
+    store,prepare=setup(path)
+    original_head=store._logical_row()["head"]
+    def fail(stage):
+        if stage=="IDENTITY_MUTATION:"+boundary:raise RuntimeError("PREPARE crash")
+    store._fault=fail
+    with pytest.raises(RuntimeError):execute(store,prepare)
+    store._db.close()
+    store=store_at(path)
+    store._mutation_source=Sources()
+    assert store._load_identity("P2") is None
+    assert store._logical_row()["head"]==original_head
+    committed=boundary!="BEFORE_COMMIT"
+    assert (load(store,"TX:"+prepare["transaction_id"]) is not None)==committed
+    assert (load(store,"AUTH:TEST-AUTHORIZATION-1") is not None)==committed
+    assert (load(store,"AUTHREF:"+A1) is not None)==committed
+    assert (load(store,"NONCE:"+prepare["kernel_proof"]["nonce"]) is not None)==committed
+    retry=deepcopy(prepare)
+    retry["kernel_proof"]["nonce"]="e"*64
+    if committed:
+        with patch.object(store,"register_identity",side_effect=AssertionError("prepared plan must not execute again")):
+            assert execute(store,resign(retry))["outcome"]=="PREPARED"
+    else:
+        assert execute(store,resign(retry))["outcome"]=="PREPARED"
+    store._verify_audit_continuity()
+    store._verify_logical_integrity()
+    store.close()

@@ -367,3 +367,7 @@ UNKNOWN_PAUSED / IMPLEMENTATION_NOT_STARTED at starting HEAD `a9ea42cbfa1f04e724
 ## F07 Package 1 implementation candidate — 2026-11-20
 
 IMPLEMENTATION_CANDIDATE / INDEPENDENT_REVIEW_PENDING / INACTIVE. Authenticated admission supersedes the earlier sandbox telemetry stop. Worker focused suite 239 passed, exit 0. Exact-SHA independent review is required before accepting the bounded atomic implementation. No active OI row closes. Live source adapter/custody/configuration, four-principal deployment, enrollment, C09/OI-0002/OI-0003 operational acceptance and protected activation retain their existing gates. Packages 2/3 have not begun. PROJECT_CHECKPOINT.md is synchronized.
+
+## F07 Package 1 rejected candidate and remediation — 2026-11-20
+
+Independent review rejected 765a2f4f4b27f792924061167f4bfea38fa7689d despite 51 independently passing tests. Two HIGH global read/restore contention findings and one MEDIUM PREPARE crash-evidence gap were corrected/tested, with 37 focused worker tests passing. Exact corrected-SHA independent acceptance remains pending. No active open-item row closes. PROJECT_CHECKPOINT.md is synchronized and Packages 2/3 remain outside this execution.

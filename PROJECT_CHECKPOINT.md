@@ -1,3 +1,9 @@
+## F07 Package 1 exact-SHA review and bounded correction — 2026-11-20
+
+INDEPENDENT_FAIL at 765a2f4f4b27f792924061167f4bfea38fa7689d. Separate read-only reviewer /root/c09_architecture_independent_review used an isolated git archive and independently ran 51 tests, exit 0. Findings were HIGH in-flight DISPATCHED read omission from mutation slot arbitration, HIGH reverse contention with existing continuity/restore pending_json, and MEDIUM missing PREPARE-specific crash evidence. Passing tests did not accept that SHA.
+
+Corrections centralize the existing deployment slot checks, retain unresolved read attempts until a verified RELEASED checkpoint covers their exact first dispatch, reject existing legacy reservations and recheck reverse guards inside the Kernel write transaction. PREPARE-specific before/after-commit/anchor fault tests verify exact reservation/proof recovery without domain changes. Focused 37 tests passed, exit 0. Corrected exact-SHA review remains pending. At authenticated 2026-11-20T14:21:22.248517Z capacity was 41% five-hour and 82% weekly, BOUNDED re-verification/review admitted, 15-point reserve preserved. No active OPEN_ITEMS row closes and operational gates remain unchanged.
+
 ## F07 Package 1 implementation candidate — 2026-11-20
 
 IMPLEMENTATION_CANDIDATE / INDEPENDENT_REVIEW_PENDING / INACTIVE. Resumed at a9ea42cbfa1f04e72444dd20e82c1a59b0c939bc with accepted mappings 7859d1b, IPC 815016190656fa75b8ab746d45eb6be41acf4508, COMMIT/Witness 8d0ebd3143fba7a7b28f2e25253f4bd90ebbdfdf and revision verifier eacbd5ed43a081c4e79e4784b963248f6b603dcc. The earlier uncommitted sandbox telemetry-stop entry is superseded by authenticated admission in this environment. Initial 2026-11-20T13:48:31.432202Z capacity was 97% five-hour and 91% weekly, EXPENSIVE 35/15 admitted with the 15-point reserve. At 14:13:35.482317Z capacity was 54%/84% and BOUNDED verification/review admitted. Resets 2026-11-20T18:46:50Z and 2026-11-25T09:13:38Z.

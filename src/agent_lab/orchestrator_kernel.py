@@ -1433,6 +1433,31 @@ class OrchestratorKernel:
             self._store_identity_payload("identity_kernel_state","deployment_id",artifact["deployment_id"],state)
             return state
 
+    def _assert_identity_witness_idle(self,deployment_id):
+        """All previously dispatched read cuts must be reconciled first."""
+        settled=set()
+        for row in self._connection.execute("SELECT payload_json FROM identity_kernel_checkpoint"):
+            pending=json.loads(row[0])
+            if pending["receipt"]["deployment_id"]!=deployment_id:
+                continue
+            if pending["status"] in {"AUDIT_CHECKPOINT_PENDING","WITNESSED"}:
+                raise StateTransitionError("earlier Witness writer requires reconciliation")
+            if pending["status"]=="RELEASED" and pending["request"]["message_type"] in {"READ_IDENTITY_STATE","GET_ENROLLMENT_STATUS"}:
+                request=pending["request"]
+                issued=self._identity_payload("identity_kernel_request","nonce",request["kernel_proof"]["nonce"])
+                if issued is None:
+                    raise IntegrityError("released checkpoint request missing")
+                settled.add(issued["first_request_digest"])
+        for row in self._connection.execute("SELECT payload_json FROM identity_kernel_request"):
+            issued=json.loads(row[0])
+            request=issued["request"]
+            if (issued["status"]=="DISPATCHED" and request["deployment_id"]==deployment_id
+                    and request["message_type"] in {"READ_IDENTITY_STATE","GET_ENROLLMENT_STATUS"}
+                    and issued["first_request_digest"] not in settled):
+                raise StateTransitionError("dispatched read requires reconciliation before mutation")
+        if self._connection.execute("SELECT 1 FROM identity_continuity WHERE deployment_id=? AND pending_json IS NOT NULL",(deployment_id,)).fetchone():
+            raise StateTransitionError("legacy continuity reservation requires reconciliation")
+
     def issue_identity_mutation(self,**kwargs):
         try:
             return self._issue_identity_mutation(**kwargs)
@@ -1515,10 +1540,7 @@ class OrchestratorKernel:
                 if "commit_request" not in tx:
                     if (state["logical_epoch"],state["logical_head"])!=(request["expected_epoch"],request["expected_head"]):
                         raise StateTransitionError("prepared predecessor stale")
-                    for row in self._connection.execute("SELECT payload_json FROM identity_kernel_checkpoint"):
-                        pending=json.loads(row[0])
-                        if pending["receipt"]["deployment_id"]==deployment_id and pending["status"] in {"AUDIT_CHECKPOINT_PENDING","WITNESSED"}:
-                            raise StateTransitionError("earlier Witness writer requires reconciliation")
+                    self._assert_identity_witness_idle(deployment_id)
                     slot=slot_projection(request,previous_epoch=str(state["witness_epoch"]),previous_sequence=str(state["witness_sequence"]),previous_record=state["previous_record"],backup_generation=state["artifact"]["backup_generation"])
                     event=self._append_event("IDENTITY_MUTATION_PENDING","IDENTITY_TRANSACTION",transaction_id,"AGENT_FACTORY_KERNEL",dict(slot=slot,prepare_digest=predecessor["request_digest"]))
                     pending_head=self._connection.execute("SELECT event_hash FROM audit_events WHERE event_id=?",(event,)).fetchone()[0]
@@ -1892,7 +1914,10 @@ class OrchestratorKernel:
         if reservation_id is not None or request_digest is not None:
             pending_value.update(reservation_id=reservation_id, request_digest=request_digest)
         pending = _canonical(pending_value)
-        with self._connection:
+        with self.atomic_execution():
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            if state is not None and state.get("active_mutation"):
+                raise StateTransitionError("deployment mutation reservation busy")
             changed = self._connection.execute(
                 "UPDATE identity_continuity SET pending_json=? WHERE deployment_id=? AND case_id=? AND tax_year=? AND epoch=? AND head=? AND pending_json IS NULL",
                 (pending, deployment_id, case_id, tax_year, expected_epoch, expected_head),
@@ -2034,7 +2059,10 @@ class OrchestratorKernel:
         observed=None if row is None else tuple(row[k] for k in ("deployment_id","case_id","tax_year","backup_digest","expected_epoch","expected_head","target_generation","operator_id"))
         if row is None or row["consumed_at"] is not None or _parse_timestamp(row["expires_at"],"expires_at")<=_utc_now() or observed!=expected:
             raise PermissionDenied("restore authorization unavailable, consumed, expired or mismatched")
-        with self._connection:
+        with self.atomic_execution():
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            if state is not None and state.get("active_mutation"):
+                raise StateTransitionError("deployment mutation reservation busy")
             changed=self._connection.execute("UPDATE identity_restore_authorizations SET consumed_at=? WHERE authorization_id=? AND consumed_at IS NULL",(_utc_now().isoformat(),authorization_id)).rowcount
             if changed!=1: raise PermissionDenied("restore authorization already consumed")
             self._append_event("IDENTITY_RESTORE_CONSUMED","IDENTITY_RESTORE",authorization_id,operator_id,{"backup_digest":backup_digest,"target_generation":target_generation})
