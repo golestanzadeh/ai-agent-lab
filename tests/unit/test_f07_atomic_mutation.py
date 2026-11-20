@@ -140,7 +140,7 @@ def test_fail_closed_evidence_and_scope(tmp_path,attack):
     store.close()
 
 
-@pytest.mark.parametrize("lost",[None,"PREPARE_RESPONSE","COMMIT_RESPONSE","FINALIZE_RESPONSE","WITNESS_UPLOAD","BUDGET","READ_IN_FLIGHT","RESTORE_IN_FLIGHT"])
+@pytest.mark.parametrize("lost",[None,"PREPARE_RESPONSE","COMMIT_RESPONSE","FINALIZE_RESPONSE","WITNESS_UPLOAD","BUDGET","READ_IN_FLIGHT","RESTORE_IN_FLIGHT","READ_BEFORE_RESTORE"])
 def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
     from unittest.mock import patch
     from test_c09_custodian_operational import fixture,rpc
@@ -183,20 +183,40 @@ def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
                 kernel.record_identity_mutation_response(prepare_retry,prepared)
             else:
                 kernel.record_identity_mutation_response(prepare,prepared)
-            if lost=="READ_IN_FLIGHT":
+            if lost in {"READ_IN_FLIGHT","READ_BEFORE_RESTORE"}:
                 from agent_lab.orchestrator_kernel import StateTransitionError
                 read_kwargs={key:value for key,value in kwargs.items() if key not in {"operation","transaction_id"}}
                 read=kernel.issue_identity_read(**read_kwargs,operation="LIST_PARTIES",payload=dict(subject_id="",as_of_date="2025-06-01"))
-                with pytest.raises(StateTransitionError,match="dispatched read"):
-                    kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
+                if lost=="READ_IN_FLIGHT":
+                    with pytest.raises(StateTransitionError,match="dispatched read"):
+                        kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
+                else:
+                    legacy={key:value for key,value in kwargs.items() if key in {"deployment_id","case_id","tax_year","manifest_id","task_id","run_id","operation"}}
+                    kernel.initialize_identity_continuity(**legacy,head="sha256:"+"a"*64)
+                    before=kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]
+                    with pytest.raises(StateTransitionError,match="dispatched read"):
+                        kernel.reserve_identity_continuity(**legacy,expected_epoch=0,expected_head="sha256:"+"a"*64,next_head="sha256:"+"b"*64)
+                    assert kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]==before
+                    assert kernel._connection.execute("SELECT pending_json FROM identity_continuity").fetchone()[0] is None
                 read_response=identity.read_operational_identity(read,allowed_case_ids=frozenset({"C1"}))
                 read_pending=kernel.stage_identity_audit_checkpoint(read,read_response)
                 kernel.witness_identity_checkpoint(read_pending["receipt"]["checkpoint_id"],custodian=client,provider=provider,signing_key=KERNEL,kernel_key_id="TEST-KERNEL-KEY-1")
+            if lost=="READ_BEFORE_RESTORE":
+                kernel.reserve_identity_continuity(**legacy,expected_epoch=0,expected_head="sha256:"+"a"*64,next_head="sha256:"+"b"*64)
+                kernel.finalize_identity_continuity(**legacy,committed_epoch=1,committed_head="sha256:"+"b"*64)
             if lost=="RESTORE_IN_FLIGHT":
                 legacy={key:value for key,value in kwargs.items() if key in {"deployment_id","case_id","tax_year","manifest_id","task_id","run_id","operation"}}
                 kernel.initialize_identity_continuity(**legacy,head="sha256:"+"a"*64)
                 kernel.reserve_identity_continuity(**legacy,expected_epoch=0,expected_head="sha256:"+"a"*64,next_head="sha256:"+"b"*64)
+                # Exact idempotent reservation reconciliation remains allowed.
+                kernel.reserve_identity_continuity(**legacy,expected_epoch=0,expected_head="sha256:"+"a"*64,next_head="sha256:"+"b"*64)
+                read_kwargs={key:value for key,value in kwargs.items() if key not in {"operation","transaction_id"}}
                 before=kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]
+                audit_before=kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]
+                with pytest.raises(StateTransitionError,match="legacy continuity"):
+                    kernel.issue_identity_read(**read_kwargs,operation="LIST_PARTIES",payload=dict(subject_id="",as_of_date="2025-06-01"))
+                assert kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]==before
+                assert kernel._connection.execute("SELECT COUNT(*) FROM audit_events").fetchone()[0]==audit_before
                 with pytest.raises(StateTransitionError,match="legacy continuity"):
                     kernel.issue_identity_mutation(**kwargs,message_type="COMMIT_MUTATION",payload=payload)
                 assert kernel._connection.execute("SELECT COUNT(*) FROM identity_kernel_request").fetchone()[0]==before
@@ -234,7 +254,7 @@ def test_real_kernel_identity_custodian_transaction(tmp_path,lost):
                 kernel.record_identity_mutation_response(finalize,result)
             state=kernel._identity_payload("identity_kernel_state","deployment_id",owner["deployment_id"])
             assert state["active_mutation"] is None and state["logical_head"]==result["identity_head"]
-            assert len(session.objects)==(3 if lost=="READ_IN_FLIGHT" else 2)
+            assert len(session.objects)==(3 if lost in {"READ_IN_FLIGHT","READ_BEFORE_RESTORE"} else 2)
             kernel._verify_identity_protocol_state()
             identity._verify_logical_integrity()
     finally:

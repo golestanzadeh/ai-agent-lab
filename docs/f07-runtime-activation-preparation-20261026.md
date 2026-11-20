@@ -282,3 +282,9 @@ A separate worker probe also reproduced F01 before correction. Its temporary-dir
 Corrected focused worker suite has 37 passed, 0 failed, exit 0. Full relevant rerun adds `tests/unit/test_identity_continuity_authority.py` to the earlier nine-file command. Exact corrected-SHA independent review is still required. No live or operational gate is accepted.
 
 Corrected ten-file relevant suite completed with 250 passed, 0 failed, 0 skipped in 53.63s, exit 0. The earlier 37 focused tests overlap this total.
+
+### Residual global-arbitration correction
+
+Exact fa258ce13a46b4f7909e3d4231117999661e5685 independently failed a residual HIGH asymmetry between READ and legacy continuity/restore reservation. Isolated archive focused verification had 37 passed in 21.66s, exit 0, and diff check passed. Earlier F01–F03 were confirmed corrected. Both orderings were still possible between READ issuance and legacy pending_json. The same atomic deployment-idle predicate now covers READ, legacy reservation and mutation COMMIT. It checks active mutation, unresolved first-dispatch read groups, PENDING/WITNESSED checkpoints and legacy pending state, with exact same-transaction/reservation exclusions for reconciliation. Authorization checks retain precedence before slot admission. Tests verify both denial orderings, no partial request/audit/pending effects and successful retry after exact reconciliation. Final exact-SHA independent acceptance remains required.
+
+Final corrected ten-file worker regression completed with 251 passed, 0 failed, 0 skipped in 56.33s, exit 0. This supersedes the earlier 250-test run and includes the new reverse-order arbitration case.

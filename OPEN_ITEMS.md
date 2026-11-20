@@ -371,3 +371,7 @@ IMPLEMENTATION_CANDIDATE / INDEPENDENT_REVIEW_PENDING / INACTIVE. Authenticated 
 ## F07 Package 1 rejected candidate and remediation — 2026-11-20
 
 Independent review rejected 765a2f4f4b27f792924061167f4bfea38fa7689d despite 51 independently passing tests. Two HIGH global read/restore contention findings and one MEDIUM PREPARE crash-evidence gap were corrected/tested, with 37 focused worker tests passing. Exact corrected-SHA independent acceptance remains pending. No active open-item row closes. PROJECT_CHECKPOINT.md is synchronized and Packages 2/3 remain outside this execution.
+
+## F07 Package 1 residual arbitration correction — 2026-11-20
+
+fa258ce13a46b4f7909e3d4231117999661e5685 independently failed one residual HIGH READ-versus-legacy reservation ordering defect. The shared atomic idle predicate now covers all three allocation entry points with exact reconciliation exclusions and two-ordering negative tests. Independent corrected-SHA review remains pending. No active OI row closes. PROJECT_CHECKPOINT.md is synchronized and operational Human Gates remain intact.

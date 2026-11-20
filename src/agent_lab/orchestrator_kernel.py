@@ -1433,14 +1433,18 @@ class OrchestratorKernel:
             self._store_identity_payload("identity_kernel_state","deployment_id",artifact["deployment_id"],state)
             return state
 
-    def _assert_identity_witness_idle(self,deployment_id):
+    def _assert_identity_witness_idle(self,deployment_id,*,read_transaction_id=None,legacy_reservation=None):
         """All previously dispatched read cuts must be reconciled first."""
+        state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+        if state is not None and state.get("active_mutation"):
+            raise StateTransitionError("deployment mutation reservation busy")
         settled=set()
         for row in self._connection.execute("SELECT payload_json FROM identity_kernel_checkpoint"):
             pending=json.loads(row[0])
             if pending["receipt"]["deployment_id"]!=deployment_id:
                 continue
-            if pending["status"] in {"AUDIT_CHECKPOINT_PENDING","WITNESSED"}:
+            if (pending["status"] in {"AUDIT_CHECKPOINT_PENDING","WITNESSED"}
+                    and pending["request"]["transaction_id"]!=read_transaction_id):
                 raise StateTransitionError("earlier Witness writer requires reconciliation")
             if pending["status"]=="RELEASED" and pending["request"]["message_type"] in {"READ_IDENTITY_STATE","GET_ENROLLMENT_STATUS"}:
                 request=pending["request"]
@@ -1453,10 +1457,12 @@ class OrchestratorKernel:
             request=issued["request"]
             if (issued["status"]=="DISPATCHED" and request["deployment_id"]==deployment_id
                     and request["message_type"] in {"READ_IDENTITY_STATE","GET_ENROLLMENT_STATUS"}
-                    and issued["first_request_digest"] not in settled):
+                    and issued["first_request_digest"] not in settled and request["transaction_id"]!=read_transaction_id):
                 raise StateTransitionError("dispatched read requires reconciliation before mutation")
-        if self._connection.execute("SELECT 1 FROM identity_continuity WHERE deployment_id=? AND pending_json IS NOT NULL",(deployment_id,)).fetchone():
-            raise StateTransitionError("legacy continuity reservation requires reconciliation")
+        for row in self._connection.execute("SELECT * FROM identity_continuity WHERE deployment_id=? AND pending_json IS NOT NULL",(deployment_id,)):
+            observed=tuple(row[key] for key in ("case_id","tax_year","epoch","head","pending_json"))
+            if observed!=legacy_reservation:
+                raise StateTransitionError("legacy continuity reservation requires reconciliation")
 
     def issue_identity_mutation(self,**kwargs):
         try:
@@ -1673,6 +1679,7 @@ class OrchestratorKernel:
                 if len(authorization_references)!=1 or authorization_references[0] not in manifest_payload["inputs"]:raise PermissionDenied("authorization not in manifest input")
                 capability="identity_read";message="READ_IDENTITY_STATE";scope_kind="CASE_YEAR"
             if _parse_timestamp(manifest["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("manifest expired")
+            self._assert_identity_witness_idle(deployment_id,read_transaction_id=transaction_id)
             if not self.consume_budget(manifest_id,tool_calls=1).allowed:raise _IdentityReadBudgetDenied("read budget exhausted")
             now=_utc_now();expiry=min(now+timedelta(seconds=5),_parse_timestamp(manifest["expires_at"],"expires_at"))
             if bootstrap:expiry=min(expiry,_parse_timestamp(state["artifact"]["expires_at"],"expires_at"))
@@ -1918,6 +1925,7 @@ class OrchestratorKernel:
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is not None and state.get("active_mutation"):
                 raise StateTransitionError("deployment mutation reservation busy")
+            self._assert_identity_witness_idle(deployment_id,legacy_reservation=(case_id,tax_year,expected_epoch,expected_head,pending))
             changed = self._connection.execute(
                 "UPDATE identity_continuity SET pending_json=? WHERE deployment_id=? AND case_id=? AND tax_year=? AND epoch=? AND head=? AND pending_json IS NULL",
                 (pending, deployment_id, case_id, tax_year, expected_epoch, expected_head),

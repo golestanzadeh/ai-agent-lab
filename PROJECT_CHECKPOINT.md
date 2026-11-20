@@ -1,3 +1,7 @@
+## F07 Package 1 shared arbitration re-review correction — 2026-11-20
+
+INDEPENDENT_FAIL at fa258ce13a46b4f7909e3d4231117999661e5685. Separate isolated review ran 37 focused tests, exit 0, and confirmed the previous three findings corrected. One residual HIGH remained between READ and legacy continuity/restore allocation in both orderings. The shared atomic deployment-idle predicate now governs READ reservation, legacy reservation and mutation COMMIT, with exact transaction/reservation self-exclusion for deterministic reconciliation. Tests assert denied requests create no reservation/audit/request effects, exact idempotent legacy reconciliation succeeds, and retry works after release. Corrected exact-SHA review is pending. Authenticated 2026-11-20T14:25:14.507745Z capacity was 35% five-hour and 81% weekly, BOUNDED correction/review admitted with the 15-point reserve. No active OI row closes, no operational gate or Package 2/3 is released.
+
 ## F07 Package 1 exact-SHA review and bounded correction — 2026-11-20
 
 INDEPENDENT_FAIL at 765a2f4f4b27f792924061167f4bfea38fa7689d. Separate read-only reviewer /root/c09_architecture_independent_review used an isolated git archive and independently ran 51 tests, exit 0. Findings were HIGH in-flight DISPATCHED read omission from mutation slot arbitration, HIGH reverse contention with existing continuity/restore pending_json, and MEDIUM missing PREPARE-specific crash evidence. Passing tests did not accept that SHA.
