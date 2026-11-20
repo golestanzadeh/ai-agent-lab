@@ -8,6 +8,43 @@ from agent_lab.ipc_operational_read import NUM, UUID, digest, exact
 
 PROFILE = "identity-mutation-witness-slot/1"
 SLOT_FIELDS = set("profile previous_epoch previous_sequence previous_record epoch sequence backup_generation operation_id object_key".split())
+RECEIPT_FIELDS = set("profile deployment_id store_id transaction_id request_digest prepared_request_digest stage_content_digest domain_result_digest prior_epoch prior_head logical_epoch logical_head audit_cut_count audit_cut_head kernel_pending_head witness_slot witness_preimage_digest".split())
+
+
+def validate_custodian_material(receipt, unsigned):
+    """Verify the closed mutation receipt carried by the pinned Kernel request.
+
+    The Kernel independently verifies the original signed COMMIT and its domain
+    successor. Custodian checks the exact reserved slot and preimage bindings
+    without receiving Identity's protected domain content.
+    """
+    exact(receipt, RECEIPT_FIELDS)
+    if receipt["profile"] != "identity-mutation-staged-receipt/1":
+        raise ValueError("unsupported mutation receipt")
+    for name in ("request_digest", "prepared_request_digest", "stage_content_digest",
+                 "domain_result_digest", "prior_head", "logical_head", "audit_cut_head",
+                 "kernel_pending_head", "witness_preimage_digest"):
+        digest(receipt[name])
+    if not isinstance(receipt["store_id"], str) or not 1 <= len(receipt["store_id"].encode()) <= 256:
+        raise ValueError("invalid Identity store")
+    if (_number(receipt["logical_epoch"]) != _number(receipt["prior_epoch"]) + 1
+            or _number(receipt["audit_cut_count"]) == 0):
+        raise ValueError("nonadvancing mutation receipt")
+    request = dict(contract="oi0002.kernel-identity-c09/1.1", message_type="COMMIT_MUTATION",
+                   deployment_id=receipt["deployment_id"], transaction_id=receipt["transaction_id"],
+                   prepared_request_digest=receipt["prepared_request_digest"])
+    slot = receipt["witness_slot"]
+    validate_slot(request, slot)
+    composite = witness_commitment(
+        deployment_id=receipt["deployment_id"], logical_epoch=receipt["logical_epoch"],
+        logical_head=receipt["logical_head"], audit_cut_count=receipt["audit_cut_count"],
+        audit_cut_head=receipt["audit_cut_head"])
+    record = WitnessRecord(PROTOCOL, receipt["deployment_id"], int(slot["epoch"]), int(slot["sequence"]),
+                           slot["previous_record"], receipt["kernel_pending_head"], H(composite),
+                           int(slot["backup_generation"]), slot["operation_id"])
+    if canonical_bytes(record.unsigned()) != unsigned or witness_digest(unsigned) != receipt["witness_preimage_digest"]:
+        raise ValueError("mutation receipt/preimage substitution")
+    return record
 
 
 def _number(value):

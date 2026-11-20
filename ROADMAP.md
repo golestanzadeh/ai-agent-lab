@@ -1,3 +1,7 @@
+## F07 Package 1 implementation register — 2026-11-20
+
+Existing authority extensions `src/agent_lab/identity_atomic_mutation.py` and `src/agent_lab/identity_mutation_source.py`, with `tests/unit/test_f07_atomic_mutation.py`, implement the accepted inactive atomic mutation and recovery package. The existing Identity SQLite, Kernel and Custodian remain the only authorities. Exact-SHA independent review precedes Package 1 acceptance. Packages 2 and 3 require their separate authorization and gates.
+
 ## Unified analysis implementation handoff — 2026-11-10
 
 Exact27d44c1 independent implementationPASS; existing Kernel/runtime only. Deploy existinglauncher and Owner UI acceptance pending. CSV uses canonical ingestion/reconciliation and source labels; no new generalized tax classifier. No real provider attempt or OI gate release. See canonical checkpoint and synchronizedOPEN_ITEMS.

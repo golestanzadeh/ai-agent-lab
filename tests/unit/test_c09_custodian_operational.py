@@ -140,3 +140,46 @@ def test_custodian_anchor_crash_exact_retry(tmp_path,boundary):
         assert host._db.execute("SELECT COUNT(*) FROM custodian11_event").fetchone()[0]==1
         assert host._db.execute("SELECT COUNT(*) FROM custodian11_anchor_pending").fetchone()[0]==0
     finally:host.close();identity.close();kernel.close()
+
+
+@pytest.mark.parametrize("changed", [None, "profile", "witness_slot", "audit_cut_head", "logical_head", "prepared_request_digest"])
+def test_mutation_receipt_exact_preimage_and_replay(tmp_path, changed):
+    from test_f07_commit_witness import recovery_exchange
+    from agent_lab.identity_logical_continuity import H
+    _, response, _, context, _ = recovery_exchange()
+    commit = context["original_commit"]
+    receipt = response["result"]["receipt"]
+    path = tmp_path / "custodian.sqlite"
+    with sqlite3.connect(path):
+        pass
+    from test_f07_commit_witness import KEY
+    host = OperationalCustodianRuntime(deployment_id=commit["deployment_id"], key_id="TEST-MAC", protected_key=MAC,
+        kernel_key_id="TEST-KERNEL", kernel_public_key=KEY.public_key(), replay_db_path=path)
+    host.start()
+    pin = PinnedProcess(ROLE_BINDINGS[ServiceRole.KEY_CUSTODIAN][1], r"C:\Controlled\Custodian.exe", "sha256:"+"a"*64)
+    client = CustodianServiceClient(deployment_id=commit["deployment_id"], pinned_server=pin, custodian_key_id="TEST-MAC")
+    pending = dict(receipt=deepcopy(receipt), unsigned_record_bytes=response["result"]["unsigned_record_bytes"])
+    if changed:
+        if changed == "profile":
+            pending["receipt"][changed] = "identity-audit-checkpoint/1"
+        elif changed == "witness_slot":
+            pending["receipt"][changed]["sequence"] = "11"
+        else:
+            pending["receipt"][changed] = "sha256:"+"0"*64
+    try:
+        with patch("agent_lab.c09_pipe_transport.exchange_custodian_control", side_effect=rpc(host)):
+            if changed:
+                with pytest.raises((ValueError, PermissionError)):
+                    client.authenticate(pending, KEY, "TEST-KERNEL")
+                assert host._db.execute("SELECT COUNT(*) FROM custodian11_event").fetchone()[0] == 0
+            else:
+                raw = client.authenticate(pending, KEY, "TEST-KERNEL")
+                assert client.authenticate(pending, KEY, "TEST-KERNEL") == raw
+                record, evidence = client.verify(raw, "42", commit["transaction_id"], KEY, "TEST-KERNEL", retain_evidence=True)
+                assert record == WitnessRecord.from_bytes(raw, MAC)
+                assert evidence["request"]["nonce"] == evidence["response"]["nonce"]
+                assert evidence["response"]["outcome"] == "VERIFIED"
+                assert H(evidence["response"]).startswith("sha256:")
+                assert client.verify(raw, "42", commit["transaction_id"], KEY, "TEST-KERNEL") == record
+    finally:
+        host.close()

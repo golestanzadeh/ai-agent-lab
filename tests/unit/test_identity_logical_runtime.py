@@ -60,7 +60,7 @@ def request_for(logical,*,case="C1",year="2025",nonce="a"*64,transaction="tx:v1:
 
 def test_signed_populated_enrollment_restart_and_direct_mutation_denial(tmp_path):
     path=tmp_path/"identity.sqlite";store,value,logical=enrolled(path)
-    assert logical["epoch"]==0 and store._db.execute("PRAGMA user_version").fetchone()[0]==4
+    assert logical["epoch"]==0 and store._db.execute("PRAGMA user_version").fetchone()[0]==5
     snapshot=H(domain_snapshot(store._db))
     with pytest.raises(PermissionError):store.register_identity(case_id="C1",record=person("P-UNAUTHORIZED"),authorization_ref=A1)
     assert H(domain_snapshot(store._db))==snapshot
@@ -143,8 +143,9 @@ def test_populated_v3_v4_migration_crash_recovery(tmp_path,boundary):
     store.register_identity(case_id="C1",record=person(),authorization_ref=A1);store.bind_party(role())
     snapshot=H(domain_snapshot(store._db));audit=store._audit_head();store.close()
     with sqlite3.connect(path) as db:
-        for table in ("identity_logical_state","identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint"):db.execute("DROP TABLE "+table)
+        for table in ("identity_logical_state","identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint","identity_mutation_record"):db.execute("DROP TABLE "+table)
         db.execute("DELETE FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V3_TO_V4'")
+        db.execute("DELETE FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V4_TO_V5'")
         db.execute("PRAGMA user_version=3")
     def fail(stage):
         if stage=="MIGRATION_V3_V4:"+boundary:raise RuntimeError("migration crash")

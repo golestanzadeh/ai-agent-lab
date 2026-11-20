@@ -1433,6 +1433,182 @@ class OrchestratorKernel:
             self._store_identity_payload("identity_kernel_state","deployment_id",artifact["deployment_id"],state)
             return state
 
+    def issue_identity_mutation(self,**kwargs):
+        try:
+            return self._issue_identity_mutation(**kwargs)
+        except _IdentityReadBudgetDenied as exc:
+            self.consume_budget(kwargs["manifest_id"],tool_calls=1)
+            raise PermissionDenied("mutation budget exhausted") from exc
+
+    def _issue_identity_mutation(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
+                                operation,message_type,payload,authorization_references,signing_key,key_id,transaction_id):
+        """Inactive governed mutation port on the existing sole coordinator."""
+        import secrets
+        from copy import deepcopy
+        from datetime import timedelta
+        from agent_lab.identity_logical_continuity import H,sign_kernel_proof
+        from agent_lab.ipc_operational_read import read_projection,validate_request
+        from agent_lab.ipc_envelope import MUTATION_OPERATIONS,OPERATION_CAPABILITIES
+        from agent_lab.f07_commit_witness import slot_projection
+        if operation not in MUTATION_OPERATIONS or message_type not in {"PREPARE_MUTATION","COMMIT_MUTATION","GET_TRANSACTION","FINALIZE_MUTATION","ABORT_PREPARED"}:
+            raise PermissionDenied("closed mutation operation required")
+        self._verify_identity_protocol_state()
+        with self.atomic_execution():
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            if state is None or state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"]:
+                raise PermissionDenied("fresh externally verified deployment required")
+            manifest=self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation)
+            capability=OPERATION_CAPABILITIES[operation]
+            if not self.permission_decision(manifest_id,capability,case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
+                raise PermissionDenied("mutation capability denied")
+            grant=json.loads(manifest["payload_json"])
+            if len(authorization_references)!=1 or authorization_references[0] not in grant["inputs"]:
+                raise PermissionDenied("exact mutation authorization input required")
+            transactions=state.setdefault("mutations",{})
+            tx=transactions.get(transaction_id)
+            if message_type!="PREPARE_MUTATION" and tx is None:
+                raise PermissionDenied("original mutation unavailable")
+            if state.get("active_mutation") not in {None,transaction_id}:
+                raise StateTransitionError("deployment Witness reservation busy")
+            if tx is not None:
+                original=tx["prepare_request"]
+                expected=(deployment_id,manifest_id,task_id,run_id,case_id,str(tax_year),operation,authorization_references)
+                actual=tuple(original[key] for key in ("deployment_id","manifest_id","task_id","run_id","case_id","tax_year","domain_operation","authorization_references"))
+                if actual!=expected or manifest["actor_instance_id"]!=original["actor_instance_id"] or manifest["role_id"]!=original["role_id"]:
+                    raise PermissionDenied("mutation recovery scope substitution")
+            if message_type in {"COMMIT_MUTATION","PREPARE_MUTATION"} and tx is not None:
+                if payload!=tx["prepare_request"]["payload"]:
+                    raise PermissionDenied("prepared content substitution")
+            if message_type=="COMMIT_MUTATION" and "prepare_response" not in tx:
+                raise StateTransitionError("verified PREPARED response required")
+            if message_type in {"GET_TRANSACTION","ABORT_PREPARED"}:
+                if payload!={"original_request_digest":tx["prepare_request"]["request_digest"]}:
+                    raise PermissionDenied("original PREPARE mismatch")
+            if message_type=="FINALIZE_MUTATION":
+                pending=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",tx.get("checkpoint_id",""))
+                if pending is None or pending["status"]!="WITNESSED" or "custodian_verification" not in pending:
+                    raise StateTransitionError("verified durable Witness finality required")
+                proof=pending["custodian_verification"]
+                expected=dict(staged_receipt_digest=H(pending["receipt"]),witness_object_key=pending["object_key"],witness_generation=pending["generation"],
+                    witness_preimage_digest=pending["receipt"]["witness_preimage_digest"],signed_record_digest=proof["response"]["signed_record_digest"],
+                    custodian_verification_digest=H(proof["response"]),custodian_nonce=proof["response"]["nonce"])
+                if payload!=expected:
+                    raise PermissionDenied("finality evidence substitution")
+            if not self.consume_budget(manifest_id,tool_calls=1).allowed:
+                raise _IdentityReadBudgetDenied("mutation budget exhausted")
+            now=_utc_now();expiry=min(now+timedelta(seconds=5),_parse_timestamp(manifest["expires_at"],"expires_at"))
+            stamp=lambda value:value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            predecessor=tx["prepare_request"] if tx is not None else None
+            request=dict(contract="oi0002.kernel-identity-c09/1.1",message_type=message_type,transaction_id=transaction_id,request_digest="",
+                deployment_id=deployment_id,scope_kind="CASE_YEAR",case_id=case_id,tax_year=str(tax_year),run_id=run_id,task_id=task_id,manifest_id=manifest_id,
+                actor_instance_id=manifest["actor_instance_id"],role_id=manifest["role_id"],capability=capability,domain_operation=operation,
+                expected_epoch=predecessor["expected_epoch"] if predecessor else state["logical_epoch"],expected_head=predecessor["expected_head"] if predecessor else state["logical_head"],
+                authorization_references=authorization_references,expires_at=stamp(expiry),payload=deepcopy(payload),
+                prepared_request_digest=predecessor["request_digest"] if message_type=="COMMIT_MUTATION" else "",
+                kernel_proof=dict(proof_version="1",key_id=key_id,algorithm="ECDSA-P256-SHA256",pending_row_digest="",kernel_projection={},
+                    authorization_state_version=str(self._connection.execute("SELECT COALESCE(MAX(event_id),0)+1 FROM audit_events").fetchone()[0]),
+                    nonce=secrets.token_hex(32),issued_at=stamp(now),not_after=stamp(expiry),signature=""))
+            cut=state["last_cut"]
+            request["kernel_proof"]["kernel_projection"]=dict(witnessed_audit_count=cut["audit_cut_count"],witnessed_audit_head=cut["audit_cut_head"],recovery_request_digest="")
+            projection=read_projection(request)
+            if message_type=="COMMIT_MUTATION":
+                if "commit_request" not in tx:
+                    if (state["logical_epoch"],state["logical_head"])!=(request["expected_epoch"],request["expected_head"]):
+                        raise StateTransitionError("prepared predecessor stale")
+                    for row in self._connection.execute("SELECT payload_json FROM identity_kernel_checkpoint"):
+                        pending=json.loads(row[0])
+                        if pending["receipt"]["deployment_id"]==deployment_id and pending["status"] in {"AUDIT_CHECKPOINT_PENDING","WITNESSED"}:
+                            raise StateTransitionError("earlier Witness writer requires reconciliation")
+                    slot=slot_projection(request,previous_epoch=str(state["witness_epoch"]),previous_sequence=str(state["witness_sequence"]),previous_record=state["previous_record"],backup_generation=state["artifact"]["backup_generation"])
+                    event=self._append_event("IDENTITY_MUTATION_PENDING","IDENTITY_TRANSACTION",transaction_id,"AGENT_FACTORY_KERNEL",dict(slot=slot,prepare_digest=predecessor["request_digest"]))
+                    pending_head=self._connection.execute("SELECT event_hash FROM audit_events WHERE event_id=?",(event,)).fetchone()[0]
+                    tx["reservation"]=dict(mutation_witness_slot=slot,kernel_pending_head=pending_head,
+                        projected_epoch=tx["prepare_response"]["identity_epoch"],projected_head=tx["prepare_response"]["identity_head"])
+                    state["active_mutation"]=transaction_id
+                projection.update(tx["reservation"])
+            request["kernel_proof"]["kernel_projection"]=projection
+            request["kernel_proof"]["pending_row_digest"]=H(projection)
+            nonce=request["kernel_proof"]["nonce"]
+            self._store_identity_payload("identity_kernel_request","nonce",nonce,dict(request=request,status="RESERVED"))
+            self._store_identity_payload("identity_kernel_state","deployment_id",deployment_id,state)
+        # Reread durable reservation under the real Kernel write lock before
+        # signing. A crash here produces no dispatch and retains the same slot.
+        with self.atomic_execution():
+            self._verify_identity_protocol_state()
+            stored=self._identity_payload("identity_kernel_request","nonce",nonce)
+            if stored["request"]!=request or not self.permission_decision(manifest_id,capability,case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
+                raise PermissionDenied("mutation reservation authority changed")
+            signed=sign_kernel_proof(request,signing_key)
+            validate_request(signed,signing_key.public_key(),expected_scope={key:signed[key] for key in "deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()},
+                now=_utc_now().replace(tzinfo=None),expected_key_id=key_id,expected_contract=signed["contract"],mutation_runtime=True)
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            tx=state.setdefault("mutations",{}).setdefault(transaction_id,{})
+            if message_type=="PREPARE_MUTATION":tx.setdefault("prepare_request",signed)
+            if message_type=="COMMIT_MUTATION":tx.setdefault("commit_request",signed)
+            if message_type=="FINALIZE_MUTATION":tx.setdefault("finalize_request",signed)
+            self._store_identity_payload("identity_kernel_state","deployment_id",deployment_id,state)
+            self._store_identity_payload("identity_kernel_request","nonce",nonce,dict(request=signed,status="DISPATCHED",first_request_digest=signed["request_digest"]))
+            return signed
+
+    def record_identity_mutation_response(self,request,response):
+        from agent_lab.identity_logical_continuity import H,witness_commitment
+        from agent_lab.ipc_operational_read import CONTROL_SCOPE,SNAPSHOT_FIELDS,validate_response
+        self._verify_identity_protocol_state()
+        with self.atomic_execution():
+            issued=self._identity_payload("identity_kernel_request","nonce",request["kernel_proof"]["nonce"])
+            if issued is None or issued["status"]!="DISPATCHED" or issued["request"]!=request:
+                raise IntegrityError("unreserved mutation response")
+            self._identity_continuity_context(manifest_id=request["manifest_id"],task_id=request["task_id"],run_id=request["run_id"],case_id=request["case_id"],tax_year=int(request["tax_year"]),operation=request["domain_operation"])
+            if not self.permission_decision(request["manifest_id"],request["capability"],case_id=request["case_id"],tax_year=int(request["tax_year"]),run_id=request["run_id"]).allowed:
+                raise PermissionDenied("mutation response release authority unavailable")
+            if "response" in issued and issued["response"]!=response:
+                raise IntegrityError("one attempt cannot have conflicting responses")
+            state=self._identity_payload("identity_kernel_state","deployment_id",request["deployment_id"])
+            tx=state["mutations"][request["transaction_id"]]
+            context=dict(original_commit=tx["commit_request"],store_id=state["store_id"],backup_generation=state["artifact"]["backup_generation"]) if "commit_request" in tx else None
+            checkpoint=dict(scope={key:tx["prepare_request"][key] for key in CONTROL_SCOPE},prepare_digest=tx["prepare_request"]["request_digest"],
+                snapshot={key:response[key] for key in SNAPSHOT_FIELDS},finalize_payload=request["payload"] if request["message_type"]=="FINALIZE_MUTATION" else tx.get("finalize_request",{}).get("payload"))
+            validate_response(response,request,transaction_checkpoint=checkpoint,mutation_material_context=context)
+            message=request["message_type"]
+            if message=="PREPARE_MUTATION":
+                if response["outcome"]!="PREPARED" or int(response["identity_epoch"])!=int(request["expected_epoch"])+1:
+                    raise IntegrityError("invalid prepared successor")
+                tx["prepare_response"]=response
+            elif response["outcome"]=="IDENTITY_COMMITTED":
+                material=response["result"];receipt=material["receipt"]
+                cp="MUTATION:"+request["transaction_id"]
+                previous=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",cp)
+                pending=dict(status="AUDIT_CHECKPOINT_PENDING",receipt=receipt,
+                    composite=witness_commitment(deployment_id=request["deployment_id"],logical_epoch=response["identity_epoch"],logical_head=response["identity_head"],audit_cut_count=response["identity_audit_count"],audit_cut_head=response["identity_audit_head"]),
+                    request=tx["commit_request"],response=response,unsigned_record_bytes=material["unsigned_record_bytes"],signed_record_bytes="",generation="",object_key=receipt["witness_slot"]["object_key"])
+                if previous is not None:
+                    if previous["receipt"]!=receipt or previous["unsigned_record_bytes"]!=material["unsigned_record_bytes"]:
+                        raise IntegrityError("recovered receipt substitution")
+                else:self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",cp,pending)
+                tx["checkpoint_id"]=cp
+            elif response["outcome"]=="COMMITTED_FINAL":
+                if message not in {"FINALIZE_MUTATION","GET_TRANSACTION"} or "finalize_request" not in tx:
+                    raise IntegrityError("final response without verified finalization")
+                pending=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",tx["checkpoint_id"])
+                receipt=pending["receipt"]
+                expected=(receipt["logical_epoch"],receipt["logical_head"],receipt["audit_cut_count"],receipt["audit_cut_head"],H(receipt),receipt["witness_preimage_digest"])
+                actual=tuple(response[key] for key in ("identity_epoch","identity_head","identity_audit_count","identity_audit_head","staged_receipt_digest","witness_preimage_digest"))
+                if actual!=expected or state.get("active_mutation") not in {None,request["transaction_id"]}:
+                    raise IntegrityError("final result receipt substitution")
+                tx.update(finalize_payload=tx["finalize_request"]["payload"],final_response=response)
+                state["active_mutation"]=None
+                pending=self._identity_payload("identity_kernel_checkpoint","checkpoint_id",tx["checkpoint_id"])
+                if pending["status"] not in {"WITNESSED","RELEASED"}:raise IntegrityError("final response before Witness")
+                pending["status"]="RELEASED"
+                self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",tx["checkpoint_id"],pending)
+            elif response["outcome"]=="ABORTED":
+                if "commit_request" in tx:raise IntegrityError("cannot release ambiguous COMMIT reservation")
+                tx["aborted_response"]=response
+            issued["response"]=response
+            self._store_identity_payload("identity_kernel_request","nonce",request["kernel_proof"]["nonce"],issued)
+            self._store_identity_payload("identity_kernel_state","deployment_id",request["deployment_id"],state)
+            return response
+
     def issue_identity_read(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
                             operation,payload,authorization_references,signing_key,key_id,transaction_id=None):
         try:
@@ -1455,6 +1631,8 @@ class OrchestratorKernel:
         with self.atomic_execution():
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is None:raise PermissionDenied("enrollment unavailable")
+            if state.get("active_mutation"):raise StateTransitionError("mutation Witness reservation requires reconciliation")
+            if transaction_id in state.get("mutations",{}):raise PermissionDenied("mutation/read transaction namespace conflict")
             manifest=self._manifest_row(manifest_id);manifest_payload=json.loads(manifest["payload_json"])
             bootstrap=operation=="READ_ENROLLMENT_STATUS"
             if bootstrap:
@@ -1521,6 +1699,7 @@ class OrchestratorKernel:
             if issued is None or issued["status"]!="DISPATCHED" or issued["request"]!=request:raise IntegrityError("unreserved/substituted Identity result")
             state=self._identity_payload("identity_kernel_state","deployment_id",request["deployment_id"])
             if state is None:raise IntegrityError("deployment missing")
+            if state.get("active_mutation"):raise StateTransitionError("mutation Witness reservation busy")
             if response["identity_head"]!=state["logical_head"] or response["identity_epoch"]!=state["logical_epoch"]:raise IntegrityError("unexpected logical read head")
             if response["outcome"]=="ENROLLMENT_READY":
                 owner=state["artifact"]
@@ -1550,7 +1729,10 @@ class OrchestratorKernel:
         if self.kill_switch_state()!="RUNNING" or manifest["state"]!="ACTIVE" or _parse_timestamp(manifest["expires_at"],"expires_at")<=_utc_now():raise PermissionDenied("current release authority unavailable")
         for name in ("task_id","actor_instance_id","role_id"):
             if manifest[name]!=request[name]:raise PermissionDenied("release task/actor/role changed")
-        if request["message_type"]=="READ_IDENTITY_STATE":
+        if request["message_type"]=="COMMIT_MUTATION":
+            if not self.permission_decision(request["manifest_id"],request["capability"],case_id=request["case_id"],tax_year=int(request["tax_year"]),run_id=request["run_id"]).allowed:
+                raise PermissionDenied("mutation finality authority denied")
+        elif request["message_type"]=="READ_IDENTITY_STATE":
             if not self.permission_decision(request["manifest_id"],"identity_read",case_id=request["case_id"],tax_year=int(request["tax_year"]),run_id=request["run_id"]).allowed:raise PermissionDenied("read release denied")
         else:
             gate=self._connection.execute("SELECT status,authority_reference FROM task_human_gates WHERE task_id=? AND trigger='IDENTITY_ENROLLMENT'",(request["task_id"],)).fetchone()
@@ -1599,7 +1781,12 @@ class OrchestratorKernel:
                 if last.object_key!=record.object_key:raise IntegrityError("unreconciled Witness history ahead")
                 generation=found
             readback=provider.readback_authenticated(raw,generation)
-            verified=custodian.verify(readback,generation,pending["receipt"]["transaction_id"],signing_key,kernel_key_id)
+            mutation=pending["receipt"]["profile"]=="identity-mutation-staged-receipt/1"
+            if mutation:
+                verified,evidence=custodian.verify(readback,generation,pending["receipt"]["transaction_id"],signing_key,kernel_key_id,retain_evidence=True)
+                pending["custodian_verification"]=evidence
+            else:
+                verified=custodian.verify(readback,generation,pending["receipt"]["transaction_id"],signing_key,kernel_key_id)
             if verified.to_bytes()!=raw or verified.object_key!=pending["object_key"]:raise IntegrityError("Witness readback substitution")
             with self.atomic_execution():
                 self._current_identity_release_authority(pending)
@@ -1607,10 +1794,14 @@ class OrchestratorKernel:
                 self._store_identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id,pending)
                 state=self._identity_payload("identity_kernel_state","deployment_id",deployment)
                 state.update(status="ACTIVE",witness_epoch=record.epoch,witness_sequence=record.sequence,previous_record=record.commitment,last_cut=pending["composite"])
+                if mutation:
+                    state.update(logical_epoch=pending["receipt"]["logical_epoch"],logical_head=pending["receipt"]["logical_head"])
                 self._store_identity_payload("identity_kernel_state","deployment_id",deployment,state)
             self._identity_verified_heads[deployment]=record.commitment
         elif self._identity_verified_heads.get(deployment)!=self._identity_payload("identity_kernel_state","deployment_id",deployment)["previous_record"]:
             self.verify_identity_witness_state(deployment,custodian=custodian,provider=provider,signing_key=signing_key,kernel_key_id=kernel_key_id)
+        if pending["receipt"]["profile"]=="identity-mutation-staged-receipt/1":
+            return pending
         with self.atomic_execution():
             self._current_identity_release_authority(pending)
             if pending["status"]!="WITNESSED":raise IntegrityError("result cannot precede Witness")
@@ -1688,6 +1879,9 @@ class OrchestratorKernel:
         expected_head: str, next_head: str, reservation_id: str | None = None,
         request_digest: str | None = None,
     ) -> None:
+        state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+        if state is not None and state.get("active_mutation"):
+            raise StateTransitionError("deployment mutation requires reconciliation before restore/reservation")
         row = self._identity_continuity_context(
             manifest_id=manifest_id, task_id=task_id, case_id=case_id,
             tax_year=tax_year, run_id=run_id, operation=operation,
@@ -1826,6 +2020,9 @@ class OrchestratorKernel:
         backup_digest: str, expected_epoch: int, expected_head: str, target_generation: int,
         operator_id: str, manifest_id: str, task_id: str, run_id: str, operation: str,
     ) -> None:
+        state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+        if state is not None and state.get("active_mutation"):
+            raise StateTransitionError("deployment mutation requires reconciliation before restore/reservation")
         context = self._identity_continuity_context(
             manifest_id=manifest_id, task_id=task_id, case_id=case_id,
             tax_year=tax_year, run_id=run_id, operation=operation,

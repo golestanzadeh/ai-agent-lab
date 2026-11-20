@@ -245,3 +245,24 @@ Codex can implement the already approved bounded authenticated client/dispatcher
 Owner actions remain only at the exact privileged service/deployment/key-custody/IAM/runtime activation gates after reviewable technical evidence exists. No new decision about internal Person A/B IDs, legacy mapping or marriage scope is pending. Unchanged confirmed facts need no reconfirmation. Approval/Submission remain disabled.
 
 Shortest secure next step: complete the missing existing-role service composition/client under the accepted operational contract, independently verify it and the remaining C09/HG controls, then perform exact evidence-bound OI-0003 registration and separately approve the first protected case/provider binding. F07 readiness cannot substitute for that operational campaign.
+
+
+## Package 1 atomic mutation candidate — 2026-11-20
+
+Status `IMPLEMENTATION_CANDIDATE / INDEPENDENT_REVIEW_PENDING / INACTIVE`. Worker verification 239 passed, 0 failed, exit 0.
+
+Schema 5 adds MAC/audit-complete operational metadata inside the existing Identity SQLite. An authenticated pending-anchor receipt binds the exact previous anchor and next committed audit cut. Crash-gap repair requires complete data/logical/audit/metadata verification. PREPARE runs existing domain APIs in a rolled-back savepoint, then reserves authority and the exact plan without domain/head effects. COMMIT revalidates bounded immutable bytes, scope, lease and prepared result, then atomically commits domain, logical continuity, authorization consumption, audit and receipt. GET reconstructs stored evidence. ABORT preserves RELEASED tombstones. FINALIZE stores the existing sole Kernel coordinator's signed exact finality assertion.
+
+Kernel uses its existing Identity protocol tables/audit and deployment-wide reservation. Read checkpoints and legacy continuity/restore reservations reject contention. COMMIT signs the retained slot/PENDING head. Custodian validates the closed mutation receipt/preimage while preserving read receipts. Kernel retains the complete successful correlated Custodian VERIFY request/reply. `custodian_nonce` is that exchange's echoed nonce and `custodian_verification_digest` is H(canonical complete closed VERIFY reply). Identity verifies its own receipt/preimage bindings under the fresh pinned Kernel proof and receives no Custodian key/client. This deterministic field completion creates no authority.
+
+The protected source port is inactive and has no live concrete adapter. Controlled fixtures supply actual synthetic bytes and typed revisions. Accepted adapter/build, deployment/store, credential-custody and source configuration binding remain Package 2 deployment gates. Neither a type name nor credentials/test fixtures accept that live binding. Production dispatch is unchanged and read-only.
+
+Exact focused command with `PYTHONPATH=src` from repository root:
+
+```powershell
+& 'C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe' -m pytest tests/unit/test_f07_atomic_mutation.py tests/unit/test_identity_persistence.py tests/unit/test_identity_logical_runtime.py tests/unit/test_kernel_identity_operational.py tests/unit/test_c09_custodian_operational.py tests/unit/test_f07_commit_witness.py tests/unit/test_f07_control_responses.py tests/unit/test_f07_operational_read.py tests/unit/test_identity_protected_revision.py -q
+```
+
+Coverage includes all five domain operations, PREPARE/COMMIT/FINALIZE response loss, ambiguous Witness upload, atomic crash boundaries, restart, authorization concurrency, tombstones, metadata deletion, migration faults and read/control/revision compatibility. Actual IPC/cloud transport is controlled by fixtures. No taxpayer data or external providers are accessed. An initial regression exposed legacy migration column-order dependence; explicit named migration columns corrected it before the successful rerun.
+
+Early independent read-only feedback found four defects. Corrections preserve budget BLOCKED/audit across failed reservation, limit role correction to the same binding and exact history projection, select a unique typed role-evidence reference, and reject duplicate/noncanonical protected DTOs. Final exact-SHA independent review remains required. No operational acceptance or Package 2/3 execution is inferred.

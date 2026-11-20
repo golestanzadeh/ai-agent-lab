@@ -151,14 +151,29 @@ class OperationalCustodianRuntime:
             auth_record=""
             if operation=="AUTHENTICATE_WITNESS":
                 raw_unsigned=unpack(request["unsigned_record_bytes"],4096);record=public_unsigned(raw_unsigned)
-                receipt_raw=unpack(request["staged_receipt_bytes"]);receipt=json.loads(receipt_raw.decode(),object_pairs_hook=_reject_duplicate_pairs);exact(receipt,RECEIPT)
-                if C(receipt)!=receipt_raw or receipt["profile"]!="identity-audit-checkpoint/1" or digest(raw_unsigned)!=request["unsigned_record_digest"] or H(receipt)!=request["staged_receipt_digest"]:raise ValueError("receipt/preimage substitution")
-                if receipt["deployment_id"]!=self._deployment or receipt["transaction_id"]!=request["transaction_id"] or receipt["request_digest"]!=request["identity_request_digest"]:raise PermissionError("receipt identity mismatch")
-                cp,operation_id=checkpoint_identifiers(self._deployment,receipt["transaction_id"],receipt["request_digest"],receipt["response_digest"])
-                composite=witness_commitment(deployment_id=self._deployment,logical_epoch=receipt["logical_epoch"],logical_head=receipt["logical_head"],audit_cut_count=receipt["audit_cut_count"],audit_cut_head=receipt["audit_cut_head"])
-                if receipt["checkpoint_id"]!=cp or record.operation_id!=operation_id or record.identity_head!=H(composite):raise ValueError("checkpoint/composite mismatch")
-                bindings=((record.deployment_id,self._deployment),(str(record.epoch),request["expected_epoch"]),(str(record.sequence),request["expected_sequence"]),(record.previous_record,request["previous_commitment"]),(record.kernel_head,request["kernel_pending_head"]),(record.identity_head,request["identity_new_head"]),(str(record.backup_generation),request["backup_generation"]),(record.object_key,request["witness_object_key"]),(str(record.backup_generation),receipt["backup_generation"]))
-                if any(a!=b for a,b in bindings):raise ValueError("Witness/PENDING binding substitution")
+                receipt_raw = unpack(request["staged_receipt_bytes"])
+                receipt = json.loads(receipt_raw.decode(), object_pairs_hook=_reject_duplicate_pairs)
+                if (C(receipt) != receipt_raw or digest(raw_unsigned) != request["unsigned_record_digest"]
+                        or H(receipt) != request["staged_receipt_digest"]):
+                    raise ValueError("receipt/preimage substitution")
+                if receipt.get("profile") == "identity-mutation-staged-receipt/1":
+                    from agent_lab.f07_commit_witness import validate_custodian_material
+                    validate_custodian_material(receipt, raw_unsigned)
+                    generation = receipt["witness_slot"]["backup_generation"]
+                else:
+                    exact(receipt, RECEIPT)
+                    if receipt["profile"] != "identity-audit-checkpoint/1":
+                        raise ValueError("unsupported receipt profile")
+                    cp, operation_id = checkpoint_identifiers(self._deployment, receipt["transaction_id"], receipt["request_digest"], receipt["response_digest"])
+                    composite = witness_commitment(deployment_id=self._deployment, logical_epoch=receipt["logical_epoch"], logical_head=receipt["logical_head"], audit_cut_count=receipt["audit_cut_count"], audit_cut_head=receipt["audit_cut_head"])
+                    if receipt["checkpoint_id"] != cp or record.operation_id != operation_id or record.identity_head != H(composite):
+                        raise ValueError("checkpoint/composite mismatch")
+                    generation = receipt["backup_generation"]
+                if receipt["deployment_id"] != self._deployment or receipt["transaction_id"] != request["transaction_id"] or receipt["request_digest"] != request["identity_request_digest"]:
+                    raise PermissionError("receipt identity mismatch")
+                bindings = ((record.deployment_id, self._deployment), (str(record.epoch), request["expected_epoch"]), (str(record.sequence), request["expected_sequence"]), (record.previous_record, request["previous_commitment"]), (record.kernel_head, request["kernel_pending_head"]), (record.identity_head, request["identity_new_head"]), (str(record.backup_generation), request["backup_generation"]), (record.object_key, request["witness_object_key"]), (str(record.backup_generation), generation))
+                if any(a != b for a, b in bindings):
+                    raise ValueError("Witness/PENDING binding substitution")
                 signed=record.signed(self._key);record_bytes=signed.to_bytes()
                 auth_record={"unsigned_record_digest":request["unsigned_record_digest"],"receipt_digest":request["staged_receipt_digest"],"record_bytes":pack(record_bytes)}
                 old_auth=self._db.execute("SELECT payload_json FROM custodian11_auth WHERE deployment_id=? AND transaction_id=?",(self._deployment,request["transaction_id"])).fetchone()
@@ -196,7 +211,7 @@ class CustodianServiceClient:
         if not isinstance(pinned_server,PinnedProcess) or pinned_server.sid!=ROLE_BINDINGS[ServiceRole.KEY_CUSTODIAN][1]:raise PermissionError("frozen Custodian principal required")
         self.deployment_id=deployment_id;self._server=pinned_server;self._custodian_key_id=custodian_key_id
 
-    def _exchange(self,body,signing_key,kernel_key_id,expected_outcome):
+    def _exchange(self,body,signing_key,kernel_key_id,expected_outcome,*,retain_evidence=False):
         import secrets
         from datetime import timedelta
         from agent_lab.identity_logical_continuity import sign_kernel_proof
@@ -213,6 +228,8 @@ class CustodianServiceClient:
         raw=unpack(response["authenticated_record_bytes"],4096)
         if digest(raw)!=response["signed_record_digest"]:raise ValueError("Custodian record digest mismatch")
         WitnessRecord.from_public_bytes(raw)
+        if retain_evidence:
+            return raw, {"request":request,"response":response}
         return raw
 
     def authenticate(self,pending,signing_key,kernel_key_id):
@@ -222,9 +239,11 @@ class CustodianServiceClient:
         if WitnessRecord.from_public_bytes(raw).unsigned()!=record.unsigned():raise ValueError("Custodian changed unsigned record")
         return raw
 
-    def verify(self,raw,generation,transaction_id,signing_key,kernel_key_id):
+    def verify(self,raw,generation,transaction_id,signing_key,kernel_key_id,*,retain_evidence=False):
         record=WitnessRecord.from_public_bytes(raw)
         body={"operation":"VERIFY_WITNESS","transaction_id":transaction_id,"authenticated_record_bytes":pack(raw),"witness_object_key":record.object_key,"witness_generation":generation,"expected_record_digest":digest(raw),"expected_preimage_digest":digest(canonical_bytes(record.unsigned())),"expected_previous_commitment":record.previous_record}
-        observed=self._exchange(body,signing_key,kernel_key_id,"VERIFIED")
-        if observed!=raw:raise ValueError("Custodian substituted readback")
-        return record
+        result = self._exchange(body, signing_key, kernel_key_id, "VERIFIED", retain_evidence=retain_evidence)
+        observed, evidence = result if retain_evidence else (result, None)
+        if observed != raw:
+            raise ValueError("Custodian substituted readback")
+        return (record, evidence) if retain_evidence else record

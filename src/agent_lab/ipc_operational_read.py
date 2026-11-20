@@ -69,7 +69,7 @@ def unsigned(request,for_digest=False):
 
 def signing_bytes(request): return DOMAIN+canonical_json_bytes(unsigned(request))
 
-def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT,bootstrap_artifact=None, mutation_commit_contract=False):
+def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expected_contract=CONTRACT,bootstrap_artifact=None, mutation_commit_contract=False, mutation_runtime=False):
     exact(value,FIELDS)
     bootstrap=bootstrap_artifact is not None
     if bootstrap:
@@ -79,6 +79,11 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
         for field,target in (("task_id","bootstrap_task_id"),("manifest_id","bootstrap_manifest_id"),("run_id","bootstrap_run_id"),("actor_instance_id","bootstrap_actor_instance_id"),("role_id","bootstrap_role_id")):
             if value[field]!=owner[target]:raise ValueError("bootstrap Owner scope mismatch")
         if value["deployment_id"]!=owner["deployment_id"] or value["authorization_references"]!=[H(owner)] or value["expected_epoch"]!="0" or value["expected_head"]!=H(genesis_preimage(owner)):raise ValueError("bootstrap authority/head mismatch")
+    elif mutation_runtime:
+        if (expected_contract != "oi0002.kernel-identity-c09/1.1"
+                or value["message_type"] not in {"PREPARE_MUTATION", "COMMIT_MUTATION", "FINALIZE_MUTATION", "GET_TRANSACTION", "ABORT_PREPARED"}
+                or value["domain_operation"] not in MUTATION_OPERATIONS):
+            raise ValueError("closed mutation runtime required")
     elif mutation_commit_contract:
         if (expected_contract!="oi0002.kernel-identity-c09/1.1" or value["message_type"]!="COMMIT_MUTATION"
                 or value["domain_operation"] not in MUTATION_OPERATIONS):
@@ -125,7 +130,7 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     if proof["proof_version"]!="1" or proof["algorithm"]!="ECDSA-P256-SHA256" or proof["key_id"]!=expected_key_id:raise ValueError("proof identity")
     digest(proof["pending_row_digest"])
     projection=proof["kernel_projection"];expected=read_projection(value)
-    if mutation_commit_contract:
+    if mutation_commit_contract or mutation_runtime and message == "COMMIT_MUTATION":
         from agent_lab.f07_commit_witness import validate_slot
         validate_slot(value, projection.get("mutation_witness_slot"))
         expected["mutation_witness_slot"]=projection["mutation_witness_slot"]

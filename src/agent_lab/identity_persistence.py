@@ -25,7 +25,7 @@ from agent_lab.person_entity_registry import (
     EntityRecord, PersonEntityRegistry, PersonRecord, RecordType, RegistryStatus,
 )
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 RECORD_SCHEMA_VERSION = 2
 SHA_REFERENCE = re.compile(r"^sha256:[0-9a-f]{64}$")
 PARTY_ROLES = frozenset({
@@ -162,6 +162,7 @@ class IdentityPersistence:
         fault_injector: Callable[[str], None] | None = None,
         successor_id_factory: Callable[[], str] | None = None,
         continuity_keys=None,
+        mutation_source=None,
     ) -> None:
         if not isinstance(integrity_key, bytes) or len(integrity_key) < 32:
             raise ValueError("a protected integrity key of at least 32 bytes is required")
@@ -181,6 +182,8 @@ class IdentityPersistence:
         from agent_lab.identity_logical_continuity import ContinuityKeys
         if continuity_keys is not None and not isinstance(continuity_keys,ContinuityKeys):raise ValueError("typed pinned continuity keys required")
         self._continuity_keys=continuity_keys
+        self._mutation_source=mutation_source
+        self._mutation_time=None
         self._protocol_context=None
         self._protocol_transaction=False
         self._successor_id_factory = successor_id_factory or (
@@ -217,7 +220,7 @@ class IdentityPersistence:
         if version == 2:
             self._migrate_v2_to_v3()
             version = 3
-        if version not in {3,SCHEMA_VERSION}:
+        if version not in {3,4,SCHEMA_VERSION}:
             self._db.close()
             raise ValueError("unsupported database schema version")
         with self._db:
@@ -270,8 +273,40 @@ class IdentityPersistence:
                     self._db.execute("UPDATE schema_migration_receipt SET status=?,digest=? WHERE migration_id=?",(status,self._mac(payload),legacy["migration_id"]))
         self._verify_audit_continuity(create_empty=created_empty)
         self._verify_data_integrity()
-        if version==3:self._migrate_v3_to_v4()
+        if version==3:
+            self._migrate_v3_to_v4()
+            version=4
+        if version==4:
+            self._migrate_v4_to_v5()
         self._verify_logical_integrity()
+
+    def _migrate_v4_to_v5(self):
+        try:
+            self._verify_logical_integrity()
+            self._db.execute("BEGIN IMMEDIATE")
+            self._db.execute("CREATE TABLE identity_mutation_record(key TEXT PRIMARY KEY,payload_json TEXT NOT NULL,digest TEXT NOT NULL)")
+            count,head=self._audit_head()
+            receipt=dict(migration_id="IDENTITY_SCHEMA_V4_TO_V5",from_version=4,to_version=5,event_count=count,head_mac=head,status="CONSUMED")
+            self._db.execute("INSERT INTO schema_migration_receipt(migration_id,from_version,to_version,event_count,head_mac,status,digest) VALUES(?,?,?,?,?,?,?)",(*receipt.values(),self._mac(receipt)))
+            self._db.execute("PRAGMA user_version=5")
+            if self._fault:self._fault("MIGRATION_V4_V5:BEFORE_COMMIT")
+            self._db.commit()
+            if self._fault:self._fault("MIGRATION_V4_V5:AFTER_COMMIT")
+        except BaseException:
+            if self._db.in_transaction:self._db.rollback()
+            raise
+
+    @_serialized_identity
+    def mutate_operational_identity(self,request,*,allowed_case_ids,now=None):
+        from agent_lab.identity_atomic_mutation import execute
+        try:
+            return execute(self,request,allowed_case_ids=allowed_case_ids,now=now)
+        except (ValueError,PermissionError):
+            # Denials keep logical continuity unchanged and contain no supplied
+            # personal values. Integrity failures remain fail-closed.
+            self._commit("IDENTITY_MUTATION_DENIED",lambda:self._append_audit(
+                "IDENTITY_MUTATION_DENIED",None,"REDACTED",{"reason":"REQUEST_REJECTED"}))
+            raise
 
     def _migrate_v3_to_v4(self):
         try:
@@ -314,6 +349,15 @@ class IdentityPersistence:
         if migration is None:raise ValueError("logical schema migration receipt missing")
         payload={name:migration[name] for name in ("migration_id","from_version","to_version","event_count","head_mac","status")}
         if not hmac.compare_digest(migration["digest"],self._mac(payload)):raise ValueError("logical migration integrity failure")
+        if self._db.execute("PRAGMA user_version").fetchone()[0] == 5:
+            receipt=self._db.execute("SELECT * FROM schema_migration_receipt WHERE migration_id='IDENTITY_SCHEMA_V4_TO_V5'").fetchone()
+            if receipt is None:
+                raise ValueError("mutation migration receipt missing")
+            payload={name:receipt[name] for name in ("migration_id","from_version","to_version","event_count","head_mac","status")}
+            if not hmac.compare_digest(receipt["digest"],self._mac(payload)):
+                raise ValueError("mutation migration receipt integrity")
+            from agent_lab.identity_atomic_mutation import verify
+            verify(self)
         logical=self._logical_row()
         for table in ("identity_protocol_result","identity_protocol_attempt","identity_audit_checkpoint"):
             for row in self._db.execute("SELECT * FROM "+table):
@@ -592,6 +636,9 @@ class IdentityPersistence:
         if not hmac.compare_digest(self._mac(payload), document.get("anchor_mac", "")):
             raise ValueError("audit anchor integrity failure")
         if payload != self._anchor_payload(count, head):
+            if self._db.execute("PRAGMA user_version").fetchone()[0] == 5:
+                from agent_lab.identity_atomic_mutation import recover_anchor
+                if recover_anchor(self,payload):return
             raise ValueError("audit anchor continuity failure")
         self._consume_migration_receipt()
 
@@ -734,7 +781,7 @@ class IdentityPersistence:
         case = self._cases.get(case_id)
         if self._protocol_context is not None:
             request=self._protocol_context
-            allowed_action={"READ_CASE_IDENTITY":{"read_party"},"LIST_PARTIES":{"read_party"},"READ_FACTS":{"read_party","read_fact"}}.get(request["domain_operation"],set())
+            allowed_action={"READ_CASE_IDENTITY":{"read_party"},"LIST_PARTIES":{"read_party"},"READ_FACTS":{"read_party","read_fact"},"REGISTER_IDENTITY":{"register_identity"},"UPDATE_IDENTITY_STATUS":{"update_identity"},"BIND_PARTY":{"bind_party"},"CORRECT_PARTY_ROLE":{"update_identity","bind_party"},"BIND_FACT":{"bind_fact","read_party"}}.get(request["domain_operation"],set())
             if case is not None and action in allowed_action and case_id==request["case_id"] and str(case.tax_period.year)==request["tax_year"] and authorization_ref==request["authorization_references"][0]:return
             raise PermissionError("signed read context cannot authorize this action/scope")
         if case is None or not authorization_ref or self._authorize is None:
@@ -783,6 +830,9 @@ class IdentityPersistence:
             prefix_head="sha256:"+(prefix[0] if prefix is not None else "0"*64)
             if (prefix_count and prefix is None) or prefix_head!=projection["witnessed_audit_head"]:raise LogicalReconciliationRequired("witnessed audit prefix missing or divergent")
             nonce=request["kernel_proof"]["nonce"]
+            from agent_lab.identity_atomic_mutation import load
+            if load(self,"NONCE:"+nonce) is not None or load(self,"TX:"+request["transaction_id"]) is not None:
+                raise PermissionError("mutation/read attempt namespace conflict")
             if self._db.execute("SELECT 1 FROM identity_protocol_attempt WHERE nonce=?",(nonce,)).fetchone():raise PermissionError("proof nonce already consumed")
             cached=self._db.execute("SELECT * FROM identity_protocol_result WHERE transaction_id=? AND message_type=?",(request["transaction_id"],request["message_type"])).fetchone()
             recovery=projection["recovery_request_digest"]
@@ -1051,7 +1101,7 @@ class IdentityPersistence:
             self._failure("SECURITY_DENIED",case_id,"identity is not associated with case",permission=True)
         record=self._load_identity(identity_id)
         if record is None: raise KeyError("unknown identity")
-        payload=self._identity_payload(record); payload["status"]=status.value; payload["updated_at"]=datetime.now(timezone.utc).isoformat()
+        payload=self._identity_payload(record); payload["status"]=status.value; payload["updated_at"]=(self._mutation_time or datetime.now(timezone.utc)).isoformat()
         def op():
             row=self._db.execute("SELECT revision FROM identity_record WHERE identity_id=?",(identity_id,)).fetchone(); revision=row["revision"]+1; digest=self._mac(payload)
             self._db.execute("UPDATE identity_record SET payload=?,digest=?,revision=? WHERE identity_id=?",(_canonical(payload),digest,revision,identity_id))
