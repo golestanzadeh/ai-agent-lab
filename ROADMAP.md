@@ -1,3 +1,7 @@
+## F07 Package 1 exit — 2026-11-20
+
+Inactive implementation independently accepted at 302b7701119a52050f5ad6bd743d3f9299722e5e. Worker 251 passed; independent isolated 38 overlapping tests passed. Packages 2 and 3 remain subsequent separately authorized stages. See PROJECT_CHECKPOINT.md and the existing F07 runtime preparation report for exact evidence, operational gates and continuation.
+
 ## F07 Package 1 implementation register — 2026-11-20
 
 Existing authority extensions `src/agent_lab/identity_atomic_mutation.py` and `src/agent_lab/identity_mutation_source.py`, with `tests/unit/test_f07_atomic_mutation.py`, implement the accepted inactive atomic mutation and recovery package. The existing Identity SQLite, Kernel and Custodian remain the only authorities. Exact-SHA independent review precedes Package 1 acceptance. Packages 2 and 3 require their separate authorization and gates.
