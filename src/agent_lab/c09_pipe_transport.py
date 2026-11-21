@@ -125,6 +125,21 @@ def exchange_operational_identity_read(frame,expected_server,*,deadline=None):
     return _exchange_canonical(frame,expected_server,pipe_name=IDENTITY_PIPE,deadline=deadline)
 
 
+def exchange_operational_identity_mutation(frame, expected_server, *, deadline=None):
+    """Bounded transport for the accepted inactive 1.1 mutation pipeline."""
+    if _halted.is_set():
+        raise PipeDeadlineError("transport halted after unacknowledged cancellation")
+    from agent_lab.ipc_wire_primitives import decode_frame
+    from agent_lab.ipc_envelope import MUTATION_OPERATIONS
+    request = decode_frame(frame)
+    messages = {"PREPARE_MUTATION", "COMMIT_MUTATION", "FINALIZE_MUTATION", "GET_TRANSACTION", "ABORT_PREPARED"}
+    if (request.get("contract") != "oi0002.kernel-identity-c09/1.1"
+            or request.get("message_type") not in messages
+            or request.get("domain_operation") not in MUTATION_OPERATIONS):
+        raise PipeSecurityError("closed versioned mutation frame required")
+    return _exchange_canonical(frame, expected_server, pipe_name=IDENTITY_PIPE, deadline=deadline)
+
+
 def exchange_custodian_control(frame,expected_server,*,deadline=None):
     if _halted.is_set():raise PipeDeadlineError("transport halted after unacknowledged cancellation")
     from agent_lab.ipc_wire_primitives import decode_frame

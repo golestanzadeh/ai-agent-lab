@@ -1,7 +1,7 @@
-"""Authenticated Identity read dispatcher boundary.
+"""Authenticated Identity dispatcher boundary.
 
 No operational persistence authority is conferred by the development IPC
-contract. Mutation and all unknown messages fail closed.
+contract. Mutation routing is disabled by default; unknown messages fail closed.
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ class IdentityDispatchError(RuntimeError):
     pass
 
 
-def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed_case_ids):
+def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed_case_ids,mutation_pipeline=False):
     """Actual token first; only the existing authority can consume and read."""
     from agent_lab.identity_persistence import IdentityPersistence,LogicalReconciliationRequired
     from agent_lab.ipc_wire_primitives import decode_frame,encode_frame,canonical_sha256
@@ -25,6 +25,12 @@ def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed
         authorize_connected_kernel(pipe_handle)
         if not isinstance(authority,IdentityPersistence):raise IdentityDispatchError("existing Identity authority required")
         request=decode_frame(read_message(MAX_FRAME_BYTES+1))
+        mutation_messages={"PREPARE_MUTATION","COMMIT_MUTATION","FINALIZE_MUTATION","GET_TRANSACTION","ABORT_PREPARED"}
+        if request.get("message_type") in mutation_messages:
+            if mutation_pipeline is not True:
+                raise PermissionError("mutation routing is disabled")
+            response=authority.mutate_operational_identity(request,allowed_case_ids=allowed_case_ids)
+            return encode_frame(response)
         try:response=authority.read_operational_identity(request,allowed_case_ids=allowed_case_ids)
         except LogicalReconciliationRequired:
             if request["message_type"]=="GET_ENROLLMENT_STATUS":

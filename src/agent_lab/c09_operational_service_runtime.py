@@ -18,7 +18,7 @@ from agent_lab.c09_pipe_transport import OperationDeadline, PipeDeadlineError, o
 
 class AuthorityPipeRuntime:
     """One first-instance endpoint, one existing authority, bounded shutdown."""
-    def __init__(self, config, authority_factory, *, allowed_case_ids=frozenset()):
+    def __init__(self, config, authority_factory, *, allowed_case_ids=frozenset(), mutation_pipeline=False):
         if config.role not in {ServiceRole.IDENTITY,ServiceRole.KEY_CUSTODIAN}:
             raise ServiceHostError("authority role required")
         name,sid=ROLE_BINDINGS[config.role]
@@ -28,6 +28,9 @@ class AuthorityPipeRuntime:
             raise ServiceHostError("closed deployment binding required")
         if not isinstance(allowed_case_ids,frozenset) or any(not isinstance(v,str) or not v or v=="*" for v in allowed_case_ids):
             raise ServiceHostError("explicit case allowlist required")
+        if type(mutation_pipeline) is not bool:
+            raise ServiceHostError("explicit mutation routing configuration required")
+        self._mutation_pipeline=mutation_pipeline
         self._config=config;self._factory=authority_factory;self._cases=allowed_case_ids
         self._stop=threading.Event();self._ready=threading.Event();self._thread=None
         self._error=None;self._handle=None;self._connection_error=None
@@ -90,7 +93,7 @@ class AuthorityPipeRuntime:
                     try:decode_frame(raw)
                     except ValueError:continue  # Wire syntax only; no authority entered.
                     if self._config.role is ServiceRole.IDENTITY:
-                        reply=dispatch_stateful_identity_read(self._handle,lambda bound:raw,authority,allowed_case_ids=self._cases)
+                        reply=dispatch_stateful_identity_read(self._handle,lambda bound:raw,authority,allowed_case_ids=self._cases,mutation_pipeline=self._mutation_pipeline)
                     else:
                         reply=encode_frame(authority.handle(decode_frame(raw)))
                     _,count=overlapped_io(self._handle,lambda ov:win32file.WriteFile(self._handle,reply,ov),deadline)
@@ -143,8 +146,8 @@ class AuthorityPipeRuntime:
             raise ServiceHostError("authority worker is not running")
 
 
-def create_identity_service_host(authority_factory,*,allowed_case_ids):
-    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,authority_factory,allowed_case_ids=allowed_case_ids))
+def create_identity_service_host(authority_factory,*,allowed_case_ids,mutation_pipeline=False):
+    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,authority_factory,allowed_case_ids=allowed_case_ids,mutation_pipeline=mutation_pipeline))
 
 
 def create_custodian_service_host(authority_factory):
@@ -155,9 +158,9 @@ class KernelIdentityServiceClient:
     """Existing Kernel coordinates proof, Identity read, Witness, then release.
 
 No UI-provided proof, callback head or authentication boolean is accepted.
-This interface does not dispatch agents or enable any domain mutation.
+Mutation routing is an explicit inactive composition option, with all authority checks preserved.
 """
-    def __init__(self,kernel,*,deployment_id,identity_server,custodian,provider,signing_key,key_id):
+    def __init__(self,kernel,*,deployment_id,identity_server,custodian,provider,signing_key,key_id,mutation_pipeline=False):
         from agent_lab.orchestrator_kernel import OrchestratorKernel
         from agent_lab.c09_named_pipe import PinnedProcess
         from agent_lab.c09_custodian_operational import CustodianServiceClient
@@ -167,6 +170,9 @@ This interface does not dispatch agents or enable any domain mutation.
         if not isinstance(identity_server,PinnedProcess) or identity_server.sid!=ROLE_BINDINGS[ServiceRole.IDENTITY][1]:raise ServiceHostError("pinned Identity principal required")
         if not isinstance(custodian,CustodianServiceClient) or custodian.deployment_id!=deployment_id or not isinstance(provider,GCSWitnessAdapter):raise ServiceHostError("concrete deployment ports required")
         if not isinstance(signing_key,ec.EllipticCurvePrivateKey) or not isinstance(signing_key.curve,ec.SECP256R1) or not isinstance(key_id,str) or not key_id:raise ServiceHostError("protected Kernel signer binding required")
+        if type(mutation_pipeline) is not bool:
+            raise ServiceHostError("explicit mutation routing configuration required")
+        self._mutation_pipeline=mutation_pipeline
         self._kernel=kernel;self._deployment=deployment_id;self._identity=identity_server
         self._custodian=custodian;self._provider=provider;self._signer=signing_key;self._key_id=key_id
 
@@ -187,21 +193,49 @@ This interface does not dispatch agents or enable any domain mutation.
         deadline.milliseconds()  # A cancelled caller cannot publish a held result.
         return result
 
+    def mutation_stage(self,*,manifest_id,task_id,run_id,case_id,tax_year,operation,message_type,
+                       payload,authorization_references,transaction_id,cancellation=None):
+        """Route one explicit stage through its issuing Kernel and Identity host.
+
+        This opt-in is routing configuration only. Actual source, proof, scope,
+        permission, enrollment and finality validation remain in the authorities.
+        No automatic retry is permitted after an ambiguous exchange.
+        """
+        if not self._mutation_pipeline:
+            raise ServiceHostError("mutation routing is disabled")
+        from datetime import datetime,timezone
+        from agent_lab.c09_identity_client import exchange_operational_identity_mutation
+        from agent_lab.ipc_wire_primitives import encode_frame
+        deadline=OperationDeadline(5,cancellation)
+        deadline.milliseconds()
+        request=self._kernel.issue_identity_mutation(deployment_id=self._deployment,manifest_id=manifest_id,
+            task_id=task_id,run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation,message_type=message_type,
+            payload=payload,authorization_references=authorization_references,transaction_id=transaction_id,
+            signing_key=self._signer,key_id=self._key_id)
+        scope={name:request[name] for name in "deployment_id case_id tax_year run_id task_id manifest_id actor_instance_id role_id".split()}
+        return exchange_operational_identity_mutation(encode_frame(request),self._identity,self._signer.public_key(),
+            kernel=self._kernel,expected_scope=scope,now=datetime.now(timezone.utc).replace(tzinfo=None),
+            expected_key_id=self._key_id,deadline=deadline)
+
     def reconcile(self,checkpoint_id):
         """Retry exact held checkpoint; never dispatch Identity a second time."""
+        pending=self._kernel._identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id)
+        if (pending is not None and pending["receipt"]["profile"]=="identity-mutation-staged-receipt/1"
+                and not self._mutation_pipeline):
+            raise ServiceHostError("mutation routing is disabled")
         return self._kernel.witness_identity_checkpoint(checkpoint_id,custodian=self._custodian,provider=self._provider,signing_key=self._signer,kernel_key_id=self._key_id)
 
 
 class KernelServiceRuntime:
     """SCM lifetime for the existing Kernel and concrete Identity service client."""
-    def __init__(self,config,kernel_factory,*,identity_server,custodian,provider,signing_key,key_id):
+    def __init__(self,config,kernel_factory,*,identity_server,custodian,provider,signing_key,key_id,mutation_pipeline=False):
         name,sid=ROLE_BINDINGS[ServiceRole.KERNEL]
         if (config.schema!="ai-tax-agent.c09-service-config/1.0" or config.role is not ServiceRole.KERNEL or
             config.service_name!=name or config.principal_sid!=sid or config.enabled is not True or
             not isinstance(config.deployment_id,str) or not config.deployment_id or len(config.deployment_id.encode())>128):
             raise ServiceHostError("fixed Kernel deployment required")
         self._config=config;self._factory=kernel_factory;self._kernel=None;self.client=None
-        self._bindings=dict(identity_server=identity_server,custodian=custodian,provider=provider,signing_key=signing_key,key_id=key_id)
+        self._bindings=dict(identity_server=identity_server,custodian=custodian,provider=provider,signing_key=signing_key,key_id=key_id,mutation_pipeline=mutation_pipeline)
 
     def start(self):
         if self._kernel is not None or current_process_sid()!=self._config.principal_sid:

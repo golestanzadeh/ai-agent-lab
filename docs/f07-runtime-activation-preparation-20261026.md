@@ -302,3 +302,22 @@ Actual operational source adapter/build approval, deployment/store/custody/confi
 ### Authenticated closing capacity handoff
 
 Measured at 2026-11-20T14:29:43.849651Z by the existing logged-in codex app-server reader. Five-hour remaining 28%, reset 2026-11-20T18:46:50Z. Weekly remaining 80%, reset 2026-11-25T09:13:38Z. Initial observation 97%/91% at 13:48:31.432202Z. Observed differences 69/11 percentage points include independent review. The existing CHEAP final documentation/publication admission passed and the mandatory 15-point five-hour reserve is preserved. No capacity reset/interruption occurred. Package 1 has no remaining implementation/review work; operational gates belong to subsequent authorization.
+
+
+## Package 2B inactive runtime integration — 2026-11-21
+
+Candidate connects the accepted Package 1 APIs through existing c09_identity_client.py, c09_identity_dispatch.py, c09_pipe_transport.py and c09_operational_service_runtime.py. Explicit constructor/factory mutation_pipeline defaults false, is not an IPC/config-file authorization field, and cannot grant operational authority. Source/custody/enrollment remain mandatory. The low-level client verifies pinned proof/scope, exact durable Kernel dispatch and current permissions before transport, then uses the issuing Kernel's record_identity_mutation_response for durable checkpoint/receipt validation. Peer responses never provide trusted checkpoints. Existing native byte transport retains actual token/image/hash pinning, bounded canonical framing and deadline cancellation. Default read paths and deployment entry points remain intact.
+
+Each stage is explicit; the runtime creates no second coordinator or automatic retry. Existing Kernel reconciliation obtains/verifies Witness/Custodian evidence. Mutation checkpoint reconciliation also requires routing enabled. Source/configuration absence and policy denial fail closed; integrity faults retain sticky host-halt behavior. No service was installed/activated, no live source/credential/enrollment or real identity was touched.
+
+Focused command, repository root with PYTHONPATH=src and existing venv Python:
+
+```powershell
+& 'C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe' -m pytest tests/unit/test_f07_inactive_runtime.py tests/unit/test_c09_operational_service_runtime.py tests/unit/test_f07_operational_read.py tests/unit/test_f07_control_responses.py -q
+```
+
+Worker 111 passed, 0 failed, 0 skipped in 26.34s, exit 0. New integration uses actual isolated temporary Windows pipes and actual current-user token/process checks, with role pins mapped only inside test fixtures. It runs the real Client, Dispatcher, Kernel/Identity/Custodian and SQLite, plus bounded synthetic source and controlled cloud/Custodian transport. It is not installed-service, real four-principal, live Witness or operational acceptance. Coverage includes all five stages, abort, lost COMMIT response, cancellation after commit, host/Kernel restart, no duplicate mutation/Witness, missing source, routing off, cross-scope permissions, Kill Switch, cancelled/unknown operations, response substitutions and pre-I/O rejection of unreserved/revoked Kernel authority. Read and accepted control-contract compatibility pass. Full Package 1 tests were not repeated.
+
+Initial native fixture failures exposed venv launcher versus actual OS process-image mismatch. Test pins now query actual Windows image without weakening verification. Existing read restart fixture also retained the same original transaction, as required by accepted Package 1 shared reservation rules. Disabled routing was classified as permission denial so the existing host can reject it without treating it as internal corruption. Subsequent focused rerun is the pass evidence.
+
+Exact-SHA independent read-only review remains pending. Existing source/build/custody/configuration, four-principal deployment/ACL, credential/IAM and Owner enrollment gates remain. Package 3 is outside this execution.

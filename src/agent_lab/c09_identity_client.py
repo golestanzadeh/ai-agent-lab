@@ -1,4 +1,4 @@
-"""Kernel-side authenticated Identity read client boundary.
+"""Kernel-side authenticated Identity client boundaries.
 
 Transport is injected; this module does not claim live SCM activation.
 """
@@ -32,6 +32,45 @@ def exchange_operational_identity_read(request_frame, expected_server, public_ke
         return response
     except Exception as exc:
         raise IdentityClientError("operational Identity read rejected; no retry authorized") from exc
+
+
+def exchange_operational_identity_mutation(request_frame, expected_server, public_key, *,
+                                           kernel, expected_scope, now, expected_key_id, deadline=None):
+    """Return only the response verified and recorded by its issuing Kernel.
+
+    Transaction checkpoints are reconstructed by Package 1 from durable Kernel
+    evidence. A peer reply cannot supply its own trusted checkpoint.
+    """
+    from agent_lab.orchestrator_kernel import OrchestratorKernel
+    from agent_lab.ipc_operational_read import validate_request
+    from agent_lab.ipc_wire_primitives import decode_frame
+    from agent_lab.c09_pipe_transport import exchange_operational_identity_mutation as exchange
+    try:
+        if not isinstance(kernel, OrchestratorKernel):
+            raise IdentityClientError("issuing Kernel required")
+        request = decode_frame(request_frame)
+        validate_request(request, public_key, expected_scope=expected_scope, now=now,
+                         expected_key_id=expected_key_id, expected_contract="oi0002.kernel-identity-c09/1.1",
+                         mutation_runtime=True)
+        kernel._verify_identity_protocol_state()
+        issued = kernel._identity_payload("identity_kernel_request", "nonce", request["kernel_proof"]["nonce"])
+        if issued is None or issued["status"] != "DISPATCHED" or issued["request"] != request:
+            raise IdentityClientError("exact durable Kernel dispatch required")
+        decision = kernel.permission_decision(request["manifest_id"], request["capability"],
+            case_id=request["case_id"], tax_year=int(request["tax_year"]), run_id=request["run_id"])
+        if not decision.allowed:
+            raise IdentityClientError("current Kernel dispatch permission denied")
+        if deadline is not None:
+            deadline.milliseconds()
+        response = decode_frame(exchange(request_frame, expected_server, deadline=deadline))
+        if deadline is not None:
+            deadline.milliseconds()
+        verified = kernel.record_identity_mutation_response(request, response)
+        if deadline is not None:
+            deadline.milliseconds()
+        return verified
+    except Exception as exc:
+        raise IdentityClientError("Identity mutation exchange failed; reconcile the original transaction") from exc
 
 
 def correlate_identity_read(

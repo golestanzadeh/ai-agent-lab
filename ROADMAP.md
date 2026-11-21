@@ -1,3 +1,7 @@
+## Package 2B inactive runtime integration — 2026-11-21
+
+Register tests/unit/test_f07_inactive_runtime.py for actual isolated native Client/Dispatcher/SQLite integration. Extend only existing Identity client, dispatcher, byte transport and service-factory composition. Defaults remain read-only, no live source/custody/enrollment or service activation. Independent exact-SHA review is required. Package 3 remains subsequent authorization.
+
 ## F07 Package 1 exit — 2026-11-20
 
 Inactive implementation independently accepted at 302b7701119a52050f5ad6bd743d3f9299722e5e. Worker 251 passed; independent isolated 38 overlapping tests passed. Packages 2 and 3 remain subsequent separately authorized stages. See PROJECT_CHECKPOINT.md and the existing F07 runtime preparation report for exact evidence, operational gates and continuation.
