@@ -1,3 +1,7 @@
+## Package 2C inactive source integration — 2026-11-21
+
+Register tests/unit/test_f07_inactive_source.py. Reuse the existing protected source port, Google Drive metadata adapter and Package2B Identity factory for exact revision-byte materialization and role-private inactive configuration/custody ports. Live reference authority/custody remains gated; independent exact-SHA review precedes bounded inactive acceptance. Package3 remains subsequent authorization.
+
 ## Package 2B exit — 2026-11-21
 
 Inactive runtime integration independently accepted at 821b3140ea2a227978f9c818085359188cf80978, worker111 and independent111 overlapping tests passed. Next proposed work is the existing protected-source adapter and role-private configuration/custody binding under subsequent authorization. All live deployment/enrollment/activation Human Gates remain. Package3 has not begun.

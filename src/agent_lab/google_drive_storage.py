@@ -80,12 +80,66 @@ class GoogleDriveMetadataAdapter:
         self._assert_contained(scope.root_id, object_id)
         return metadata
 
-    def _assert_contained(self, root_id: str, object_id: str) -> None:
+    def read_protected_revision(self, case_id, reference, *, now, max_bytes=1024*1024):
+        """Read only an exact binary revision under the registered case root.
+
+        This verifies bytes and containment. It does not authenticate the
+        reference authority or grant source/custody acceptance.
+        """
+        import io
+        from googleapiclient.http import MediaIoBaseDownload
+        from agent_lab.identity_protected_revision import ProtectedReference,MaterializedRevision,verify_protected_revision
+        if not isinstance(reference,ProtectedReference) or type(max_bytes) is not int or not 0<max_bytes<=1024*1024:
+            raise GoogleDriveScopeError("typed bounded protected reference required")
+        scope=self._resolver.resolve(case_id).storage_scope
+        revision=reference.revision
+        if (reference.scope.case_id!=case_id or revision.provider!=self.PROVIDER or scope.provider!=self.PROVIDER
+                or revision.root_id!=scope.root_id or revision.object_id==scope.root_id
+                or revision.revision_id.casefold() in {"head","latest",""}
+                or reference.revoked_at is not None or reference.expires_at<=now):
+            raise GoogleDriveScopeError("protected source scope/lease unavailable")
+        before=self._assert_contained(scope.root_id,revision.object_id,capture_versions=True)
+        metadata=self._drive.revisions().get(fileId=revision.object_id,revisionId=revision.revision_id,
+            fields="id,mimeType,size").execute(num_retries=0)
+        size=metadata.get("size")
+        mime=metadata.get("mimeType")
+        if (metadata.get("id")!=revision.revision_id or not isinstance(size,str) or not size.isascii() or not size.isdecimal()
+                or str(int(size))!=size or not 0<int(size)<=max_bytes or not isinstance(mime,str)
+                or mime.startswith("application/vnd.google-apps.")):
+            raise GoogleDriveScopeError("exact bounded binary revision unavailable")
+        class BoundedBuffer(io.BytesIO):
+            def write(self, data):
+                if self.tell()+len(data)>max_bytes:
+                    raise GoogleDriveScopeError("protected revision exceeds bound")
+                return super().write(data)
+        stream=BoundedBuffer()
+        request=self._drive.revisions().get_media(fileId=revision.object_id,revisionId=revision.revision_id)
+        download=MediaIoBaseDownload(stream,request,chunksize=min(65536,max_bytes))
+        done=False
+        for _ in range((int(size)+min(65536,max_bytes)-1)//min(65536,max_bytes)+1):
+            previous=stream.tell()
+            _,done=download.next_chunk(num_retries=0)
+            if download._uri!=request.uri or stream.tell()<=previous or stream.tell()>int(size):
+                raise GoogleDriveScopeError("protected media progress/source mismatch")
+            if done:
+                break
+        if not done:
+            raise GoogleDriveScopeError("protected media did not complete within bound")
+        raw=stream.getvalue()
+        if len(raw)!=int(size) or before!=self._assert_contained(scope.root_id,revision.object_id,capture_versions=True):
+            raise GoogleDriveScopeError("protected revision length or containment changed")
+        observed=MaterializedRevision(revision,raw)
+        verify_protected_revision(reference,observed,committed_provider=scope.provider,committed_root=scope.root_id,
+            expected_scope=reference.scope,now=now,max_bytes=max_bytes)
+        return observed
+
+    def _assert_contained(self, root_id: str, object_id: str, *, capture_versions=False):
         if object_id == root_id:
             return
 
         current_id = object_id
         visited: set[str] = set()
+        versions=[]
         for _ in range(self._max_ancestry_depth):
             if current_id in visited:
                 raise GoogleDriveScopeError("cyclic or malformed Drive ancestry")
@@ -93,7 +147,7 @@ class GoogleDriveMetadataAdapter:
             try:
                 item = self._drive.files().get(
                     fileId=current_id,
-                    fields="id,parents,trashed",
+                    fields="id,parents,trashed,version" if capture_versions else "id,parents,trashed",
                 ).execute()
             except Exception as exc:
                 raise OutOfScopeError(f"cannot verify Drive object ancestry: {object_id}") from exc
@@ -101,8 +155,14 @@ class GoogleDriveMetadataAdapter:
             if item.get("trashed", False):
                 raise OutOfScopeError(f"trashed object is outside active case scope: {object_id}")
             parents = tuple(item.get("parents", ()))
+            if capture_versions:
+                version=item.get("version")
+                if (item.get("id")!=current_id or len(parents)!=1 or not isinstance(version,str)
+                        or not version.isascii() or not version.isdecimal() or str(int(version))!=version):
+                    raise GoogleDriveScopeError("stable exact ancestry identity required")
+                versions.append((current_id,parents[0],version))
             if root_id in parents:
-                return
+                return tuple(versions) if capture_versions else None
             if not parents:
                 raise OutOfScopeError(f"Drive object is not a descendant of case root: {object_id}")
             if len(parents) != 1:

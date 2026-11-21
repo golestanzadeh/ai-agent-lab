@@ -146,8 +146,21 @@ class AuthorityPipeRuntime:
             raise ServiceHostError("authority worker is not running")
 
 
-def create_identity_service_host(authority_factory,*,allowed_case_ids,mutation_pipeline=False):
-    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,authority_factory,allowed_case_ids=allowed_case_ids,mutation_pipeline=mutation_pipeline))
+def create_identity_service_host(authority_factory,*,allowed_case_ids,mutation_pipeline=False,protected_source=None):
+    def bound_factory(config):
+        authority=authority_factory(config)
+        if protected_source is None:
+            return authority
+        try:
+            from agent_lab.identity_mutation_source import InactiveGoogleDriveMutationSource
+            if not isinstance(protected_source,InactiveGoogleDriveMutationSource):
+                raise ServiceHostError("typed inactive protected source required")
+            protected_source.bind_authority(authority,config)
+            return authority
+        except BaseException:
+            authority.close()
+            raise
+    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,bound_factory,allowed_case_ids=allowed_case_ids,mutation_pipeline=mutation_pipeline))
 
 
 def create_custodian_service_host(authority_factory):

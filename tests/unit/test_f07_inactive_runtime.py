@@ -25,7 +25,7 @@ pytestmark=pytest.mark.skipif(sys.platform!="win32",reason="native Windows Named
 
 
 @contextmanager
-def runtime_at(tmp_path,*,source=True,routing=True):
+def runtime_at(tmp_path,*,source=True,routing=True,protected_source=None):
     import pywintypes,win32con,win32pipe,win32security
     kernel,identity,owner,pending,custodian,client,provider,session=fixture(tmp_path)
     sid=current_process_sid()
@@ -62,7 +62,12 @@ def runtime_at(tmp_path,*,source=True,routing=True):
             def compose():
                 state["client"]=KernelIdentityServiceClient(state["kernel"],deployment_id=owner["deployment_id"],identity_server=peer,custodian=client,
                     provider=provider,signing_key=KERNEL,key_id="TEST-KERNEL-KEY-1",mutation_pipeline=True)
-                state["host"]=AuthorityPipeRuntime(configuration(owner["deployment_id"]),authority_factory,allowed_case_ids=frozenset({"C1"}),mutation_pipeline=routing)
+                if protected_source is None:
+                    state["host"]=AuthorityPipeRuntime(configuration(owner["deployment_id"]),authority_factory,allowed_case_ids=frozenset({"C1"}),mutation_pipeline=routing)
+                else:
+                    from agent_lab.c09_operational_service_runtime import create_identity_service_host
+                    host=create_identity_service_host(authority_factory,allowed_case_ids=frozenset({"C1"}),mutation_pipeline=routing,protected_source=protected_source)
+                    state["host"]=host._runtime_factory(configuration(owner["deployment_id"]))
                 state["host"].start()
             def restart():
                 from agent_lab.orchestrator_kernel import OrchestratorKernel
