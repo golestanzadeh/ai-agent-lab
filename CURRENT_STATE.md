@@ -477,3 +477,5 @@ New deletion/selection features are NOT implemented or authorized. CASE-2025-000
 
 
 2026-11-22 — Family dashboard bounded inactive implementation: actual isolated HTTP/native Kernel/Identity create, correction, refresh/restart and bilingual readback demonstrated; live Owner intent/source binding and marriage creation remain blocked. Exact scope/review status: latest PROJECT_CHECKPOINT.md / OPEN_ITEMS.md entry.
+
+2026-11-22 final: Family bounded implementation independently accepted9a42a77465357b048346b697652c3ca77d2a4bdf / INACTIVE; task PARTIALLY_IMPLEMENTED. Live Owner Broker/source binding, relationship creation and annual-fact UI remain gated. Exact evidence and continuation in canonical checkpoint/open items; no operational activation.
