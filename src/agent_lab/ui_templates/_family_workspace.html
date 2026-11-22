@@ -4,6 +4,7 @@
   <div class="family-head"><div><p class="eyebrow">{{ 'مدیریت خانواده' if lang == 'fa-IR' else 'Familienverwaltung' }}</p><h2>{{ 'اشخاص و روابط خانوادگی' if lang == 'fa-IR' else 'Personen und Familienbeziehungen' }}</h2><p>{{ 'ثبت اولیه توسط مالک؛ اطلاعات مدارک فقط برای تطبیق و پیشنهاد' if lang == 'fa-IR' else 'Angaben des Eigentümers; Dokumente dienen zum Abgleich' }}</p></div><button id="family-add" type="button" disabled>+ {{ 'افزودن شخص' if lang == 'fa-IR' else 'Person hinzufügen' }}</button></div>
   <div id="family-status" class="family-alert" role="status">{{ 'در حال بررسی اتصال مجاز هویت…' if lang == 'fa-IR' else 'Autorisierte Identitätsverbindung wird geprüft…' }}</div>
   <button id="family-recover" type="button" hidden>{{ 'تکمیل خواندن قبلی' if lang == 'fa-IR' else 'Vorheriges Lesen abschließen' }}</button>
+  <div id="family-mutation-pending" aria-live="polite"></div>
   <div id="family-people" class="family-people" aria-live="polite"></div>
   <form id="family-editor" class="family-editor" hidden>
     <input name="person_id" type="hidden"><h3 id="family-form-title">{{ 'افزودن شخص' if lang == 'fa-IR' else 'Person hinzufügen' }}</h3>

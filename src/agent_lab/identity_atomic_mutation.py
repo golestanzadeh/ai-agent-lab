@@ -132,12 +132,14 @@ def protected_json(raw):
     return value
 
 
-def decode_record(data):
+def decode_record(data, *, expected_schema_version=2):
     from agent_lab.person_entity_registry import PersonRecord, EntityRecord, RegistryStatus, PersonEntityRegistry
+    if type(expected_schema_version) is not int or expected_schema_version not in {1,2}:
+        raise ValueError("unsupported protected person schema")
     names = {"identity_id","record_type","status","name","created_at","updated_at","lookup_attributes","record_schema_version"}
     if set(data) != names:
         raise ValueError("closed protected Identity record required")
-    if (type(data["record_schema_version"]) is not int or data["record_schema_version"]!=2
+    if (type(data["record_schema_version"]) is not int or data["record_schema_version"]!=expected_schema_version
             or type(data["lookup_attributes"]) is not list or len(data["lookup_attributes"])>64
             or any(type(pair) is not list or len(pair)!=2 or any(type(value) is not str or len(value.encode())>256 for value in pair) for pair in data["lookup_attributes"])
             or data["name"] is not None and (type(data["name"]) is not str or len(data["name"].encode())>256)):
@@ -191,7 +193,10 @@ def apply_domain(owner, request, refs):
         owner.register_identity(case_id=case, record=record, authorization_ref=auth)
         return p["subject_id"]
     if op == "CORRECT_PERSON":
-        record=decode_record(protected_json(refs[p["identity_record_ref"]].observed.content))
+        from agent_lab.person_entity_registry import PersonRecord
+        current=owner._load_identity(p["subject_id"],require_active=True)
+        if not isinstance(current,PersonRecord):raise PermissionError("correction person unavailable")
+        record=decode_record(protected_json(refs[p["identity_record_ref"]].observed.content),expected_schema_version=current.schema_version)
         if record.person_id!=p["subject_id"]:raise PermissionError("correction subject mismatch")
         owner.correct_person(case_id=case,record=record,expected_record_digest=p["expected_record_digest"],
                              evidence_ref=p["identity_record_ref"],authorization_ref=auth)

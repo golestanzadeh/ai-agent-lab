@@ -1637,6 +1637,84 @@ class OrchestratorKernel:
             self._store_identity_payload("identity_kernel_state","deployment_id",request["deployment_id"],state)
             return response
 
+    def family_identity_workflow(self, *, deployment_id, workflow=None, workflow_id=None,
+                                 owner_id, case_id, tax_year, run_id):
+        """Journal immutable UI intent routing in the existing Kernel ledger.
+
+        This is not a grant, domain store or second progress tracker. Progress
+        comes exclusively from existing Identity mutation transaction records.
+        """
+        from copy import deepcopy
+        from agent_lab.ipc_operational_read import OPERATION_CAPABILITIES,PAYLOADS,UUID,digest,refs,text
+        self._verify_identity_protocol_state()
+        with self.atomic_execution():
+            state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+            if state is None or state["status"]!="ACTIVE" or self.kill_switch_state()!="RUNNING":
+                raise PermissionDenied("Family workflow authority unavailable")
+            records=state.get("family_workflows",{})
+            if workflow is not None:
+                if set(workflow)!={"owner_id","case_id","tax_year","run_id","action","input_digest","intents"}:
+                    raise ContractError("closed Family workflow required")
+                expected={"create":["REGISTER_IDENTITY","BIND_PARTY"],"correct":["CORRECT_PERSON"],"associate":["BIND_PARTY"]}
+                if (workflow["action"] not in expected or type(workflow["intents"]) is not list or
+                        [item["operation"] for item in workflow["intents"]]!=expected[workflow["action"]]):
+                    raise ContractError("closed Family operations required")
+                digest(workflow["input_digest"])
+                if len(_canonical(workflow).encode("utf-8"))>131072:raise ContractError("bounded Family routing metadata required")
+                if len({item["transaction_id"] for item in workflow["intents"]})!=len(workflow["intents"]):raise ContractError("distinct original transactions required")
+                identity=deepcopy(workflow)
+                for item in identity["intents"]:item.pop("transaction_id",None)
+                matches=[key for key,value in records.items() if value["identity"]==identity]
+                if len(matches)>1:raise IntegrityError("ambiguous Family workflow")
+                workflow_id=matches[0] if matches else workflow["intents"][0]["transaction_id"]
+                if workflow_id in records:
+                    if records[workflow_id]["identity"]!=identity:raise IntegrityError("Family workflow ID conflict")
+                    workflow=records[workflow_id]["workflow"]
+            else:
+                if workflow_id not in records:raise PermissionDenied("unknown Family workflow")
+                workflow=records[workflow_id]["workflow"]
+            if (workflow["owner_id"],workflow["case_id"],workflow["tax_year"],workflow["run_id"])!=(owner_id,case_id,tax_year,run_id):
+                raise PermissionDenied("Family workflow scope substitution")
+            for item in workflow["intents"]:
+                required={"manifest_id","task_id","case_id","tax_year","run_id","authorization_references","operation","transaction_id","payload"}
+                if set(item)!=required or (item["case_id"],item["tax_year"],item["run_id"])!=(case_id,tax_year,run_id):
+                    raise PermissionDenied("Family intent scope substitution")
+                if not isinstance(item["transaction_id"],str) or not UUID.fullmatch(item["transaction_id"]):raise ContractError("canonical Family transaction required")
+                payload=item["payload"]
+                if type(payload) is not dict or set(payload)!=(PAYLOADS[item["operation"]]|{"owner_input_digest"}):raise ContractError("closed Family intent payload required")
+                digest(payload["owner_input_digest"])
+                for key,value in payload.items():
+                    if key=="evidence_refs":refs(value,1)
+                    else:text(value,key=="valid_to_exclusive")
+                manifest=self._identity_continuity_context(manifest_id=item["manifest_id"],task_id=item["task_id"],case_id=case_id,tax_year=tax_year,run_id=run_id,operation=item["operation"])
+                capability=OPERATION_CAPABILITIES[item["operation"]]
+                if not self.permission_decision(item["manifest_id"],capability,case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
+                    raise PermissionDenied("Family workflow permission denied")
+                if len(item["authorization_references"])!=1 or item["authorization_references"][0] not in json.loads(manifest["payload_json"])["inputs"]:
+                    raise PermissionDenied("Family workflow authorization input required")
+            existing=workflow_id in records
+            if not existing:
+                records[workflow_id]=dict(identity=identity,workflow=deepcopy(workflow))
+                state["family_workflows"]=records
+                self._store_identity_payload("identity_kernel_state","deployment_id",deployment_id,state)
+            return dict(workflow_id=workflow_id,workflow=deepcopy(workflow),existing=existing)
+
+    def pending_family_identity_workflows(self, *, deployment_id, owner_id, case_id, tax_year, run_id,
+                                          manifest_id, task_id):
+        self._verify_identity_protocol_state()
+        self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,case_id=case_id,tax_year=tax_year,run_id=run_id,operation="READ_FAMILY")
+        if not self.permission_decision(manifest_id,"identity_read",case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
+            raise PermissionDenied("Family workflow read denied")
+        state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
+        if state is None:raise PermissionDenied("Family deployment unavailable")
+        result=[]
+        for key,record in state.get("family_workflows",{}).items():
+            work=record["workflow"]
+            if (work["owner_id"],work["case_id"],work["tax_year"],work["run_id"])!=(owner_id,case_id,tax_year,run_id):continue
+            if any(state.get("mutations",{}).get(item["transaction_id"],{}).get("final_response",{}).get("outcome")!="COMMITTED_FINAL" for item in work["intents"]):
+                result.append({"workflow_id":key,"action":work["action"]})
+        return result
+
     def issue_identity_read(self,*,deployment_id,manifest_id,task_id,run_id,case_id,tax_year,
                             operation,payload,authorization_references,signing_key,key_id,transaction_id=None):
         try:

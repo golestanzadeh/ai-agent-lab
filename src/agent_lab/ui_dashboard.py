@@ -379,8 +379,33 @@ def create_dashboard_app(
         except Exception:
             raise HTTPException(status_code=503,detail="FAMILY_READ_AUTHORITY_OR_RECOVERY_REQUIRED") from None
 
+    @app.get("/family/pending")
+    async def family_pending(request: Request):
+        scope=await family_scope(request)
+        try:return {"pending":family_gateway.pending(*scope)}
+        except Exception:raise HTTPException(status_code=403,detail="FAMILY_RECOVERY_AUTHORITY_REQUIRED") from None
+
+    @app.post("/family/persons/recover")
+    async def family_recover(request: Request):
+        from agent_lab.family_identity_gateway import FamilyMutationPending
+        from agent_lab.identity_atomic_mutation import protected_json
+        scope=await family_scope(request)
+        try:
+            raw=b""
+            async for chunk in request.stream():
+                if len(raw)+len(chunk)>256:raise ValueError("bounded recovery reference required")
+                raw+=chunk
+            body=protected_json(raw)
+            if set(body)!={"workflow_id"} or type(body["workflow_id"]) is not str:raise ValueError("closed recovery reference")
+            return family_gateway.recover(*scope,body["workflow_id"])
+        except FamilyMutationPending as exc:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=409,content={"detail":str(exc),"workflow_id":exc.workflow_id,"transaction_id":exc.transaction_id})
+        except Exception:raise HTTPException(status_code=403,detail="FAMILY_RECOVERY_AUTHORITY_REQUIRED") from None
+
     @app.post("/family/persons")
     async def family_write(request: Request):
+        from agent_lab.family_identity_gateway import FamilyMutationPending
         scope=await family_scope(request)
         raw=b""
         async for chunk in request.stream():
@@ -393,6 +418,9 @@ def create_dashboard_app(
             if set(body)!={"action","values"} or type(body["values"]) is not dict:
                 raise ValueError("closed Family command required")
             return family_gateway.mutate(*scope,body["action"],body["values"])
+        except FamilyMutationPending as exc:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=409,content={"detail":str(exc),"workflow_id":exc.workflow_id,"transaction_id":exc.transaction_id})
         except Exception:
             raise HTTPException(status_code=409,detail="FAMILY_AUTHENTICATED_EVIDENCE_OR_RECONCILIATION_REQUIRED") from None
 

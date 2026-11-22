@@ -25,6 +25,12 @@ class FamilyReadPending(FamilyUnavailable):
         self.transaction_id=transaction_id
 
 
+class FamilyMutationPending(FamilyUnavailable):
+    def __init__(self,workflow_id,transaction_id):
+        super().__init__("FAMILY_MUTATION_RECONCILIATION_REQUIRED")
+        self.workflow_id=workflow_id;self.transaction_id=transaction_id
+
+
 @dataclass(frozen=True)
 class FamilyScope:
     owner_id: str
@@ -144,27 +150,32 @@ class FamilyIdentityGateway:
         for intent in intents:
             if "person_id" in values and intent.payload.get("subject_id")!=values["person_id"]:
                 raise FamilyUnavailable("FAMILY_INTENT_CONFLICT")
+        definitions=[]
         for intent in intents:
-            args = self._scope(intent.scope, case_id, tax_year, run_id)
-            args.update(operation=intent.operation, transaction_id=intent.transaction_id)
+            args=self._scope(intent.scope,case_id,tax_year,run_id)
             payload=dict(intent.payload)
             input_values={key:value for key,value in values.items() if key not in {"person_id","role"}}
             payload["owner_input_digest"]=canonical_sha256({"role":values["role"]} if intent.operation=="BIND_PARTY" else input_values)
-            prepared = self._client.mutation_stage(**args, message_type="PREPARE_MUTATION", payload=payload)
-            if prepared["outcome"] != "PREPARED":
-                raise FamilyUnavailable("FAMILY_RECONCILIATION_REQUIRED")
-            committed = self._client.mutation_stage(**args, message_type="COMMIT_MUTATION", payload=payload)
-            if committed["outcome"] != "IDENTITY_COMMITTED":
-                raise FamilyUnavailable("FAMILY_RECONCILIATION_REQUIRED")
-            final = self._client.reconcile("MUTATION:" + intent.transaction_id)
-            receipt = final["receipt"]
-            verification = final["custodian_verification"]["response"]
-            payload = dict(staged_receipt_digest=canonical_sha256(receipt),
-                witness_object_key=final["object_key"], witness_generation=final["generation"],
-                witness_preimage_digest=receipt["witness_preimage_digest"],
-                signed_record_digest=verification["signed_record_digest"],
-                custodian_verification_digest=canonical_sha256(verification), custodian_nonce=verification["nonce"])
-            reply = self._client.mutation_stage(**args, message_type="FINALIZE_MUTATION", payload=payload)
-            if reply["outcome"] != "COMMITTED_FINAL":
-                raise FamilyUnavailable("FAMILY_RECONCILIATION_REQUIRED")
-        return dict(status="COMMITTED_FINAL")
+            definitions.append({**args,"operation":intent.operation,"transaction_id":intent.transaction_id,"payload":payload})
+        record=self._client.family_workflow(owner_id=self._owner,case_id=case_id,tax_year=tax_year,run_id=run_id,
+            workflow=dict(owner_id=self._owner,case_id=case_id,tax_year=tax_year,run_id=run_id,action=action,input_digest=canonical_sha256(values),intents=definitions))
+        if record["existing"]:raise FamilyMutationPending(record["workflow_id"],record["workflow_id"])
+        return self._complete(record,recovery=False)
+
+    def _complete(self,record,*,recovery):
+        for intent in record["workflow"]["intents"]:
+            try:self._client.complete_mutation(intent,recovery=recovery)
+            except Exception:
+                raise FamilyMutationPending(record["workflow_id"],intent["transaction_id"]) from None
+        return dict(status="COMMITTED_FINAL",workflow_id=record["workflow_id"])
+
+    def recover(self,case_id,tax_year,run_id,workflow_id):
+        self._scope(self._read_scope(case_id,tax_year,run_id),case_id,tax_year,run_id)
+        record=self._client.family_workflow(owner_id=self._owner,case_id=case_id,tax_year=tax_year,run_id=run_id,workflow_id=workflow_id)
+        return self._complete(record,recovery=True)
+
+    def pending(self,case_id,tax_year,run_id):
+        args=self._scope(self._read_scope(case_id,tax_year,run_id),case_id,tax_year,run_id)
+        args.pop("authorization_references")
+        return self._client._kernel.pending_family_identity_workflows(deployment_id=self._client._deployment,
+            owner_id=self._owner,**args)

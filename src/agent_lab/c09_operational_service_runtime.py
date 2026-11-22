@@ -271,6 +271,51 @@ Mutation routing is an explicit inactive composition option, with all authority 
                          run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation,
                          payload=payload,authorization_references=authorization_references)
 
+    def family_workflow(self, **kwargs):
+        return self._kernel.family_identity_workflow(deployment_id=self._deployment,**kwargs)
+
+    def complete_mutation(self, intent, *, recovery=False):
+        """Complete one exact journaled transaction; no fresh mutation on ambiguity."""
+        from agent_lab.ipc_wire_primitives import canonical_sha256 as H
+        args={key:value for key,value in intent.items() if key!="payload"}
+        self._kernel._verify_identity_protocol_state()
+        state=self._kernel._identity_payload("identity_kernel_state","deployment_id",self._deployment)
+        tx=state.get("mutations",{}).get(intent["transaction_id"])
+        from agent_lab.ipc_operational_read import OPERATION_CAPABILITIES
+        self._kernel._identity_continuity_context(manifest_id=intent["manifest_id"],task_id=intent["task_id"],case_id=intent["case_id"],tax_year=intent["tax_year"],run_id=intent["run_id"],operation=intent["operation"])
+        if not self._kernel.permission_decision(intent["manifest_id"],OPERATION_CAPABILITIES[intent["operation"]],case_id=intent["case_id"],tax_year=intent["tax_year"],run_id=intent["run_id"]).allowed:
+            raise ServiceHostError("mutation recovery authority denied")
+        if tx is not None:
+            prior=tx["prepare_request"]
+            expected={**{key:value for key,value in args.items() if key!="operation"},"tax_year":str(intent["tax_year"]),"domain_operation":intent["operation"],"payload":intent["payload"]}
+            if any(prior[name]!=value for name,value in expected.items()):raise ServiceHostError("mutation recovery content substitution")
+            if recovery and tx.get("final_response",{}).get("outcome")=="COMMITTED_FINAL":return tx["final_response"]
+        if tx is not None and not recovery:
+            raise ServiceHostError("explicit original mutation recovery required")
+        if tx is None or "prepare_response" not in tx:
+            prepared=self.mutation_stage(**args,message_type="PREPARE_MUTATION",payload=intent["payload"])
+            if prepared["outcome"]!="PREPARED":raise ServiceHostError("mutation prepare failed")
+            state=self._kernel._identity_payload("identity_kernel_state","deployment_id",self._deployment)
+            tx=state["mutations"][intent["transaction_id"]]
+        if "commit_request" in tx:
+            reply=self.mutation_stage(**args,message_type="GET_TRANSACTION",
+                payload={"original_request_digest":tx["prepare_request"]["request_digest"]})
+            if reply["outcome"]=="COMMITTED_FINAL":return reply
+            if reply["outcome"] not in {"PREPARED","IDENTITY_COMMITTED"}:
+                raise ServiceHostError("mutation is not resumable")
+        else:reply={"outcome":"PREPARED"}
+        if reply["outcome"]=="PREPARED":
+            reply=self.mutation_stage(**args,message_type="COMMIT_MUTATION",payload=intent["payload"])
+            if reply["outcome"]!="IDENTITY_COMMITTED":raise ServiceHostError("mutation commit failed")
+        final=self.reconcile("MUTATION:"+intent["transaction_id"])
+        receipt=final["receipt"];verification=final["custodian_verification"]["response"]
+        payload=dict(staged_receipt_digest=H(receipt),witness_object_key=final["object_key"],witness_generation=final["generation"],
+            witness_preimage_digest=receipt["witness_preimage_digest"],signed_record_digest=verification["signed_record_digest"],
+            custodian_verification_digest=H(verification),custodian_nonce=verification["nonce"])
+        reply=self.mutation_stage(**args,message_type="FINALIZE_MUTATION",payload=payload)
+        if reply["outcome"]!="COMMITTED_FINAL":raise ServiceHostError("mutation finalize failed")
+        return reply
+
 
 class KernelServiceRuntime:
     """SCM lifetime for the existing Kernel and concrete Identity service client."""

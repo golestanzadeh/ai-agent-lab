@@ -269,3 +269,93 @@ def test_private_intent_mapping_cannot_substitute_different_person_values(tmp_pa
             authority=store_at(tmp_path/"identity.sqlite")
             assert authority._load_identity("P2") is None
             authority._verify_audit_continuity();authority.close()
+
+
+def test_atomic_correction_preserves_accepted_legacy_person_schema(tmp_path):
+    from test_f07_atomic_mutation import Sources, prepare_request, resign, execute, commit_request
+    from test_identity_logical_runtime import enrolled
+    from test_identity_persistence import E1
+    from agent_lab.identity_atomic_mutation import decode_record
+    authority,_,logical=enrolled(tmp_path/"identity.sqlite")
+    original=authority._identity_payload(authority._load_identity("P1"))
+    assert original["record_schema_version"]==1
+    replacement={**original,"name":"Legacy Corrected","updated_at":(authority._load_identity("P1").updated_at+timedelta(seconds=1)).isoformat(),
+                 "lookup_attributes":[["first_name","Legacy"],["last_name","Corrected"],["birth_date","1990-01-02"]]}
+    with pytest.raises(ValueError):decode_record(replacement)  # REGISTER still requires2.
+    source=Sources();source.subject="P1"
+    source.materials=((A1,"IDENTITY_AUTHORIZATION",b"synthetic legacy correction approval","AUTH"),
+                      (E1,"ROLE_EVIDENCE",b"synthetic original case role","ROLE"),
+                      (RECORD,"IDENTITY_RECORD",json.dumps(replacement,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode(),"REPLACEMENT"))
+    authority._mutation_source=source
+    request=prepare_request(logical)
+    request.update(domain_operation="CORRECT_PERSON",capability="identity_update",
+        payload=dict(request_id="TEST-LEGACY-CORRECTION",subject_id="P1",identity_record_ref=RECORD,
+            expected_record_digest="sha256:"+sha256(json.dumps(original,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest(),
+            evidence_refs=sorted([RECORD,E1]),owner_input_digest=H(dict(replacement["lookup_attributes"]))))
+    request=resign(request)
+    assert execute(authority,request)["outcome"]=="PREPARED"
+    assert execute(authority,commit_request(authority,request))["outcome"]=="IDENTITY_COMMITTED"
+    assert authority._load_identity("P1").schema_version==1
+    authority.close()
+    reopened=store_at(tmp_path/"identity.sqlite")
+    assert reopened._load_identity("P1").preferred_display_name=="Legacy Corrected"
+    assert reopened._db.execute("SELECT COUNT(*) FROM identity_history WHERE identity_id='P1'").fetchone()[0]==2
+    reopened._verify_data_integrity();reopened._verify_logical_integrity();reopened.close()
+
+
+@pytest.mark.parametrize("lost",["PREPARE_MUTATION","COMMIT_MUTATION","WITNESS","FINALIZE_MUTATION","BETWEEN_STEPS"])
+def test_original_write_workflow_recovers_from_dashboard_after_restart(tmp_path,lost):
+    with patch("test_f07_inactive_runtime.task",side_effect=family_task):
+        with runtime_at(tmp_path,mutation_source=SyntheticSource(),
+                permissions=["identity_create","identity_read","identity_update","case_party_bind"],
+                inputs=[A1,B1,D1,E2,RECORD,CORRECTED]) as state:
+            native=state["client"].mutation_stage
+            reconcile=state["client"].reconcile
+            calls=[]
+            from agent_lab.c09_pipe_transport import _exchange_canonical as native_exchange
+            from agent_lab.ipc_wire_primitives import decode_frame
+            def exchange_loss(frame,*args,**kwargs):
+                result=native_exchange(frame,*args,**kwargs)
+                request=decode_frame(frame)
+                if request["domain_operation"]=="BIND_PARTY" and request["message_type"]==lost:
+                    raise TimeoutError("synthetic lost native response before Kernel recording")
+                return result
+            def stage_loss(**kwargs):
+                if lost=="BETWEEN_STEPS" and kwargs["operation"]=="BIND_PARTY":raise TimeoutError("synthetic interruption between transactions")
+                result=native(**kwargs)
+                return result
+            def witness_loss(checkpoint):
+                result=reconcile(checkpoint);calls.append(checkpoint)
+                if lost=="WITNESS" and len(calls)==2:raise TimeoutError("synthetic lost Witness response")
+                return result
+            async def start():
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app_at(state)),base_url="http://127.0.0.1:8766") as browser:
+                    reply=await browser.post("/family/persons"+QUERY,content=C(dict(action="create",values=VALUES)),headers=HEADERS)
+                    assert reply.status_code==409,reply.text
+                    assert reply.json()["detail"]=="FAMILY_MUTATION_RECONCILIATION_REQUIRED"
+                    return reply.json()["workflow_id"]
+            with patch.object(state["client"],"mutation_stage",side_effect=stage_loss),patch.object(state["client"],"reconcile",side_effect=witness_loss),patch("agent_lab.c09_pipe_transport._exchange_canonical",side_effect=exchange_loss):
+                workflow=asyncio.run(start())
+            state["restart"]()
+            g=gateway(state);g._resolve=None  # No transient browser intent or mapper survives restart.
+            app=create_dashboard_app(read_cases=lambda:(DashboardCase("C1",2025,"CREATED"),),family_gateway=g)
+            async def recover():
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url="http://127.0.0.1:8766") as browser:
+                    pending=await browser.get("/family/pending"+QUERY)
+                    assert pending.status_code==200 and pending.json()["pending"]==[dict(workflow_id=workflow,action="create")]
+                    denied=await browser.post("/family/persons/recover"+QUERY.replace("C1","C2"),content=C(dict(workflow_id=workflow)),headers=HEADERS)
+                    assert denied.status_code==403
+                    reply=await browser.post("/family/persons/recover"+QUERY,content=C(dict(workflow_id=workflow)),headers=HEADERS)
+                    assert reply.status_code==200,reply.text
+                    assert reply.json()["status"]=="COMMITTED_FINAL"
+                    assert (await browser.get("/family/pending"+QUERY)).json()=={"pending":[]}
+                    data=await browser.get("/family/persons"+QUERY)
+                    assert data.status_code==200,data.text
+                    assert data.json()["people"][0]["person_id"]=="P2"
+            asyncio.run(recover())
+            authority=store_at(tmp_path/"identity.sqlite")
+            assert authority._db.execute("SELECT COUNT(*) FROM identity_history WHERE identity_id='P2'").fetchone()[0]==1
+            assert authority._db.execute("SELECT COUNT(*) FROM case_party_role WHERE subject_id='P2'").fetchone()[0]==1
+            assert authority._logical_row()["epoch"]==2
+            authority._verify_audit_continuity();authority.close()
+            assert state["kernel"]._identity_payload("identity_kernel_state","deployment_id",state["owner"]["deployment_id"])["active_mutation"] is None

@@ -8,6 +8,8 @@
   const add = root.querySelector('#family-add');
   const recover = root.querySelector('#family-recover');
   let recovery = null;
+  let pendingWork = [];
+  const pendingBox = root.querySelector("#family-mutation-pending");
   const relationships = root.querySelector('#family-relationships');
   const relationshipForm = root.querySelector('#family-relationship-form');
   const endpoint = '/family/persons?' + new URLSearchParams({case_id: root.dataset.caseId,
@@ -50,6 +52,34 @@
     }
     form.querySelector('input[name="first_name"]').focus();
   }
+  async function loadPending() {
+    const response = await fetch(endpoint.replace('/family/persons?', '/family/pending?'), {cache:'no-store', credentials:'same-origin'});
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!Array.isArray(data.pending)) throw new Error('Invalid pending work');
+    pendingWork = data.pending;
+    pendingBox.replaceChildren();
+    for (const work of pendingWork) {
+      const button = text('button', fa ? 'تکمیل عملیات قبلی با همان مجوز و شناسه' : 'Vorherigen Vorgang mit gleicher Autorisierung abschließen');
+      button.type = 'button';
+      button.addEventListener('click', async () => {
+        if (busy) return;
+        busy = true; button.disabled = true;
+        try {
+          const reply = await fetch(endpoint.replace('/family/persons?', '/family/persons/recover?'), {
+            method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({workflow_id:work.workflow_id})});
+          if (!reply.ok) throw new Error('Original recovery remains blocked');
+          await loadPending(); await load();
+        } catch (_) {
+          status.textContent = fa ? 'بازیابی عملیات اصلی هنوز نیازمند مجوز معتبر یا تطبیق شواهد است. ثبت جدید را تکرار نکنید.'
+            : 'Originalvorgang benötigt gültige Autorisierung oder Belegabgleich. Keine neue Registrierung starten.';
+        } finally {busy = false; button.disabled = false;}
+      });
+      pendingBox.append(button);
+    }
+    if (pendingWork.length) add.disabled = true;
+  }
   async function load(resume = false) {
     recover.hidden = true;
     const response = await fetch(endpoint + (resume && recovery ? "&recovery=" + encodeURIComponent(recovery) : ""), {cache: 'no-store', credentials: 'same-origin'});
@@ -81,7 +111,7 @@
         text('small', person.person_id + ' · ' + (labels[person.role] || person.role)),
         text('small', person.attributes.birth_date || ''));
       card.append(info);
-      if (data.writes_available) {
+      if (data.writes_available && !pendingWork.length) {
         const edit = text('button', fa ? 'اصلاح با حفظ شناسه' : 'Mit gleicher ID korrigieren');
         edit.type = 'button';
         edit.addEventListener('click', () => open(person));
@@ -95,7 +125,7 @@
       relationships.append(text('p', (fa ? 'ازدواج: ' : 'Ehe: ') + relation.subject_a_id + ' ↔ '
         + relation.subject_b_id + (fa ? ' · اعتبار در پرونده از ' : ' · im Fall gültig ab ') + relation.valid_from));
     }
-    add.disabled = !data.writes_available;
+    add.disabled = !data.writes_available || !!pendingWork.length;
     relationshipForm.hidden = !data.relationship_writes_available;
     status.textContent = data.writes_available
       ? (fa ? 'اطلاعات پایدار از مسیر Kernel/Identity خوانده شد. هر تغییر به شواهد و مجوز مستقل نیاز دارد.'
@@ -114,8 +144,8 @@
         headers: {'Content-Type': 'application/json'}, body: canonical});
       if (!response.ok) throw new Error('Family authorization or reconciliation required');
       form.hidden = true;
-      await load();
-    } catch (_) { unavailable(); }
+      await loadPending(); await load();
+    } catch (_) { unavailable(); await loadPending().catch(() => {}); }
     finally {
       busy = false;
       root.querySelectorAll('button[type="submit"]').forEach(button => button.disabled = false);
@@ -137,5 +167,5 @@
     event.preventDefault();
     if (relationshipForm.reportValidity()) save('relationship', Object.fromEntries(new FormData(relationshipForm)));
   });
-  load().catch(unavailable);
+  loadPending().then(() => load()).catch(unavailable);
 })();
