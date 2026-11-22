@@ -13,7 +13,14 @@ from cryptography.hazmat.primitives.asymmetric import ec,utils
 
 from agent_lab.ipc_wire_primitives import canonical_json_bytes,canonical_sha256,encode_frame,decode_frame
 
-from agent_lab.ipc_envelope import OPERATION_CAPABILITIES,MUTATION_OPERATIONS,READ_OPERATIONS
+from agent_lab.ipc_envelope import (OPERATION_CAPABILITIES as DEV_CAPABILITIES,
+    MUTATION_OPERATIONS as DEV_MUTATIONS, READ_OPERATIONS as DEV_READS)
+
+# Additive operational 1.1 coverage; the frozen development 1.0 stays closed.
+OPERATION_CAPABILITIES={**DEV_CAPABILITIES,"CORRECT_PERSON":"identity_update",
+                        "LIST_RELATIONSHIPS":"identity_read","READ_FAMILY":"identity_read"}
+MUTATION_OPERATIONS=DEV_MUTATIONS|{"CORRECT_PERSON"}
+READ_OPERATIONS=DEV_READS|{"LIST_RELATIONSHIPS","READ_FAMILY"}
 
 from agent_lab.identity_persistence import PARTY_ROLES
 
@@ -38,6 +45,7 @@ UUID=re.compile(r"tx:v1:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 DENIALS={"AUTHORIZATION_DENIED","SCOPE_DENIED","TRANSACTION_CONFLICT","CONTINUITY_CONFLICT","REQUEST_INVALID","EXPIRED","UNSUPPORTED","TEMPORARY_FAILURE"}
 
 PAYLOADS={
+ "CORRECT_PERSON":set("request_id subject_id identity_record_ref expected_record_digest evidence_refs".split()),
  "REGISTER_IDENTITY":set("request_id subject_id identity_record_ref evidence_refs".split()),
  "UPDATE_IDENTITY_STATUS":set("request_id subject_id from_status to_status effective_date evidence_refs".split()),
  "BIND_PARTY":set("request_id subject_id party_role valid_from valid_to_exclusive evidence_refs".split()),
@@ -101,6 +109,7 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     elif value["scope_kind"]!="CASE_YEAR" or not re.fullmatch(r"\d{4}",value["tax_year"]) or not 1900<=int(value["tax_year"])<=9998:raise ValueError("scope")
     if {k:value[k] for k in expected_scope}!=expected_scope:raise ValueError("cross scope")
     operation=value["domain_operation"];message=value["message_type"]
+    if operation in {"CORRECT_PERSON","LIST_RELATIONSHIPS","READ_FAMILY"} and expected_contract!="oi0002.kernel-identity-c09/1.1":raise ValueError("Family operations require operational 1.1")
     if not bootstrap and (operation not in OPERATION_CAPABILITIES or value["capability"]!=OPERATION_CAPABILITIES[operation]):raise ValueError("capability")
     reads=operation in READ_OPERATIONS or bootstrap
     if not bootstrap and (reads and message!="READ_IDENTITY_STATE" or not reads and message not in {"PREPARE_MUTATION","COMMIT_MUTATION","FINALIZE_MUTATION","GET_TRANSACTION","ABORT_PREPARED"}):raise ValueError("message mapping")
@@ -111,8 +120,8 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
         exact(payload,{"enrollment_id","owner_authorization_digest"})
         if payload!={"enrollment_id":owner["enrollment_id"],"owner_authorization_digest":H(owner)}:raise ValueError("bootstrap artifact substitution")
     elif reads:
-        exact(payload,{"subject_id","as_of_date"});text(payload["subject_id"],operation=="LIST_PARTIES")
-        if operation=="LIST_PARTIES" and payload["subject_id"]!="":raise ValueError("list subject must be empty")
+        exact(payload,{"subject_id","as_of_date"});text(payload["subject_id"],operation in {"LIST_PARTIES","LIST_RELATIONSHIPS","READ_FAMILY"})
+        if operation in {"LIST_PARTIES","LIST_RELATIONSHIPS","READ_FAMILY"} and payload["subject_id"]!="":raise ValueError("list subject must be empty")
         if operation=="READ_FACTS" and payload["as_of_date"]!="":raise ValueError("facts use tax year")
         if operation!="READ_FACTS":
             parsed=date.fromisoformat(payload["as_of_date"])
@@ -122,10 +131,16 @@ def validate_request(value,public_key,*,expected_scope,now,expected_key_id,expec
     elif message=="FINALIZE_MUTATION":
         exact(payload,set("staged_receipt_digest witness_object_key witness_generation witness_preimage_digest signed_record_digest custodian_verification_digest custodian_nonce".split()))
     else:
-        exact(payload,PAYLOADS[operation])
+        fields=PAYLOADS[operation]
+        if operation in {"REGISTER_IDENTITY","CORRECT_PERSON","BIND_PARTY"} and "owner_input_digest" in payload:
+            fields=fields|{"owner_input_digest"}
+            digest(payload["owner_input_digest"])
+        exact(payload,fields)
         for k,v in payload.items():
             if k=="evidence_refs":refs(v,1)
             else:text(v,k=="valid_to_exclusive")
+    if not reads and message in {"PREPARE_MUTATION","COMMIT_MUTATION"}:
+        if operation=="CORRECT_PERSON":digest(payload["expected_record_digest"])
     proof=value["kernel_proof"];exact(proof,PROOF)
     if proof["proof_version"]!="1" or proof["algorithm"]!="ECDSA-P256-SHA256" or proof["key_id"]!=expected_key_id:raise ValueError("proof identity")
     digest(proof["pending_row_digest"])
@@ -173,7 +188,23 @@ def validate_result(result,request):
         if result[key]!=request[key]:raise ValueError("result scope")
     items=result["items"];operation=request["domain_operation"]
     if not isinstance(items,list) or len(items)>64:raise ValueError("result limit")
-    if operation=="READ_CASE_IDENTITY":
+    if operation=="READ_FAMILY":
+        if len(items)!=1:raise ValueError("family snapshot cardinality")
+        snapshot=items[0];exact(snapshot,{"people","relationships"})
+        people=snapshot["people"]
+        if not isinstance(people,list) or len(people)>64:raise ValueError("family person bound")
+        parties=[]
+        for pair in people:
+            exact(pair,{"person","party"});exact(pair["person"],PERSON)
+            child=deepcopy(request);child["domain_operation"]="READ_CASE_IDENTITY"
+            child["payload"]["subject_id"]=pair["party"]["subject_id"]
+            validate_result({**result,"domain_operation":"READ_CASE_IDENTITY","items":[pair["person"]]},child)
+            if pair["party"]["subject_type"]!="PERSON":raise ValueError("family person type")
+            parties.append(pair["party"])
+        for operation,children in (("LIST_PARTIES",parties),("LIST_RELATIONSHIPS",snapshot["relationships"])):
+            child=deepcopy(request);child["domain_operation"]=operation
+            validate_result({**result,"domain_operation":operation,"items":children},child)
+    elif operation=="READ_CASE_IDENTITY":
         if len(items)!=1:raise ValueError("identity cardinality")
         item=items[0];fields=PERSON if "person_id" in item else ENTITY;exact(item,fields)
         key="person_id" if "person_id" in item else "entity_id"
@@ -185,15 +216,28 @@ def validate_result(result,request):
             for value in pair:text(value)
         timestamp(item["created_at"]);timestamp(item["updated_at"])
         if not re.fullmatch(r"[1-9][0-9]{0,19}",item["schema_version"]):raise ValueError("schema version")
+    elif operation=="LIST_RELATIONSHIPS":
+        keys=[]
+        fields=set("relationship_id case_id relationship_type subject_a_id subject_b_id valid_from valid_to_exclusive evidence_ref authorization_ref revision".split())
+        for item in items:
+            exact(item,fields)
+            for name in fields:text(item[name],name=="valid_to_exclusive")
+            if item["case_id"]!=request["case_id"] or item["relationship_type"]!="MARRIAGE" or item["subject_a_id"]>=item["subject_b_id"]:raise ValueError("relationship scope/type")
+            digest(item["evidence_ref"]);digest(item["authorization_ref"])
+            if not re.fullmatch(r"[1-9][0-9]{0,19}",item["revision"]):raise ValueError("relationship revision")
+            as_of=date.fromisoformat(request["payload"]["as_of_date"])
+            if date.fromisoformat(item["valid_from"])>as_of or item["valid_to_exclusive"] and as_of>=date.fromisoformat(item["valid_to_exclusive"]):raise ValueError("relationship interval")
+            keys.append(item["relationship_id"])
+        if keys!=sorted(set(keys)):raise ValueError("relationship order")
     else:
-        fields=PARTY if operation=="LIST_PARTIES" else FACT
+        fields=PARTY if operation in {"LIST_PARTIES","LIST_RELATIONSHIPS","READ_FAMILY"} else FACT
         keys=[]
         for item in items:
             exact(item,fields)
             if item["case_id"]!=request["case_id"]:raise ValueError("item case")
             for name in fields-{"audit_lineage"}:text(item[name],name=="valid_to_exclusive")
             if item["subject_type"] not in {"PERSON","ENTITY"}:raise ValueError("subject type")
-            if operation=="LIST_PARTIES":
+            if operation in {"LIST_PARTIES","LIST_RELATIONSHIPS","READ_FAMILY"}:
                 if item["role"] not in PARTY_ROLES:raise ValueError("role")
                 digest(item["evidence_ref"]);digest(item["authorization_ref"])
                 keys.append(item["binding_id"])

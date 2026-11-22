@@ -1,0 +1,25 @@
+{% if tab == 'family' %}
+<link rel="stylesheet" href="{{ url_for('static', path='/family_workspace.css') }}">
+<section class="panel family-workspace" data-lang="{{ lang }}" data-case-id="{{ selected.case_id if selected else '' }}" data-tax-year="{{ selected.tax_year if selected else '' }}" data-run-id="{{ run_id or '' }}">
+  <div class="family-head"><div><p class="eyebrow">{{ 'مدیریت خانواده' if lang == 'fa-IR' else 'Familienverwaltung' }}</p><h2>{{ 'اشخاص و روابط خانوادگی' if lang == 'fa-IR' else 'Personen und Familienbeziehungen' }}</h2><p>{{ 'ثبت اولیه توسط مالک؛ اطلاعات مدارک فقط برای تطبیق و پیشنهاد' if lang == 'fa-IR' else 'Angaben des Eigentümers; Dokumente dienen zum Abgleich' }}</p></div><button id="family-add" type="button" disabled>+ {{ 'افزودن شخص' if lang == 'fa-IR' else 'Person hinzufügen' }}</button></div>
+  <div id="family-status" class="family-alert" role="status">{{ 'در حال بررسی اتصال مجاز هویت…' if lang == 'fa-IR' else 'Autorisierte Identitätsverbindung wird geprüft…' }}</div>
+  <button id="family-recover" type="button" hidden>{{ 'تکمیل خواندن قبلی' if lang == 'fa-IR' else 'Vorheriges Lesen abschließen' }}</button>
+  <div id="family-people" class="family-people" aria-live="polite"></div>
+  <form id="family-editor" class="family-editor" hidden>
+    <input name="person_id" type="hidden"><h3 id="family-form-title">{{ 'افزودن شخص' if lang == 'fa-IR' else 'Person hinzufügen' }}</h3>
+    <div class="family-fields"><label>{{ 'نام' if lang == 'fa-IR' else 'Vorname' }}<input name="first_name" required maxlength="100" autocomplete="off"></label><label>{{ 'نام خانوادگی' if lang == 'fa-IR' else 'Nachname' }}<input name="last_name" required maxlength="100" autocomplete="off"></label><label>{{ 'تاریخ تولد' if lang == 'fa-IR' else 'Geburtsdatum' }}<input name="birth_date" type="date" required></label><label>{{ 'نقش در پرونده' if lang == 'fa-IR' else 'Rolle im Steuerfall' }}<select name="role"><option value="PRIMARY_TAXPAYER">{{ 'مؤدی اصلی' if lang == 'fa-IR' else 'Steuerpflichtige Person' }}</option><option value="SPOUSE_OR_PARTNER">{{ 'همسر' if lang == 'fa-IR' else 'Ehepartner/in' }}</option><option value="CHILD">{{ 'فرزند' if lang == 'fa-IR' else 'Kind' }}</option><option value="OTHER_DEPENDENT_OR_RELEVANT_PERSON">{{ 'شخص مرتبط دیگر' if lang == 'fa-IR' else 'Weitere Person' }}</option></select></label><label>Steuer-ID <input name="tax_id" inputmode="numeric" pattern="[0-9]{11}" placeholder="11 Ziffern"></label></div>
+    <div class="family-actions"><button type="submit">{{ 'ذخیره با مجوز معتبر' if lang == 'fa-IR' else 'Mit gültiger Autorisierung speichern' }}</button><button type="button" id="family-cancel">{{ 'انصراف' if lang == 'fa-IR' else 'Abbrechen' }}</button></div>
+  </form>
+  <p>{{ 'اطلاعات سالانه مانند مالیات کلیسا جدا از هویت شخص نگهداری می‌شوند. تغییر آن‌ها در این فرم فعال نیست.' if lang == 'fa-IR' else 'Jahresbezogene Fakten wie Kirchensteuer bleiben von der Person getrennt. Änderungen sind hier nicht aktiviert.' }}</p>
+  <h3>{{ 'روابط تأییدشده' if lang == 'fa-IR' else 'Belegte Beziehungen' }}</h3>
+  <div id="family-relationships" aria-live="polite"></div>
+  <form id="family-relationship-form" hidden>
+    <label>{{ 'شناسه شخص اول' if lang == 'fa-IR' else 'Erste Personen-ID' }}<input name="subject_a_id" required maxlength="256"></label>
+    <label>{{ 'شناسه شخص دوم' if lang == 'fa-IR' else 'Zweite Personen-ID' }}<input name="subject_b_id" required maxlength="256"></label>
+    <label>{{ 'شروع اعتبار ارتباط در پرونده' if lang == 'fa-IR' else 'Gültig im Fall ab' }}<input name="valid_from" type="date" required></label>
+    <button type="submit">{{ 'ثبت رابطه ازدواج با مجوز معتبر' if lang == 'fa-IR' else 'Belegte Ehe zuordnen' }}</button>
+  </form>
+  <p>{{ 'روابط ازدواج موجود قابل خواندن‌اند. ایجاد رابطه تا تکمیل اتصال شواهد دو شخص غیرفعال است؛ رابطه والد–فرزند در قرارداد فعلی پشتیبانی نمی‌شود.' if lang == 'fa-IR' else 'Bestehende Ehen sind lesbar. Neue Beziehungen bleiben bis zur Zwei-Personen-Belegbindung gesperrt; Eltern-Kind-Beziehungen sind nicht im Vertrag enthalten.' }}</p>
+</section>
+<script src="{{ url_for('static', path='/family_workspace.js') }}" defer></script>
+{% endif %}

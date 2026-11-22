@@ -203,7 +203,7 @@ def domain_result(connection,operation,case_id,tax_year,object_id):
         projection={"profile":"identity-domain-row/1","table":table,"columns":columns,"cells":[cell(value) for value in row]}
         selected.append({"table":table,"primary_key":[cell(keys[name]) for name in names],"row_digest":H(projection)})
         return values
-    if operation in {"REGISTER_IDENTITY","UPDATE_IDENTITY_STATUS"}:
+    if operation in {"REGISTER_IDENTITY","UPDATE_IDENTITY_STATUS","CORRECT_PERSON"}:
         row=add("identity_record",{"identity_id":object_id});add("identity_history",{"identity_id":object_id,"revision":row["revision"]})
     elif operation in {"BIND_PARTY","CORRECT_PARTY_ROLE"}:
         row=add("case_party_role",{"binding_id":object_id})

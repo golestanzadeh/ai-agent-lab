@@ -1479,7 +1479,7 @@ class OrchestratorKernel:
         from datetime import timedelta
         from agent_lab.identity_logical_continuity import H,sign_kernel_proof
         from agent_lab.ipc_operational_read import read_projection,validate_request
-        from agent_lab.ipc_envelope import MUTATION_OPERATIONS,OPERATION_CAPABILITIES
+        from agent_lab.ipc_operational_read import MUTATION_OPERATIONS,OPERATION_CAPABILITIES
         from agent_lab.f07_commit_witness import slot_projection
         if operation not in MUTATION_OPERATIONS or message_type not in {"PREPARE_MUTATION","COMMIT_MUTATION","GET_TRANSACTION","FINALIZE_MUTATION","ABORT_PREPARED"}:
             raise PermissionDenied("closed mutation operation required")
@@ -1673,7 +1673,7 @@ class OrchestratorKernel:
                 if (case_id,tax_year)!=("*","*") or authorization_references!=[state["artifact_digest"]]:raise PermissionDenied("bootstrap authority reference mismatch")
                 capability="identity_enrollment_status";message="GET_ENROLLMENT_STATUS";scope_kind="DEPLOYMENT_STORE"
             else:
-                if state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"] or operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS"}:raise PermissionDenied("fresh externally verified genesis/read state required")
+                if state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"] or operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS","LIST_RELATIONSHIPS","READ_FAMILY"}:raise PermissionDenied("fresh externally verified genesis/read state required")
                 self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,case_id=case_id,tax_year=tax_year,run_id=run_id,operation=operation)
                 if not self.permission_decision(manifest_id,"identity_read",case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:raise PermissionDenied("Kernel identity_read denied")
                 if len(authorization_references)!=1 or authorization_references[0] not in manifest_payload["inputs"]:raise PermissionDenied("authorization not in manifest input")

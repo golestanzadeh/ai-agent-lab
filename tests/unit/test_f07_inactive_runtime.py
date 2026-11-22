@@ -25,7 +25,7 @@ pytestmark=pytest.mark.skipif(sys.platform!="win32",reason="native Windows Named
 
 
 @contextmanager
-def runtime_at(tmp_path,*,source=True,routing=True,protected_source=None):
+def runtime_at(tmp_path,*,source=True,routing=True,protected_source=None,mutation_source=None,permissions=None,inputs=None):
     import pywintypes,win32con,win32pipe,win32security
     kernel,identity,owner,pending,custodian,client,provider,session=fixture(tmp_path)
     sid=current_process_sid()
@@ -41,16 +41,16 @@ def runtime_at(tmp_path,*,source=True,routing=True,protected_source=None):
             win32pipe.PIPE_TYPE_MESSAGE|win32pipe.PIPE_READMODE_MESSAGE|win32pipe.PIPE_REJECT_REMOTE_CLIENTS,1,65540,65540,500,attrs)
     def authority_factory(_config):
         authority=store_at(tmp_path/"identity.sqlite")
-        if source:authority._mutation_source=Sources()
+        if source:authority._mutation_source=mutation_source or Sources()
         return authority
     state={"kernel":kernel,"host":None,"calls":[],"client":None,"owner":owner,"session":session}
     try:
         with patch("agent_lab.c09_pipe_transport.exchange_custodian_control",side_effect=rpc(custodian)):
             kernel.witness_identity_checkpoint(pending["receipt"]["checkpoint_id"],custodian=client,provider=provider,signing_key=KERNEL,kernel_key_id="TEST-KERNEL-KEY-1")
             identity.close()
-            work=task(task_id="TASK-RUNTIME-1",role_id="IDENTITY_ADMINISTRATION_AGENT",permissions=["identity_create","identity_read"],
+            work=task(task_id="TASK-RUNTIME-1",role_id="IDENTITY_ADMINISTRATION_AGENT",permissions=permissions or ["identity_create","identity_read"],
                       case_context=dict(case_id="C1",tax_year=2025,run_id="RUN-RUNTIME-1"))
-            work["inputs"]=[A1,"sha256:"+"8"*64]
+            work["inputs"]=inputs or [A1,"sha256:"+"8"*64]
             kernel.register_task(work,gate_triggers=[])
             grant=manifest(work,manifest_id="MAN-RUNTIME-1",tiers=["A4"])
             kernel.register_manifest(grant)

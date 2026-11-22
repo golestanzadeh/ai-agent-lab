@@ -130,7 +130,7 @@ def exchange_operational_identity_mutation(frame, expected_server, *, deadline=N
     if _halted.is_set():
         raise PipeDeadlineError("transport halted after unacknowledged cancellation")
     from agent_lab.ipc_wire_primitives import decode_frame
-    from agent_lab.ipc_envelope import MUTATION_OPERATIONS
+    from agent_lab.ipc_operational_read import MUTATION_OPERATIONS
     request = decode_frame(frame)
     messages = {"PREPARE_MUTATION", "COMMIT_MUTATION", "FINALIZE_MUTATION", "GET_TRANSACTION", "ABORT_PREPARED"}
     if (request.get("contract") != "oi0002.kernel-identity-c09/1.1"

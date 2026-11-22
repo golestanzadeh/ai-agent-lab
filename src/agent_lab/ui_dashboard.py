@@ -223,12 +223,23 @@ def create_dashboard_app(
     read_runtime_case: Callable[[str,int],object] | None = None,
     create_real_case: Callable[[int,str],str] | None = None,
     preview_next_case_id: Callable[[int],str] | None = None,
+    family_gateway=None,
+    loopback_origin: str = "http://127.0.0.1:8766",
 ) -> FastAPI:
     """Expose a fail-closed dashboard; caller must inject an authorized live resolver.
 
     This is not a substitute for the Kernel's permission or persistence layer.
     No fake cases, inferred 2024 status or case data are returned by default.
     """
+    import re
+    origin_match=re.fullmatch(r"http://127\.0\.0\.1:([1-9][0-9]{0,4})",loopback_origin)
+    if origin_match is None or int(origin_match[1])>65535:
+        raise ValueError("exact configured IPv4 loopback origin required")
+    loopback_host=loopback_origin.removeprefix("http://")
+    if family_gateway is not None:
+        from agent_lab.family_identity_gateway import FamilyIdentityGateway
+        if not isinstance(family_gateway, FamilyIdentityGateway) or read_cases is None or test_store is not None:
+            raise ValueError("Family requires the canonical authorized runtime")
     if test_store is not None and read_cases is not None:
         raise ValueError("test store and live case resolver must never be mixed")
     if read_kernel_projection is not None and test_store is None and read_cases is None:
@@ -243,13 +254,18 @@ def create_dashboard_app(
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
-        if test_store is None and request.url.path.startswith("/test/"):
+        if request.url.path.startswith("/family/") and (request.headers.get("host")!=loopback_host or
+                request.headers.get("origin") not in {None,loopback_origin} or
+                request.client is None or request.client.host not in {"127.0.0.1","::1"}):
+            from fastapi.responses import PlainTextResponse
+            response=PlainTextResponse("Family loopback scope rejected",status_code=403)
+        elif test_store is None and request.url.path.startswith("/test/"):
             from fastapi.responses import PlainTextResponse
             response = PlainTextResponse("Not found", status_code=404)
-        elif (test_store is not None or create_real_case is not None) and request.method not in {"GET", "HEAD", "OPTIONS"}:
+        elif (test_store is not None or create_real_case is not None or family_gateway is not None) and request.method not in {"GET", "HEAD", "OPTIONS"}:
             origin = request.headers.get("origin")
             host = request.headers.get("host")
-            if origin != "http://127.0.0.1:8766" or host != "127.0.0.1:8766":
+            if origin != loopback_origin or host != loopback_host:
                 from fastapi.responses import PlainTextResponse
                 response = PlainTextResponse("Cross-origin mutation rejected", status_code=403)
             else:
@@ -258,7 +274,7 @@ def create_dashboard_app(
             response = await call_next(request)
         for name, value in LOCAL_SECURITY_HEADERS.items():
             response.headers[name] = value
-        if test_store is not None or create_real_case is not None:
+        if test_store is not None or create_real_case is not None or family_gateway is not None:
             response.headers["content-security-policy"] = response.headers["content-security-policy"].replace("form-action "+chr(39)+"none"+chr(39), "form-action "+chr(39)+"self"+chr(39))
             # Chrome serializes a form POST's Origin as ``null`` when the
             # source document uses the production ``no-referrer`` policy.
@@ -335,6 +351,50 @@ def create_dashboard_app(
             "runtime_configured":read_runtime_case is not None,
             "real_case_creation_available":create_real_case is not None,
         })
+
+    async def family_scope(request: Request):
+        from agent_lab.family_identity_gateway import FamilyUnavailable
+        if family_gateway is None or read_cases is None:
+            raise HTTPException(status_code=503,detail="FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE")
+        case_id=request.query_params.get("case_id")
+        run_id=request.query_params.get("run_id")
+        try:
+            year=int(request.query_params.get("tax_year",""))
+            cases=read_cases()
+            if type(cases) is not tuple or not any(item.case_id==case_id and item.tax_year==year for item in cases) or not run_id:
+                raise FamilyUnavailable("FAMILY_SCOPE_DENIED")
+        except Exception:
+            raise HTTPException(status_code=403,detail="FAMILY_SCOPE_DENIED") from None
+        return case_id,year,run_id
+
+    @app.get("/family/persons")
+    async def family_read(request: Request):
+        from agent_lab.family_identity_gateway import FamilyReadPending
+        scope=await family_scope(request)
+        try:
+            return family_gateway.read(*scope,recovery=request.query_params.get("recovery"))
+        except FamilyReadPending as exc:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=409,content={"detail":"FAMILY_READ_RECONCILIATION_REQUIRED","transaction_id":exc.transaction_id})
+        except Exception:
+            raise HTTPException(status_code=503,detail="FAMILY_READ_AUTHORITY_OR_RECOVERY_REQUIRED") from None
+
+    @app.post("/family/persons")
+    async def family_write(request: Request):
+        scope=await family_scope(request)
+        raw=b""
+        async for chunk in request.stream():
+            if len(raw)+len(chunk)>8192:raise HTTPException(status_code=413,detail="FAMILY_INPUT_TOO_LARGE")
+            raw+=chunk
+        try:
+            from agent_lab.identity_atomic_mutation import protected_json
+            # Duplicate JSON keys and ambiguous/noncanonical bodies are rejected.
+            body=protected_json(raw)
+            if set(body)!={"action","values"} or type(body["values"]) is not dict:
+                raise ValueError("closed Family command required")
+            return family_gateway.mutate(*scope,body["action"],body["values"])
+        except Exception:
+            raise HTTPException(status_code=409,detail="FAMILY_AUTHENTICATED_EVIDENCE_OR_RECONCILIATION_REQUIRED") from None
 
     def execution_error_redirect(exc: Exception, *, case_id: str, lang: str):
         params = {"case_id": case_id, "lang": lang}

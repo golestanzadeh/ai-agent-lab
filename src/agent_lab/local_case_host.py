@@ -411,7 +411,7 @@ class LocalCaseHost:
             return result.case_id
 
 
-def create_local_case_app(*, kernel_dispatch=None):
+def create_local_case_app(*, kernel_dispatch=None, family_gateway=None):
     host = LocalCaseHost()
     if kernel_dispatch is None:
         from agent_lab.case_analysis_kernel_dispatch import CaseAnalysisKernelDispatcher
@@ -420,7 +420,7 @@ def create_local_case_app(*, kernel_dispatch=None):
             host.root / 'orchestrator-kernel.sqlite',
             Path(__file__).resolve().parents[2] / 'contracts' / 'orchestrator' / 'v1',
             worker=GeminiCaseDocumentWorker(host, max_documents=int(os.environ.get('AI_TAX_AGENT_ANALYSIS_MAX_DOCUMENTS', '20'))))
-    app = create_dashboard_app(read_cases=host.read_cases, create_real_case=host.create_case, preview_next_case_id=host.preview_next_case_id)
+    app = create_dashboard_app(read_cases=host.read_cases, create_real_case=host.create_case, preview_next_case_id=host.preview_next_case_id, family_gateway=family_gateway)
     from fastapi import Form, HTTPException, Request
     from fastapi.responses import JSONResponse
 

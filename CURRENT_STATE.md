@@ -474,3 +474,6 @@ Obtain the Owner/independent-authority decision to provide or establish the cano
 Canonical specification: [docs/case-lifecycle-owner-decisions-2026-10-27.md](docs/case-lifecycle-owner-decisions-2026-10-27.md).
 Covers the accepted in-page creation confirmation modal, year/case selector and active case scope, case/document deletion rules, final-completion hard lock, backup-before-deleting document-bearing cases, empty-case ID reuse, last-case-of-year warning, and open safety/identity design conflicts.
 New deletion/selection features are NOT implemented or authorized. CASE-2025-0001/0002/0003 are untouched. Do not interpret this note as an execution gate.
+
+
+2026-11-22 — Family dashboard bounded inactive implementation: actual isolated HTTP/native Kernel/Identity create, correction, refresh/restart and bilingual readback demonstrated; live Owner intent/source binding and marriage creation remain blocked. Exact scope/review status: latest PROJECT_CHECKPOINT.md / OPEN_ITEMS.md entry.

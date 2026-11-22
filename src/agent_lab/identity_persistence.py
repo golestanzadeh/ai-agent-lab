@@ -151,6 +151,18 @@ class RelationshipFactEnvelope:
     revision: int = 1
 
 
+@dataclass(frozen=True, slots=True)
+class FamilyPersonProjection:
+    person: PersonRecord
+    party: CasePartyRole
+
+
+@dataclass(frozen=True, slots=True)
+class FamilyProjection:
+    people: tuple[FamilyPersonProjection,...]
+    relationships: tuple[SubjectRelationship,...]
+
+
 class IdentityPersistence:
     """One protected SQLite authority composed with the existing Case Registry."""
 
@@ -781,7 +793,7 @@ class IdentityPersistence:
         case = self._cases.get(case_id)
         if self._protocol_context is not None:
             request=self._protocol_context
-            allowed_action={"READ_CASE_IDENTITY":{"read_party"},"LIST_PARTIES":{"read_party"},"READ_FACTS":{"read_party","read_fact"},"REGISTER_IDENTITY":{"register_identity"},"UPDATE_IDENTITY_STATUS":{"update_identity"},"BIND_PARTY":{"bind_party"},"CORRECT_PARTY_ROLE":{"update_identity","bind_party"},"BIND_FACT":{"bind_fact","read_party"}}.get(request["domain_operation"],set())
+            allowed_action={"READ_CASE_IDENTITY":{"read_party"},"LIST_PARTIES":{"read_party"},"READ_FACTS":{"read_party","read_fact"},"LIST_RELATIONSHIPS":{"read_party"},"READ_FAMILY":{"read_party"},"REGISTER_IDENTITY":{"register_identity"},"UPDATE_IDENTITY_STATUS":{"update_identity"},"BIND_PARTY":{"bind_party"},"CORRECT_PARTY_ROLE":{"update_identity","bind_party"},"BIND_FACT":{"bind_fact","read_party"},"CORRECT_PERSON":{"update_identity","read_party"}}.get(request["domain_operation"],set())
             if case is not None and action in allowed_action and case_id==request["case_id"] and str(case.tax_period.year)==request["tax_year"] and authorization_ref==request["authorization_references"][0]:return
             raise PermissionError("signed read context cannot authorize this action/scope")
         if case is None or not authorization_ref or self._authorize is None:
@@ -889,6 +901,12 @@ class IdentityPersistence:
     def _read_protocol_domain(self,request):
         case=request["case_id"];authorization=request["authorization_references"][0];payload=request["payload"]
         if request["domain_operation"]=="READ_CASE_IDENTITY":return (self.read_case_identity(case_id=case,subject_id=payload["subject_id"],on_date=date.fromisoformat(payload["as_of_date"]),authorization_ref=authorization),)
+        if request["domain_operation"]=="READ_FAMILY":
+            on_date=date.fromisoformat(payload["as_of_date"])
+            people=tuple(FamilyPersonProjection(self._load_identity(p.subject_id,require_active=True),p)
+                for p in self.list_parties(case,on_date=on_date,authorization_ref=authorization) if p.subject_type=="PERSON")
+            return (FamilyProjection(people,self.list_relationships(case,on_date=on_date,authorization_ref=authorization)),)
+        if request["domain_operation"]=="LIST_RELATIONSHIPS":return self.list_relationships(case,on_date=date.fromisoformat(payload["as_of_date"]),authorization_ref=authorization)
         if request["domain_operation"]=="LIST_PARTIES":return self.list_parties(case,on_date=date.fromisoformat(payload["as_of_date"]),authorization_ref=authorization)
         return self.read_facts(case_id=case,tax_year=int(request["tax_year"]),subject_id=payload["subject_id"],authorization_ref=authorization)
 
@@ -897,6 +915,12 @@ class IdentityPersistence:
         case=request["case_id"];year=int(request["tax_year"]);authorization=request["authorization_references"][0]
         operation=request["domain_operation"];subject=request["payload"]["subject_id"]
         self._check_access("read_fact" if operation=="READ_FACTS" else "read_party",case,authorization)
+        if operation=="READ_FAMILY":
+            self._read_protocol_domain(request)
+            return
+        if operation=="LIST_RELATIONSHIPS":
+            self.list_relationships(case,on_date=date.fromisoformat(request["payload"]["as_of_date"]),authorization_ref=authorization)
+            return
         if operation=="LIST_PARTIES":
             self.list_parties(case,on_date=date.fromisoformat(request["payload"]["as_of_date"]),authorization_ref=authorization)
             return
@@ -931,7 +955,7 @@ class IdentityPersistence:
         case=self._cases.get(case_id)
         if case is None or type(tax_year) is not int or case.tax_period.year!=tax_year:
             raise PermissionError("IPC case/year mismatch")
-        if operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS"} or not SHA_REFERENCE.fullmatch(request_digest):
+        if operation not in {"READ_CASE_IDENTITY","LIST_PARTIES","READ_FACTS","LIST_RELATIONSHIPS","READ_FAMILY"} or not SHA_REFERENCE.fullmatch(request_digest):
             raise ValueError("invalid IPC denial metadata")
         self._commit("IPC_BOUNDARY_DENIED",lambda:self._append_audit("IPC_BOUNDARY_DENIED",case_id,"REDACTED",
             {"request_digest":request_digest,"operation":operation,"reason":"CONTINUITY_CONTRACT_REQUIRED"}))
@@ -985,8 +1009,24 @@ class IdentityPersistence:
             self._failure("LIFECYCLE_DENIED", None, "identity is not active", permission=True)
         return record
 
+    def _assert_person_attributes(self, record):
+        if not isinstance(record,PersonRecord):return
+        attributes=dict(record.lookup_attributes)
+        if len(attributes)!=len(record.lookup_attributes):raise ValueError("duplicate person attribute")
+        tax_id=attributes.get("tax_id","")
+        if tax_id and not re.fullmatch(r"[0-9]{11}",tax_id):raise ValueError("tax ID requires eleven digits")
+        if attributes.get("birth_date"):
+            born=date.fromisoformat(attributes["birth_date"])
+            if born.isoformat()!=attributes["birth_date"]:raise ValueError("canonical birth date required")
+        if tax_id:
+            for row in self._db.execute("SELECT identity_id FROM identity_record WHERE record_type='PERSON' AND identity_id<>?",(record.person_id,)):
+                other=self._load_identity(row["identity_id"])
+                if dict(other.lookup_attributes).get("tax_id")==tax_id:raise ValueError("duplicate authoritative person attribute")
+
+    @_serialized_identity
     def register_identity(self, *, case_id: str, record: PersonRecord | EntityRecord, authorization_ref: str) -> None:
         self._check_access("register_identity", case_id, authorization_ref)
+        self._assert_person_attributes(record)
         payload = self._identity_payload(record); identity_id = payload["identity_id"]
         def op():
             old = self._db.execute("SELECT payload FROM identity_record WHERE identity_id=?",(identity_id,)).fetchone()
@@ -998,6 +1038,50 @@ class IdentityPersistence:
             self._db.execute("INSERT INTO identity_history VALUES(?,?,?,?)",(identity_id,1,_canonical(payload),digest))
             self._append_audit("IDENTITY_REGISTER",case_id,identity_id,{"digest":digest})
         self._commit("IDENTITY_REGISTER",op)
+
+    @_serialized_identity
+    def correct_person(self, *, case_id: str, record: PersonRecord, expected_record_digest: str,
+                       evidence_ref: str, authorization_ref: str) -> None:
+        """Evidence-bound CAS correction; stable ID, lifecycle and creation remain immutable."""
+        self._check_access("update_identity",case_id,authorization_ref)
+        if not isinstance(record,PersonRecord) or not SHA_REFERENCE.fullmatch(expected_record_digest) or not SHA_REFERENCE.fullmatch(evidence_ref):
+            raise ValueError("canonical person correction required")
+        current=self._load_identity(record.person_id,require_active=True)
+        if not isinstance(current,PersonRecord):raise PermissionError("person unavailable")
+        case=self._cases.get(case_id);year=case.tax_period.year
+        intervals=self._db.execute("SELECT valid_from,valid_to_exclusive FROM case_party_role WHERE case_id=? AND subject_id=?",(case_id,record.person_id)).fetchall()
+        days=[max(date(year,1,1),date.fromisoformat(row["valid_from"])) for row in intervals
+              if date.fromisoformat(row["valid_from"])<date(year+1,1,1) and
+              (row["valid_to_exclusive"] is None or date.fromisoformat(row["valid_to_exclusive"])>date(year,1,1))]
+        if not days or not any(self.list_parties(case_id,on_date=day,authorization_ref=authorization_ref,_subject_id=record.person_id) for day in days):
+            raise PermissionError("person is not a case party")
+        if "sha256:"+hashlib.sha256(_canonical(self._identity_payload(current)).encode("utf-8")).hexdigest()!=expected_record_digest:raise ValueError("stale person revision")
+        if record.created_at!=current.created_at or record.status!=current.status or record.schema_version!=current.schema_version or record.updated_at<=current.updated_at:
+            raise ValueError("immutable person fields or correction time mismatch")
+        for kind,ref in (("IDENTITY_RECORD",evidence_ref),("IDENTITY_AUTHORIZATION",authorization_ref)):
+            self._resolve_evidence(kind,ref,case_id,year,record.person_id,date(year,1,1),date(year+1,1,1))
+        self._assert_person_attributes(record)
+        payload=self._identity_payload(record)
+        def op():
+            row=self._db.execute("SELECT revision FROM identity_record WHERE identity_id=?",(record.person_id,)).fetchone()
+            revision=row["revision"]+1;digest=self._mac(payload)
+            self._db.execute("UPDATE identity_record SET payload=?,digest=?,revision=? WHERE identity_id=?",(_canonical(payload),digest,revision,record.person_id))
+            self._db.execute("INSERT INTO identity_history VALUES(?,?,?,?)",(record.person_id,revision,_canonical(payload),digest))
+            self._append_audit("PERSON_CORRECT",case_id,record.person_id,{"revision":revision,"evidence_ref":evidence_ref,"authorization_ref":authorization_ref})
+        self._commit("PERSON_CORRECT",op)
+
+    def list_relationships(self, case_id: str, *, on_date: date, authorization_ref: str) -> tuple[SubjectRelationship,...]:
+        self._check_access("read_party",case_id,authorization_ref)
+        self._verify_data_integrity()
+        case=self._cases.get(case_id)
+        if on_date.year!=case.tax_period.year:raise PermissionError("relationship year mismatch")
+        result=[]
+        for row in self._db.execute("SELECT * FROM subject_relationship WHERE case_id=? ORDER BY relationship_id",(case_id,)):
+            start=date.fromisoformat(row["valid_from"]);end=date.fromisoformat(row["valid_to_exclusive"]) if row["valid_to_exclusive"] else None
+            if start<=on_date and (end is None or on_date<end):
+                self._validate_relationship_members(row,start,end or date(case.tax_period.year+1,1,1),authorization_ref)
+                result.append(SubjectRelationship(row["relationship_id"],case_id,row["relationship_type"],row["subject_a_id"],row["subject_b_id"],start,end,row["evidence_ref"],row["authorization_ref"],row["revision"]))
+        return tuple(result)
 
     def allocate_successor_person(
         self, *, request_id: str, case_id: str, declaration_ref: str,
@@ -1173,9 +1257,12 @@ class IdentityPersistence:
         self._commit("CASE_PARTY_CORRECT",op)
         return CasePartyRole(binding_id,case_id,row["subject_type"],row["subject_id"],row["role"],start,valid_to_exclusive,correction_evidence_ref,authorization_ref)
 
-    def list_parties(self, case_id: str, *, on_date: date, authorization_ref: str) -> tuple[CasePartyRole,...]:
+    def list_parties(self, case_id: str, *, on_date: date, authorization_ref: str, _subject_id: str | None = None) -> tuple[CasePartyRole,...]:
         self._check_access("read_party",case_id,authorization_ref); result=[]
-        for row in self._db.execute("SELECT * FROM case_party_role WHERE case_id=? ORDER BY binding_id",(case_id,)):
+        query="SELECT * FROM case_party_role WHERE case_id=?"
+        args=(case_id,)
+        if _subject_id is not None:query+=" AND subject_id=?";args+=(_subject_id,)
+        for row in self._db.execute(query+" ORDER BY binding_id",args):
             payload={key:row[key] for key in ("binding_id","case_id","subject_type","subject_id","role","valid_from","valid_to_exclusive","evidence_ref","authorization_ref")}
             if row["schema_version"]!=2 or not hmac.compare_digest(self._mac(payload),row["digest"]): self._failure("INTEGRITY_FAILURE",case_id,"party binding integrity failure",permission=False)
             self._load_identity(row["subject_id"],require_active=True)
@@ -1301,8 +1388,8 @@ class IdentityPersistence:
         case_id=relationship["case_id"]; year=self._cases.get(case_id).tax_period.year
         if date.fromisoformat(relationship["valid_from"])>start or (relationship["valid_to_exclusive"] is not None and date.fromisoformat(relationship["valid_to_exclusive"])<end):
             raise PermissionError("relationship does not cover fact validity")
-        parties=self.list_parties(case_id,on_date=start,authorization_ref=authorization_ref)
         for subject in (relationship["subject_a_id"],relationship["subject_b_id"]):
+            parties=self.list_parties(case_id,on_date=start,authorization_ref=authorization_ref,_subject_id=subject)
             record=self._load_identity(subject,require_active=True)
             if record is None or record.record_type is not RecordType.PERSON: raise PermissionError("relationship person unavailable")
             if not any(p.subject_id==subject and p.valid_from<=start and (p.valid_to_exclusive is None or p.valid_to_exclusive>=end) for p in parties):

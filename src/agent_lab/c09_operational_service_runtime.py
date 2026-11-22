@@ -238,6 +238,39 @@ Mutation routing is an explicit inactive composition option, with all authority 
             raise ServiceHostError("mutation routing is disabled")
         return self._kernel.witness_identity_checkpoint(checkpoint_id,custodian=self._custodian,provider=self._provider,signing_key=self._signer,kernel_key_id=self._key_id)
 
+    def recover_read(self, *, transaction_id, manifest_id, task_id, run_id, case_id, tax_year,
+                     operation, payload, authorization_references):
+        """Explicit recovery of the exact held read, using existing Kernel evidence.
+
+        Never return a caller-supplied result or redispatch a completed mutation.
+        A missing checkpoint uses the existing same-transaction read recovery.
+        """
+        from agent_lab.ipc_operational_read import UUID
+        if not isinstance(transaction_id,str) or not UUID.fullmatch(transaction_id):
+            raise ServiceHostError("canonical read transaction required")
+        expected=dict(deployment_id=self._deployment,manifest_id=manifest_id,task_id=task_id,
+                      run_id=run_id,case_id=case_id,tax_year=str(tax_year),domain_operation=operation,
+                      authorization_references=authorization_references,payload=payload,message_type="READ_IDENTITY_STATE")
+        self._kernel._verify_identity_protocol_state()
+        rows=self._kernel._connection.execute(
+            "SELECT checkpoint_id FROM identity_kernel_checkpoint WHERE json_extract(payload_json,'$.request.transaction_id')=? AND json_extract(payload_json,'$.request.case_id')=?",
+            (transaction_id,case_id)).fetchall()
+        if len(rows)>1:raise ServiceHostError("ambiguous read checkpoint")
+        if rows:
+            pending=self._kernel._identity_payload("identity_kernel_checkpoint","checkpoint_id",rows[0][0])
+            request=pending["request"]
+            if any(request[name]!=value for name,value in expected.items()):
+                raise ServiceHostError("read recovery scope substitution")
+            self._kernel._current_identity_release_authority(pending)
+            self._kernel._assert_identity_witness_idle(self._deployment,read_transaction_id=transaction_id)
+            state=self._kernel._identity_payload("identity_kernel_state","deployment_id",self._deployment)
+            if (pending["response"]["identity_epoch"],pending["response"]["identity_head"])!=(state["logical_epoch"],state["logical_head"]):
+                raise ServiceHostError("read snapshot predates a mutation")
+            return self.reconcile(rows[0][0])
+        return self.read(transaction_id=transaction_id,manifest_id=manifest_id,task_id=task_id,
+                         run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation,
+                         payload=payload,authorization_references=authorization_references)
+
 
 class KernelServiceRuntime:
     """SCM lifetime for the existing Kernel and concrete Identity service client."""

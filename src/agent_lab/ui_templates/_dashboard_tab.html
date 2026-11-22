@@ -1,5 +1,6 @@
 {% set page = t.pages[tab] %}
 <div class="heading"><div><p class="eyebrow">{{ t.workspace_eyebrow }} / {{ tab }}</p><h1>{{ page[0] }}</h1><p class="sub">{{ page[1] }}</p></div><span class="source {{ state }}" role="status">{{ t.source_connected if state == "connected" else t.source_unavailable }}</span></div>
+{% include '_family_workspace.html' %}
 {% if tab == "cases" and state == "connected" and cases %}
 <script src="{{ url_for('static', path='/case_year_selection.js') }}" defer></script>
 <section class="panel" aria-label="Case selection">
@@ -73,6 +74,7 @@
 <script src="{{ url_for('static', path='/analysis_readiness.js') }}" defer></script>
 <script src="{{ url_for('static', path='/analysis_request.js') }}" defer></script>
 {% endif %}
+{% if tab != "family" %}
 <section class="panel tab-panel">
   <div class="panel-heading"><div><p class="eyebrow">{{ t.connection_status }}</p><h2>{{ page[0] }}</h2></div><span class="read-only">{{ t.secure_readonly }}</span></div>
   <div class="tab-body">
@@ -133,3 +135,5 @@
 {% endif %}
   </div>
 </section>
+
+{% endif %}

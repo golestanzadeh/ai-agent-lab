@@ -171,12 +171,30 @@ def apply_domain(owner, request, refs):
     op = request["domain_operation"]
     auth = request["authorization_references"][0]
     case = request["case_id"]
+    if "owner_input_digest" in p:
+        if op in {"REGISTER_IDENTITY","CORRECT_PERSON"}:
+            raw_record=protected_json(refs[p["identity_record_ref"]].observed.content)
+            attributes=dict(raw_record["lookup_attributes"])
+            allowed={"first_name","last_name","birth_date","tax_id"}
+            if (len(attributes)!=len(raw_record["lookup_attributes"]) or set(attributes)-allowed or
+                    not {"first_name","last_name","birth_date"}<=set(attributes) or
+                    raw_record["name"]!=attributes["first_name"]+" "+attributes["last_name"] or
+                    H(attributes)!=p["owner_input_digest"]):
+                raise PermissionError("protected person differs from confirmed UI input")
+        elif op=="BIND_PARTY" and H({"role":p["party_role"]})!=p["owner_input_digest"]:
+            raise PermissionError("protected role differs from confirmed UI input")
     if op == "REGISTER_IDENTITY":
         raw = refs[p["identity_record_ref"]].observed.content
         record = decode_record(protected_json(raw))
         if owner._identity_payload(record)["identity_id"] != p["subject_id"]:
             raise PermissionError("protected subject mismatch")
         owner.register_identity(case_id=case, record=record, authorization_ref=auth)
+        return p["subject_id"]
+    if op == "CORRECT_PERSON":
+        record=decode_record(protected_json(refs[p["identity_record_ref"]].observed.content))
+        if record.person_id!=p["subject_id"]:raise PermissionError("correction subject mismatch")
+        owner.correct_person(case_id=case,record=record,expected_record_digest=p["expected_record_digest"],
+                             evidence_ref=p["identity_record_ref"],authorization_ref=auth)
         return p["subject_id"]
     if op == "UPDATE_IDENTITY_STATUS":
         current = owner._load_identity(p["subject_id"])
