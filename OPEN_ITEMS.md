@@ -490,3 +490,7 @@ BLOCKED_WITH_EXACT_UNRESOLVED_DEPENDENCY / INDEPENDENT_FAIL / INACTIVE atbf75475
 ## F05/F06 remediation candidate — 2026-11-23
 
 F05 atomic export implemented under existing Kernel transaction, including queued lease time. F06 actual Kernel/Identity/native-pipe focused tests implemented;44related tests passed, no authorization mock or operational acceptance. Exact-SHA independent review pending; F05/F06 not yet closed and no active OI row closes. Only bounded findings remediation authorized; all Family/runtime/Witness/enrollment Human Gates remain. Original dirty UI/Drive work preserved; checkpoint synchronized. Fresh initial100%/41% capacity admitted with15reserve.
+
+## F05/F06 independently closed — 2026-11-23
+
+F05_F06_INDEPENDENT_PASS / INACTIVE, exactdb50184da85caa5c2e02468a686580681c4d4673. Separate read-only reviewer:11native integration tests passed,0failed/0skipped,exit0,20.78s; diff-check0. F05 HIGH and F06 MEDIUM CLOSED in this bounded scope; older failures retained as history. No active OI row closes or Human Gate grants. Family/source factory/Option B operational composition, canonical enrollment and independent live Custodian/Witness prerequisites remain open; no credentials, genesis/pins, native ceremony or real records changed. Next identified-only package: accepted Option B binding loader and existing Family factory DI, fail closed on missing material; no execution under this order. Canonical checkpoint synchronized; original dirty UI/Drive changes preserved. Final authenticated19:35:03.821446Z87%/39%,15reserve preserved.

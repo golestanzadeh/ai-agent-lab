@@ -384,3 +384,42 @@ were corrected; actual lease expiry is now used in the recovery test. Independen
 exact-SHA review pending, so F05/F06 are not yet closed. Existing27Family/269wire
 campaigns not repeated. No real data, native ceremony, key/pin/genesis creation,
 source/Family activation, service/ACL/IAM change or external submission occurred.
+
+## F05/F06 final independent acceptance — 2026-11-23
+
+Result: F05_F06_INDEPENDENT_PASS / INACTIVE. Accepted implementation and exact
+review SHA: db50184da85caa5c2e02468a686580681c4d4673. Separate read-only reviewer
+/root/c09_architecture_independent_review used an isolated exact git archive,
+made no project edits and performed no live operations. Independent command:
+PYTHONPATH=src python -m pytest tests/unit/test_f07_owner_authorization_integration.py -q
+=>11passed,0failed,0skipped,exit0,20.78s; git diff --check7cade479..db50184 exit0.
+No residual bounded defect. F05 HIGH and F06 MEDIUM are CLOSED by this exact verdict;
+older independent failures remain historical, superseded only for these findings.
+
+Worker related selection (new integration11+Broker19+Owner source14)44passed,
+exit0,34.65s; final integration11+documentation18 selection29passed,exit0,19.82s.
+These selections overlap and must not be added as unique tests. No broad27/269
+campaign repeated. Existing approval receipt/reference, audit history and recovery
+were retained. No production code outside the export function changed.
+
+Next smallest technical package, identified only and NOT executed here:
+accepted Option B binding loader plus existing Family factory composition. Load
+and validate canonical deployment/store, accepted key/custody/source references,
+current independent Custodian/GCS Witness binding and Owner/case/year allowlist;
+use the existing Kernel/Identity client, Owner Broker, CanonicalOwnerDeclarationSource
+and FamilyIdentityGateway. Complete minimal versioned Option B dependency injection
+without reinstating mandatory service accounts, introducing a new transport authority
+or creating a second runtime/store. Missing or unaccepted binding must leave503,
+without generating keys/genesis/pins or treating environment/HTTP as approval.
+Focused acceptance: valid isolated binding reaches the existing actual Client/
+Dispatcher and Family read/mutation path; wrong/missing/revoked references deny;
+case/year isolation and committed restart recovery hold. Actual native enrollment,
+canonical protected enrollment, independent Witness/Custodian operational evidence
+and Owner UI/real-data activation remain their existing Human Gates. This task
+neither performs them nor repeats the already valid Owner approval.
+
+Capacity source codex_app_server: initial19:25:44.519003Z100%/41%; final observation
+2026-11-23T19:35:03.821446Z87%five-hour/39%weekly; resets2026-11-24T00:25:38Z and
+2026-11-25T09:13:38Z.15reserve preserved; no interruption. Observed differences
+are not exclusive task billing. Governed final documentation commit/publication
+follows; exact implementation SHA above stays unchanged. No OI row/Human Gate closes.
