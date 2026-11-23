@@ -132,6 +132,50 @@ class CanonicalOwnerDeclarationSource(ProtectedMutationSource):
         if payload['revoked'] is not False:raise OwnerAssertionError('Owner evidence revoked')
         return payload
 
+    def _historical_role(self,reference,case_id,year,subject,kind='ROLE_EVIDENCE'):
+        """Authentic prior fact, never a reusable authorization.
+
+        Query scope is enforced by SQLite before protected bytes are loaded.
+        Authentication lease is checked at original confirmation time; current
+        access still requires the existing signed read/mutation authorization.
+        Explicit declaration revocation remains effective.
+        """
+        verify_storage(self.owner)
+        if not self.owner._db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",(TABLE,)).fetchone():return None
+        rows=self.owner._db.execute('SELECT reference,payload_json FROM '+TABLE+" WHERE json_extract(payload_json,'$.intent.case_id')=? AND json_extract(payload_json,'$.intent.tax_year')=? AND json_extract(payload_json,'$.intent.subject_id')=?",(case_id,str(year),subject)).fetchall()
+        found=[]
+        for row in rows:
+            data=json.loads(row['payload_json'])
+            entries=[a for a in data['artifacts'] if a['reference']==reference and a['kind']=='ROLE_EVIDENCE']
+            if kind=='IDENTITY_AUTHORIZATION' and row['reference']==reference:
+                entries=[dict(content=base64.b64encode(_json(dict(intent=data['intent'],proof_digest=data['proof_digest'])).encode()).decode())]
+            if not entries:continue
+            if data['revoked'] is not False:raise OwnerAssertionError('prior role declaration revoked')
+            issued=datetime.strptime(data['intent']['issued_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc)
+            _,scope,proof=self._approval(data['delivery'],issued)
+            if scope['operation']!='BIND_PARTY' or scope['owner_id']!=self.owner._cases.get(case_id).owner_id or proof.proof_digest!=data['proof_digest']:
+                raise OwnerAssertionError('prior role provenance mismatch')
+            for entry in entries:
+                raw=base64.b64decode(entry['content'],validate=True)
+                if kind=='ROLE_EVIDENCE' and _content_digest(raw)!=reference:raise OwnerAssertionError('prior role content mismatch')
+                found.append(raw)
+        if not found:return None
+        if any(raw!=found[0] for raw in found):raise OwnerAssertionError('ambiguous prior role')
+        return found[0]
+
+    def existing_role_evidence(self,kind,reference,case_id,year,subject,start,end):
+        if kind not in {'ROLE_EVIDENCE','IDENTITY_AUTHORIZATION'}:return None
+        context=self.owner._protocol_context
+        if context is None or (context['case_id'],context['tax_year'])!=(case_id,str(year)):
+            raise OwnerAssertionError('current scoped Identity context required')
+        if not date(year,1,1)<=start<end<=date(year+1,1,1):raise OwnerAssertionError('prior evidence interval mismatch')
+        column='evidence_ref' if kind=='ROLE_EVIDENCE' else 'authorization_ref'
+        if not self.owner._db.execute('SELECT 1 FROM case_party_role WHERE case_id=? AND subject_id=? AND '+column+'=?',(case_id,subject,reference)).fetchone():return None
+        raw=self._historical_role(reference,case_id,year,subject,kind)
+        if raw is None:return None
+        # Return real verified content, never a synthetic success/authority flag.
+        return MaterializedRevision(ProtectedRevision(PROVIDER,self.root_id,reference,'1'),raw)
+
     def resolve(self,request,case,now):
         if len(request['authorization_references'])!=1:raise OwnerAssertionError('one Owner declaration required')
         reference=request['authorization_references'][0];row=self._row(reference);intent=row['intent']
@@ -149,6 +193,15 @@ class CanonicalOwnerDeclarationSource(ProtectedMutationSource):
         expiry=datetime.strptime(intent['expires_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc)
         authorization=_json(dict(intent=intent,proof_digest=row['proof_digest'])).encode()
         entries=[dict(reference=reference,kind='IDENTITY_AUTHORIZATION',content=base64.b64encode(authorization).decode()),*row['artifacts']]
+        if request['domain_operation']=='CORRECT_PERSON':
+            prior=self.owner._db.execute('SELECT evidence_ref,authorization_ref FROM case_party_role WHERE case_id=? AND subject_id=?',
+                (case.case_id,scope['subject_id'])).fetchall()
+            for binding in prior:
+                for column,kind in (('evidence_ref','ROLE_EVIDENCE'),('authorization_ref','IDENTITY_AUTHORIZATION')):
+                    ref=binding[column]
+                    raw=self._historical_role(ref,case.case_id,year,scope['subject_id'],kind)
+                    if raw is not None and not any(e['reference']==ref for e in entries):
+                        entries.append(dict(reference=ref,kind=kind,content=base64.b64encode(raw).decode()))
         artifacts=[]
         for entry in entries:
             raw=base64.b64decode(entry['content'],validate=True)

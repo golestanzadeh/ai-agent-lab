@@ -48,8 +48,11 @@ def verify_process_evidence(actual: ProcessEvidence, expected: PinnedProcess) ->
         raise PipeSecurityError("peer image digest mismatch")
 
 
-def kernel_only_sddl() -> str:
-    return f"D:P(A;;GA;;;SY)(A;;GRGW;;;{KERNEL_SID})"
+def kernel_only_sddl(kernel_sid=None) -> str:
+    sid=kernel_sid or KERNEL_SID
+    import re
+    if not re.fullmatch(r'S-1-5(?:-[0-9]+){1,15}',sid):raise PipeSecurityError('invalid pinned principal')
+    return f"D:P(A;;GA;;;SY)(A;;GRGW;;;{sid})"
 
 
 def read_one_canonical_message(read_message: Callable[[int], bytes]) -> tuple[bytes, dict]:
@@ -90,8 +93,8 @@ def actual_named_pipe_client_sid(pipe_handle) -> str:
         raise PipeSecurityError("actual Named Pipe client token is unavailable") from exc
 
 
-def authorize_connected_kernel(pipe_handle) -> None:
-    if actual_named_pipe_client_sid(pipe_handle) != KERNEL_SID:
+def authorize_connected_kernel(pipe_handle,*,kernel_sid=None) -> None:
+    if actual_named_pipe_client_sid(pipe_handle) != (kernel_sid or KERNEL_SID):
         raise PipeSecurityError("connected client is not the pinned Kernel principal")
 
 
@@ -128,7 +131,7 @@ def verify_connected_server(pipe_handle, expected: PinnedProcess) -> ProcessEvid
     with retain_verified_server(pipe_handle,expected) as evidence:return evidence
 
 
-def create_kernel_only_server(pipe_name: str, *, overlapped: bool = False):
+def create_kernel_only_server(pipe_name: str, *, overlapped: bool = False,kernel_sid=None):
     if pipe_name not in {IDENTITY_PIPE, CUSTODIAN_PIPE}:
         raise PipeSecurityError("pipe name is not frozen")
     try:
@@ -137,7 +140,7 @@ def create_kernel_only_server(pipe_name: str, *, overlapped: bool = False):
         import win32con
         import win32pipe
         import win32security
-        descriptor = win32security.ConvertStringSecurityDescriptorToSecurityDescriptor(kernel_only_sddl(), win32security.SDDL_REVISION_1)
+        descriptor = win32security.ConvertStringSecurityDescriptorToSecurityDescriptor(kernel_only_sddl(kernel_sid), win32security.SDDL_REVISION_1)
         attributes = pywintypes.SECURITY_ATTRIBUTES(); attributes.SECURITY_DESCRIPTOR = descriptor
         access = win32pipe.PIPE_ACCESS_DUPLEX | win32pipe.FILE_FLAG_FIRST_PIPE_INSTANCE
         if overlapped:access |= win32con.FILE_FLAG_OVERLAPPED

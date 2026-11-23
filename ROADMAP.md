@@ -293,3 +293,5 @@ Owner-authorized recovery increment (2026-11-09): case_analysis_diagnostics.py, 
 2026-11-23 F05/F06 bounded remediation: planned tests/unit/test_f07_owner_authorization_integration.py, reusing existing isolated Kernel/Identity native runtime fixtures for export/revocation barriers and exact mutation-hook coverage. No operational activation scope.
 
 2026-11-23 F05/F06 completed: test_f07_owner_authorization_integration.py created,11native integration cases independently passed atdb50184da85caa5c2e02468a686580681c4d4673 / INACTIVE. Atomic Owner evidence export corrected; no runtime activation. Next identified-only package is accepted Option B binding loader and existing Family factory DI under unchanged Human Gates.
+
+2026-11-23 planned option_b_family_binding.py and test_option_b_family_factory.py: versioned accepted binding loader, existing Family/runtime factory injection and fail-closed isolated verification. No operational activation or new authority/store.

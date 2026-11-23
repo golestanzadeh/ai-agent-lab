@@ -361,6 +361,10 @@ def create_dashboard_app(
                 headers={"X-Family-Readiness":ReadinessStatus.CONFIGURATION_MISSING.value,
                          "X-Family-Blocker":blocker})
         case_id=request.query_params.get("case_id")
+        if hasattr(family_gateway,'ensure_ready'):
+            try:family_gateway.ensure_ready()
+            except Exception:
+                raise HTTPException(status_code=503,detail='FAMILY_OPERATIONAL_BINDING_UNAVAILABLE') from None
         run_id=request.query_params.get("run_id")
         try:
             year=int(request.query_params.get("tax_year",""))

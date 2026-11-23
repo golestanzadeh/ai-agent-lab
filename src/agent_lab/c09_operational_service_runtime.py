@@ -18,11 +18,18 @@ from agent_lab.c09_pipe_transport import OperationDeadline, PipeDeadlineError, o
 
 class AuthorityPipeRuntime:
     """One first-instance endpoint, one existing authority, bounded shutdown."""
-    def __init__(self, config, authority_factory, *, allowed_case_ids=frozenset(), mutation_pipeline=False):
+    def __init__(self, config, authority_factory, *, allowed_case_ids=frozenset(), mutation_pipeline=False,owner_binding=None):
         if config.role not in {ServiceRole.IDENTITY,ServiceRole.KEY_CUSTODIAN}:
             raise ServiceHostError("authority role required")
         name,sid=ROLE_BINDINGS[config.role]
-        if (config.schema!="ai-tax-agent.c09-service-config/1.0" or
+        if owner_binding is not None:
+            from agent_lab.option_b_family_binding import BoundOptionBFamily
+            if not isinstance(owner_binding,BoundOptionBFamily) or config.role is not ServiceRole.IDENTITY:
+                raise ServiceHostError('accepted Option B Identity binding required')
+            owner_binding.ensure_ready(require_client=False)
+            sid=owner_binding.binding.payload['owner_sid']
+        schema='ai-tax-agent.option-b-identity-host/1' if owner_binding is not None else 'ai-tax-agent.c09-service-config/1.0'
+        if (config.schema!=schema or
             config.service_name!=name or config.principal_sid!=sid or config.enabled is not True or
             not isinstance(config.deployment_id,str) or not config.deployment_id):
             raise ServiceHostError("closed deployment binding required")
@@ -31,6 +38,7 @@ class AuthorityPipeRuntime:
         if type(mutation_pipeline) is not bool:
             raise ServiceHostError("explicit mutation routing configuration required")
         self._mutation_pipeline=mutation_pipeline
+        self._owner_binding=owner_binding
         self._config=config;self._factory=authority_factory;self._cases=allowed_case_ids
         self._stop=threading.Event();self._ready=threading.Event();self._thread=None
         self._error=None;self._handle=None;self._connection_error=None
@@ -39,8 +47,17 @@ class AuthorityPipeRuntime:
         if self._thread is not None:raise ServiceHostError("runtime already started")
         if current_process_sid()!=self._config.principal_sid:
             raise ServiceHostError("actual authority service token required before opening store")
+        if self._owner_binding is not None:
+            import win32api,win32process
+            from pathlib import Path
+            from agent_lab.c09_named_pipe import sha256_file
+            image=win32process.GetModuleFileNameEx(win32api.GetCurrentProcess(),0)
+            expected=self._owner_binding.binding.payload
+            if str(Path(image)).casefold()!=str(Path(expected['identity_image_path'])).casefold() or sha256_file(image)!=expected['identity_image_ref']:
+                raise ServiceHostError('actual Option B Identity image mismatch')
         pipe=IDENTITY_PIPE if self._config.role is ServiceRole.IDENTITY else CUSTODIAN_PIPE
-        self._handle=create_kernel_only_server(pipe,overlapped=True)
+        self._handle=(create_kernel_only_server(pipe,overlapped=True,kernel_sid=self._config.principal_sid)
+                      if self._owner_binding is not None else create_kernel_only_server(pipe,overlapped=True))
         self._thread=threading.Thread(target=self._serve,name=self._config.service_name,daemon=True)
         self._thread.start()
         if not self._ready.wait(6):
@@ -88,12 +105,15 @@ class AuthorityPipeRuntime:
                     # Buffer bounded opaque bytes first; authenticate actual token
                     # and revert before any decoding, signature or domain work.
                     raw=read_message(MAX_FRAME_BYTES+1)
-                    authorize_connected_kernel(self._handle)
+                    if self._owner_binding is None:authorize_connected_kernel(self._handle)
+                    else:authorize_connected_kernel(self._handle,kernel_sid=self._config.principal_sid)
                     authenticated=True
                     try:decode_frame(raw)
                     except ValueError:continue  # Wire syntax only; no authority entered.
                     if self._config.role is ServiceRole.IDENTITY:
-                        reply=dispatch_stateful_identity_read(self._handle,lambda bound:raw,authority,allowed_case_ids=self._cases,mutation_pipeline=self._mutation_pipeline)
+                        options=dict(allowed_case_ids=self._cases,mutation_pipeline=self._mutation_pipeline)
+                        if self._owner_binding is not None:options['kernel_sid']=self._config.principal_sid
+                        reply=dispatch_stateful_identity_read(self._handle,lambda bound:raw,authority,**options)
                     else:
                         reply=encode_frame(authority.handle(decode_frame(raw)))
                     _,count=overlapped_io(self._handle,lambda ov:win32file.WriteFile(self._handle,reply,ov),deadline)
@@ -153,14 +173,17 @@ def create_identity_service_host(authority_factory,*,allowed_case_ids,mutation_p
             return authority
         try:
             from agent_lab.identity_mutation_source import InactiveGoogleDriveMutationSource
-            if not isinstance(protected_source,InactiveGoogleDriveMutationSource):
+            from agent_lab.option_b_family_binding import BoundOptionBFamily
+            if not isinstance(protected_source,(InactiveGoogleDriveMutationSource,BoundOptionBFamily)):
                 raise ServiceHostError("typed inactive protected source required")
             protected_source.bind_authority(authority,config)
             return authority
         except BaseException:
             authority.close()
             raise
-    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,bound_factory,allowed_case_ids=allowed_case_ids,mutation_pipeline=mutation_pipeline))
+    from agent_lab.option_b_family_binding import BoundOptionBFamily
+    owner_binding=protected_source if isinstance(protected_source,BoundOptionBFamily) else None
+    return ServiceHost(ServiceRole.IDENTITY,lambda config:AuthorityPipeRuntime(config,bound_factory,allowed_case_ids=allowed_case_ids,mutation_pipeline=mutation_pipeline,owner_binding=owner_binding))
 
 
 def create_custodian_service_host(authority_factory):
@@ -173,14 +196,20 @@ class KernelIdentityServiceClient:
 No UI-provided proof, callback head or authentication boolean is accepted.
 Mutation routing is an explicit inactive composition option, with all authority checks preserved.
 """
-    def __init__(self,kernel,*,deployment_id,identity_server,custodian,provider,signing_key,key_id,mutation_pipeline=False):
+    def __init__(self,kernel,*,deployment_id,identity_server,custodian,provider,signing_key,key_id,mutation_pipeline=False,owner_binding=None):
         from agent_lab.orchestrator_kernel import OrchestratorKernel
         from agent_lab.c09_named_pipe import PinnedProcess
         from agent_lab.c09_custodian_operational import CustodianServiceClient
         from agent_lab.c09_gcs_witness_adapter import GCSWitnessAdapter
         from cryptography.hazmat.primitives.asymmetric import ec
         if not isinstance(kernel,OrchestratorKernel):raise ServiceHostError("existing Kernel required")
-        if not isinstance(identity_server,PinnedProcess) or identity_server.sid!=ROLE_BINDINGS[ServiceRole.IDENTITY][1]:raise ServiceHostError("pinned Identity principal required")
+        expected_sid=ROLE_BINDINGS[ServiceRole.IDENTITY][1]
+        if owner_binding is not None:
+            from agent_lab.option_b_family_binding import BoundOptionBFamily
+            if not isinstance(owner_binding,BoundOptionBFamily) or owner_binding.kernel is not kernel:raise ServiceHostError('accepted Option B binding required')
+            owner_binding.ensure_ready(require_client=False)
+            expected_sid=owner_binding.binding.payload['owner_sid']
+        if not isinstance(identity_server,PinnedProcess) or identity_server.sid!=expected_sid:raise ServiceHostError("pinned Identity principal required")
         if not isinstance(custodian,CustodianServiceClient) or custodian.deployment_id!=deployment_id or not isinstance(provider,GCSWitnessAdapter):raise ServiceHostError("concrete deployment ports required")
         if not isinstance(signing_key,ec.EllipticCurvePrivateKey) or not isinstance(signing_key.curve,ec.SECP256R1) or not isinstance(key_id,str) or not key_id:raise ServiceHostError("protected Kernel signer binding required")
         if type(mutation_pipeline) is not bool:

@@ -16,13 +16,14 @@ class IdentityDispatchError(RuntimeError):
     pass
 
 
-def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed_case_ids,mutation_pipeline=False):
+def dispatch_stateful_identity_read(pipe_handle,read_message,authority,*,allowed_case_ids,mutation_pipeline=False,kernel_sid=None):
     """Actual token first; only the existing authority can consume and read."""
     from agent_lab.identity_persistence import IdentityPersistence,LogicalReconciliationRequired
     from agent_lab.ipc_wire_primitives import decode_frame,encode_frame,canonical_sha256
     from agent_lab.c09_named_pipe import MAX_FRAME_BYTES
     try:
-        authorize_connected_kernel(pipe_handle)
+        if kernel_sid is None:authorize_connected_kernel(pipe_handle)
+        else:authorize_connected_kernel(pipe_handle,kernel_sid=kernel_sid)
         if not isinstance(authority,IdentityPersistence):raise IdentityDispatchError("existing Identity authority required")
         request=decode_frame(read_message(MAX_FRAME_BYTES+1))
         mutation_messages={"PREPARE_MUTATION","COMMIT_MUTATION","FINALIZE_MUTATION","GET_TRANSACTION","ABORT_PREPARED"}

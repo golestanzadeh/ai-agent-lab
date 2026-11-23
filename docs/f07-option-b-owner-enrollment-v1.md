@@ -423,3 +423,63 @@ Capacity source codex_app_server: initial19:25:44.519003Z100%/41%; final observa
 2026-11-25T09:13:38Z.15reserve preserved; no interruption. Observed differences
 are not exclusive task billing. Governed final documentation commit/publication
 follows; exact implementation SHA above stays unchanged. No OI row/Human Gate closes.
+
+## Option B Family binding/factory candidate — 2026-11-23
+
+Baseline8d5f98a87bd40e88f2193f83dbf29f1a4786e81f; F05/F06 acceptance db50184
+preserved, campaign not repeated. Initial authenticated19:38:20.335764Z86%five-hour/
+39%weekly, bounded admission granted;19:57:52.236712Z63%/35% review admission granted.
+Mandatory15reserve remains. All unrelated dirty UI/Drive changes preserved; only
+owned factory/readiness hunks are staged in those two already-dirty files.
+
+Versioned metadata schema ai-tax-agent.option-b-family-binding/1 is loaded from
+existing app root/family-runtime-binding.json by OptionBFamilyFactory. This file
+is configuration only, never an identity/approval store. Closed fields bind exact
+deployment/store, Owner/SID, case/year allowlist, source code/scope, public key refs,
+custody/recovery refs, Identity executable path/hash, concrete Witness bucket/key
+and validity interval. No file/key/configuration is created by the loader.
+
+Readiness verifies canonical Kernel/Identity storage root and enrollment, existing
+Owner Broker nonrevoked pin, actual Windows token, protected DPAPI key/public-ref
+matches, exact source code/scope, existing permission_expansion Owner Human Gate
+and separate independent acceptance of the exact binding digest in the Kernel.
+Gate/review rows must match their immutable audit lineage and separate reviewer
+role/parent/actor. A config hash, credential, browser request or boolean cannot
+substitute for these checks. Existing concrete Custodian/GCS ports reverify the
+current external chain at factory composition; no arbitrary trusted-head callback.
+
+The actual create_local_case_app accepts a role-private binding loader and borrowed
+case host, creates the existing FamilyIdentityGateway, and rechecks binding on
+Family requests. Missing/unaccepted configuration returns503 with existing
+FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE; an already-bound runtime becoming invalid
+returns503 FAMILY_OPERATIONAL_BINDING_UNAVAILABLE. Existing CSRF and individual
+mutation recovery semantics remain intact. No fallback storage or mocked production
+worker. Default module composition still has no operational ports and stays disabled.
+
+Existing Named Pipe, ServiceHost and KernelIdentityServiceClient support only an
+explicit accepted Option B Identity profile in addition to their unchanged legacy
+profile: actual Owner SID/token and pinned executable are checked, first-instance/
+remote rejection/framing/correlation remain, and Kernel remains sole coordinator.
+Existing Custodian independence is not replaced by local DPAPI or new accounts.
+No services/accounts/operational ACLs were installed or modified. Configuration
+acceptance is an existing governed permission_expansion decision, not a new gate.
+
+Factory integration exposed a real correction/readback gap: persistent party
+validation needs the original role evidence AND its historical authorization
+receipt. The canonical source now reads only exact case/year/subject rows, verifies
+original signed Owner/Kernel provenance at its issuance time and current declaration
+revocation, and exposes those immutable proofs solely for existing party validation.
+Fresh mutation materialization still requires its NEW current approved lease/scope;
+old authorization is never re-consumed as the new operation's authority. Prior
+facts are not silently invalidated when their original execution lease expires.
+Current read grants remain distinct. No role/history/person value is rewritten.
+
+Focused isolated tests use actual local app factory, canonical Identity SQLite,
+real existing client/dispatcher/native pipe and existing synthetic Witness fixture.
+Owner governance/enrollment fixtures and DPAPI keys are temporary/non-production;
+no real Hello ceremony or synthetic authority promotion. Unused legacy module-import
+Drive construction is isolated to prevent any OAuth/API access; Family authorization
+is not mocked. Create/read/correct, refresh, service/Kernel/app restart, Persian RTL/
+German LTR HTML, case/year denial and missing/revoked/expired/unaccepted key/source/
+Owner/image/Custodian/Witness/version dependencies verified. Final exact-SHA review
+pending; no FACTORY_INDEPENDENT_PASS or FAMILY_OPERATIONAL_PASS yet.

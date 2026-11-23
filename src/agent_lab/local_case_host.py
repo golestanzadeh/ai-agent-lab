@@ -411,8 +411,11 @@ class LocalCaseHost:
             return result.case_id
 
 
-def create_local_case_app(*, kernel_dispatch=None, family_gateway=None):
-    host = LocalCaseHost()
+def create_local_case_app(*, kernel_dispatch=None, family_gateway=None,family_binding=None,case_host=None):
+    host = case_host if case_host is not None else LocalCaseHost()
+    if family_gateway is None:
+        from agent_lab.option_b_family_binding import compose_family_gateway
+        family_gateway=compose_family_gateway(host,family_binding)
     if kernel_dispatch is None:
         from agent_lab.case_analysis_kernel_dispatch import CaseAnalysisKernelDispatcher
         from agent_lab.case_analysis_gemini_worker import GeminiCaseDocumentWorker
