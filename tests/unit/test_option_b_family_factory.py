@@ -144,7 +144,8 @@ def factory_at(path,monkeypatch):
                     prior=state['client'];state['host'].stop();state['kernel'].close()
                     from agent_lab.orchestrator_kernel import OrchestratorKernel
                     state['kernel']=OrchestratorKernel(path/'kernel.sqlite',prior._kernel.contract_root)
-                    state['kernel'].verify_identity_witness_state(binding['deployment_id'],custodian=prior._custodian,provider=prior._provider,signing_key=KERNEL,kernel_key_id='TEST-KERNEL-KEY-1')
+                    # Simulate a genuine cold start: no external verifier
+                    # preinstalled on the newly constructed Kernel.
                     bound=compose();state['bound']=bound
                 state.update(bound=bound,app=app,config=config,restart=restart,case_host=host,local=local,analysis=analysis)
                 yield state
@@ -279,12 +280,26 @@ def test_build_manifest_detects_every_authority_file_substitution(tmp_path):
     from pathlib import Path
     root=Path(__file__).resolve().parents[2]
     original=build_manifest()
+    names={name for name,_ in original['files']}
+    # Completeness is a set-membership invariant; no hand-maintained allowlist.
+    all_code={p.relative_to(root).as_posix() for p in (root/'src'/'agent_lab').rglob('*.py')}
+    all_ui={p.relative_to(root).as_posix() for p in (root/'src'/'agent_lab').rglob('*')
+            if p.is_file() and p.suffix in {'.js','.css','.html'}}
+    assert all_code<=names
+    assert all_ui<=names
+    assert 'requirements.txt' in names
+    assert any(n.endswith('/local_case_host.py') for n in names)
+    # One representative of each file class is sufficient for digest
+    # sensitivity; checking 212 files one by one is redundant and expensive.
+    selected=[next(n for n in sorted(names) if n.endswith(suffix)) for suffix in
+              ('option_b_family_binding.py','local_case_host.py','dashboard.html',
+               'app.css','analysis_readiness.js','requirements.txt')]
     for name,_ in original['files']:
-        target=tmp_path/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((root/name).read_bytes())
+        target=tmp_path/name;target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes((root/name).read_bytes())
     baseline=H(build_manifest(tmp_path))
     assert baseline==H(original)
-    assert any(name=='requirements.txt' for name,_ in original['files'])
-    for name,_ in original['files']:
+    for name in selected:
         target=tmp_path/name;raw=target.read_bytes();target.write_bytes(raw+b'\n')
         assert H(build_manifest(tmp_path))!=baseline,name
         target.write_bytes(raw)

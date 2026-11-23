@@ -32,10 +32,16 @@ def source_build_ref():
 def build_manifest(root=None):
     root=Path(root) if root is not None else Path(__file__).resolve().parents[2]
     package=root/'src'/'agent_lab'
-    names={'option_b_family_binding.py','orchestrator_kernel.py','family_identity_gateway.py','ui_dashboard.py','local_case_host.py',
-           'case_registry.py','case_persistence.py','person_entity_registry.py','case_identity_association.py','runtime_activation.py','production_runtime.py'}
-    files=[path for path in package.glob('*.py') if path.name in names or path.name.startswith(('identity_','owner_identity_','c09_','ipc_','f07_'))]
-    files+=[root/'requirements.txt',*sorted((root/'contracts'/'orchestrator').rglob('*.json'))]
+    # Pin the complete shipped application code and UI, not a hand-maintained
+    # list of authority modules that can silently omit a newly imported module.
+    suffixes={'.py','.js','.css','.html','.json'}
+    files=[p for p in package.rglob('*') if p.is_file() and p.suffix.lower() in suffixes
+           and not any(part.startswith('.') or part=='__pycache__' for part in p.relative_to(package).parts)]
+    for directory in ('ui_static','ui_templates'):
+        files.extend(p for p in (root/directory).rglob('*') if p.is_file() and p.suffix.lower() in suffixes)
+    files.extend(p for p in (root/'contracts').rglob('*') if p.is_file() and p.suffix.lower() in {'.json','.yaml','.yml'})
+    files.extend(p for name in ('requirements.txt','requirements-hg01-build.txt') if (p:=root/name).is_file())
+    files=sorted(set(files))
     return dict(schema='ai-tax-agent.family-build-manifest/1',files=[[p.relative_to(root).as_posix(),'sha256:'+hashlib.sha256(p.read_bytes()).hexdigest()] for p in sorted(files)])
 
 def _time(value):
@@ -231,8 +237,11 @@ class BoundFamilyIdentityGateway(FamilyIdentityGateway):
         if not isinstance(binding,BoundOptionBFamily):raise FamilyUnavailable('FAMILY_ACCEPTED_BINDING_REQUIRED')
         if kwargs.get('client') is not binding.client or kwargs.get('cases') is not binding.cases or kwargs.get('owner_id')!=binding.binding.payload['owner_id']:
             raise FamilyUnavailable('FAMILY_GATEWAY_DEPENDENCIES_MISMATCH')
-        try:binding.ensure_ready()
-        except Exception:binding.recovery_ready()
+        # Reconstruct externally verified freshness on every cold factory
+        # composition. A new Kernel process has no in-memory verified head.
+        # Do not treat an accepted binding digest as a substitute for Witness.
+        try:binding.ensure_ready(require_client=False)
+        except Exception:binding.recovery_ready(require_client=False)
         c=binding.client
         binding.kernel.verify_identity_witness_state(c._deployment,custodian=c._custodian,provider=c._provider,signing_key=c._signer,kernel_key_id=c._key_id)
         try:binding.ensure_ready()

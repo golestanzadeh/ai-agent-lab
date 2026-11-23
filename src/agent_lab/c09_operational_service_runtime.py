@@ -207,13 +207,23 @@ Mutation routing is an explicit inactive composition option, with all authority 
         if owner_binding is not None:
             from agent_lab.option_b_family_binding import BoundOptionBFamily
             if not isinstance(owner_binding,BoundOptionBFamily) or owner_binding.kernel is not kernel:raise ServiceHostError('accepted Option B binding required')
-            owner_binding.constructor_ready()
             expected_sid=owner_binding.binding.payload['owner_sid']
         if not isinstance(identity_server,PinnedProcess) or identity_server.sid!=expected_sid:raise ServiceHostError("pinned Identity principal required")
         if not isinstance(custodian,CustodianServiceClient) or custodian.deployment_id!=deployment_id or not isinstance(provider,GCSWitnessAdapter):raise ServiceHostError("concrete deployment ports required")
         if not isinstance(signing_key,ec.EllipticCurvePrivateKey) or not isinstance(signing_key.curve,ec.SECP256R1) or not isinstance(key_id,str) or not key_id:raise ServiceHostError("protected Kernel signer binding required")
         if type(mutation_pipeline) is not bool:
             raise ServiceHostError("explicit mutation routing configuration required")
+        if owner_binding is not None:
+            if (owner_binding.binding.payload['deployment_id']!=deployment_id or
+                owner_binding.binding.payload['witness_bucket']!=provider.bucket or
+                owner_binding.binding.payload['custodian_key_id']!=custodian._custodian_key_id):
+                raise ServiceHostError('Option B external authority ports mismatch')
+            # Cold Kernel has no in-memory verified head. Reconstruct it only
+            # from the existing independent Custodian/Witness chain, then
+            # enforce the normal Owner/acceptance checks before binding.
+            kernel.verify_identity_witness_state(deployment_id,custodian=custodian,provider=provider,
+                signing_key=signing_key,kernel_key_id=key_id)
+            owner_binding.constructor_ready()
         self._mutation_pipeline=mutation_pipeline
         self._kernel=kernel;self._deployment=deployment_id;self._identity=identity_server
         self._custodian=custodian;self._provider=provider;self._signer=signing_key;self._key_id=key_id
