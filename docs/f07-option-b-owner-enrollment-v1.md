@@ -171,3 +171,46 @@ This accepts only the verifier/proposal, not enrollment or the operational runti
 Kernel nonce issuer/atomic consumer, native enrollment interoperability, reviewed
 source-kind implementation, accepted custody/Witness binding and actual composition
 remain technical/operational acceptance work after the specified Owner decision.
+
+## Approved implementation increment — 2026-11-23
+
+Owner approval APPROVE_OPTION_B_OWNER_ENROLLMENT_V1 is now recorded in the canonical
+checkpoint; the proposal's earlier approval-required status is historical. Native
+Windows Hello registration/assertion ABI v1 and closed P-256 registration parsing
+are implemented in owner_identity_native.py. A second required-UV assertion verifies
+possession of the extracted registration key. No hardware attestation is claimed.
+The actual ceremony has NOT been run. Native cancellation/denial propagates without
+creating a public pin. The bootstrap entry point accepts no HTTP identity/key input.
+
+owner_identity_broker.py uses only existing Kernel identity_kernel_state, atomic
+execution and audit verification. Nonces/approvals are committed together, exact
+manifest/task/case/year/run permissions and externally verified deployment are
+rechecked, same-proof recovery returns the original approval and changed-proof
+replay fails. This is not live Identity genesis or a Witness acceptance artifact.
+owner_identity_keys.py provisions separate Kernel/Identity DPAPI keys only through
+explicit enrollment; load never regenerates missing keys. Production keys have
+not been generated. Isolated real DPAPI tests verified role separation/readback
+and denied wrong Owner/role or missing keys.
+
+54 focused tests passed (18 Broker/native/custody plus36 existing proof tests),
+0failed,0skipped,exit0; includes actual canonical Kernel/isolated native IPC fixture,
+concurrent approvals, rollback, replay, restart, lost response, audit deletion,
+registration substitutions and DPAPI. Initial canonical-state digest and DPAPI
+argument-order failures were corrected and rerun. These are technical tests, not
+actual Windows Hello or live Family acceptance. Accepted27/269 suites not repeated.
+
+After independent exact-SHA review, the Owner's native action is to open PowerShell
+in this repository and run:
+
+```powershell
+$env:PYTHONPATH = (Join-Path (Get-Location) 'src')
+& 'C:\Users\rezag\ai-agent-lab\.venv\Scripts\python.exe' -m agent_lab.owner_identity_broker --enroll
+```
+
+Confirm only the AI-Tax-Agent Windows Hello dialogs. Do not send PIN/password/key
+material to chat. The flow requests two verifications, creates application keys,
+and records ENROLLED_LOCAL only after successful proof verification. Cancellation
+leaves pending enrollment and Family disabled. No real person data is entered.
+Do not run before the new exact-SHA security review. Live source/reference binding,
+Option B runtime composition and accepted independent Witness/Custodian evidence
+remain required; this increment does not complete them or claim Family persistence.

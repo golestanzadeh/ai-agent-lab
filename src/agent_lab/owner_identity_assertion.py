@@ -94,7 +94,17 @@ def verify_owner_assertion(*,intent,expected_scope,enrollment,credential_id,clie
     if (not isinstance(now,datetime) or now.utcoffset() is None or
             not _utc(intent["issued_at"])<=now<_utc(intent["expires_at"])):
         raise OwnerAssertionError("Owner approval expired or not yet valid")
-    if (not isinstance(enrollment,EnrolledOwnerCredential) or enrollment.owner_id!=intent["owner_id"] or
+    return verify_challenge_assertion(challenge=challenge,nonce=intent['nonce'],owner_id=intent['owner_id'],
+        enrollment=enrollment,credential_id=credential_id,client_data_json=client_data_json,
+        authenticator_data=authenticator_data,signature=signature)
+
+
+def verify_challenge_assertion(*,challenge,nonce,owner_id,enrollment,credential_id,client_data_json,
+                               authenticator_data,signature):
+    """Cryptographic primitive only; caller owns closed challenge/lease validation."""
+    if type(challenge) is not bytes or len(challenge)!=32:
+        raise OwnerAssertionError('bounded challenge required')
+    if (not isinstance(enrollment,EnrolledOwnerCredential) or enrollment.owner_id!=owner_id or
             type(enrollment.credential_id) is not bytes or not 1<=len(enrollment.credential_id)<=1024 or
             type(enrollment.public_key_der) is not bytes or not 1<=len(enrollment.public_key_der)<=512 or
             type(enrollment.previous_counter) is not int or not 0<=enrollment.previous_counter<=0xffffffff or
@@ -138,7 +148,7 @@ def verify_owner_assertion(*,intent,expected_scope,enrollment,credential_id,clie
     proof={"intent_digest":intent_digest,"credential_id":base64.urlsafe_b64encode(credential_id).rstrip(b"=").decode(),
            "client_data_sha256":hashlib.sha256(client_data_json).hexdigest(),
            "authenticator_data_sha256":hashlib.sha256(authenticator_data).hexdigest(),"signature_sha256":hashlib.sha256(canonical_signature).hexdigest()}
-    return VerifiedOwnerAssertion(intent_digest,"sha256:"+hashlib.sha256(DOMAIN+canonical_json_bytes(proof)).hexdigest(),intent["nonce"],counter)
+    return VerifiedOwnerAssertion(intent_digest,"sha256:"+hashlib.sha256(DOMAIN+canonical_json_bytes(proof)).hexdigest(),nonce,counter)
 
 
 def probe_windows_owner_authenticator():
