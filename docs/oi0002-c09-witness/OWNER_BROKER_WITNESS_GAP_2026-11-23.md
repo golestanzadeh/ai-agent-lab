@@ -28,3 +28,14 @@ Status: READ_ONLY_CODE_REVIEW_COMPLETE / DESIGN_ONLY / INACTIVE. Reviewed exact 
 
 ## Decision
 A one-line hook from Owner Broker _save to witness_identity_checkpoint is NOT valid: that API requires an Identity checkpoint receipt and assumes Identity audit-cut semantics. Next work is a small contract mapping and one failing synthetic rollback test, then minimal implementation only if existing protocol accommodates it. No new orchestrator, database, service, or trust root. No Codex.
+
+## Source-to-contract reconciliation — 2026-11-23 (no runtime change)
+
+Read-only inspection of the current repository confirms the precise mismatch:
+- `owner_identity_broker.begin_enrollment` and `_finish_enrollment` call `_save`, which stores the Owner row in Kernel SQLite. Neither stages nor finalizes an external Witness record. No accepted operational revoke/rotate entrypoint was found in this Broker.
+- `OrchestratorKernel._require_durable_owner_binding` checks the Owner row only when present. A coherent rollback of the entire Kernel SQLite and its local audit can therefore remove the evidence that Option B was enrolled; the existing two tamper tests are narrower.
+- `verify_identity_witness_state` authenticates the entire external chain and compares its final `identity_head` with `H(state['last_cut'])`. `last_cut` is the Identity logical/audit composite, not an Owner Broker control cut.
+- `stage_identity_audit_checkpoint` derives its Witness `identity_head` from the Identity response and its `kernel_head` from the `IDENTITY_AUDIT_CHECKPOINT_PENDING` event. `witness_identity_checkpoint` requires an Identity checkpoint receipt and release authority; it is not a generic Owner-control finalizer.
+- `c09_witness_protocol.WitnessRecord.validate_public_schema` permits only `COMMIT` and `RESTORE`; `owner_authorization_digest` is mandatory only for `RESTORE`. Reusing that field for enrollment or revocation would violate the frozen contract. A new record type or reinterpretation of `identity_head` cannot be assumed accepted.
+
+Decision: `EXISTING_R1_R2_PASS_PRESERVED / OWNER_CONTROL_CUT_UNMAPPED / NO_IMPLEMENTATION_AUTHORIZED`. Do not repeat R1/R2, change Witness schema, add a second authority, or claim a fix from local audit integrity. The smallest next engineering deliverable is an explicit mapping of Owner-control finality to the existing global reservation and authenticated Witness fields, with preservation of the Identity composite and restore semantics; if no non-conflicting mapping exists, obtain a narrowly scoped contract amendment before implementation. Only then add one synthetic coherent-rollback negative test and its minimal code remedy. Operational Family remains inactive.
