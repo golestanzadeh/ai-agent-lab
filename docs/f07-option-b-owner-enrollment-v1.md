@@ -146,3 +146,15 @@ family_identity_gateway.py; orchestrator_kernel.py; local_case_host.py;
 case_analysis_kernel_dispatch.py; runtime_activation.py; canonical checkpoint
 Option B decision; docs/f07-runtime-activation-preparation-20261026.md.
 Native API reference: https://learn.microsoft.com/en-us/windows/win32/api/webauthn/nf-webauthn-webauthnisuserverifyingplatformauthenticatoravailable
+
+## Independent review correction
+
+Candidate b4997f3f13982ff892c08a36d32968b62a47b8f2: INDEPENDENT_FAIL,
+ECDSA high-S twin accepted with a different proof_digest. Corrected by strict DER
+and P-256 scalar bounds plus canonical low-S encoding before proof commitment.
+Both valid native S representations now yield one verified proof identity; no
+native high-S output is rejected merely for its S representation. Added twin
+canonical-equivalence and four invalid scalar-boundary tests. Final focused
+command includes assertion and documentation tests:54passed,0failed,0skipped,
+exit0. Exact successor independent review pending; no live authentication or
+operational acceptance implied.

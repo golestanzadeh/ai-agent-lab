@@ -7,11 +7,11 @@ import json
 
 import pytest
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec, utils
 
 from agent_lab.owner_identity_assertion import (
     CONTRACT, RP_ID, ORIGIN, SCOPE, EnrolledOwnerCredential, OwnerAssertionError,
-    intent_challenge, verify_owner_assertion,
+    intent_challenge, verify_owner_assertion, P256_ORDER,
 )
 
 
@@ -39,6 +39,21 @@ def test_verified_signature_is_not_an_approval_or_nonce_consumer():
     assert result.nonce==arguments["intent"]["nonce"] and result.counter==1
     assert result.intent_digest=="sha256:"+intent_challenge(arguments["intent"]).hex()
     assert verify_owner_assertion(**arguments)==result  # Kernel consumption is separate and mandatory.
+
+
+def test_ecdsa_twin_has_one_canonical_proof_commitment():
+    _,arguments=vector()
+    original=verify_owner_assertion(**arguments)
+    r,s=utils.decode_dss_signature(arguments["signature"])
+    arguments["signature"]=utils.encode_dss_signature(r,P256_ORDER-s)
+    assert verify_owner_assertion(**arguments)==original
+
+
+@pytest.mark.parametrize("r,s",[(0,1),(1,0),(P256_ORDER,1),(1,P256_ORDER)])
+def test_signature_scalar_boundaries_denied(r,s):
+    _,arguments=vector()
+    arguments["signature"]=utils.encode_dss_signature(r,s)
+    with pytest.raises(OwnerAssertionError):verify_owner_assertion(**arguments)
 
 
 @pytest.mark.parametrize("field",sorted(SCOPE))

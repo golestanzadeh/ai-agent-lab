@@ -14,12 +14,13 @@ import re
 import sys
 
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec, utils
 
 from agent_lab.ipc_wire_primitives import canonical_json_bytes
 
 CONTRACT = "ai-tax-agent.owner-identity-intent/1"
 DOMAIN = b"AI-TAX-AGENT\0OWNER-IDENTITY-INTENT\0"
+P256_ORDER = 0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551
 RP_ID = "localhost"
 ORIGIN = "http://localhost:8766"
 OPERATIONS = frozenset({"REGISTER_IDENTITY", "CORRECT_PERSON", "BIND_PARTY", "CORRECT_PARTY_ROLE", "BIND_FACT"})
@@ -121,16 +122,22 @@ def verify_owner_assertion(*,intent,expected_scope,enrollment,credential_id,clie
     if enrollment.previous_counter and counter<=enrollment.previous_counter:
         raise OwnerAssertionError("Owner authenticator counter rollback")
     try:
+        r,s=utils.decode_dss_signature(signature)
+        if not (0<r<P256_ORDER and 0<s<P256_ORDER) or utils.encode_dss_signature(r,s)!=signature:
+            raise ValueError("canonical P-256 signature required")
+        # Native authenticators can return either S representation. Both verify,
+        # but their one proof commitment must use the same strict low-S encoding.
+        canonical_signature=utils.encode_dss_signature(r,min(s,P256_ORDER-s))
         public=serialization.load_der_public_key(enrollment.public_key_der)
         if not isinstance(public,ec.EllipticCurvePublicKey) or not isinstance(public.curve,ec.SECP256R1):
             raise ValueError("P-256 required")
-        public.verify(signature,authenticator_data+hashlib.sha256(client_data_json).digest(),ec.ECDSA(hashes.SHA256()))
+        public.verify(canonical_signature,authenticator_data+hashlib.sha256(client_data_json).digest(),ec.ECDSA(hashes.SHA256()))
     except Exception:
         raise OwnerAssertionError("Owner assertion signature denied") from None
     intent_digest="sha256:"+challenge.hex()
     proof={"intent_digest":intent_digest,"credential_id":base64.urlsafe_b64encode(credential_id).rstrip(b"=").decode(),
            "client_data_sha256":hashlib.sha256(client_data_json).hexdigest(),
-           "authenticator_data_sha256":hashlib.sha256(authenticator_data).hexdigest(),"signature_sha256":hashlib.sha256(signature).hexdigest()}
+           "authenticator_data_sha256":hashlib.sha256(authenticator_data).hexdigest(),"signature_sha256":hashlib.sha256(canonical_signature).hexdigest()}
     return VerifiedOwnerAssertion(intent_digest,"sha256:"+hashlib.sha256(DOMAIN+canonical_json_bytes(proof)).hexdigest(),intent["nonce"],counter)
 
 
@@ -150,4 +157,3 @@ def probe_windows_owner_authenticator():
                 "api_version":version,"hresult":code,"enrollment_performed":False}
     except OSError as exc:
         return {"status":"UNAVAILABLE","reason":"NATIVE_API_UNAVAILABLE","winerror":exc.winerror}
-
