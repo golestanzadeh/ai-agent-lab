@@ -289,3 +289,5 @@ Owner-authorized recovery increment (2026-11-09): case_analysis_diagnostics.py, 
 2026-11-23 source integration: created identity_owner_source.py and test_identity_owner_source.py. Versioned optional Owner-declaration source bytes live only in canonical Identity SQLite; accepted enrollment key/scope, existing audit, and atomic mutation remain authoritative. No live source enrollment or operational composition implied.
 
 2026-11-23 created owner_identity_delivery.py: closed authenticated delivery of durable Kernel-approved Owner intent to the canonical Identity source; no new authority, transport or DB. Existing Kernel key remains its verifier trust root; native assertion and continuity keys are distinct.
+
+2026-11-23 F05/F06 bounded remediation: planned tests/unit/test_f07_owner_authorization_integration.py, reusing existing isolated Kernel/Identity native runtime fixtures for export/revocation barriers and exact mutation-hook coverage. No operational activation scope.

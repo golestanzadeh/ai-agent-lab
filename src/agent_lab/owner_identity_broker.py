@@ -177,19 +177,27 @@ def approved_source_evidence(kernel,*,deployment_id,nonce,expected_scope,now,sig
     person values. Source independently verifies these against canonical pins.
     Fresh use still requires the original lease and current exact authority.
     """
-    state=_load(kernel,deployment_id);pin=_credential(state)
-    item=state['intents'].get(nonce)
-    if item is None or item['status']!='APPROVED':raise OwnerAssertionError('committed Owner approval required')
-    _authorize(kernel,expected_scope)
-    assertion={k:_decode(v) for k,v in item['assertion'].items()}
-    verify_owner_assertion(intent=item['intent'],expected_scope=expected_scope,
-        enrollment=_credential(state,counter=item['counter']),now=now,**assertion)
-    from agent_lab.owner_identity_delivery import sign
-    credential=dict(owner_id=state['owner_id'],credential_id=state['credential_id'],
-        public_key_der=state['public_key_der'],enrollment_proof_digest=state['proof_digest'],revoked=False)
-    return sign(dict(contract='ai-tax-agent.owner-approval-delivery/1',key_id=key_id,
-        deployment_id=deployment_id,store_id=state['store_id'],approval_status=item['status'],approval=item['approval'],intent=item['intent'],
-        assertion=item['assertion'],owner_credential=credential),signing_key)
+    import time
+    _clock(now)
+    started=time.monotonic()
+    # BEGIN IMMEDIATE precedes the first authoritative read and stays held until
+    # signing completes. Another Kernel connection cannot revoke the credential
+    # or manifest between validation and issuance of this immutable delivery.
+    with kernel.atomic_execution():
+        state=_load(kernel,deployment_id);_credential(state)
+        item=state['intents'].get(nonce)
+        if item is None or item['status']!='APPROVED':raise OwnerAssertionError('committed Owner approval required')
+        _authorize(kernel,expected_scope)
+        assertion={k:_decode(v) for k,v in item['assertion'].items()}
+        verify_owner_assertion(intent=item['intent'],expected_scope=expected_scope,
+            enrollment=_credential(state,counter=item['counter']),
+            now=now+timedelta(seconds=time.monotonic()-started),**assertion)
+        from agent_lab.owner_identity_delivery import sign
+        credential=dict(owner_id=state['owner_id'],credential_id=state['credential_id'],
+            public_key_der=state['public_key_der'],enrollment_proof_digest=state['proof_digest'],revoked=False)
+        return sign(dict(contract='ai-tax-agent.owner-approval-delivery/1',key_id=key_id,
+            deployment_id=deployment_id,store_id=state['store_id'],approval_status=item['status'],approval=item['approval'],intent=item['intent'],
+            assertion=item['assertion'],owner_credential=credential),signing_key)
 
 def approve_native(kernel,*,deployment_id,nonce,confirmed_values,clock):
     """Trusted local Owner Broker; HTTP is never an authentication substitute."""

@@ -348,3 +348,39 @@ finished, only controlled documentation/publication followed. Platform quota was
 not bypassed; observed differences are not exclusive per-task billing. Preserve
 all original dirty UI/Drive files. Final recovery documentation commit and remote
 readback follow; no active OPEN_ITEMS row closes and no Human Gate is granted.
+
+## F05/F06 bounded security remediation — 2026-11-23
+
+Owner authorized only atomic approval export and exact mutation-hook verification.
+Baseline7cade479733a54c9e322c7467024e4839b074b3c recovered and fetched remote aligned;
+all pre-existing dirty UI/Drive files preserved. Initial authenticated app-server
+observation19:25:44.519003Z100%five-hour/41%weekly, BOUNDED15/5 admitted; reserve15.
+
+F05 production correction is limited to approved_source_evidence: load/check current
+Owner approval/credential/scope and sign delivery inside existing Kernel.atomic_execution
+(BEGIN IMMEDIATE). Original receipt/reference, immutable scope slot, proof, audit and
+lost-response semantics unchanged. Monotonic time spent waiting for the lock counts
+against the original approval lease; queued export cannot issue expired evidence.
+No new authority, table, protocol, credential or operational binding introduced.
+
+New focused test_f07_owner_authorization_integration.py reuses existing isolated
+canonical Kernel/Identity SQLite, actual native Named Pipe client/dispatcher and
+existing synthetic Custodian/Witness test fixture. No authorization mock is used:
+only fixture dependency injection, signing/transport observation, controlled clock
+for pre-dispatch expiry denial, and deterministic concurrency barriers. Native
+Owner enrollment and operational acceptance are not simulated or claimed.
+F05 barriers prove credential and manifest revocation cannot enter its write
+transaction until export signing finishes; subsequent export denies without signing.
+Queued-lock lease expiry also denies. F06 actual PREPARE/COMMIT accept valid Owner
+authority and reject revoked/expired/substituted subject scope before transport.
+Existing non-Owner authorization still commits. Actual committed GET/FINALIZE,
+Witness settlement and restart readback remain available after Owner revocation
+and real lease expiry, without issuing another grant or domain mutation.
+
+Worker focused three-file command44passed,0failed,0skipped,exit0,34.65s. Final new-test
+and documentation verification recorded below after execution. Initial test harness
+errors (Identity context-manager assumption and inconsistent simulated IPC clock)
+were corrected; actual lease expiry is now used in the recovery test. Independent
+exact-SHA review pending, so F05/F06 are not yet closed. Existing27Family/269wire
+campaigns not repeated. No real data, native ceremony, key/pin/genesis creation,
+source/Family activation, service/ACL/IAM change or external submission occurred.
