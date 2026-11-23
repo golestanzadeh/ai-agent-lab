@@ -6,6 +6,7 @@ local credential enrollment only, never live Identity genesis or Witness accepta
 import base64
 from datetime import datetime,timedelta,timezone
 import hashlib
+import hmac
 import secrets
 
 from agent_lab.ipc_wire_primitives import canonical_json_bytes
@@ -19,6 +20,9 @@ REGISTRATION_DOMAIN=b'AI-TAX-AGENT\0OWNER-BROKER-REGISTRATION\0V1\0'
 
 def _time(value):return value.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 def _hash(value):return 'sha256:'+hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+def authorization_reference(scope):
+    if type(scope) is not dict or set(scope)!=SCOPE:raise OwnerAssertionError('closed authorization scope required')
+    return _hash(dict(contract='ai-tax-agent.owner-authorization-reference/1',scope=scope))
 def _encode(value):return base64.b64encode(value).decode('ascii')
 def _decode(value):return base64.b64decode(value,validate=True)
 def _key(deployment):return 'owner-broker:v1:'+deployment
@@ -73,6 +77,9 @@ def _finish_enrollment(kernel,*,deployment_id,credential,assertion,now):
 def enroll_native(kernel,*,owner_id,deployment_id,store_id,approval,clock,key_root=None):
     """The production bootstrap entry point has no injectable authenticator/key."""
     from agent_lab.owner_identity_native import WindowsHello
+    binding=canonical_enrollment_binding(kernel)
+    if (binding['deployment_id'],binding['store_id'])!=(deployment_id,store_id):
+        raise OwnerAssertionError('canonical enrollment scope mismatch')
     state=begin_enrollment(kernel,owner_id=owner_id,deployment_id=deployment_id,store_id=store_id,
                            approval=approval,now=clock())
     native=WindowsHello()
@@ -130,26 +137,61 @@ def approve_intent(kernel,*,deployment_id,nonce,assertion,now):
         state=_load(kernel,deployment_id);_credential(state)
         item=state['intents'].get(nonce)
         if item is None:raise OwnerAssertionError('unknown Owner nonce')
-        intent=item['intent'];scope={k:intent[k] for k in SCOPE};_authorize(kernel,scope)
+        intent=item['intent'];scope={k:intent[k] for k in SCOPE}
+        if item['status']=='APPROVED':
+            # Authenticated receipt readback, NOT another mutation authorization.
+            # Its original lease/manifest can expire after the commit; returning
+            # the original receipt must not mint or extend a grant.
+            proof=verify_challenge_assertion(challenge=intent_challenge(intent),nonce=nonce,owner_id=intent['owner_id'],
+                enrollment=_credential(state,counter=item['counter']),**assertion)
+            if not hmac.compare_digest(item['proof_digest'],proof.proof_digest):raise OwnerAssertionError('Owner nonce already consumed')
+            return item['approval']
+        _authorize(kernel,scope)
         proof=verify_owner_assertion(intent=intent,expected_scope=scope,
             enrollment=_credential(state,counter=item['counter']),now=now,**assertion)
-        if item['status']=='APPROVED':
-            if item['proof_digest']!=proof.proof_digest:raise OwnerAssertionError('Owner nonce already consumed')
-            return item['approval']
         if state['counter'] and proof.counter<=state['counter']:raise OwnerAssertionError('stale Owner counter')
         approval=dict(contract='ai-tax-agent.owner-approval/1',intent_digest=proof.intent_digest,
-                      proof_digest=proof.proof_digest,scope=scope,nonce=nonce)
+                      proof_digest=proof.proof_digest,scope=scope,nonce=nonce,
+                      issued_at=intent['issued_at'],expires_at=intent['expires_at'],
+                      execution_authorization_reference=authorization_reference(scope))
         approval['authority_reference']=_hash(approval)
         item.update(status='APPROVED',approval=approval,proof_digest=proof.proof_digest)
         state['counter']=proof.counter
         _save(kernel,deployment_id,state)
         return approval
 
+def approve_native(kernel,*,deployment_id,nonce,confirmed_values,clock):
+    """Trusted local Owner Broker; HTTP is never an authentication substitute."""
+    from agent_lab.owner_identity_native import WindowsHello
+    state=_load(kernel,deployment_id);pin=_credential(state)
+    item=state['intents'].get(nonce)
+    if item is None or item['status']!='PENDING':raise OwnerAssertionError('pending Owner intent required; recover settled receipt separately')
+    intent=item['intent'];_authorize(kernel,{k:intent[k] for k in SCOPE})
+    if not intent['issued_at']<=_time(clock())<intent['expires_at']:raise OwnerAssertionError('Owner intent expired')
+    native=WindowsHello();native.confirm_intent(intent,confirmed_values)
+    assertion=native.assert_intent(intent,pin.credential_id)
+    return approve_intent(kernel,deployment_id=deployment_id,nonce=nonce,assertion=assertion,now=clock())
+
+def canonical_enrollment_binding(kernel):
+    """Only an accepted, current externally verified existing deployment.
+
+    Credential enrollment must not invent live Identity genesis/store identities.
+    This read does not mark any Witness head verified.
+    """
+    kernel._verify_identity_protocol_state()
+    import json
+    states=[json.loads(row[0]) for row in kernel._connection.execute('SELECT payload_json FROM identity_kernel_state')]
+    accepted=[state for state in states if state.get('status')=='ACTIVE' and 'artifact' in state]
+    if len(accepted)!=1:raise OwnerAssertionError('exact accepted canonical Identity deployment/store unavailable or ambiguous')
+    state=accepted[0];artifact=state['artifact'];deployment=artifact['deployment_id'];store=artifact['store_id']
+    if state.get('store_id',store)!=store or kernel._identity_verified_heads.get(deployment)!=state.get('previous_record'):
+        raise OwnerAssertionError('accepted current independent Witness binding required before Owner enrollment')
+    return dict(deployment_id=deployment,store_id=store)
+
 def main():
     import argparse
     import os
     from pathlib import Path
-    from uuid import uuid4
     from agent_lab.orchestrator_kernel import OrchestratorKernel
     parser=argparse.ArgumentParser(description='Native Option B Owner credential enrollment; no person records or protected runtime activation')
     parser.add_argument('--enroll',action='store_true')
@@ -170,10 +212,10 @@ def main():
     print('No taxpayer records, external submission, cloud permissions or Family activation. Windows Hello will request verification twice.')
     with OrchestratorKernel(database,contract) as kernel:
         kernel._verify_identity_protocol_state()
-        states=[__import__('json').loads(row[0]) for row in kernel._connection.execute(
-            "SELECT payload_json FROM identity_kernel_state WHERE deployment_id LIKE 'owner-broker:v1:%'")]
-        if len(states)>1:raise OwnerAssertionError('ambiguous local Owner deployment; reconciliation required')
-        state=states[0] if states else dict(deployment_id='dep:v1:'+str(uuid4()),store_id='store:v1:'+str(uuid4()))
+        state=canonical_enrollment_binding(kernel)
+        print('Deployment:',state['deployment_id'],'Store:',state['store_id'])
+        print('Canonical Kernel:',database,'Canonical Identity:',root/'identity.sqlite')
+        print('Application keys:',root/'owner-kernel-signing.dpapi',root/'owner-identity-signing.dpapi')
         result=enroll_native(kernel,owner_id=owner,deployment_id=state['deployment_id'],store_id=state['store_id'],
             approval=APPROVAL,clock=lambda:datetime.now(timezone.utc),key_root=root)
         print(result['status'])

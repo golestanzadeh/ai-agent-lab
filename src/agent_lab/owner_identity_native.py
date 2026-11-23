@@ -117,6 +117,18 @@ class WindowsHello:
     def _check(code):
         if code:raise OwnerAssertionError('Windows Hello cancelled or denied (HRESULT 0x%08X)'%(code&0xffffffff))
 
+    def confirm_intent(self,intent,confirmed_values):
+        """Trusted local review surface; this dialog itself is NOT approval."""
+        from agent_lab.ipc_wire_primitives import canonical_sha256
+        if canonical_sha256(confirmed_values)!=intent['input_digest']:
+            raise OwnerAssertionError('confirmation input commitment mismatch')
+        message='\n'.join([intent['operation'],'Case: '+intent['case_id'],'Tax year: '+intent['tax_year'],
+                           'Subject: '+intent['subject_id'],json.dumps(confirmed_values,ensure_ascii=False,indent=2),
+                           'Authorize only these values? Windows Hello verification follows.'])
+        api=c.WinDLL('user32.dll');api.MessageBoxW.argtypes=[c.c_void_p,W,W,D];api.MessageBoxW.restype=c.c_int32
+        if api.MessageBoxW(self.hwnd,message,'AI-Tax-Agent — Owner Identity approval',0x00040000|0x00010000|0x00000024)!=6:
+            raise OwnerAssertionError('Owner cancelled confirmation')
+
     def register(self,owner_id,challenge):
         if type(challenge) is not bytes or len(challenge)!=32:raise OwnerAssertionError('registration challenge required')
         raw,buffer,client=_client('webauthn.create',challenge)

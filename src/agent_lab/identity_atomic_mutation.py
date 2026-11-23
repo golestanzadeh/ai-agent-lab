@@ -327,6 +327,11 @@ def execute(owner, request, *, allowed_case_ids, now=None):
     owner._db.execute("BEGIN IMMEDIATE")
     try:
         current_time=now+timedelta(seconds=time.monotonic()-started)
+        from agent_lab.identity_owner_source import CanonicalOwnerDeclarationSource
+        if refs is not None and isinstance(owner._mutation_source,CanonicalOwnerDeclarationSource):
+            # Source bytes were resolved before the lock; verify its authoritative
+            # expiry/revocation again in the same transaction as consumption.
+            owner._mutation_source.revalidate(request,case,current_time)
         from agent_lab.identity_logical_continuity import utc
         if current_time>=utc(request["kernel_proof"]["not_after"]):
             raise PermissionError("proof expired during protected resolution")

@@ -670,6 +670,8 @@ class IdentityPersistence:
         self._write_anchor(count, head)
 
     def _verify_data_integrity(self) -> None:
+        from agent_lab.identity_owner_source import verify_storage
+        verify_storage(self)
         for row in self._db.execute("SELECT * FROM identity_record"):
             payload = json.loads(row["payload"])
             if row["schema_version"] != 2 or payload.get("identity_id") != row["identity_id"] or not hmac.compare_digest(self._mac(payload), row["digest"]):

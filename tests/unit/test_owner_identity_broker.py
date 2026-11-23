@@ -73,6 +73,9 @@ def test_nonce_atomic_replay_rollback_and_lost_response(tmp_path):
             assert broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)==first
     with OrchestratorKernel(path,ROOT) as kernel,patch.object(broker,'_authorize'):
         assert broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)==first
+        with patch.object(broker,'_authorize',side_effect=PermissionError('revoked manifest')):
+            assert broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW+timedelta(minutes=6))==first
+        assert first['expires_at']==intent['expires_at']
         with pytest.raises(OwnerAssertionError):broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],
             assertion=assertion(private,pin,intent_challenge(intent),counter=3),now=NOW)
         state=broker._load(kernel,'TEST-DEPLOYMENT');state['revoked']=True
@@ -84,6 +87,13 @@ def test_missing_kernel_authority_denied(tmp_path):
         enroll(kernel)
         with pytest.raises(Exception):broker.issue_intent(kernel,scope=scope(),now=NOW)
         assert broker._load(kernel,'TEST-DEPLOYMENT')['intents']=={}
+
+def test_missing_canonical_enrollment_has_no_side_effects(tmp_path):
+    with OrchestratorKernel(tmp_path/'kernel.sqlite',ROOT) as kernel:
+        with patch('agent_lab.owner_identity_native.WindowsHello',side_effect=AssertionError('must not prompt')):
+            with pytest.raises(OwnerAssertionError):broker.enroll_native(kernel,owner_id='TEST-OWNER',deployment_id='UNKNOWN',store_id='UNKNOWN',approval=broker.APPROVAL,clock=lambda:NOW,key_root=tmp_path)
+        assert kernel._connection.execute('SELECT COUNT(*) FROM identity_kernel_state').fetchone()[0]==0
+        assert not list(tmp_path.glob('*.dpapi'))
 
 def registration_vector():
     private,pin=credential();point=private.public_key().public_numbers()

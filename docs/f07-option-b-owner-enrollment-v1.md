@@ -214,3 +214,50 @@ leaves pending enrollment and Family disabled. No real person data is entered.
 Do not run before the new exact-SHA security review. Live source/reference binding,
 Option B runtime composition and accepted independent Witness/Custodian evidence
 remain required; this increment does not complete them or claim Family persistence.
+
+## Independent findings, source integration and genuine activation prerequisite
+
+Candidate51f43cfdac1232ed3e5724c3e0c86ec0be179c24 was INDEPENDENT_FAIL:
+HIGH fabricated deployment/store UUID fallback; HIGH approval recovery failed after
+lease expiry. Removed the fallback: native entry requires exactly one canonical
+ACTIVE deployment/store and its current independently verified Witness record.
+No accepted binding means no prompt/pin/key. Display exact scope and canonical
+paths before a permitted ceremony. Committed same-proof readback now verifies
+its immutable signature/commitment without a new issuance lease/manifest decision;
+it returns only the old receipt. Receipts retain original issue/expiry and deterministic
+execution authorization reference. No lifetime extension or new nonce is implied.
+
+The Owner approval already given is valid; no repeated approval is requested.
+The earlier CLI directions are now conditional: a fresh standalone CLI cannot
+invent an external-verification adapter or mark a head verified. Do NOT run it as
+an operational bypass. The existing governed runtime must first supply the accepted
+canonical deployment and independently verified Custodian/Witness binding. There
+is no automatic new genesis or synthetic trust promotion in this increment.
+
+Read-only actual application storage inspection2026-11-23: identity.sqlite absent;
+canonical Kernel identity_kernel_state has0rows/0ACTIVE enrollment artifacts;
+new Kernel/Identity DPAPI files absent. Therefore the real application cannot yet
+satisfy that existing protected enrollment/finality requirement. Windows Hello
+has not been invoked and no production key generated. Existing Kernel/Identity
+operational architecture source-boundary/genesis/Witness clauses and this approved
+amendment require failure closed. This is an actual operational prerequisite,
+not C09 globally blocking ordinary development or a reinstated four-principal target.
+
+Implemented identity_owner_source.py optional versioned source inside canonical
+Identity SQLite: actual immutable content, scoped Owner proof and accepted canonical
+enrollment key; content substitution denial; case/year/subject/run/operation and
+expiry checks; audit/MAC deletion detection; idempotent identical staging; revocation
+revalidation inside the existing Identity writer transaction. Document sources keep
+their original case/provider/root restriction. Only the concrete pinned Owner source
+kind may use its canonical Identity root. No browser request selects a source root.
+Staging is evidence/audit only and cannot mutate persons or logical identity head.
+The existing PREPARE/COMMIT path remains the only domain writer, consuming its
+one-time authorization with domain/head/audit/receipt. New source table is a
+versioned optional same-database extension, not another database. Live enrollment
+or a request-controlled source configuration is NOT installed by these changes.
+
+A trusted native review dialog now displays exact operation/case/year/subject and
+confirmed input before required Windows Hello verification; the dialog alone never
+grants authority. The actual Family app remains unbound until its source, accepted
+canonical enrollment/Witness and client composition exist. No real dashboard
+refresh/restart acceptance may be inferred from isolated synthetic SQLite tests.

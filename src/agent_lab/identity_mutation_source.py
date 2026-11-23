@@ -53,9 +53,11 @@ def resolve(source, request, case, now):
                                  request["task_id"], request["manifest_id"], scope.valid_from, scope.valid_to_exclusive)
         if not date(int(request["tax_year"]),1,1)<=scope.valid_from<scope.valid_to_exclusive<=date(int(request["tax_year"])+1,1,1):
             raise PermissionError("evidence effective interval mismatch")
+        from agent_lab.identity_owner_source import CanonicalOwnerDeclarationSource,PROVIDER
+        owner_source=isinstance(source,CanonicalOwnerDeclarationSource) and scope.subject_id==bundle.subject_id and artifact.accepted.revision.provider==PROVIDER
         verify_protected_revision(artifact.accepted, artifact.observed,
-                                  committed_provider=case.storage_scope_reference.provider,
-                                  committed_root=case.storage_scope_reference.root_id, expected_scope=expected,
+                                  committed_provider=PROVIDER if owner_source else case.storage_scope_reference.provider,
+                                  committed_root=source.root_id if owner_source else case.storage_scope_reference.root_id, expected_scope=expected,
                                   now=now, max_bytes=1024*1024)
         import re
         if not isinstance(artifact.reference, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", artifact.reference):
