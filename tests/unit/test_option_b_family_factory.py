@@ -292,6 +292,34 @@ def test_restarted_raw_kernel_denies_enrolled_owner_without_factory(tmp_path,mon
             raw.close()
 
 
+@pytest.mark.parametrize('tamper',['delete','rollback'])
+def test_durable_owner_profile_tamper_fails_closed(tmp_path,monkeypatch,tamper):
+    import sqlite3
+    from agent_lab.orchestrator_kernel import OrchestratorKernel,IntegrityError
+    with factory_at(tmp_path,monkeypatch) as state:
+        original=state['kernel']
+        copied=tmp_path/'tampered-kernel.sqlite'
+        with sqlite3.connect(copied) as target:
+            original._connection.backup(target)
+        with sqlite3.connect(copied) as db:
+            key='owner-broker:v1:'+state['config'].payload['deployment_id']
+            if tamper=='delete':
+                db.execute('DELETE FROM identity_kernel_state WHERE deployment_id=?',(key,))
+            else:
+                row=db.execute('SELECT payload_json FROM identity_kernel_state WHERE deployment_id=?',(key,)).fetchone()
+                old=json.loads(row[0]);old['status']='PENDING'
+                # A syntactically valid digest does not rewrite the audit history.
+                from agent_lab.orchestrator_kernel import _digest,_canonical
+                db.execute('UPDATE identity_kernel_state SET payload_json=?,digest=? WHERE deployment_id=?',
+                           (_canonical(old),_digest(old),key))
+        raw=OrchestratorKernel(copied,original.contract_root)
+        try:
+            with pytest.raises(IntegrityError,match='deletion/substitution'):
+                raw._verify_identity_protocol_state()
+        finally:
+            raw.close()
+
+
 def test_raw_gateway_cannot_bypass_production_factory(tmp_path,monkeypatch):
     from agent_lab.family_identity_gateway import FamilyIdentityGateway
     with factory_at(tmp_path,monkeypatch) as state:
