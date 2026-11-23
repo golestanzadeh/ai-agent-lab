@@ -261,3 +261,41 @@ confirmed input before required Windows Hello verification; the dialog alone nev
 grants authority. The actual Family app remains unbound until its source, accepted
 canonical enrollment/Witness and client composition exist. No real dashboard
 refresh/restart acceptance may be inferred from isolated synthetic SQLite tests.
+
+## Source review corrections: authenticated delivery, distinct assertion key
+
+Candidate7365841b916302d5a4f82af222f4a9fae1dffc61 was INDEPENDENT_FAIL:
+CRITICAL raw-assertion staging bypassed the committed Kernel approval; HIGH
+conflation of the new Windows Hello credential with the continuity/restore key;
+MEDIUM repeat authorization conflicted with immutable scope reference.
+
+Corrections: source staging no longer accepts raw intent/assertion. It requires
+closed ai-tax-agent.owner-approval-delivery/1, signed by Identity's EXISTING pinned
+Kernel key under a distinct domain. The Kernel exporter verifies the authoritative
+ledger's APPROVED nonce, current exact scope, lease and nonrevoked Owner credential
+before signing. Delivery binds the actual approval/reference, exact intent/proof,
+original expiry, deployment/store and distinct Windows Hello credential pin. Identity
+verifies the Kernel signature and Owner proof independently, then stores that
+signed pin/proof/approval digest with the immutable source bytes in canonical SQLite.
+No Kernel DB is opened by Identity. A Windows Hello key is NOT required to equal
+or replace the continuity/restore key. The earlier equality requirement was a defect,
+not an accepted security rule. The distinct pin is authorized by the existing Kernel
+boundary; a raw caller-provided key, hash or class is still insufficient authority.
+
+Execution authorization slots are now permanently one-per-exact-scope: repeated
+pending issue returns the same nonce; an expired or consumed slot requires an
+explicit new Task/Manifest successor, never a new approval silently overwriting the
+same immutable reference. This restriction preserves bounded execution and history.
+Committed receipt readback remains separate and does not authorize fresh use.
+Kernel mutation issuance also rechecks recognized Owner approval scope, expiry and
+credential revocation before fresh PREPARE/COMMIT; recovery/finality paths retain
+their existing semantics. Public signed proof bytes are durable for source delivery
+and lost-response recovery; person values are not stored in the Kernel ledger.
+No source revocation/rotation administrative authority is fabricated or activated.
+
+Actual application composition remains unavailable because the canonical deployment/
+Identity database/Witness enrollment prerequisites are absent. No actual native
+ceremony has occurred; do not execute the old standalone command without an accepted
+current governed binding. Owner approval is already granted and needs no repetition.
+Final exact-SHA independent re-review follows these corrections. No operational
+acceptance, real-person write, service, ACL, credential or cloud change occurred.

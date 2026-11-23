@@ -71,6 +71,11 @@ def test_nonce_atomic_replay_rollback_and_lost_response(tmp_path):
             assert broker._load(kernel,'TEST-DEPLOYMENT')['intents'][intent['nonce']]['status']=='PENDING'
             first=broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)
             assert broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)==first
+            with pytest.raises(OwnerAssertionError):broker.issue_intent(kernel,scope=scope(),now=NOW+timedelta(minutes=6))
+            from test_identity_logical_runtime import KERNEL
+            delivered=broker.approved_source_evidence(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],
+                expected_scope=scope(),now=NOW,signing_key=KERNEL,key_id='TEST-KERNEL-KEY-1')
+            assert delivered['approval']==first
     with OrchestratorKernel(path,ROOT) as kernel,patch.object(broker,'_authorize'):
         assert broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)==first
         with patch.object(broker,'_authorize',side_effect=PermissionError('revoked manifest')):
@@ -80,6 +85,8 @@ def test_nonce_atomic_replay_rollback_and_lost_response(tmp_path):
             assertion=assertion(private,pin,intent_challenge(intent),counter=3),now=NOW)
         state=broker._load(kernel,'TEST-DEPLOYMENT');state['revoked']=True
         with kernel.atomic_execution():broker._save(kernel,'TEST-DEPLOYMENT',state)
+        with pytest.raises(OwnerAssertionError):broker.revalidate_mutation_approval(kernel,deployment_id='TEST-DEPLOYMENT',
+            reference=first['execution_authorization_reference'],request_scope=scope(),now=NOW)
         with pytest.raises(OwnerAssertionError):broker.approve_intent(kernel,deployment_id='TEST-DEPLOYMENT',nonce=intent['nonce'],assertion=proof,now=NOW)
 
 def test_missing_kernel_authority_denied(tmp_path):

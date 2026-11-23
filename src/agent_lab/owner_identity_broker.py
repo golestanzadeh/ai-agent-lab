@@ -69,7 +69,7 @@ def _finish_enrollment(kernel,*,deployment_id,credential,assertion,now):
             owner_id=state['owner_id'],enrollment=credential,**assertion)
         state.update(status='ENROLLED_LOCAL',credential_id=_encode(credential.credential_id),
             public_key_der=_encode(credential.public_key_der),counter=proof.counter,
-            proof_digest=proof.proof_digest,revoked=False, intents={})
+            proof_digest=proof.proof_digest,enrollment_assertion={k:_encode(v) for k,v in assertion.items()},revoked=False, intents={})
         _save(kernel,deployment_id,state)
         binding={name:state[name] for name in ('contract','owner_id','deployment_id','store_id','credential_id','public_key_der','proof_digest')}
         return dict(status=state['status'],enrollment_ref=_hash(binding),proof_digest=proof.proof_digest)
@@ -77,6 +77,9 @@ def _finish_enrollment(kernel,*,deployment_id,credential,assertion,now):
 def enroll_native(kernel,*,owner_id,deployment_id,store_id,approval,clock,key_root=None):
     """The production bootstrap entry point has no injectable authenticator/key."""
     from agent_lab.owner_identity_native import WindowsHello
+    from agent_lab.c09_service_host import current_process_sid
+    if owner_id!='WINDOWS-OWNER:'+current_process_sid():
+        raise OwnerAssertionError('native Owner account binding mismatch')
     binding=canonical_enrollment_binding(kernel)
     if (binding['deployment_id'],binding['store_id'])!=(deployment_id,store_id):
         raise OwnerAssertionError('canonical enrollment scope mismatch')
@@ -119,6 +122,12 @@ def issue_intent(kernel,*,scope,now):
         state=_load(kernel,scope['deployment_id']);_credential(state)
         if (state['owner_id'],state['store_id'])!=(scope['owner_id'],scope['store_id']):raise OwnerAssertionError('Owner/store mismatch')
         _authorize(kernel,scope)
+        for item in state['intents'].values():
+            if {k:item['intent'][k] for k in SCOPE}==scope:
+                # One authorization slot per exact execution. An expired slot
+                # requires a new Task/Manifest successor, never silent renewal.
+                if item['status']=='PENDING' and item['intent']['expires_at']>_time(now):return item['intent']
+                raise OwnerAssertionError('execution authorization slot already used/expired; explicit successor required')
         intent=dict(contract=CONTRACT,**scope,nonce=secrets.token_hex(32),issued_at=_time(now),expires_at=_time(now+timedelta(minutes=5)))
         intent_challenge(intent)
         state['intents'][intent['nonce']]=dict(intent=intent,status='PENDING',counter=state['counter'])
@@ -155,15 +164,39 @@ def approve_intent(kernel,*,deployment_id,nonce,assertion,now):
                       issued_at=intent['issued_at'],expires_at=intent['expires_at'],
                       execution_authorization_reference=authorization_reference(scope))
         approval['authority_reference']=_hash(approval)
-        item.update(status='APPROVED',approval=approval,proof_digest=proof.proof_digest)
+        item.update(status='APPROVED',approval=approval,proof_digest=proof.proof_digest,
+                    assertion={k:_encode(v) for k,v in assertion.items()})
         state['counter']=proof.counter
         _save(kernel,deployment_id,state)
         return approval
+
+def approved_source_evidence(kernel,*,deployment_id,nonce,expected_scope,now,signing_key,key_id):
+    """Role-private proof export for Identity staging, not a new approval.
+
+    Only public signed assertion bytes and hashes are retained in Kernel; no
+    person values. Source independently verifies these against canonical pins.
+    Fresh use still requires the original lease and current exact authority.
+    """
+    state=_load(kernel,deployment_id);pin=_credential(state)
+    item=state['intents'].get(nonce)
+    if item is None or item['status']!='APPROVED':raise OwnerAssertionError('committed Owner approval required')
+    _authorize(kernel,expected_scope)
+    assertion={k:_decode(v) for k,v in item['assertion'].items()}
+    verify_owner_assertion(intent=item['intent'],expected_scope=expected_scope,
+        enrollment=_credential(state,counter=item['counter']),now=now,**assertion)
+    from agent_lab.owner_identity_delivery import sign
+    credential=dict(owner_id=state['owner_id'],credential_id=state['credential_id'],
+        public_key_der=state['public_key_der'],enrollment_proof_digest=state['proof_digest'],revoked=False)
+    return sign(dict(contract='ai-tax-agent.owner-approval-delivery/1',key_id=key_id,
+        deployment_id=deployment_id,store_id=state['store_id'],approval_status=item['status'],approval=item['approval'],intent=item['intent'],
+        assertion=item['assertion'],owner_credential=credential),signing_key)
 
 def approve_native(kernel,*,deployment_id,nonce,confirmed_values,clock):
     """Trusted local Owner Broker; HTTP is never an authentication substitute."""
     from agent_lab.owner_identity_native import WindowsHello
     state=_load(kernel,deployment_id);pin=_credential(state)
+    from agent_lab.c09_service_host import current_process_sid
+    if state['owner_id']!='WINDOWS-OWNER:'+current_process_sid():raise OwnerAssertionError('native Owner account mismatch')
     item=state['intents'].get(nonce)
     if item is None or item['status']!='PENDING':raise OwnerAssertionError('pending Owner intent required; recover settled receipt separately')
     intent=item['intent'];_authorize(kernel,{k:intent[k] for k in SCOPE})
@@ -171,6 +204,18 @@ def approve_native(kernel,*,deployment_id,nonce,confirmed_values,clock):
     native=WindowsHello();native.confirm_intent(intent,confirmed_values)
     assertion=native.assert_intent(intent,pin.credential_id)
     return approve_intent(kernel,deployment_id=deployment_id,nonce=nonce,assertion=assertion,now=clock())
+
+def revalidate_mutation_approval(kernel,*,deployment_id,reference,request_scope,now):
+    """Existing non-Broker authorizations remain governed by their own sources."""
+    state=kernel._identity_payload('identity_kernel_state','deployment_id',_key(deployment_id))
+    if state is None:return
+    for item in state.get('intents',{}).values():
+        intent=item['intent'];scope={k:intent[k] for k in SCOPE}
+        if authorization_reference(scope)!=reference:continue
+        _credential(state)
+        if item['status']!='APPROVED' or not intent['issued_at']<=_time(now)<intent['expires_at'] or any(scope[k]!=v for k,v in request_scope.items()):
+            raise OwnerAssertionError('current exact Owner mutation approval required')
+        return
 
 def canonical_enrollment_binding(kernel):
     """Only an accepted, current externally verified existing deployment.
@@ -184,7 +229,11 @@ def canonical_enrollment_binding(kernel):
     accepted=[state for state in states if state.get('status')=='ACTIVE' and 'artifact' in state]
     if len(accepted)!=1:raise OwnerAssertionError('exact accepted canonical Identity deployment/store unavailable or ambiguous')
     state=accepted[0];artifact=state['artifact'];deployment=artifact['deployment_id'];store=artifact['store_id']
-    if state.get('store_id',store)!=store or kernel._identity_verified_heads.get(deployment)!=state.get('previous_record'):
+    previous=state.get('previous_record')
+    import re
+    if (state.get('store_id',store)!=store or type(previous) is not str or
+        not re.fullmatch(r'sha256:[0-9a-f]{64}',previous) or
+        kernel._identity_verified_heads.get(deployment)!=previous):
         raise OwnerAssertionError('accepted current independent Witness binding required before Owner enrollment')
     return dict(deployment_id=deployment,store_id=store)
 

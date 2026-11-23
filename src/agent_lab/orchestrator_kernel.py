@@ -1495,6 +1495,11 @@ class OrchestratorKernel:
             grant=json.loads(manifest["payload_json"])
             if len(authorization_references)!=1 or authorization_references[0] not in grant["inputs"]:
                 raise PermissionDenied("exact mutation authorization input required")
+            if message_type in {"PREPARE_MUTATION","COMMIT_MUTATION"}:
+                from agent_lab.owner_identity_broker import revalidate_mutation_approval
+                revalidate_mutation_approval(self,deployment_id=deployment_id,reference=authorization_references[0],
+                    request_scope=dict(operation=operation,case_id=case_id,tax_year=str(tax_year),run_id=run_id,
+                                       task_id=task_id,manifest_id=manifest_id,subject_id=payload.get("subject_id","")),now=_utc_now())
             transactions=state.setdefault("mutations",{})
             tx=transactions.get(transaction_id)
             if message_type!="PREPARE_MUTATION" and tx is None:

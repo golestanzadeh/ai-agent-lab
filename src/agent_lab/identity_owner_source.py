@@ -13,10 +13,11 @@ import json
 from agent_lab.identity_mutation_source import ProtectedMutationSource,MaterializedMutation,EvidenceArtifact
 from agent_lab.identity_evidence_authority import EvidenceScope
 from agent_lab.identity_protected_revision import ProtectedRevision,ProtectedReference,MaterializedRevision
-from agent_lab.owner_identity_assertion import SCOPE,verify_owner_assertion,OwnerAssertionError
+from agent_lab.owner_identity_assertion import SCOPE,EnrolledOwnerCredential,verify_owner_assertion,OwnerAssertionError
 from agent_lab.owner_identity_broker import authorization_reference
 from agent_lab.ipc_wire_primitives import canonical_sha256 as H
 from cryptography.hazmat.primitives import serialization
+from agent_lab.owner_identity_delivery import verify as verify_delivery,digest as delivery_digest
 
 TABLE='identity_owner_declaration_v1'
 PROVIDER='identity-owner-declaration-v1'
@@ -48,27 +49,44 @@ def _write(owner,reference,payload):
     owner._append_audit(ACTION,payload['intent']['case_id'],reference,dict(reference=reference,row_mac=mac))
 
 class CanonicalOwnerDeclarationSource(ProtectedMutationSource):
-    def __init__(self,owner,*,enrollment,deployment_id,store_id):
+    def __init__(self,owner,*,deployment_id,store_id):
         # Pinned configuration comes from accepted native enrollment/startup,
         # never a request/public-key field or an environment authorization flag.
-        self.owner=owner;self.enrollment=enrollment;self.deployment_id=deployment_id;self.root_id=store_id
+        self.owner=owner;self.deployment_id=deployment_id;self.root_id=store_id
         logical=owner._logical_row()
         if logical is None or (logical['deployment_id'],logical['store_id'])!=(deployment_id,store_id):
             raise OwnerAssertionError('accepted exact Identity enrollment required')
-        keys=owner._continuity_keys
-        if keys is None or keys.owner_public_key.public_bytes(serialization.Encoding.DER,serialization.PublicFormat.SubjectPublicKeyInfo)!=enrollment.public_key_der:
-            raise OwnerAssertionError('Owner source key must match the accepted canonical enrollment authority')
+        if owner._continuity_keys is None:raise OwnerAssertionError('accepted canonical Kernel key required')
 
-    def stage(self,*,intent,assertion,confirmed_values,artifacts,now):
+    def _approval(self,delivery,now):
+        keys=self.owner._continuity_keys
+        payload=verify_delivery(delivery,kernel_public_key=keys.kernel_public_key,key_id=keys.kernel_key_id,
+            deployment_id=self.deployment_id,store_id=self.root_id)
+        credential=payload['owner_credential']
+        if type(credential) is not dict or set(credential)!={'owner_id','credential_id','public_key_der','enrollment_proof_digest','revoked'} or credential['revoked'] is not False:
+            raise OwnerAssertionError('accepted nonrevoked native Owner pin required')
+        pin=EnrolledOwnerCredential(credential['owner_id'],base64.b64decode(credential['credential_id'],validate=True),
+            base64.b64decode(credential['public_key_der'],validate=True),0)
+        intent=payload['intent'];scope={k:intent[k] for k in SCOPE}
+        assertion={k:base64.b64decode(v,validate=True) for k,v in payload['assertion'].items()}
+        proof=verify_owner_assertion(intent=intent,expected_scope=scope,enrollment=pin,now=now,**assertion)
+        expected=dict(contract='ai-tax-agent.owner-approval/1',intent_digest=proof.intent_digest,proof_digest=proof.proof_digest,
+            scope=scope,nonce=intent['nonce'],issued_at=intent['issued_at'],expires_at=intent['expires_at'],
+            execution_authorization_reference=authorization_reference(scope))
+        expected['authority_reference']=delivery_digest(expected)
+        if payload['approval']!=expected:raise OwnerAssertionError('committed Kernel approval/intent/proof substitution')
+        if (scope['owner_id'],scope['deployment_id'],scope['store_id'])!=(pin.owner_id,self.deployment_id,self.root_id):
+            raise OwnerAssertionError('Kernel-delivered native pin scope mismatch')
+        return intent,scope,proof
+
+    def stage(self,*,delivery,confirmed_values,artifacts,now):
         """Identity role-private evidence write; actual verified content only.
 
         Caller already holds the Identity serialization lock. This is not a
         dashboard/IPC bypass for person writes: no domain rows change here.
         """
-        scope={k:intent[k] for k in SCOPE}
-        proof=verify_owner_assertion(intent=intent,expected_scope=scope,enrollment=self.enrollment,now=now,**assertion)
-        if (scope['owner_id']!=self.enrollment.owner_id or (scope['deployment_id'],scope['store_id'])!=(self.deployment_id,self.root_id)
-            or H(confirmed_values)!=scope['input_digest'] or scope['operation'] not in {'REGISTER_IDENTITY','CORRECT_PERSON','BIND_PARTY'}):
+        intent,scope,proof=self._approval(delivery,now)
+        if (H(confirmed_values)!=scope['input_digest'] or scope['operation'] not in {'REGISTER_IDENTITY','CORRECT_PERSON','BIND_PARTY'}):
             raise OwnerAssertionError('Owner source operation/input mismatch')
         case=self.owner._cases.get(scope['case_id'])
         if case is None or case.owner_id!=scope['owner_id'] or str(case.tax_period.year)!=scope['tax_year']:
@@ -91,8 +109,8 @@ class CanonicalOwnerDeclarationSource(ProtectedMutationSource):
             material.append(dict(reference=_content_digest(raw),kind=kind,content=base64.b64encode(raw).decode()))
         if len({item['reference'] for item in material})!=len(material):raise OwnerAssertionError('duplicate Owner artifacts')
         reference=authorization_reference(scope)
-        stored=dict(contract='ai-tax-agent.identity-owner-source/1',intent=intent,
-            assertion={k:base64.b64encode(v).decode() for k,v in assertion.items()},confirmed_values=confirmed_values,
+        stored=dict(contract='ai-tax-agent.identity-owner-source/1',intent=intent,delivery=delivery,
+            approval_digest=delivery['approval']['authority_reference'],confirmed_values=confirmed_values,
             proof_digest=proof.proof_digest,artifacts=material,revoked=False)
         def write():
             verify_storage(self.owner)
@@ -117,9 +135,9 @@ class CanonicalOwnerDeclarationSource(ProtectedMutationSource):
     def resolve(self,request,case,now):
         if len(request['authorization_references'])!=1:raise OwnerAssertionError('one Owner declaration required')
         reference=request['authorization_references'][0];row=self._row(reference);intent=row['intent']
-        scope={k:intent[k] for k in SCOPE}
-        assertion={k:base64.b64decode(v,validate=True) for k,v in row['assertion'].items()}
-        verify_owner_assertion(intent=intent,expected_scope=scope,enrollment=self.enrollment,now=now,**assertion)
+        delivered_intent,scope,proof=self._approval(row['delivery'],now)
+        if delivered_intent!=intent or proof.proof_digest!=row['proof_digest'] or row['approval_digest']!=row['delivery']['approval']['authority_reference']:
+            raise OwnerAssertionError('stored approval revision mismatch')
         expected=dict(operation=request['domain_operation'],case_id=request['case_id'],tax_year=request['tax_year'],
             subject_id=request['payload']['subject_id'],deployment_id=request['deployment_id'],task_id=request['task_id'],
             manifest_id=request['manifest_id'],run_id=request['run_id'],store_id=self.root_id,owner_id=case.owner_id,
