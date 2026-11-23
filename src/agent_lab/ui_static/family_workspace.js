@@ -84,6 +84,18 @@
     recover.hidden = true;
     const response = await fetch(endpoint + (resume && recovery ? "&recovery=" + encodeURIComponent(recovery) : ""), {cache: 'no-store', credentials: 'same-origin'});
     if (!response.ok) {
+      let missingRuntime = response.headers.get('X-Family-Blocker') === 'FAMILY_RUNTIME_BINDING_REQUIRED';
+      if (response.status === 503 && !missingRuntime) {
+        try { missingRuntime = (await response.json()).detail === 'FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE'; }
+        catch (_) { /* Keep an unknown failure fail-closed. */ }
+      }
+      if (response.status === 503 && missingRuntime) {
+        unavailable();
+        status.textContent = fa
+          ? 'ثبت و خواندن اشخاص غیرفعال است: اتصال تأییدشدهٔ هویت و مجوز مالک به برنامه متصل نشده است. ابتدا binding عملیاتی و تأییدهای امنیتی همان استقرار باید تکمیل شوند.'
+          : 'Personen sind nicht verfügbar: Die freigegebene Identity-Verbindung mit Eigentümerautorisierung ist nicht angebunden. Zuerst sind die Betriebsbindung und Sicherheitsfreigaben dieser Installation erforderlich.';
+        return;
+      }
       if (response.status === 409) {
         const error = await response.json();
         if (error.detail === 'FAMILY_READ_RECONCILIATION_REQUIRED' && typeof error.transaction_id === 'string') {

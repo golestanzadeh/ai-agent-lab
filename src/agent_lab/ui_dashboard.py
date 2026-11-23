@@ -355,7 +355,11 @@ def create_dashboard_app(
     async def family_scope(request: Request):
         from agent_lab.family_identity_gateway import FamilyUnavailable
         if family_gateway is None or read_cases is None:
-            raise HTTPException(status_code=503,detail="FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE")
+            from agent_lab.runtime_activation import ReadinessStatus
+            blocker="FAMILY_RUNTIME_BINDING_REQUIRED" if family_gateway is None else "CASE_REGISTRY_BINDING_REQUIRED"
+            raise HTTPException(status_code=503,detail="FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE",
+                headers={"X-Family-Readiness":ReadinessStatus.CONFIGURATION_MISSING.value,
+                         "X-Family-Blocker":blocker})
         case_id=request.query_params.get("case_id")
         run_id=request.query_params.get("run_id")
         try:
