@@ -146,7 +146,7 @@ def factory_at(path,monkeypatch):
                     state['kernel']=OrchestratorKernel(path/'kernel.sqlite',prior._kernel.contract_root)
                     state['kernel'].verify_identity_witness_state(binding['deployment_id'],custodian=prior._custodian,provider=prior._provider,signing_key=KERNEL,kernel_key_id='TEST-KERNEL-KEY-1')
                     bound=compose();state['bound']=bound
-                state.update(bound=bound,app=app,config=config,restart=restart,case_host=host)
+                state.update(bound=bound,app=app,config=config,restart=restart,case_host=host,local=local,analysis=analysis)
                 yield state
 
 def test_factory_create_correct_refresh(tmp_path,monkeypatch):
@@ -186,6 +186,108 @@ def test_factory_unaccepted_or_revoked_binding_is_503(tmp_path,monkeypatch):
                 assert (await browser.get('/family/persons'+QUERY)).status_code==503
                 assert (await browser.post('/family/persons'+QUERY,content=C(dict(action='create',values=VALUES)),headers=HEADERS)).status_code==503
         asyncio.run(denied())
+
+def clock_after(binding):
+    return datetime.strptime(binding.payload['expires_at'],'%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc)+timedelta(seconds=1)
+
+def mutation_args(state,operation='REGISTER_IDENTITY'):
+    values=EDIT if operation=='CORRECT_PERSON' else VALUES
+    action='correct' if operation=='CORRECT_PERSON' else 'create'
+    intent=state['bound'].resolve_intents('C1',2025,'RUN-RUNTIME-1',action,values)[0]
+    return dict(case_id='C1',tax_year=2025,run_id='RUN-RUNTIME-1',task_id=intent.scope.task_id,manifest_id=intent.scope.manifest_id,
+        operation=operation,authorization_references=[intent.scope.authorization_ref],transaction_id=intent.transaction_id,
+        payload={**intent.payload,'owner_input_digest':H({k:v for k,v in values.items() if k not in {'person_id','role'}})})
+
+@pytest.mark.parametrize('failure',['expired','revoked'])
+def test_direct_client_and_kernel_cannot_bypass_binding(tmp_path,monkeypatch,failure):
+    with factory_at(tmp_path,monkeypatch) as state:
+        if failure=='revoked':
+            with state['kernel'].atomic_execution():
+                owner=broker._load(state['kernel'],state['config'].payload['deployment_id']);owner['revoked']=True
+                broker._save(state['kernel'],state['config'].payload['deployment_id'],owner)
+        with patch('agent_lab.option_b_family_binding.datetime',wraps=datetime) as clock,patch('agent_lab.c09_pipe_transport._exchange_canonical',side_effect=AssertionError('must deny before transport')) as transport:
+            clock.now.return_value=clock_after(state['config']) if failure=='expired' else datetime.now(timezone.utc)
+            args=mutation_args(state)
+            with pytest.raises(PermissionError):state['client'].read(**{k:v for k,v in args.items() if k not in {'payload','operation'}},operation='READ_FAMILY',payload=dict(subject_id='',as_of_date='2025-01-01'))
+            with pytest.raises(PermissionError):state['client'].mutation_stage(**args,message_type='PREPARE_MUTATION')
+            with pytest.raises(PermissionError):state['kernel'].issue_identity_mutation(**args,message_type='PREPARE_MUTATION',deployment_id=state['config'].payload['deployment_id'],signing_key=KERNEL,key_id='TEST-KERNEL-KEY-1')
+            transport.assert_not_called()
+
+def test_binding_expiry_between_prepare_and_commit_denies_new_domain_write(tmp_path,monkeypatch):
+    with factory_at(tmp_path,monkeypatch) as state:
+        args=mutation_args(state)
+        assert state['client'].mutation_stage(**args,message_type='PREPARE_MUTATION')['outcome']=='PREPARED'
+        with patch('agent_lab.option_b_family_binding.datetime',wraps=datetime) as clock,patch('agent_lab.c09_pipe_transport._exchange_canonical',side_effect=AssertionError('must deny before transport')) as transport:
+            clock.now.return_value=clock_after(state['config'])
+            with pytest.raises(PermissionError):state['client'].mutation_stage(**args,message_type='COMMIT_MUTATION')
+            transport.assert_not_called()
+        with closing(store_at(tmp_path/'identity.sqlite')) as authority:assert authority._load_identity('P2') is None
+
+def test_cached_private_read_cannot_bypass_revoked_binding(tmp_path,monkeypatch):
+    with factory_at(tmp_path,monkeypatch) as state:
+        args=mutation_args(state)
+        args={k:v for k,v in args.items() if k not in {'payload','operation'}}
+        args.update(operation='READ_FAMILY',payload=dict(subject_id='',as_of_date='2025-01-01'),authorization_references=[A1],
+                    transaction_id='tx:v1:123e4567-e89b-42d3-a456-426614174998')
+        assert state['client'].read(**args)['outcome']=='READ_OK'
+        with state['kernel'].atomic_execution():
+            owner=broker._load(state['kernel'],state['config'].payload['deployment_id']);owner['revoked']=True
+            broker._save(state['kernel'],state['config'].payload['deployment_id'],owner)
+        with pytest.raises(PermissionError):state['client'].recover_read(**args)
+
+def test_committed_recovery_after_binding_expiry_revocation_and_restart(tmp_path,monkeypatch):
+    with factory_at(tmp_path,monkeypatch) as state:
+        async def begin():
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=state['app']()),base_url='http://127.0.0.1:8766') as browser:
+                assert (await browser.post('/family/persons'+QUERY,content=C(dict(action='create',values=VALUES)),headers=HEADERS)).status_code==200
+                with patch.object(state['client'],'reconcile',side_effect=TimeoutError('lost before Witness settlement')):
+                    held=await browser.post('/family/persons'+QUERY,content=C(dict(action='correct',values=EDIT)),headers=HEADERS)
+                assert held.status_code==409
+                return held.json()['workflow_id']
+        workflow=asyncio.run(begin())
+        with state['kernel'].atomic_execution():
+            owner=broker._load(state['kernel'],state['config'].payload['deployment_id']);owner['revoked']=True
+            broker._save(state['kernel'],state['config'].payload['deployment_id'],owner)
+            state['kernel']._connection.execute("UPDATE tasks SET status='BLOCKED' WHERE task_id='TASK-FAMILY-BIND'")
+            state['kernel']._append_event('TASK_BLOCKED','TASK','TASK-FAMILY-BIND','HUMAN_PROJECT_OWNER',{'reason':'synthetic binding withdrawal'})
+        with patch('agent_lab.option_b_family_binding.datetime',wraps=datetime) as clock:
+            clock.now.return_value=clock_after(state['config'])
+            state['restart']()
+            async def settle():
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=state['app']()),base_url='http://127.0.0.1:8766') as browser:
+                    assert (await browser.get('/family/persons'+QUERY)).status_code==503
+                    assert (await browser.get('/family/pending'+QUERY)).status_code==200
+                    result=await browser.post('/family/persons/recover'+QUERY,content=C(dict(workflow_id=workflow)),headers=HEADERS)
+                    assert result.status_code==200,result.text
+                    assert result.json()['status']=='COMMITTED_FINAL'
+            asyncio.run(settle())
+        with closing(store_at(tmp_path/'identity.sqlite')) as authority:assert authority._load_identity('P2').preferred_display_name=='Corrected Person'
+
+def test_raw_gateway_cannot_bypass_production_factory(tmp_path,monkeypatch):
+    from agent_lab.family_identity_gateway import FamilyIdentityGateway
+    with factory_at(tmp_path,monkeypatch) as state:
+        bound=state['bound']
+        raw=FamilyIdentityGateway(cases=bound.cases,owner_id='P1',client=state['client'],read_scope=bound.read_scope)
+        app=state['local'].create_local_case_app(case_host=state['case_host'],kernel_dispatch=state['analysis'],family_gateway=raw)
+        async def denied():
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://127.0.0.1:8766') as browser:
+                assert (await browser.get('/family/persons'+QUERY)).status_code==503
+        asyncio.run(denied())
+
+def test_build_manifest_detects_every_authority_file_substitution(tmp_path):
+    from agent_lab.option_b_family_binding import build_manifest
+    from pathlib import Path
+    root=Path(__file__).resolve().parents[2]
+    original=build_manifest()
+    for name,_ in original['files']:
+        target=tmp_path/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((root/name).read_bytes())
+    baseline=H(build_manifest(tmp_path))
+    assert baseline==H(original)
+    assert any(name=='requirements.txt' for name,_ in original['files'])
+    for name,_ in original['files']:
+        target=tmp_path/name;raw=target.read_bytes();target.write_bytes(raw+b'\n')
+        assert H(build_manifest(tmp_path))!=baseline,name
+        target.write_bytes(raw)
 
 @pytest.mark.parametrize('failure',['key','case','source','owner','custodian','witness','expired','unaccepted','schema','image'])
 def test_factory_dependency_rejection_is_503(tmp_path,monkeypatch,failure):

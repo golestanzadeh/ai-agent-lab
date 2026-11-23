@@ -413,6 +413,8 @@ class LocalCaseHost:
 
 def create_local_case_app(*, kernel_dispatch=None, family_gateway=None,family_binding=None,case_host=None):
     host = case_host if case_host is not None else LocalCaseHost()
+    from agent_lab.option_b_family_binding import BoundFamilyIdentityGateway
+    if family_gateway is not None and not isinstance(family_gateway,BoundFamilyIdentityGateway):family_gateway=None
     if family_gateway is None:
         from agent_lab.option_b_family_binding import compose_family_gateway
         family_gateway=compose_family_gateway(host,family_binding)

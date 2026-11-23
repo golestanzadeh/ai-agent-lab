@@ -1407,7 +1407,14 @@ class OrchestratorKernel:
         return json.loads(row[0]) if row else None
 
     def _store_identity_payload(self,table,key,value,payload):
-        self._identity_payload(table,key,value)
+        old=self._identity_payload(table,key,value)
+        binding=getattr(self,'_family_runtime_binding',None)
+        if binding is not None and table=='identity_kernel_request' and 'request' in payload:
+            if old is not None:
+                payload={**payload,**{k:old[k] for k in ('family_binding_ref','family_binding_expires','family_binding_gate_event','family_binding_review_event') if k in old}}
+            elif payload.get('status')=='RESERVED':
+                payload={**payload,'family_binding_ref':binding.binding.reference,'family_binding_expires':binding.binding.payload['expires_at'],
+                    'family_binding_gate_event':binding._authority_events[0],'family_binding_review_event':binding._authority_events[1]}
         digest=_digest(payload)
         self._connection.execute("INSERT INTO "+table+" VALUES(?,?,?) ON CONFLICT("+key+") DO UPDATE SET payload_json=excluded.payload_json,digest=excluded.digest",(value,_canonical(payload),digest))
         self._append_event("IDENTITY_PROTOCOL_RECORDED","IDENTITY_PROTOCOL",table+":"+value,"AGENT_FACTORY_KERNEL",{"payload_digest":digest})
@@ -1488,6 +1495,8 @@ class OrchestratorKernel:
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is None or state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"]:
                 raise PermissionDenied("fresh externally verified deployment required")
+            binding=getattr(self,'_family_runtime_binding',None)
+            if binding is not None:binding.authorize_request(message_type=message_type,transaction_id=transaction_id,case_id=case_id,tax_year=tax_year)
             manifest=self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation)
             capability=OPERATION_CAPABILITIES[operation]
             if not self.permission_decision(manifest_id,capability,case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
@@ -1742,6 +1751,8 @@ class OrchestratorKernel:
         with self.atomic_execution():
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is None:raise PermissionDenied("enrollment unavailable")
+            binding=getattr(self,'_family_runtime_binding',None)
+            if binding is not None:binding.authorize_request(message_type='READ_IDENTITY_STATE',transaction_id=transaction_id,case_id=case_id,tax_year=tax_year)
             if state.get("active_mutation"):raise StateTransitionError("mutation Witness reservation requires reconciliation")
             if transaction_id in state.get("mutations",{}):raise PermissionDenied("mutation/read transaction namespace conflict")
             manifest=self._manifest_row(manifest_id);manifest_payload=json.loads(manifest["payload_json"])

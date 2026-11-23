@@ -483,3 +483,41 @@ is not mocked. Create/read/correct, refresh, service/Kernel/app restart, Persian
 German LTR HTML, case/year denial and missing/revoked/expired/unaccepted key/source/
 Owner/image/Custodian/Witness/version dependencies verified. Final exact-SHA review
 pending; no FACTORY_INDEPENDENT_PASS or FAMILY_OPERATIONAL_PASS yet.
+
+## Factory independent findings and bounded correction
+
+Exact d2d57abddd7c829923921f038ed7335c977884d9: INDEPENDENT_FAIL, despite
+12exact-archive tests passing. F01 CRITICAL: entry-only binding validation allowed
+direct client work after expiry/revocation and blocked committed recovery. F02
+HIGH: Python executable plus one source file did not bind the reviewed build.
+F03 HIGH: raw gateway injection bypassed the production binding loader.
+
+Corrected: existing Kernel read/mutation issuance revalidates the bound profile
+inside its existing atomic boundary before new READ/PREPARE/COMMIT. Existing
+nonce ledger journals immutable binding reference/expiry and exact Human Gate/
+independent-review audit-event identities; status updates preserve those original
+values and never label old unbound requests. No wire framing/DTO or authority is
+replaced. Exact GET/FINALIZE/ABORT settlement is permitted only for the original
+bound transaction. Current read/private cached-read release and new workflow
+creation remain disabled after binding expiry/revocation. UI pending/write-recovery
+stays reachable for exact existing work. Historical accepted evidence can settle
+an already committed change after binding acceptance withdrawal/Owner revocation
+and restart, without renewed approval or a fresh domain mutation. Protected keys,
+actual token, source/build identity, exact case and existing protocol controls still
+apply; this is not recovery without authority or a new write grant.
+
+source_build_ref now hashes a canonical versioned manifest of all identity/Owner/
+C09/IPC/F07 authority modules, Kernel/family/local HTTP/case/runtime modules, existing
+orchestrator contracts and pinned requirements.txt. Each file substitution changes
+the digest. It binds repository deployment bytes, not just python.exe and not Git
+head as anti-rollback authority. It is not OS or installed-library attestation and
+never replaces independent Custodian/Witness controls. custody_ref/audit_recovery_ref
+are governed references bound by the existing Owner/reviewer decision, NOT resolved
+credential/backup-content proofs. Concrete runtime checks are DPAPI key decryption/
+public matches plus authenticated Custodian/GCS current-chain verification.
+
+Production raw gateway injection is disabled; only the typed bound gateway with
+matching client/cases/Owner, current binding graph and fresh Witness verification
+can compose. Legacy synthetic create_dashboard_app remains unchanged. No additional
+service/store/transport authority or live activation. The earlier factory-candidate
+claims are superseded by these corrections; exact successor review remains required.

@@ -362,7 +362,7 @@ def create_dashboard_app(
                          "X-Family-Blocker":blocker})
         case_id=request.query_params.get("case_id")
         if hasattr(family_gateway,'ensure_ready'):
-            try:family_gateway.ensure_ready()
+            try:family_gateway.ensure_ready(recovery=request.url.path in {'/family/pending','/family/persons/recover'})
             except Exception:
                 raise HTTPException(status_code=503,detail='FAMILY_OPERATIONAL_BINDING_UNAVAILABLE') from None
         run_id=request.query_params.get("run_id")

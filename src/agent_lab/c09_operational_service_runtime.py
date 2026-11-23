@@ -26,7 +26,7 @@ class AuthorityPipeRuntime:
             from agent_lab.option_b_family_binding import BoundOptionBFamily
             if not isinstance(owner_binding,BoundOptionBFamily) or config.role is not ServiceRole.IDENTITY:
                 raise ServiceHostError('accepted Option B Identity binding required')
-            owner_binding.ensure_ready(require_client=False)
+            owner_binding.constructor_ready()
             sid=owner_binding.binding.payload['owner_sid']
         schema='ai-tax-agent.option-b-identity-host/1' if owner_binding is not None else 'ai-tax-agent.c09-service-config/1.0'
         if (config.schema!=schema or
@@ -207,7 +207,7 @@ Mutation routing is an explicit inactive composition option, with all authority 
         if owner_binding is not None:
             from agent_lab.option_b_family_binding import BoundOptionBFamily
             if not isinstance(owner_binding,BoundOptionBFamily) or owner_binding.kernel is not kernel:raise ServiceHostError('accepted Option B binding required')
-            owner_binding.ensure_ready(require_client=False)
+            owner_binding.constructor_ready()
             expected_sid=owner_binding.binding.payload['owner_sid']
         if not isinstance(identity_server,PinnedProcess) or identity_server.sid!=expected_sid:raise ServiceHostError("pinned Identity principal required")
         if not isinstance(custodian,CustodianServiceClient) or custodian.deployment_id!=deployment_id or not isinstance(provider,GCSWitnessAdapter):raise ServiceHostError("concrete deployment ports required")
@@ -217,6 +217,8 @@ Mutation routing is an explicit inactive composition option, with all authority 
         self._mutation_pipeline=mutation_pipeline
         self._kernel=kernel;self._deployment=deployment_id;self._identity=identity_server
         self._custodian=custodian;self._provider=provider;self._signer=signing_key;self._key_id=key_id
+        self._owner_binding=owner_binding
+        if owner_binding is not None:kernel._family_runtime_binding=owner_binding
 
     def read(self,*,manifest_id,task_id,run_id,case_id,tax_year,operation,payload,authorization_references,transaction_id=None,cancellation=None):
         from datetime import datetime,timezone
@@ -262,6 +264,12 @@ Mutation routing is an explicit inactive composition option, with all authority 
     def reconcile(self,checkpoint_id):
         """Retry exact held checkpoint; never dispatch Identity a second time."""
         pending=self._kernel._identity_payload("identity_kernel_checkpoint","checkpoint_id",checkpoint_id)
+        if self._owner_binding is not None:
+            if pending is None:raise ServiceHostError('exact held checkpoint required')
+            if pending['receipt']['profile']=='identity-mutation-staged-receipt/1':
+                request=pending['request']
+                self._owner_binding.authorize_request(message_type='GET_TRANSACTION',transaction_id=request['transaction_id'],case_id=request['case_id'],tax_year=request['tax_year'])
+            else:self._owner_binding.ensure_ready()
         if (pending is not None and pending["receipt"]["profile"]=="identity-mutation-staged-receipt/1"
                 and not self._mutation_pipeline):
             raise ServiceHostError("mutation routing is disabled")
@@ -274,6 +282,7 @@ Mutation routing is an explicit inactive composition option, with all authority 
         Never return a caller-supplied result or redispatch a completed mutation.
         A missing checkpoint uses the existing same-transaction read recovery.
         """
+        if self._owner_binding is not None:self._owner_binding.ensure_ready()
         from agent_lab.ipc_operational_read import UUID
         if not isinstance(transaction_id,str) or not UUID.fullmatch(transaction_id):
             raise ServiceHostError("canonical read transaction required")
@@ -301,6 +310,9 @@ Mutation routing is an explicit inactive composition option, with all authority 
                          payload=payload,authorization_references=authorization_references)
 
     def family_workflow(self, **kwargs):
+        if self._owner_binding is not None:
+            if kwargs.get('workflow') is not None:self._owner_binding.ensure_ready()
+            else:self._owner_binding.recovery_ready()
         return self._kernel.family_identity_workflow(deployment_id=self._deployment,**kwargs)
 
     def complete_mutation(self, intent, *, recovery=False):
