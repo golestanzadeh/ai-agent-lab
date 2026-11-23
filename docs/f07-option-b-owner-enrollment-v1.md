@@ -158,3 +158,16 @@ canonical-equivalence and four invalid scalar-boundary tests. Final focused
 command includes assertion and documentation tests:54passed,0failed,0skipped,
 exit0. Exact successor independent review pending; no live authentication or
 operational acceptance implied.
+
+## Exact successor independent acceptance
+
+Separate read-only reviewer /root/c09_architecture_independent_review returned
+INDEPENDENT_PASS / INACTIVE at858b8b3a17cb26e88affd2fdca28ecfe1dee5cce.
+Initial b4997f3 finding severityMEDIUM, with no signed-scope bypass. Exact-archive
+commands: assertion pytest36passed,exit0,0.61s; documentation pytest18passed,
+exit0,0.99s; independent ECDSA twin probe accepted both forms with equal proof
+digest,exit0; git diff --check b4997f3..858b8b3 exit0. No residual bounded defect.
+This accepts only the verifier/proposal, not enrollment or the operational runtime.
+Kernel nonce issuer/atomic consumer, native enrollment interoperability, reviewed
+source-kind implementation, accepted custody/Witness binding and actual composition
+remain technical/operational acceptance work after the specified Owner decision.
