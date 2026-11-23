@@ -1471,6 +1471,30 @@ class OrchestratorKernel:
             if observed!=legacy_reservation:
                 raise StateTransitionError("legacy continuity reservation requires reconciliation")
 
+    def _require_durable_owner_binding(self,deployment_id,*,case_id,tax_year,transaction_id,message_type):
+        """A raw/restarted Kernel cannot silently bypass enrolled Option B.
+
+        The existing canonical Owner Broker record is the durable deployment
+        profile. Never infer authority solely from an optional client object.
+        """
+        owner=self._identity_payload("identity_kernel_state","deployment_id",
+                                     "owner-broker:v1:"+deployment_id)
+        binding=getattr(self,"_family_runtime_binding",None)
+        if owner is None:
+            if binding is not None:
+                raise PermissionDenied("bound Option B deployment has no durable Owner profile")
+            return
+        if owner.get("contract")!="ai-tax-agent.owner-broker-registration/1":
+            raise PermissionDenied("invalid durable Owner profile")
+        if owner.get("status")!="ENROLLED_LOCAL":
+            raise PermissionDenied("Option B Owner profile not enrolled")
+        if binding is None:
+            raise PermissionDenied("durable Option B deployment requires bound verifier")
+        if binding.binding.payload["deployment_id"]!=deployment_id:
+            raise PermissionDenied("Option B deployment verifier mismatch")
+        binding.authorize_request(message_type=message_type,transaction_id=transaction_id,
+                                  case_id=case_id,tax_year=tax_year)
+
     def issue_identity_mutation(self,**kwargs):
         try:
             return self._issue_identity_mutation(**kwargs)
@@ -1495,8 +1519,8 @@ class OrchestratorKernel:
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is None or state["status"]!="ACTIVE" or self._identity_verified_heads.get(deployment_id)!=state["previous_record"]:
                 raise PermissionDenied("fresh externally verified deployment required")
-            binding=getattr(self,'_family_runtime_binding',None)
-            if binding is not None:binding.authorize_request(message_type=message_type,transaction_id=transaction_id,case_id=case_id,tax_year=tax_year)
+            self._require_durable_owner_binding(deployment_id,case_id=case_id,tax_year=tax_year,
+                transaction_id=transaction_id,message_type=message_type)
             manifest=self._identity_continuity_context(manifest_id=manifest_id,task_id=task_id,run_id=run_id,case_id=case_id,tax_year=tax_year,operation=operation)
             capability=OPERATION_CAPABILITIES[operation]
             if not self.permission_decision(manifest_id,capability,case_id=case_id,tax_year=tax_year,run_id=run_id).allowed:
@@ -1751,8 +1775,9 @@ class OrchestratorKernel:
         with self.atomic_execution():
             state=self._identity_payload("identity_kernel_state","deployment_id",deployment_id)
             if state is None:raise PermissionDenied("enrollment unavailable")
-            binding=getattr(self,'_family_runtime_binding',None)
-            if binding is not None:binding.authorize_request(message_type='READ_IDENTITY_STATE',transaction_id=transaction_id,case_id=case_id,tax_year=tax_year)
+            if operation!='READ_ENROLLMENT_STATUS':
+                self._require_durable_owner_binding(deployment_id,case_id=case_id,tax_year=tax_year,
+                    transaction_id=transaction_id,message_type='READ_IDENTITY_STATE')
             if state.get("active_mutation"):raise StateTransitionError("mutation Witness reservation requires reconciliation")
             if transaction_id in state.get("mutations",{}):raise PermissionDenied("mutation/read transaction namespace conflict")
             manifest=self._manifest_row(manifest_id);manifest_payload=json.loads(manifest["payload_json"])

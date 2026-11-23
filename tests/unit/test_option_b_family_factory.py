@@ -264,6 +264,34 @@ def test_committed_recovery_after_binding_expiry_revocation_and_restart(tmp_path
             asyncio.run(settle())
         with closing(store_at(tmp_path/'identity.sqlite')) as authority:assert authority._load_identity('P2').preferred_display_name=='Corrected Person'
 
+def test_restarted_raw_kernel_denies_enrolled_owner_without_factory(tmp_path,monkeypatch):
+    from agent_lab.orchestrator_kernel import OrchestratorKernel
+    from agent_lab.orchestrator_kernel import PermissionDenied
+    with factory_at(tmp_path,monkeypatch) as state:
+        args=mutation_args(state)
+        prior=state['kernel']
+        raw=OrchestratorKernel(tmp_path/'kernel.sqlite',prior.contract_root)
+        try:
+            # Even a freshly verified external Witness head cannot authorize
+            # a raw Kernel when durable Owner enrollment requires the factory.
+            client=state['client']
+            raw.verify_identity_witness_state(state['config'].payload['deployment_id'],
+                custodian=client._custodian,provider=client._provider,
+                signing_key=KERNEL,kernel_key_id='TEST-KERNEL-KEY-1')
+            with pytest.raises(PermissionDenied,match='requires bound verifier'):
+                raw.issue_identity_mutation(**args,message_type='PREPARE_MUTATION',
+                    deployment_id=state['config'].payload['deployment_id'],
+                    signing_key=KERNEL,key_id='TEST-KERNEL-KEY-1')
+            read={k:v for k,v in args.items() if k not in {'payload','operation'}}
+            with pytest.raises(PermissionDenied,match='requires bound verifier'):
+                raw.issue_identity_read(**read,operation='READ_FAMILY',
+                    payload=dict(subject_id='',as_of_date='2025-01-01'),
+                    deployment_id=state['config'].payload['deployment_id'],
+                    signing_key=KERNEL,key_id='TEST-KERNEL-KEY-1')
+        finally:
+            raw.close()
+
+
 def test_raw_gateway_cannot_bypass_production_factory(tmp_path,monkeypatch):
     from agent_lab.family_identity_gateway import FamilyIdentityGateway
     with factory_at(tmp_path,monkeypatch) as state:
