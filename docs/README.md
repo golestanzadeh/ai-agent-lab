@@ -208,3 +208,6 @@ Historical D-024/D-025 progress snapshots were removed after their durable rules
 - Update current state and the checkpoint in the same governed change set.
 - Preserve reusable contracts, tests, verified lessons, and recovery evidence.
 - Remove temporary probes and superseded progress snapshots when they no longer provide unique value.
+
+- `f07-option-b-owner-enrollment-v1.md`: proposed single-user Owner authentication/source/custody enrollment amendment; no live enrollment or operational acceptance.
+- `F07_TOYOTA_EXECUTION_DECISION_20261118.md`: existing bounded F07 Package 1/2/3 execution decision.
