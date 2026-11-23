@@ -299,3 +299,52 @@ ceremony has occurred; do not execute the old standalone command without an acce
 current governed binding. Owner approval is already granted and needs no repetition.
 Final exact-SHA independent re-review follows these corrections. No operational
 acceptance, real-person write, service, ACL, credential or cloud change occurred.
+
+## Final controlled handoff — 2026-11-23
+
+Final mission status: BLOCKED_WITH_EXACT_UNRESOLVED_DEPENDENCY.
+Stop: OWNER_CONTROLLED_STOP / QUOTA_15_PERCENT. No operational acceptance.
+Exact final implementation/review candidate: bf75475d3ba073f0a431fb6fc3f7e6a8b8c79e35.
+Separate read-only reviewer /root/c09_architecture_independent_review returned
+INDEPENDENT_FAIL. Exact archive87tests passed,0failed,0skipped,exit0,15.06s;
+diff-check exit0. Worker same87test selection passed,exit0,13.49s. Earlier atomic
+regression selection105passed before the final Kernel hook; it is not claimed as
+an exact-final compatibility run. Accepted Family27/269 suites were not repeated.
+
+Remaining F05 HIGH: approved_source_evidence checks current approval/revocation
+and signs outside Kernel.atomic_execution. Concurrent revocation can linearize
+between the check and signing; Identity could stage stale-authorized bytes before
+Kernel's later mutation check rejects them. Repair must load/check/sign in the
+existing atomic Kernel boundary and prove ordering with a barrier concurrency test.
+Remaining F06 MEDIUM: exact-SHA integration tests must exercise the new Kernel
+Owner approval hook at both PREPARE/COMMIT (valid, revoked, expired, substituted),
+existing non-Owner authorization and GET/FINALIZE recovery. Current direct Identity
+source tests do not supply that evidence. No fix or new test started after the
+Limit Guard stop; these are real unresolved findings, not accepted residual risks.
+
+Actual localhost8766 read-only readback: root200; /family/persons503 with
+FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE. No Windows Hello ceremony, production key,
+protected enrollment, source activation, real taxpayer mutation or application
+restart occurred. Live refresh/restart Family persistence is NOT verified. Isolated
+canonical SQLite source/PREPARE/COMMIT/reopen behavior is verified only as synthetic
+technical evidence. Source factory and Option B transport/application composition
+remain unwired. Do not run the earlier enrollment command at this revision.
+
+Owner approval remains valid; do not request it again. After a fresh admitted
+execution, repair F05, supply F06 evidence and obtain independent acceptance on the
+new exact SHA before continuing remaining factory/Option B runtime integration.
+Operational enrollment additionally requires the existing accepted canonical
+Identity deployment/store and independent Custodian/Witness binding. Actual
+canonical metadata currently has no such enrollment; no UUID/credential/config flag
+may stand in for it. No four-principal target reinstatement or new cloud decision
+is made. The native Owner verification action becomes executable only once that
+governed binding and technical security acceptance exist, not now.
+
+Capacity source codex_app_server: initial2026-11-23T14:30:38.786256Z58%/48%; final
+observed2026-11-23T15:02:58.133527Z15%five-hour/41%weekly, resets18:33:47Z and
+2026-11-25T09:13:38Z. Observation15:00:08.371783Z24%/43% returned
+CAUTION_CHECKPOINT_ONLY even for CHEAP; development stopped then, existing review
+finished, only controlled documentation/publication followed. Platform quota was
+not bypassed; observed differences are not exclusive per-task billing. Preserve
+all original dirty UI/Drive files. Final recovery documentation commit and remote
+readback follow; no active OPEN_ITEMS row closes and no Human Gate is granted.
