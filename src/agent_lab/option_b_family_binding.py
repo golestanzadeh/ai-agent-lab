@@ -256,11 +256,49 @@ class OptionBFamilyFactory:
     """Metadata loader for the existing local app; borrows its existing client."""
     def __init__(self,*,client,read_scope,resolve_intents=None):
         self.client=client;self.read_scope=read_scope;self.resolve_intents=resolve_intents
+        self._runtime=None
+
+    @classmethod
+    def from_runtime(cls,*,kernel,identity_server,custodian,provider,kernel_key_id,
+                     read_scope,resolve_intents=None):
+        """Borrow accepted running ports; never provision a host or authority.
+
+        Resolve the client/binding construction cycle at application startup.
+        The existing client still verifies concrete external ports and Witness
+        finality before the factory can return a gateway.
+        """
+        factory=cls(client=None,read_scope=read_scope,resolve_intents=resolve_intents)
+        factory._runtime=dict(kernel=kernel,identity_server=identity_server,
+            custodian=custodian,provider=provider,key_id=kernel_key_id)
+        return factory
 
     def load(self,host):
         binding=OptionBFamilyBinding.load(Path(host.root)/'family-runtime-binding.json')
+        if self._runtime is not None:
+            from agent_lab.owner_identity_keys import load_key
+            from agent_lab.c09_operational_service_runtime import KernelIdentityServiceClient
+            ports=self._runtime
+            bound=BoundOptionBFamily(binding,kernel=ports['kernel'],cases=host.registry,
+                key_root=host.root,client=None,read_scope=self.read_scope,resolve_intents=self.resolve_intents)
+            signer=load_key(host.root,role='kernel',owner_id=binding.payload['owner_id'])
+            client=KernelIdentityServiceClient(ports['kernel'],deployment_id=binding.payload['deployment_id'],
+                identity_server=ports['identity_server'],custodian=ports['custodian'],provider=ports['provider'],
+                signing_key=signer,key_id=ports['key_id'],mutation_pipeline=True,owner_binding=bound)
+            bound.client=client
+            return bound
         return BoundOptionBFamily(binding,kernel=self.client._kernel,cases=host.registry,key_root=host.root,
             client=self.client,read_scope=self.read_scope,resolve_intents=self.resolve_intents)
+
+
+def local_family_prerequisite(root):
+    """Privacy-minimized startup diagnosis only; presence is never acceptance."""
+    root=Path(root)
+    for name,code in (('identity.sqlite','FAMILY_CANONICAL_IDENTITY_ENROLLMENT_REQUIRED'),
+                      ('owner-kernel-signing.dpapi','FAMILY_KERNEL_KEY_ENROLLMENT_REQUIRED'),
+                      ('owner-identity-signing.dpapi','FAMILY_IDENTITY_KEY_ENROLLMENT_REQUIRED'),
+                      ('family-runtime-binding.json','FAMILY_ACCEPTED_DEPLOYMENT_BINDING_REQUIRED')):
+        if not (root/name).is_file():return code
+    return 'FAMILY_ACCEPTED_RUNTIME_PORTS_REQUIRED'
 
 def compose_family_gateway(host,bound=None):
     """Actual local factory hook. Missing/unaccepted composition stays disabled."""

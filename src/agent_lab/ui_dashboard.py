@@ -357,6 +357,12 @@ def create_dashboard_app(
         if family_gateway is None or read_cases is None:
             from agent_lab.runtime_activation import ReadinessStatus
             blocker="FAMILY_RUNTIME_BINDING_REQUIRED" if family_gateway is None else "CASE_REGISTRY_BINDING_REQUIRED"
+            if family_gateway is None:
+                safe_blockers={"FAMILY_CANONICAL_IDENTITY_ENROLLMENT_REQUIRED","FAMILY_KERNEL_KEY_ENROLLMENT_REQUIRED",
+                    "FAMILY_IDENTITY_KEY_ENROLLMENT_REQUIRED","FAMILY_ACCEPTED_DEPLOYMENT_BINDING_REQUIRED",
+                    "FAMILY_ACCEPTED_RUNTIME_PORTS_REQUIRED"}
+                candidate=getattr(request.app.state,'family_blocker',None)
+                if candidate in safe_blockers:blocker=candidate
             raise HTTPException(status_code=503,detail="FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE",
                 headers={"X-Family-Readiness":ReadinessStatus.CONFIGURATION_MISSING.value,
                          "X-Family-Blocker":blocker})

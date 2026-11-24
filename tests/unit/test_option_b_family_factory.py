@@ -136,8 +136,12 @@ def factory_at(path,monkeypatch):
                     create_case=lambda *_:(_ for _ in ()).throw(PermissionError('outside fixture')),preview_next_case_id=lambda *_:'TEST-NEXT')
                 from agent_lab.case_analysis_kernel_dispatch import CaseAnalysisKernelDispatcher
                 analysis=CaseAnalysisKernelDispatcher(path/'kernel.sqlite',state['kernel'].contract_root)
-                def app():
-                    loader=OptionBFamilyFactory(client=state['client'],read_scope=bound.read_scope,resolve_intents=bound.resolve_intents)
+                def app(*,runtime=False):
+                    c=state['client']
+                    loader=(OptionBFamilyFactory.from_runtime(kernel=c._kernel,identity_server=c._identity,
+                        custodian=c._custodian,provider=c._provider,kernel_key_id=c._key_id,
+                        read_scope=bound.read_scope,resolve_intents=bound.resolve_intents) if runtime else
+                        OptionBFamilyFactory(client=c,read_scope=bound.read_scope,resolve_intents=bound.resolve_intents))
                     return local.create_local_case_app(case_host=host,kernel_dispatch=analysis,family_binding=loader)
                 def restart():
                     nonlocal bound
@@ -150,9 +154,9 @@ def factory_at(path,monkeypatch):
                 state.update(bound=bound,app=app,config=config,restart=restart,case_host=host,local=local,analysis=analysis)
                 yield state
 
-def test_factory_create_correct_refresh(tmp_path,monkeypatch):
+def _factory_roundtrip(tmp_path,monkeypatch,*,runtime=False):
     with factory_at(tmp_path,monkeypatch) as state:
-        app=state['app']()
+        app=state['app'](runtime=runtime)
         async def flow():
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://127.0.0.1:8766') as browser:
                 created=await browser.post('/family/persons'+QUERY,content=C(dict(action='create',values=VALUES)),headers=HEADERS)
@@ -167,7 +171,7 @@ def test_factory_create_correct_refresh(tmp_path,monkeypatch):
         asyncio.run(flow())
         state['restart']()
         async def recovered():
-            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=state['app']()),base_url='http://127.0.0.1:8766') as browser:
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=state['app'](runtime=runtime)),base_url='http://127.0.0.1:8766') as browser:
                 read=await browser.get('/family/persons'+QUERY)
                 assert read.status_code==200,read.text
                 assert next(p for p in read.json()['people'] if p['person_id']=='P2')['name']=='Corrected Person'
@@ -175,6 +179,13 @@ def test_factory_create_correct_refresh(tmp_path,monkeypatch):
                     page=await browser.get('/?tab=family&case_id=C1&tax_year=2025&lang='+language)
                     assert page.status_code==200 and 'dir="'+direction+'"' in page.text
         asyncio.run(recovered())
+
+def test_factory_create_correct_refresh(tmp_path,monkeypatch):
+    _factory_roundtrip(tmp_path,monkeypatch)
+
+def test_startup_runtime_ports_create_correct_refresh_restart(tmp_path,monkeypatch):
+    _factory_roundtrip(tmp_path,monkeypatch,runtime=True)
+
 
 def test_factory_unaccepted_or_revoked_binding_is_503(tmp_path,monkeypatch):
     with factory_at(tmp_path,monkeypatch) as state:
@@ -384,3 +395,14 @@ def test_factory_dependency_rejection_is_503(tmp_path,monkeypatch,failure):
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://127.0.0.1:8766') as browser:
                 assert (await browser.get('/family/persons'+QUERY)).status_code==503
         asyncio.run(denied())
+
+
+def test_startup_runtime_ports_reject_untrusted_custodian(tmp_path,monkeypatch):
+    with factory_at(tmp_path,monkeypatch) as state:
+        c=state['client']
+        loader=OptionBFamilyFactory.from_runtime(kernel=c._kernel,identity_server=c._identity,
+            custodian=object(),provider=c._provider,kernel_key_id=c._key_id,
+            read_scope=state['bound'].read_scope,resolve_intents=state['bound'].resolve_intents)
+        from agent_lab.c09_service_host import ServiceHostError
+        with pytest.raises(ServiceHostError,match='concrete deployment ports required'):
+            loader.load(state['case_host'])
