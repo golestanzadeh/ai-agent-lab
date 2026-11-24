@@ -84,6 +84,19 @@
     recover.hidden = true;
     const response = await fetch(endpoint + (resume && recovery ? "&recovery=" + encodeURIComponent(recovery) : ""), {cache: 'no-store', credentials: 'same-origin'});
     if (!response.ok) {
+      const prerequisites = {
+        FAMILY_CANONICAL_IDENTITY_ENROLLMENT_REQUIRED: fa ? 'پایگاه هویت این استقرار هنوز ثبت و تأیید نشده است. ابتدا enrollment قانونی Identity و اتصال مستقل Witness باید تکمیل شود؛ ثبت شخص فعلاً غیرفعال است.' : 'Die Identity-Datenbank dieser Installation ist noch nicht freigegeben. Zuerst sind die geregelte Identity-Einrichtung und unabhängige Witness-Bindung erforderlich.',
+        FAMILY_KERNEL_KEY_ENROLLMENT_REQUIRED: fa ? 'کلید حفاظت‌شدهٔ Kernel موجود نیست. ثبت کنترل‌شدهٔ کلید با مسیر تأییدشدهٔ مالک لازم است؛ کلید جایگزین خودکار ساخته نمی‌شود.' : 'Der geschützte Kernel-Schlüssel fehlt. Die freigegebene Eigentümer-Einrichtung ist erforderlich; kein automatischer Ersatz.',
+        FAMILY_IDENTITY_KEY_ENROLLMENT_REQUIRED: fa ? 'کلید حفاظت‌شدهٔ Identity موجود نیست. ثبت کنترل‌شده با مسیر تأییدشدهٔ مالک لازم است.' : 'Der geschützte Identity-Schlüssel fehlt. Die freigegebene Eigentümer-Einrichtung ist erforderlich.',
+        FAMILY_ACCEPTED_DEPLOYMENT_BINDING_REQUIRED: fa ? 'فایل binding تأییدشدهٔ همین استقرار موجود نیست. پس از تأیید منابع و مجوزها باید از مسیر موجود متصل شود.' : 'Die freigegebene Betriebsbindung dieser Installation fehlt. Sie muss nach Prüfung der Quellen und Freigaben angebunden werden.',
+        FAMILY_ACCEPTED_RUNTIME_PORTS_REQUIRED: fa ? 'فایل‌های محلی به‌تنهایی مجوز نیستند. اتصال پذیرفته‌شدهٔ Kernel، Identity و Custodian/Witness هنوز لازم است.' : 'Lokale Dateien allein sind keine Freigabe. Die akzeptierte Kernel-, Identity- und Custodian/Witness-Verbindung ist erforderlich.'
+      };
+      const prerequisite = response.headers.get('X-Family-Blocker');
+      if (response.status === 503 && Object.hasOwn(prerequisites, prerequisite)) {
+        unavailable();
+        status.textContent = prerequisites[prerequisite];
+        return;
+      }
       let missingRuntime = response.headers.get('X-Family-Blocker') === 'FAMILY_RUNTIME_BINDING_REQUIRED';
       if (response.status === 503 && !missingRuntime) {
         try { missingRuntime = (await response.json()).detail === 'FAMILY_AUTHORIZED_RUNTIME_UNAVAILABLE'; }
